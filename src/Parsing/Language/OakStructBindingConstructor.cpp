@@ -4,18 +4,21 @@
 #include <Parsing/ASTElement.h>
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
+#include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
 OakBareTypeNameConstructor _OakStructBindingConstructor_OakBareTypeNameConstructorInstance;
+OakTemplatedTypeNameConstructor _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance;
 
 OakStructBindingConstructor :: OakStructBindingConstructor ():
 	TypeGroup ()
 {
 	
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakBareTypeNameConstructorInstance, 1 );
+	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
+	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakBareTypeNameConstructorInstance, 2 );
 	
 }
 

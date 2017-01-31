@@ -3,16 +3,19 @@
 #include <Parsing/ASTElement.h>
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
+#include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
 OakBareTypeNameConstructor _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance;
+OakTemplatedTypeNameConstructor _OakTemplateSpecificationConstructor_OakTemplatedTypeNameConstructorInstance;
 
 OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
 	ParameterGroup ()
 {
 	
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance, 1 );
+	ParameterGroup.AddConstructorCantidate ( & _OakTemplateSpecificationConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
+	ParameterGroup.AddConstructorCantidate ( & _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance, 2 );
 	
 }
 
@@ -64,23 +67,23 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 		
 		
 		// Any template specification element which may be double-closed
-		/*if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_RestrictedTemplateParameter )
+		if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_TypeName_Templated )
 		{
 			
-			OakRestrictedTemplateParameterConstructor :: ElementData * Data = reinterpret_cast <OakRestrictedTemplateParameterConstructor :: ElementData *> ( ParameterElement -> GetData () );
+			OakTemplatedTypeNameConstructor :: ElementData * Data = reinterpret_cast <OakTemplatedTypeNameConstructor :: ElementData *> ( ParameterElement -> GetData () );
 			
 			if ( Data -> DoubleTemplateClose )
 			{
 				
 				Output.Accepted = true;
-				Output.TokensConsumed = TokenCount;
-				Output.ConstructedElement = TemplateDefinitionElement;
+				Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+				Output.ConstructedElement = TemplateSpecificationElement;
 				
 				return;
 				
 			}
 			
-		}*/
+		}
 		
 		if ( TokenCount == 0 )
 		{
@@ -112,7 +115,7 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 			return;
 			
 		}
-		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TriangleBracket_Close )
+		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_DoubleTriangleBracket_Close )
 		{
 			
 			TemplateData -> DoubleTemplateClose  = true;

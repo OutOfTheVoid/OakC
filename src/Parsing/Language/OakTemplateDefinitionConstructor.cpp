@@ -79,7 +79,7 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 			{
 				
 				Output.Accepted = true;
-				Output.TokensConsumed = TokenCount;
+				Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
 				Output.ConstructedElement = TemplateDefinitionElement;
 				
 				return;

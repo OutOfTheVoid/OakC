@@ -8,18 +8,18 @@ struct MyType <A, B: SomeTrait, C: MyTrait + MyOtherTrait,>
 	
 	bind TestString: string,
 	bind TestInt: i32,
-	bind TestTempalted: B,
+	bind TestTempalted: Array<Array<Array<B>>>,
 	
 }
 
 /*implement MyType
 {
 	
-	function init ( self, StringValue: * string )
+	function init ( * self, StringValue: * string )
 	{
 		
-		self.TestString = StringValue;
-		self.TestInt = 0;
+		self -> TestString = StringValue;
+		self -> TestInt = 0;
 		
 	}
 	

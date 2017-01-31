@@ -82,7 +82,7 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	
 	ASTElement * BareTypeNameElement = new ASTElement ();
 	
-	BareTypeNameElement -> SetTag ( OakASTTags :: kASTTag_BareTypeName );
+	BareTypeNameElement -> SetTag ( OakASTTags :: kASTTag_TypeName_Bare );
 	BareTypeNameElement -> SetData ( BareTypeNameData, & ElementDataDestructor );
 	BareTypeNameElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
 	
