@@ -21,6 +21,8 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_StructBinding = 10;
 	
+	const uint64_t kASTTag_TemplateSpecification = 11;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -33,7 +35,8 @@ namespace OakASTTags
 		"TEMPLATE_PARAMETER_RESTRICTED",
 		"TRAIT_NAME_BARE",
 		"TYPE_NAME_BARE",
-		"STRUCT_BINDING"
+		"STRUCT_BINDING",
+		"TEMPLATE_SPECIFICATION",
 		
 	};
 	

@@ -9,12 +9,14 @@
 
 #include <Parsing/Language/OakBareTraitNameConstructor.h>
 
+OakBareTraitNameConstructor _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance;
+
 OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConstructor ():
 	RestrictionTraitGroup ()
 {
 	
 	// TODO: Add templated, namespaced, and namespace templated trait name constructors.
-	RestrictionTraitGroup.AddConstructorCantidate ( new OakBareTraitNameConstructor (), 1 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance, 1 );
 	
 }
 

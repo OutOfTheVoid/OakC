@@ -16,13 +16,16 @@
 	#define NULL nullptr
 #endif
 
+OakTemplateDefinitionConstructor _OakStructDefinitionConstructor_OakTemplateDefinitionConstructorInstance;
+OakStructBindingConstructor _OakStructDefinitionConstructor_OakStructBindingConstructorInstance;
+
 OakStructDefinitionConstructor :: OakStructDefinitionConstructor ():
 	TemplateConstructionGroup (),
 	StructBodyConstructionGroup ()
 {
 	
-	TemplateConstructionGroup.AddConstructorCantidate ( new OakTemplateDefinitionConstructor (), 0 );
-	StructBodyConstructionGroup.AddConstructorCantidate ( new OakStructBindingConstructor (), 0 );
+	TemplateConstructionGroup.AddConstructorCantidate ( & _OakStructDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
+	StructBodyConstructionGroup.AddConstructorCantidate ( & _OakStructDefinitionConstructor_OakStructBindingConstructorInstance, 0 );
 	
 }
 

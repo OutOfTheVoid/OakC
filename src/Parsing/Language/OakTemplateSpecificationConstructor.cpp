@@ -1,34 +1,26 @@
-#include <Parsing/Language/OakTemplateDefinitionConstructor.h>
+#include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
+#include <Parsing/Language/OakBareTypeNameConstructor.h>
+
 #include <Tokenization/Language/OakTokenTags.h>
 
-#include <Parsing/Language/OakUnrestrictedTemplateParameterConstructor.h>
-#include <Parsing/Language/OakRestrictedTemplateParameterConstructor.h>
+OakBareTypeNameConstructor _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance;
 
-#include <Logging/Logging.h>
-
-//TODO: Finish
-
-OakRestrictedTemplateParameterConstructor _OakTemplateDefinitionConstructor_OakRestrictedTemplateParameterConstructorInstance;
-OakUnrestrictedTemplateParameterConstructor _OakTemplateDefinitionConstructor_OakUnrestrictedTemplateParameterConstructorInstance;
-
-OakTemplateDefinitionConstructor :: OakTemplateDefinitionConstructor ():
+OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
 	ParameterGroup ()
 {
 	
-	// TODO: Add template parameter constructors
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateDefinitionConstructor_OakRestrictedTemplateParameterConstructorInstance, 0 );
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateDefinitionConstructor_OakUnrestrictedTemplateParameterConstructorInstance, 1 );
+	ParameterGroup.AddConstructorCantidate ( & _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance, 1 );
 	
 }
 
-OakTemplateDefinitionConstructor :: ~OakTemplateDefinitionConstructor ()
+OakTemplateSpecificationConstructor :: ~OakTemplateSpecificationConstructor ()
 {
 }
 
-void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
 	if ( Input.AvailableTokenCount < 2 )
@@ -55,22 +47,24 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	TemplateData -> DoubleTemplateClose = false;
 	
-	ASTElement * TemplateDefinitionElement = new ASTElement ();
-	TemplateDefinitionElement -> SetTag ( OakASTTags :: kASTTag_TemplateDefinition );
-	TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
-	TemplateDefinitionElement -> SetData ( TemplateData, & ElementDataDestructor );
+	ASTElement * TemplateSpecificationElement = new ASTElement ();
+	TemplateSpecificationElement -> SetTag ( OakASTTags :: kASTTag_TemplateSpecification );
+	TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	TemplateSpecificationElement -> SetData ( TemplateData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;
 	uint64_t TokenCount = Input.AvailableTokenCount - 1;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	while ( ParameterGroup.TryConstruction ( TemplateDefinitionElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
+	while ( ParameterGroup.TryConstruction ( TemplateSpecificationElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
 	{
 		
-		ASTElement * ParameterElement = TemplateDefinitionElement -> GetSubElement ( TemplateDefinitionElement -> GetSubElementCount () - 1 );
+		ASTElement * ParameterElement = TemplateSpecificationElement -> GetSubElement ( TemplateSpecificationElement -> GetSubElementCount () - 1 );
 		
-		if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_RestrictedTemplateParameter )
+		
+		// Any template specification element which may be double-closed
+		/*if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_RestrictedTemplateParameter )
 		{
 			
 			OakRestrictedTemplateParameterConstructor :: ElementData * Data = reinterpret_cast <OakRestrictedTemplateParameterConstructor :: ElementData *> ( ParameterElement -> GetData () );
@@ -86,16 +80,16 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 				
 			}
 			
-		}
+		}*/
 		
 		if ( TokenCount == 0 )
 		{
 			
-			delete TemplateDefinitionElement;
+			delete TemplateSpecificationElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
-			Output.ErrorSuggestion = "Expected end of template definition";
+			Output.ErrorSuggestion = "Expected end of template specification";
 			Output.ErrorProvokingToken = Input.Tokens [ 0 ];
 			
 			return;
@@ -107,13 +101,13 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TriangleBracket_Close )
 		{
 			
-			TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+			TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 			
 			TokenCount --;
 			
 			Output.Accepted = true;
 			Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-			Output.ConstructedElement = TemplateDefinitionElement;
+			Output.ConstructedElement = TemplateSpecificationElement;
 			
 			return;
 			
@@ -123,13 +117,13 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 			TemplateData -> DoubleTemplateClose  = true;
 			
-			TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+			TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 			
 			TokenCount --;
 			
 			Output.Accepted = true;
 			Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-			Output.ConstructedElement = TemplateDefinitionElement;
+			Output.ConstructedElement = TemplateSpecificationElement;
 			
 			return;
 			
@@ -137,7 +131,7 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		else if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Comma )
 		{
 			
-			delete TemplateDefinitionElement;
+			delete TemplateSpecificationElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -148,7 +142,7 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 		}
 		
-		TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+		TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 		
 		TokenCount --;
 		
@@ -157,7 +151,7 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	if ( ConstructionError )
 	{
 		
-		delete TemplateDefinitionElement;
+		delete TemplateSpecificationElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -173,13 +167,13 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TriangleBracket_Close )
 	{
 		
-		TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+		TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 		
 		TokenCount --;
 		
 		Output.Accepted = true;
 		Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-		Output.ConstructedElement = TemplateDefinitionElement;
+		Output.ConstructedElement = TemplateSpecificationElement;
 		
 		return;
 		
@@ -189,19 +183,19 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 		TemplateData -> DoubleTemplateClose  = true;
 		
-		TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+		TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 		
 		TokenCount --;
 		
 		Output.Accepted = true;
 		Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-		Output.ConstructedElement = TemplateDefinitionElement;
+		Output.ConstructedElement = TemplateSpecificationElement;
 		
 		return;
 		
 	}
 	
-	delete TemplateDefinitionElement;
+	delete TemplateSpecificationElement;
 	
 	Output.Accepted = false;
 	Output.Error = true;
@@ -210,7 +204,7 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 }
 
-void OakTemplateDefinitionConstructor :: ElementDataDestructor ( void * Data )
+void OakTemplateSpecificationConstructor :: ElementDataDestructor ( void * Data )
 {
 	
 	delete reinterpret_cast <ElementData *> ( Data );

@@ -9,11 +9,13 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+OakBareTypeNameConstructor _OakStructBindingConstructor_OakBareTypeNameConstructorInstance;
+
 OakStructBindingConstructor :: OakStructBindingConstructor ():
 	TypeGroup ()
 {
 	
-	TypeGroup.AddConstructorCantidate ( new OakBareTypeNameConstructor (), 1 );
+	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakBareTypeNameConstructorInstance, 1 );
 	
 }
 
