@@ -1,0 +1,51 @@
+
+// Working
+import "Other.oak";
+
+// Works, doesn't allow for template specified nor namespaced traits yet, but working on it.
+struct MyType <A, B: SomeTrait, C: MyTrait + MyOtherTrait>
+{
+	
+	bind TestString: string,
+	bind TestInt: i32
+	
+}
+
+/*implement MyType
+{
+	
+	function init ( self, StringValue: * string )
+	{
+		
+		self.TestString = StringValue;
+		self.TestInt = 0;
+		
+	}
+	
+	function drop ()
+	{
+		
+		delete TestString;
+		
+	}
+	
+	function SayHello ()
+	{
+		
+		Std::IO :: Print ( TestString + ", " + String::ToString ( TestInt ) );
+		
+	}
+	
+}
+
+function Main ( ProgramArguments: & array <string> )
+{
+	
+	ignore ProgramArguments;
+	
+	MyString: string = "Hello, world!";
+	MyStruct: MyType ( MyString.copy () );
+	
+	MyType.SayHello ();
+	
+}*/

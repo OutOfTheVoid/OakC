@@ -1,0 +1,142 @@
+#include <Parsing/ASTConstructionGroup.h>
+
+#ifndef NULL
+	#define NULL nullptr
+#endif
+
+#include <Parsing/IASTConstructor.h>
+
+#include <Encoding/CodeConversion.h>
+
+#include <Tokenization/Language/OakTokenTags.h>
+
+ASTConstructionGroup :: ASTConstructionGroup ():
+	Constructors ()
+{
+}
+
+ASTConstructionGroup :: ~ASTConstructionGroup ()
+{
+}
+
+void ASTConstructionGroup :: AddConstructorCantidate ( const IASTConstructor * Cantidate, uint32_t Priority )
+{
+	
+	ConstructorRecord Record;
+	
+	Record.Priority = Priority;
+	Record.Cantidate = Cantidate;
+	
+	uint32_t Index = 0;
+	
+	while ( Index < Constructors.size () )
+	{
+		
+		if ( Constructors [ Index ].Priority > Priority )
+			break;
+		
+		Index ++;
+		
+	}
+	
+	Constructors.insert ( Constructors.begin () + Index, Record );
+	
+}
+
+uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uint64_t SubElementLimit, bool & Error, std :: string & ErrorSuggestion, const Token * & ErrorProvokingToken, const Token ** TokenList, uint64_t & AvailableTokens ) const
+{
+	
+	if ( RootElement == NULL )
+	{
+		
+		Error = true;
+		ErrorSuggestion = "Internal error: AST Root node not set";
+		
+		return 0;
+		
+	}
+	
+	if ( Constructors.size () == 0 )
+	{
+		
+		Error = false;
+		
+		return 0;
+		
+	}
+	
+	uint64_t SubElementCount = 0;
+	uint64_t TokenOffset = 0;
+	
+	while ( SubElementCount < SubElementLimit )
+	{
+		
+		bool Found = false;
+		
+		for ( uint64_t I = 0; I < Constructors.size (); I ++ )
+		{
+			
+			IASTConstructor :: ASTConstructionInput Input;
+			IASTConstructor :: ASTConstructionOutput Output;
+			
+			Input.Tokens = & TokenList [ TokenOffset ];
+			Input.AvailableTokenCount = AvailableTokens - TokenOffset;
+			
+			Output.Accepted = false;
+			Output.Error = false;
+			Output.ErrorSuggestion = "";
+			Output.TokensConsumed = 0;
+			Output.ConstructedElement = NULL;
+			Output.ErrorProvokingToken = NULL;
+			
+			Constructors [ I ].Cantidate -> TryConstruct ( Input, Output );
+			
+			if ( Output.Accepted )
+			{
+				
+				Found = true;
+				
+				if ( Output.ConstructedElement != NULL )
+					RootElement -> AddSubElement ( Output.ConstructedElement );
+				
+				SubElementCount ++;
+				
+				TokenOffset += Output.TokensConsumed;
+				
+				if ( TokenOffset >= AvailableTokens )
+				{
+					
+					AvailableTokens = 0;
+					
+					Error = false;
+					return SubElementCount;
+					
+				}
+				
+				break;
+				
+			}
+			else if ( Output.Error )
+			{
+				
+				Error = true;
+				ErrorSuggestion = Output.ErrorSuggestion;
+				ErrorProvokingToken = Output.ErrorProvokingToken;
+				
+				return SubElementCount;
+				
+			}
+			
+		}
+		
+		if ( ! Found )
+			break;
+		
+	}
+	
+	AvailableTokens -= TokenOffset;
+	Error = false;
+	
+	return SubElementCount;
+	
+}

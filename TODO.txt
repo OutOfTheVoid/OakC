@@ -1,0 +1,24 @@
+TODO
+====
+
+Tokenization - complete ( possibly extended for more language features ).
+Lexing - complete ( possibly extended for more language features ).
+Parsing - in progres.
+	* Basic parsing architecture complete, just language definition remains.
+	* No current AST visiting system is in place, will take place in an analysis.
+Analysis - TODO.
+	* Conditional compilation
+	* Overall validation
+	* Constant folding
+	* Name resolution
+	* Structure specification
+	* Type resolution
+	* Attribute resolution
+( Possibly ) Optimization - TODO.
+	* Dead code elimination
+	* Intransitive repositioning
+	* Cache optimization
+		- Shadow reads
+		- Data structuring
+Code / Symbol generation - TODO.
+Linking - TODO.
