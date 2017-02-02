@@ -1,15 +1,20 @@
-#ifndef PARSING_LANGUAGE_OAKTEMPLATEDTRAITNAMECONSTRUCTOR_H
-#define PARSING_LANGUAGE_OAKTEMPLATEDTRAITNAMECONSTRUCTOR_H
+#ifndef PARSING_LANGUAGE_OAKNAMESPACEDTEMPLATEDTYPENAMECONSTRUCTOR_H
+#define PARSING_LANGUAGE_OAKNAMESPACEDTEMPLATEDTYPENAMECONSTRUCTOR_H
 
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-class OakTemplatedTraitNameConstructor : public virtual IASTConstructor
+class OakNamespacedTemplatedTypeNameConstructor : public IASTConstructor
 {
 public:
 	
 	typedef struct
 	{
+		
+		bool DirectGlobalReference;
+		
+		std :: u32string * IdentList;
+		uint32_t IdentListLength;
 		
 		std :: u32string Name;
 		
@@ -17,8 +22,8 @@ public:
 		
 	} ElementData;
 	
-	OakTemplatedTraitNameConstructor ();
-	~OakTemplatedTraitNameConstructor ();
+	OakNamespacedTemplatedTypeNameConstructor ();
+	~OakNamespacedTemplatedTypeNameConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	

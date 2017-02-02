@@ -43,7 +43,7 @@ void OakBareTraitNameConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	NameData -> Name = CurrentToken -> GetSource ();
 	
 	ASTElement * ParameterElement = new ASTElement ();
-	ParameterElement -> SetTag ( OakASTTags :: kASTTag_BareTraitName );
+	ParameterElement -> SetTag ( OakASTTags :: kASTTag_TraitName_Bare );
 	ParameterElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
 	ParameterElement -> SetData ( NameData, & ElementDataDestructor );
 	

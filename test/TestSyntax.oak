@@ -3,11 +3,11 @@
 import "Other.oak";
 
 // Works, doesn't allow for template specified nor namespaced traits yet, but working on it.
-struct MyType <A, B: SomeTrait, C: MyTrait + MyOtherTrait,>
+struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <A>>
 {
 	
 	bind TestString: string,
-	bind TestInt: i32,
+	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType <A>,
 	bind TestTempalted: Array<Array<Array<B>>>,
 	
 }

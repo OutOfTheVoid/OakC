@@ -5,6 +5,8 @@
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
+#include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
+#include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -12,11 +14,15 @@
 
 OakBareTypeNameConstructor _OakStructBindingConstructor_OakBareTypeNameConstructorInstance;
 OakTemplatedTypeNameConstructor _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance;
+OakNamespacedTypeNameConstructor _OakStructBindingConstructor_OakNamespacedTypeNameConstructorIstance;
+OakNamespacedTemplatedTypeNameConstructor _OakStructBindingConstructor_OakNamespacedTemplatedTypeNameConstructorInstance;
 
 OakStructBindingConstructor :: OakStructBindingConstructor ():
 	TypeGroup ()
 {
 	
+	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakNamespacedTemplatedTypeNameConstructorInstance, 0 );
+	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakNamespacedTypeNameConstructorIstance, 1 );
 	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
 	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakBareTypeNameConstructorInstance, 2 );
 	

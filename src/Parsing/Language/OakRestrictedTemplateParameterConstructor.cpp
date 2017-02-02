@@ -8,15 +8,25 @@
 #include <Tokenization/Language/OakTokenTags.h>
 
 #include <Parsing/Language/OakBareTraitNameConstructor.h>
+#include <Parsing/Language/OakTemplatedTraitNameConstructor.h>
+#include <Parsing/Language/OakNamespacedTraitNameConstructor.h>
+#include <Parsing/Language/OakNamespacedTemplatedTraitNameConstructor.h>
 
 OakBareTraitNameConstructor _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance;
+OakTemplatedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakTemplatedTraitNameConstructorInstance;
+OakNamespacedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakNamespacedTraitNameConstructorInstance;
+OakNamespacedTemplatedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakNamespacedTemplatedTraitNameConstructorInstance;
 
 OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConstructor ():
 	RestrictionTraitGroup ()
 {
 	
 	// TODO: Add templated, namespaced, and namespace templated trait name constructors.
-	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance, 1 );
+	
+	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_OakNamespacedTemplatedTraitNameConstructorInstance, 0 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_OakNamespacedTraitNameConstructorInstance, 1 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_OakTemplatedTraitNameConstructorInstance, 1 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance, 2 );
 	
 }
 
@@ -78,7 +88,24 @@ void OakRestrictedTemplateParameterConstructor :: TryConstruct ( ASTConstruction
 		
 		ASTElement * RestrictionElement = ParameterElement -> GetSubElement ( ParameterElement -> GetSubElementCount () - 1 );
 		
-		// In the case that it's a templated, OR namespaced templated parameter, we need to figure out whether it was a double-closed one due to the >> problem.
+		if ( RestrictionElement -> GetTag () == OakASTTags :: kASTTag_TraitName_Templated )
+		{
+			
+			OakTemplatedTraitNameConstructor :: ElementData * TemplateData = reinterpret_cast <OakTemplatedTraitNameConstructor :: ElementData *> ( RestrictionElement -> GetData () );
+			
+			if ( TemplateData -> DoubleTemplateClose )
+				ParameterData -> DoubleTemplateClose = true;
+			
+		}
+		else if ( RestrictionElement -> GetTag () == OakASTTags :: kASTTag_TraitName_NamespacedTemplated )
+		{
+			
+			OakNamespacedTemplatedTraitNameConstructor :: ElementData * TemplateData = reinterpret_cast <OakNamespacedTemplatedTraitNameConstructor :: ElementData *> ( RestrictionElement -> GetData () );
+			
+			if ( TemplateData -> DoubleTemplateClose )
+				ParameterData -> DoubleTemplateClose = true;
+			
+		}
 		
 		if ( TokenCount == 0 )
 		{
