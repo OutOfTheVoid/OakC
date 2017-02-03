@@ -7,6 +7,7 @@
 
 #include <Utils/Trie.h>
 
+/// The keyword lexing pattern assigns an auxiliary tag to tokens to identify them as keywords or identifiers, as specified in the OakKeywordTokenTags namespace
 class OakKeywordLexingPattern : public virtual ILexingPattern
 {
 public:

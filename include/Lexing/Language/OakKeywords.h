@@ -4,6 +4,8 @@
 namespace OakKeywords
 {
 	
+	/// A list of all UTF8-encoded keywords in the Oak language
+	
 	const std :: string kKeyword_True ( u8"true" );
 	const std :: string kKeyword_False ( u8"false" );
 	

@@ -12,6 +12,18 @@ struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <A>>
 	
 }
 
+namespace MyNamespace::MySubNamespace
+{
+	
+	struct MyNamespacedStruct
+	{
+		
+		bind Yay:u32,
+		
+	}
+	
+}
+
 /*implement MyType
 {
 	

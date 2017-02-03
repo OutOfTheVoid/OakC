@@ -29,9 +29,12 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_TemplateSpecification = 17;
 	
+	const uint64_t kASTTag_NamespaceDefinition = 18;
+	
 	const char * const TagNames [] =
 	{
 		
+		"DEFAULT",
 		"FILE",
 		"IMPORT_STATEMENT",
 		"FILE_STRING",
@@ -49,6 +52,7 @@ namespace OakASTTags
 		"TYPE_NAME_NAMESPACED_TEMPLATED",
 		"STRUCT_BINDING",
 		"TEMPLATE_SPECIFICATION",
+		"NAMESPACE_DEFINITION",
 		
 	};
 	

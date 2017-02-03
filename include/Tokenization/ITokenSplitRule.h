@@ -5,6 +5,7 @@
 
 #include <string>
 
+/// Interface for token splitting rules
 class ITokenSplitRule
 {
 public:

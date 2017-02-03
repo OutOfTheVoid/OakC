@@ -6,8 +6,14 @@
 
 #include <Parsing/Language/OakImportStatementConstructor.h>
 #include <Parsing/Language/OakStructDefinitionConstructor.h>
+#include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
 
 const ASTConstructionGroup * OakParser :: Instance = NULL;
+
+OakImportStatementConstructor _OakParser_OakImportStatementConstructorInstance;
+OakStructDefinitionConstructor _OakParser_OakStructDefinitionConstructorInstance;
+OakNamespaceDefinitionConstructor _OakParser_OakNamespaceDefinitionConstructorInstance;
+
 
 const ASTConstructionGroup & OakParser :: GetOakParser ()
 {
@@ -18,9 +24,9 @@ const ASTConstructionGroup & OakParser :: GetOakParser ()
 	ASTConstructionGroup * NewParser = new ASTConstructionGroup ();
 	
 	// TODO: Setup parser
-	NewParser -> AddConstructorCantidate ( new OakImportStatementConstructor (), 0 );
-	NewParser -> AddConstructorCantidate ( new OakStructDefinitionConstructor (), 0 );
-	
+	NewParser -> AddConstructorCantidate ( & _OakParser_OakImportStatementConstructorInstance, 0 );
+	NewParser -> AddConstructorCantidate ( & _OakParser_OakStructDefinitionConstructorInstance, 0 );
+	NewParser -> AddConstructorCantidate ( & _OakParser_OakNamespaceDefinitionConstructorInstance, 0 );
 	
 	Instance = NewParser;
 	return * NewParser;

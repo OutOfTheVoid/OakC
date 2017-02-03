@@ -39,6 +39,19 @@ CompilationUnit :: ~CompilationUnit ()
 {
 }
 
+void _PrintAST ( const ASTElement * Root, uint32_t Indent )
+{
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		std :: cout << "    ";
+		
+	std :: cout << "[ " << OakASTTags :: TagNames [ Root -> GetTag () ] << " ]" << std :: endl;
+	
+	for ( uint32_t I = 0; I < Root -> GetSubElementCount (); I ++ )
+		_PrintAST ( Root -> GetSubElement ( I ), Indent + 1 );
+	
+}
+
 bool CompilationUnit :: RunIndependantCompilationSteps ()
 {
 	
@@ -135,8 +148,25 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 		else
 			LOG_FATALERROR_NOFILE ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : std :: string ( "unkown error" ) );
 		
+		delete Root;
+		
 		return false;
 		
+	}
+	else if ( AvailableTokens != 0 )
+	{
+		
+		ErrorToken = PostLexTokens [ PostLexTokens.size () - AvailableTokens ];
+		
+		LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Columb " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
+		
+	}
+	else
+	{
+		
+		std :: cout << "AST: " << std :: endl;
+		
+		_PrintAST ( Root, 0 );
 	}
 	
 	return true;

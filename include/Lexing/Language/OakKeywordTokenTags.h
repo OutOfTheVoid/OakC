@@ -4,6 +4,8 @@
 namespace OakKeywordTokenTags
 {
 	
+	/// A list of auxialiary tags for keywords, as well as the Ident tag, which is equivalent to ITokenSplitRule :: kAuxTag_Default
+	
 	const uint64_t kKeywordAuxTags_Ident = 0;
 	
 	const uint64_t kKeywordAuxTags_True = 1;
@@ -50,6 +52,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Match = 40;
 	const uint64_t kKeywordAuxTags_Bind = 41;
 	
+	/// A list of the human-readable forms of kewords.
 	const char * const KeywordAuxTagNames [] =
 	{
 		
