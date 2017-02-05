@@ -8,7 +8,9 @@
 #include <Tokenization/Language/OakTokenTags.h>
 #include <Tokenization/Token.h>
 
-uint64_t AllowedKeywordTagList [] =
+#include <Logging/Logging.h>
+
+uint64_t _OakBareTypeNameConstructor_AllowedKeywordTagList [] =
 {
 	
 	OakKeywordTokenTags :: kKeywordAuxTags_Ident,
@@ -33,7 +35,7 @@ uint64_t AllowedKeywordTagList [] =
 	
 };
 
-TestSet <uint64_t> OakBareTypeNameConstructor :: AllowedKeywordTags ( AllowedKeywordTagList, 19, false );
+TestSet <uint64_t> OakBareTypeNameConstructor :: AllowedKeywordTags ( _OakBareTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
 OakBareTypeNameConstructor :: OakBareTypeNameConstructor ()
 {	
@@ -55,6 +57,8 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
+	LOG_VERBOSE ( "*A" );
+	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Identifier )
@@ -66,6 +70,8 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
+	LOG_VERBOSE ( "*B" );
+	
 	if ( ! AllowedKeywordTags.Contains ( CurrentToken -> GetAuxTag () ) )
 	{
 		
@@ -74,6 +80,8 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		return;
 		
 	}
+	
+	LOG_VERBOSE ( "*C" );
 	
 	ElementData * BareTypeNameData = new ElementData ();
 	

@@ -38,6 +38,8 @@ namespace OakKeywords
 	const std :: string kKeyword_Return ( u8"return" );
 	const std :: string kKeyword_Enum ( u8"enum" );
 	const std :: string kKeyword_Ignore ( u8"ignore" );
+	const std :: string kKeyword_Implement ( u8"implement" );
+	const std :: string kKeyword_Self ( u8"self" );
 	
 	const std :: string kKeyword_Mut ( u8"mut" );
 	const std :: string kKeyword_Public ( u8"public" );

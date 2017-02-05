@@ -1,11 +1,10 @@
-#ifndef PARSING_LANGUAGE_OAKNAMESPACEDTYPENAMECONSTRUCTOR_H
-#define PARSING_LANGUAGE_OAKNAMESPACEDTYPENAMECONSTRUCTOR_H
+#ifndef PARSING_LANGUAGE_OAKIMPLEMENTDEFINITIONCONSTRUCTOR_H
+#define PARSING_LANGUAGE_OAKIMPLEMENTDEFINITIONCONSTRUCTOR_H
 
 #include <Parsing/IASTConstructor.h>
+#include <Parsing/ASTConstructionGroup.h>
 
-#include <Utils/TestSet.h>
-
-class OakNamespacedTypeNameConstructor : public IASTConstructor
+class OakImplementDefinitionConstructor : public virtual IASTConstructor
 {
 public:
 	
@@ -21,8 +20,8 @@ public:
 		
 	} ElementData;
 	
-	OakNamespacedTypeNameConstructor ();
-	~OakNamespacedTypeNameConstructor ();
+	OakImplementDefinitionConstructor ();
+	~OakImplementDefinitionConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
@@ -30,7 +29,7 @@ private:
 	
 	static void ElementDataDestructor ( void * Data );
 	
-	static TestSet <uint64_t> AllowedKeywordTags;
+	ASTConstructionGroup ImplementChildrenConstructionGroup;
 	
 };
 

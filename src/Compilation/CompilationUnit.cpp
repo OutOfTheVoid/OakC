@@ -43,7 +43,7 @@ void _PrintAST ( const ASTElement * Root, uint32_t Indent )
 {
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
-		std :: cout << "    ";
+		std :: cout << "|   ";
 		
 	std :: cout << "[ " << OakASTTags :: TagNames [ Root -> GetTag () ] << " ]" << std :: endl;
 	

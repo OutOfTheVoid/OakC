@@ -10,8 +10,6 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-#include <Logging/Logging.h>
-
 #ifndef NULL
 	#define NULL nullptr
 #endif
@@ -153,6 +151,8 @@ void OakStructDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
+	StructElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+	
 	TokenCount --;
 	
 	Error = false;
@@ -214,6 +214,8 @@ void OakStructDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		return;
 		
 	}
+	
+	StructElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 	
 	TokenCount --;
 	

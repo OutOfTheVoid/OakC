@@ -1,34 +1,33 @@
-#include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
+#include <Parsing/Language/OakImplementDefinitionConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
-#include <Parsing/Language/OakStructBindingConstructor.h>
+#include <Parsing/Language/OakFunctionDefinitionConstructor.h>
+#include <Parsing/Language/OakMethodDefinitionConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-#include <Parsing/Language/OakStructDefinitionConstructor.h>
+OakFunctionDefinitionConstructor _OakImplementDefinitionConstructor_OakFunctionDefinitionConstructorInstance;
+OakMethodDefinitionConstructor _OakImplementDefinitionConstructor_OakMethodDefinitionConstructorInstance;
 
-OakNamespaceDefinitionConstructor _OakNamespaceDefinitionConstructor_OakNamespaceDefinitionConstructorInstance;
-OakStructDefinitionConstructor _OakNamespaceDefinitionConstructor_OakStructDefinitionConstructorInstance;
-
-OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
-	NamespaceChildrenGroup ()
+OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
+	ImplementChildrenConstructionGroup ()
 {
 	
-	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakNamespaceDefinitionConstructorInstance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakStructDefinitionConstructorInstance, 0 );
+	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & _OakImplementDefinitionConstructor_OakMethodDefinitionConstructorInstance, 0 );
+	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & _OakImplementDefinitionConstructor_OakFunctionDefinitionConstructorInstance, 1 );
 	
 }
 
-OakNamespaceDefinitionConstructor :: ~OakNamespaceDefinitionConstructor ()
+OakImplementDefinitionConstructor :: ~OakImplementDefinitionConstructor ()
 {
 }
 
-void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
 	uint64_t Offset = 0;
@@ -49,7 +48,7 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	const Token * CurrentToken = Input.Tokens [ Offset ];
 	
-	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Namespace ) )
+	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Implement ) )
 	{
 		
 		Output.Accepted = false;
@@ -123,36 +122,36 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected body after namespace declaration";
+		Output.ErrorSuggestion = "Expected body after implement declaration";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 	}
 	
 	Offset ++;
 	
-	ElementData * NamespaceData = new ElementData ();
+	ElementData * ImplementData = new ElementData ();
 	
-	NamespaceData -> DirectGlobalReference = DirectGlobalReference;
+	ImplementData -> DirectGlobalReference = DirectGlobalReference;
 	
-	NamespaceData -> Name = LastIdent;
+	ImplementData -> Name = LastIdent;
 	
-	NamespaceData -> IdentList = new std :: u32string [ NamespaceChain.size () ];
-	NamespaceData -> IdentListLength = NamespaceChain.size ();
+	ImplementData -> IdentList = new std :: u32string [ NamespaceChain.size () ];
+	ImplementData -> IdentListLength = NamespaceChain.size ();
 	
 	for ( uint32_t I = 0; I < NamespaceChain.size (); I ++ )
-		NamespaceData -> IdentList [ I ] = NamespaceChain [ I ];
+		ImplementData -> IdentList [ I ] = NamespaceChain [ I ];
 	
-	ASTElement * NamespaceElement = new ASTElement ();
-	NamespaceElement -> SetTag ( OakASTTags :: kASTTag_NamespaceDefinition );
-	NamespaceElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
-	NamespaceElement -> SetData ( NamespaceData, & ElementDataDestructor );
+	ASTElement * ImplementElement = new ASTElement ();
+	ImplementElement -> SetTag ( OakASTTags :: kASTTag_ImplementDefinition );
+	ImplementElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
+	ImplementElement -> SetData ( ImplementData, & ElementDataDestructor );
 	
 	bool Error = false;
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
 	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
 	
-	NamespaceChildrenGroup.TryConstruction ( NamespaceElement, 0xFFFFFFFFFFFFFFFF, Error, ErrorString, ErrorToken, & Input.Tokens [ Offset ], TokenCount );
+	ImplementChildrenConstructionGroup.TryConstruction ( ImplementElement, 0xFFFFFFFFFFFFFFFF, Error, ErrorString, ErrorToken, & Input.Tokens [ Offset ], TokenCount );
 	
 	if ( Error )
 	{
@@ -171,7 +170,7 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected closing curly brace at end of namespace definition";
+		Output.ErrorSuggestion = "Expected closing curly brace at end of implement definition";
 		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
 		
 		return;
@@ -188,25 +187,25 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected closing curly brace at end of namespace definition";
+		Output.ErrorSuggestion = "Expected closing curly brace at end of implement definition";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 	}
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Offset;
-	Output.ConstructedElement = NamespaceElement;
+	Output.ConstructedElement = ImplementElement;
 	
 }
 
-void OakNamespaceDefinitionConstructor :: ElementDataDestructor ( void * Data )
+void OakImplementDefinitionConstructor :: ElementDataDestructor ( void * Data )
 {
 	
-	ElementData * EData = reinterpret_cast <ElementData *> ( Data );
+	ElementData * ImplementDefinitionInstance = reinterpret_cast <ElementData *> ( Data );
 	
-	delete [] EData -> IdentList;
-	EData -> IdentList = NULL;
+	if ( ImplementDefinitionInstance -> IdentList != NULL )
+		delete [] ImplementDefinitionInstance -> IdentList;
 	
-	delete EData;
+	delete ImplementDefinitionInstance;
 	
 }

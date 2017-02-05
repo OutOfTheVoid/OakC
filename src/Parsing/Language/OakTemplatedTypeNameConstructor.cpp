@@ -3,9 +3,38 @@
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
+#include <Tokenization/Language/OakTokenTags.h>
+
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
+
+uint64_t _OakTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
+{
+	
+	OakKeywordTokenTags :: kKeywordAuxTags_Ident,
+	OakKeywordTokenTags :: kKeywordAuxTags_Bool,
+	OakKeywordTokenTags :: kKeywordAuxTags_Int8,
+	OakKeywordTokenTags :: kKeywordAuxTags_Int16,
+	OakKeywordTokenTags :: kKeywordAuxTags_Int32,
+	OakKeywordTokenTags :: kKeywordAuxTags_Int64,
+	OakKeywordTokenTags :: kKeywordAuxTags_IntPtr,
+	OakKeywordTokenTags :: kKeywordAuxTags_UInt8,
+	OakKeywordTokenTags :: kKeywordAuxTags_UInt16,
+	OakKeywordTokenTags :: kKeywordAuxTags_UInt32,
+	OakKeywordTokenTags :: kKeywordAuxTags_UInt64,
+	OakKeywordTokenTags :: kKeywordAuxTags_UIntPtr,
+	OakKeywordTokenTags :: kKeywordAuxTags_Void,
+	OakKeywordTokenTags :: kKeywordAuxTags_Char,
+	OakKeywordTokenTags :: kKeywordAuxTags_Float32,
+	OakKeywordTokenTags :: kKeywordAuxTags_Float64,
+	OakKeywordTokenTags :: kKeywordAuxTags_String8,
+	OakKeywordTokenTags :: kKeywordAuxTags_String16,
+	OakKeywordTokenTags :: kKeywordAuxTags_String32
+	
+};
+
+TestSet <uint64_t> OakTemplatedTypeNameConstructor :: AllowedKeywordTags ( _OakTemplatedTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
 OakTemplateSpecificationConstructor _OakTemplatedTypeNameConstructor_OakTemplateSpecificationConstructorInstance;
 
@@ -35,7 +64,17 @@ void OakTemplatedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & In
 	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
-	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
+	
+	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Identifier )
+	{
+		
+		Output.Accepted = false;
+		
+		return;
+		
+	}
+	
+	if ( ! AllowedKeywordTags.Contains ( CurrentToken -> GetAuxTag () ) )
 	{
 		
 		Output.Accepted = false;

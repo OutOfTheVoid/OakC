@@ -45,6 +45,8 @@ OakKeywordLexingPattern :: OakKeywordLexingPattern ():
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Return.c_str (), OakKeywords :: kKeyword_Return.size (), OakKeywordTokenTags :: kKeywordAuxTags_Return );
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Enum.c_str (), OakKeywords :: kKeyword_Enum.size (), OakKeywordTokenTags :: kKeywordAuxTags_Enum );
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Ignore.c_str (), OakKeywords :: kKeyword_Ignore.size (), OakKeywordTokenTags :: kKeywordAuxTags_Ignore );
+	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Implement.c_str (), OakKeywords :: kKeyword_Implement.size (), OakKeywordTokenTags :: kKeywordAuxTags_Implement );
+	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Self.c_str (), OakKeywords :: kKeyword_Self.size (), OakKeywordTokenTags :: kKeywordAuxTags_Self );
 	
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Mut.c_str (), OakKeywords :: kKeyword_Mut.size (), OakKeywordTokenTags :: kKeywordAuxTags_Mut );
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Public.c_str (), OakKeywords :: kKeyword_Public.size (), OakKeywordTokenTags :: kKeywordAuxTags_Public );

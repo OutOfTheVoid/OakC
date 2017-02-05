@@ -22,35 +22,48 @@ namespace MyNamespace::MySubNamespace
 		
 	}
 	
+	namespace SubSubNamespace
+	{
+		
+		/*struct MySubSubNamespaceStruct
+		{
+			
+			bind SomeBinding:f64
+			
+		}*/
+		
+	}
+	
 }
 
-/*implement MyType
+implement MyType
 {
 	
-	function init ( * self, StringValue: * string )
+	function Test ( * self, StringValue: * string )
 	{
 		
-		self -> TestString = StringValue;
-		self -> TestInt = 0;
+		/*self -> TestString = StringValue;
+		self -> TestInt = 0;*/
 		
 	}
 	
-	function drop ()
+	/*
+	function drop ( * self )
 	{
 		
-		delete TestString;
+		delete self -> TestString;
 		
 	}
 	
-	function SayHello ()
+	function SayHello ( * self )
 	{
 		
-		Std::IO :: Print ( TestString + ", " + String::ToString ( TestInt ) );
+		Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
 		
-	}
+	}*/
 	
 }
-
+/*
 function Main ( ProgramArguments: & array <string> )
 {
 	

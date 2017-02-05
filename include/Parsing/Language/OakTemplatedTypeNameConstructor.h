@@ -4,6 +4,8 @@
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
+#include <Utils/TestSet.h>
+
 class OakTemplatedTypeNameConstructor : public virtual IASTConstructor
 {
 public:
@@ -27,6 +29,8 @@ private:
 	static void ElementDataDestructor ( void * Data );
 	
 	ASTConstructionGroup TemplateGroup;
+	
+	static TestSet <uint64_t> AllowedKeywordTags;
 	
 };
 
