@@ -5,6 +5,7 @@
 
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakFunctionParameterListConstructor.h>
+#include <Parsing/Language/OakReturnTypeConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -12,15 +13,18 @@
 
 OakTemplateDefinitionConstructor _OakFunctionDefinitionConstructor_OakTemplateDefinitionConstructorInstance;
 OakFunctionParameterListConstructor _OakFunctionDefinitionConstructor_OakFunctionParameterListConstructorInstance;
+OakReturnTypeConstructor _OakFunctionDefinitionConstructor_OakReturnTypeConstructorInstance;
 
 OakFunctionDefinitionConstructor :: OakFunctionDefinitionConstructor ():
 	TemplateConstructionGroup (),
 	ParameterListConstructionGroup (),
+	ReturnTypeConstructionGroup (),
 	FunctionBodyConstructionGroup ()
 {
 	
 	TemplateConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
 	ParameterListConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakFunctionParameterListConstructorInstance, 0 );
+	ReturnTypeConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakReturnTypeConstructorInstance, 0 );
 	
 }
 
@@ -69,6 +73,7 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	FunctionData -> Name = CurrentToken -> GetSource ();
 	FunctionData -> Templated = false;
+	FunctionData -> ReturnTyped = false;
 	
 	ASTElement * FunctionElement = new ASTElement ();
 	
@@ -155,6 +160,19 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		Output.ErrorProvokingToken = ErrorToken;
 		
 		return;
+		
+	}
+	
+	if ( ReturnTypeConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
+		FunctionData -> ReturnTyped = true;
+	
+	if ( Error )
+	{
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = ErrorString;
+		Output.ErrorProvokingToken = ErrorToken;
 		
 	}
 	

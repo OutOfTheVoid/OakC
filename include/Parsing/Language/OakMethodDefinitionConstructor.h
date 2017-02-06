@@ -13,6 +13,7 @@ public:
 		
 		std :: u32string Name;
 		bool Templated;
+		bool ReturnTyped;
 		
 	} ElementData;
 	
@@ -27,6 +28,7 @@ private:
 	
 	ASTConstructionGroup TemplateConstructionGroup;
 	ASTConstructionGroup ParameterListConstructionGroup;
+	ASTConstructionGroup ReturnTypeConstructionGroup;
 	ASTConstructionGroup FunctionBodyConstructionGroup;
 	
 };

@@ -39,7 +39,7 @@ namespace MyNamespace::MySubNamespace
 implement MyType
 {
 	
-	function Test ( * self, StringValue: * string )
+	function Test <A, B: SomeTrait <A>> ( * self, StringValue: * string ): u32
 	{
 		
 		/*self -> TestString = StringValue;

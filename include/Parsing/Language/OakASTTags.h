@@ -44,6 +44,8 @@ namespace OakASTTags
 	const uint64_t kASTTag_MethodDefinition = 25;
 	const uint64_t kASTTag_MethodParameterList = 26;
 	
+	const uint64_t kASTTag_ReturnType = 27;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -74,6 +76,7 @@ namespace OakASTTags
 		"SELF_PARAMETER_POINTER",
 		"METHOD_DEFINITION",
 		"METHOD_PARAMETER_LIST",
+		"RETURN_TYPE",
 		
 	};
 	
