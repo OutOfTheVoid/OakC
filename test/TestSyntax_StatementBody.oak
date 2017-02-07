@@ -1,0 +1,11 @@
+
+function TestSyntax ()
+{
+	
+	"Hello world";
+	
+	3;
+	
+	0.2f;
+	
+}

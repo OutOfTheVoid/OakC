@@ -51,6 +51,12 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_IgnoreStatement = 30;
 	
+	const uint64_t kASTTag_RawRValueStatement = 31;
+	
+	const uint64_t kASTTag_RValue = 32;
+	
+	const uint64_t kASTTag_LiteralRValue = 33;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -84,7 +90,10 @@ namespace OakASTTags
 		"METHOD_DEFINITION",
 		"METHOD_PARAMETER_LIST",
 		"RETURN_TYPE",
-		"IGNORE_STATEMENT"
+		"IGNORE_STATEMENT",
+		"RAW_RVALUE_STATEMENT",
+		"RVALUE",
+		"LITERAL_RVALUE",
 		
 	};
 	

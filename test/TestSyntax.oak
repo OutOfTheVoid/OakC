@@ -1,5 +1,4 @@
 
-// Working
 import "Other.oak";
 
 namespace MyNamespace::MySubNamespace
@@ -15,12 +14,12 @@ namespace MyNamespace::MySubNamespace
 	namespace SubSubNamespace
 	{
 		
-		/*struct MySubSubNamespaceStruct
+		struct MySubSubNamespaceStruct
 		{
 			
 			bind SomeBinding:f64
 			
-		}*/
+		}
 		
 	}
 	
@@ -30,6 +29,8 @@ function MyGlobalFunc ( SomeParam : i32 ) : void
 {
 	
 	ignore SomeParam;
+	
+	3;
 	
 }
 
@@ -53,20 +54,20 @@ implement MyType
 		
 	}
 	
-	/*
-	function drop ( self )
+	
+	/*function drop ( self )
 	{
 		
-		delete self -> TestString;
+		//delete self -> TestString;
 		
-	}
+	}*/
 	
 	function SayHello ( & self )
 	{
 		
-		Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
+		//Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
 		
-	}*/
+	}
 	
 }
 
