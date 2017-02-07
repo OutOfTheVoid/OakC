@@ -81,6 +81,7 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 			
 			Input.Tokens = & TokenList [ TokenOffset ];
 			Input.AvailableTokenCount = AvailableTokens - TokenOffset;
+			Input.ParentElement = RootElement;
 			
 			Output.Accepted = false;
 			Output.Error = false;

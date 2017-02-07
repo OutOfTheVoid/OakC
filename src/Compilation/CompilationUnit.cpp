@@ -32,6 +32,7 @@ CompilationUnit :: CompilationUnit ( const std :: string & FilePath ):
 	
 	OakTokenizer :: GetOakTokenizer (); // Ensure initialization pre-run
 	OakLexer :: GetOakLexer ();
+	OakParser :: GetOakParser ();
 	
 }
 
@@ -167,6 +168,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 		std :: cout << "AST: " << std :: endl;
 		
 		_PrintAST ( Root, 0 );
+		
 	}
 	
 	return true;

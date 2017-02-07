@@ -29,7 +29,7 @@ private:
 	ASTConstructionGroup TemplateConstructionGroup;
 	ASTConstructionGroup ParameterListConstructionGroup;
 	ASTConstructionGroup ReturnTypeConstructionGroup;
-	ASTConstructionGroup FunctionBodyConstructionGroup;
+	ASTConstructionGroup BodyConstructionGroup;
 	
 };
 

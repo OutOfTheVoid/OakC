@@ -9,6 +9,7 @@
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
 #include <Parsing/Language/OakImplementDefinitionConstructor.h>
 #include <Parsing/Language/OakFunctionDefinitionConstructor.h>
+#include <Parsing/Language/OakLoneSemicolonConstructor.h>
 
 const ASTConstructionGroup * OakParser :: Instance = NULL;
 
@@ -17,6 +18,7 @@ OakStructDefinitionConstructor _OakParser_OakStructDefinitionConstructorInstance
 OakNamespaceDefinitionConstructor _OakParser_OakNamespaceDefinitionConstructorInstance;
 OakImplementDefinitionConstructor _OakParser_OakImplementDefinitionConstructorInstance;
 OakFunctionDefinitionConstructor _OakParser_OakFunctionDefinitionConstructorInstance;
+OakLoneSemicolonConstructor _OakParser_OakLoneSemicolonConstructorInstance;
 
 
 const ASTConstructionGroup & OakParser :: GetOakParser ()
@@ -27,12 +29,14 @@ const ASTConstructionGroup & OakParser :: GetOakParser ()
 	
 	ASTConstructionGroup * NewParser = new ASTConstructionGroup ();
 	
-	// TODO: Setup parser
 	NewParser -> AddConstructorCantidate ( & _OakParser_OakImportStatementConstructorInstance, 0 );
 	NewParser -> AddConstructorCantidate ( & _OakParser_OakStructDefinitionConstructorInstance, 0 );
 	NewParser -> AddConstructorCantidate ( & _OakParser_OakNamespaceDefinitionConstructorInstance, 0 );
 	NewParser -> AddConstructorCantidate ( & _OakParser_OakImplementDefinitionConstructorInstance, 0 );
 	NewParser -> AddConstructorCantidate ( & _OakParser_OakFunctionDefinitionConstructorInstance, 0 );
+	
+	// Just in case
+	NewParser -> AddConstructorCantidate ( & _OakParser_OakLoneSemicolonConstructorInstance, 1 );
 	
 	Instance = NewParser;
 	return * NewParser;

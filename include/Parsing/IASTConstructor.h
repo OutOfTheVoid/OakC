@@ -18,6 +18,8 @@ public:
 		const Token ** Tokens;
 		uint64_t AvailableTokenCount;
 		
+		const ASTElement * ParentElement;
+		
 	} ASTConstructionInput;
 	
 	typedef struct

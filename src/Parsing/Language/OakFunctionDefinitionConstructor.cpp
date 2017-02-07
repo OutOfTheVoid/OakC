@@ -6,6 +6,7 @@
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakFunctionParameterListConstructor.h>
 #include <Parsing/Language/OakReturnTypeConstructor.h>
+#include <Parsing/Language/OakStatementBlockConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -14,17 +15,19 @@
 OakTemplateDefinitionConstructor _OakFunctionDefinitionConstructor_OakTemplateDefinitionConstructorInstance;
 OakFunctionParameterListConstructor _OakFunctionDefinitionConstructor_OakFunctionParameterListConstructorInstance;
 OakReturnTypeConstructor _OakFunctionDefinitionConstructor_OakReturnTypeConstructorInstance;
+OakStatementBlockConstructor _OakFunctionDefinitionConstructor_OakStatementBlockConstructorInstance;
 
 OakFunctionDefinitionConstructor :: OakFunctionDefinitionConstructor ():
 	TemplateConstructionGroup (),
 	ParameterListConstructionGroup (),
 	ReturnTypeConstructionGroup (),
-	FunctionBodyConstructionGroup ()
+	BodyConstructionGroup ()
 {
 	
 	TemplateConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
 	ParameterListConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakFunctionParameterListConstructorInstance, 0 );
 	ReturnTypeConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakReturnTypeConstructorInstance, 0 );
+	BodyConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakStatementBlockConstructorInstance, 0 );
 	
 }
 
@@ -176,31 +179,23 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 	}
 	
-	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+	Error = false;
+	ErrorString = "";
+	ErrorToken = NULL;
 	
-	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Open )
+	if ( BodyConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
 		delete FunctionElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected body for function definition";
-		Output.ErrorProvokingToken = NULL;
+		Output.ErrorSuggestion = "Expected body for method";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		return;
 		
 	}
-	
-	FunctionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
-	
-	TokenCount --;
-	
-	Error = false;
-	ErrorString = "";
-	ErrorToken = NULL;
-	
-	FunctionBodyConstructionGroup.TryConstruction ( FunctionElement, 0xFFFFFFFFFFFFFFFF, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 	
 	if ( Error )
 	{
@@ -215,26 +210,6 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		return;
 		
 	}
-	
-	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
-	
-	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Close )
-	{
-		
-		delete FunctionElement;
-		
-		Output.Accepted = false;
-		Output.Error = true;
-		Output.ErrorSuggestion = "Expected closing curly bracket at end of function body";
-		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
-		
-		return;
-		
-	}
-	
-	FunctionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
-	
-	TokenCount --;
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
