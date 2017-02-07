@@ -4,12 +4,12 @@
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-class OakPrimaryExpressionParser : public virtual IASTConstructor
+class OakPrimaryExpressionConstructor : public virtual IASTConstructor
 {
 public:
 	
-	OakPrimaryExpressionParser ();
-	~OakPrimaryExpressionParser ();
+	OakPrimaryExpressionConstructor ();
+	~OakPrimaryExpressionConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	

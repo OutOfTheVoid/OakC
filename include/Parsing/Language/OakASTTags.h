@@ -50,13 +50,15 @@ namespace OakASTTags
 	const uint64_t kASTTag_ReturnType = 29;
 	
 	const uint64_t kASTTag_IgnoreStatement = 30;
+	const uint64_t kASTTag_ReturnStatement = 31;
 	
-	const uint64_t kASTTag_ExpressionStatement = 31;
+	const uint64_t kASTTag_ExpressionStatement = 32;
 	
-	const uint64_t kASTTag_Expression = 32;
+	const uint64_t kASTTag_Expression = 33;
+	const uint64_t kASTTag_PrimaryExpression = 34;
 	
-	const uint64_t kASTTag_LiteralExpression = 33;
-	const uint64_t kASTTag_ParenthesizedExpression = 34;
+	const uint64_t kASTTag_LiteralExpression = 35;
+	const uint64_t kASTTag_ParenthesizedExpression = 36;
 	
 	const char * const TagNames [] =
 	{
@@ -92,8 +94,10 @@ namespace OakASTTags
 		"METHOD_PARAMETER_LIST",
 		"RETURN_TYPE",
 		"IGNORE_STATEMENT",
+		"RETURN_STATEMENT",
 		"EXPRESSION_STATEMENT",
 		"EXPRESSION",
+		"PRIMARY_EXPRESSION",
 		"LITERAL_EXPRESSION",
 		"PARENTHESIZED_EXPRESSION",
 		

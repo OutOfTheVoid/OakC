@@ -1,6 +1,6 @@
 #include <Parsing/Language/OakParenthesizedExpressionConstructor.h>
-#include <Parsing/Language/OakExpressionConstructor.h>
 
+#include <Parsing/Language/OakExpressionConstructor.h>
 #include <Parsing/Language/OakASTTags.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
@@ -106,6 +106,8 @@ void OakParenthesizedExpressionConstructor :: TryConstruct ( ASTConstructionInpu
 		return;
 		
 	}
+	
+	ParenthesizedElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 	
 	TokenCount --;
 	

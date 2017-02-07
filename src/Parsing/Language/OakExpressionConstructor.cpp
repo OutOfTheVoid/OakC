@@ -1,20 +1,16 @@
 #include <Parsing/Language/OakExpressionConstructor.h>
-#include <Parsing/Language/OakLiteralExpressionConstructor.h>
-#include <Parsing/Language/OakParenthesizedExpressionConstructor.h>
+
+#include <Parsing/Language/OakPrimaryExpressionConstructor.h>
 
 #include <Parsing/Language/OakASTTags.h>
 
-OakLiteralExpressionConstructor _OakExpressionConstructor_OakLiteralExpressionConstructorInstance;
-OakParenthesizedExpressionConstructor _OakExpressionConstructor_OakParenthesizedExpressionConstructorInstance;
+OakPrimaryExpressionConstructor _OakExpressionConstructor_OakPrimaryExpressionConstructorInstance;
 
 OakExpressionConstructor :: OakExpressionConstructor ():
 	SubExpressionGroup ()
 {
 	
-	SubExpressionGroup.AddConstructorCantidate ( & _OakExpressionConstructor_OakParenthesizedExpressionConstructorInstance, 0 );
-	
-	// This must be the highest priority ( last tested ).
-	SubExpressionGroup.AddConstructorCantidate ( & _OakExpressionConstructor_OakLiteralExpressionConstructorInstance, 1 );
+	SubExpressionGroup.AddConstructorCantidate ( & _OakExpressionConstructor_OakPrimaryExpressionConstructorInstance, 0 );
 	
 }
 

@@ -1,9 +1,13 @@
 
-function TestSyntax ( SomeParam: u32 ) : void
+function TestSyntax ( SomeParam: u32 ) : u32
 {
 	
 	ignore SomeParam;
 	
 	"Hello world"u16;
+	
+	{
+		return 6u32;
+	}
 	
 }
