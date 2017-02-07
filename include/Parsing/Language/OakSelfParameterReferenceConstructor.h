@@ -4,12 +4,12 @@
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-class OakSelfParameterPointerConstructor : public virtual IASTConstructor
+class OakSelfParameterReferenceConstructor : public virtual IASTConstructor
 {
 public:
 	
-	OakSelfParameterPointerConstructor ();
-	~OakSelfParameterPointerConstructor ();
+	OakSelfParameterReferenceConstructor ();
+	~OakSelfParameterReferenceConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	

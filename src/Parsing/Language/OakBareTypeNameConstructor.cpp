@@ -57,8 +57,6 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
-	LOG_VERBOSE ( "*A" );
-	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Identifier )
@@ -70,8 +68,6 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
-	LOG_VERBOSE ( "*B" );
-	
 	if ( ! AllowedKeywordTags.Contains ( CurrentToken -> GetAuxTag () ) )
 	{
 		
@@ -80,8 +76,6 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "*C" );
 	
 	ElementData * BareTypeNameData = new ElementData ();
 	

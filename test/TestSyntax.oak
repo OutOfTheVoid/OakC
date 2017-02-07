@@ -2,16 +2,6 @@
 // Working
 import "Other.oak";
 
-// Works, doesn't allow for template specified nor namespaced traits yet, but working on it.
-struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <A>>
-{
-	
-	bind TestString: string,
-	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType <A>,
-	bind TestTempalted: Array<Array<Array<B>>>,
-	
-}
-
 namespace MyNamespace::MySubNamespace
 {
 	
@@ -43,10 +33,19 @@ function MyGlobalFunc ( SomeParam : i32 ) : void
 	
 }
 
+struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <A>>
+{
+	
+	bind TestString: string,
+	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType <A>,
+	bind TestTempalted: Array<Array<Array<B>>>,
+	
+}
+
 implement MyType
 {
 	
-	function Test <A, B: SomeTrait <A>> ( * self, StringValue: * string ): u32
+	function Test <A, B: SomeTrait <A>> ( & self, StringValue: & string ): u32
 	{
 		
 		/*self -> TestString = StringValue;
@@ -55,14 +54,14 @@ implement MyType
 	}
 	
 	/*
-	function drop ( * self )
+	function drop ( self )
 	{
 		
 		delete self -> TestString;
 		
 	}
 	
-	function SayHello ( * self )
+	function SayHello ( & self )
 	{
 		
 		Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
@@ -70,15 +69,15 @@ implement MyType
 	}*/
 	
 }
-/*
-function Main ( ProgramArguments: & array <string> )
+
+function Main ( ProgramArguments: Array <string> )
 {
 	
 	ignore ProgramArguments;
 	
-	MyString: string = "Hello, world!";
-	MyStruct: MyType ( MyString.copy () );
+	/*bind MyString: string = "Hello, world!";
+	bind MyStruct: MyType = MyType ( MyString.copy () );
 	
-	MyType.SayHello ();
+	MyType.SayHello ();*/
 	
-}*/
+}

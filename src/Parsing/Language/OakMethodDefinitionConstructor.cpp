@@ -40,8 +40,6 @@ OakMethodDefinitionConstructor :: ~OakMethodDefinitionConstructor ()
 void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
-	LOG_VERBOSE ( "+A" );
-	
 	if ( Input.AvailableTokenCount < 6 )
 	{
 		
@@ -50,8 +48,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "+B" );
 	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
@@ -63,8 +59,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "+C" );
 	
 	CurrentToken = Input.Tokens [ 1 ];
 	
@@ -79,8 +73,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "+D" );
 	
 	ElementData * MethodData = new ElementData ();
 	
@@ -102,8 +94,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	if ( TemplateConstructionGroup.TryConstruction ( MethodElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ 2 ], TokenCount ) != 0 )
 	{
 		
-		LOG_VERBOSE ( "+D_A" );
-		
 		MethodData -> Templated = true;
 		
 		ASTElement * TemplateElement = MethodElement -> GetSubElement ( MethodElement -> GetSubElementCount () - 1 );
@@ -122,8 +112,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 			
 		}
 		
-		LOG_VERBOSE ( "+D_B" );
-		
 		if ( TokenCount < 2 )
 		{
 			
@@ -137,8 +125,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 			return;
 			
 		}
-		
-		LOG_VERBOSE ( "+D_C" );
 		
 	}
 	else if ( Error )
@@ -154,8 +140,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "+E" );
 	
 	if ( ParameterListConstructionGroup.TryConstruction ( MethodElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
@@ -184,8 +168,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
-	LOG_VERBOSE ( "+F" );
-	
 	if ( ReturnTypeConstructionGroup.TryConstruction ( MethodElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
 		MethodData -> ReturnTyped = true;
 	
@@ -204,8 +186,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	Error = false;
 	ErrorString = "";
 	ErrorToken = NULL;
-	
-	LOG_VERBOSE ( "+G" );
 	
 	if ( BodyConstructionGroup.TryConstruction ( MethodElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
@@ -234,8 +214,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "+H" );
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;

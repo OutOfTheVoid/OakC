@@ -4,6 +4,8 @@
 #include <Parsing/ASTElement.h>
 
 #include <Parsing/Language/OakPointerTypeConstructor.h>
+#include <Parsing/Language/OakReferenceTypeConstructor.h>
+
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
@@ -14,6 +16,8 @@
 #include <Tokenization/Language/OakTokenTags.h>
 
 OakPointerTypeConstructor _OakStructBindingConstructor_OakPointerTypeConstructorInstance;
+OakReferenceTypeConstructor _OakStructBindingConstructor_OakReferenceTypeConstructorInstance;
+
 OakBareTypeNameConstructor _OakStructBindingConstructor_OakBareTypeNameConstructorInstance;
 OakTemplatedTypeNameConstructor _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance;
 OakNamespacedTypeNameConstructor _OakStructBindingConstructor_OakNamespacedTypeNameConstructorIstance;
@@ -24,6 +28,8 @@ OakStructBindingConstructor :: OakStructBindingConstructor ():
 {
 	
 	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakPointerTypeConstructorInstance, 0 );
+	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakReferenceTypeConstructorInstance, 0 );
+	
 	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakNamespacedTemplatedTypeNameConstructorInstance, 0 );
 	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakNamespacedTypeNameConstructorIstance, 1 );
 	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance, 1 );

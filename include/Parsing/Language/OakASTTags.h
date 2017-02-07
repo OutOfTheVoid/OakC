@@ -39,16 +39,17 @@ namespace OakASTTags
 	const uint64_t kASTTag_StatementBlock = 22;
 	
 	const uint64_t kASTTag_PointerType = 23;
+	const uint64_t kASTTag_ReferenceType = 24;
 	
-	const uint64_t kASTTag_SelfParameter = 24;
-	const uint64_t kASTTag_SelfParameterPointer = 25;
+	const uint64_t kASTTag_SelfParameter = 25;
+	const uint64_t kASTTag_SelfParameterReference = 26;
 	
-	const uint64_t kASTTag_MethodDefinition = 26;
-	const uint64_t kASTTag_MethodParameterList = 27;
+	const uint64_t kASTTag_MethodDefinition = 27;
+	const uint64_t kASTTag_MethodParameterList = 28;
 	
-	const uint64_t kASTTag_ReturnType = 28;
+	const uint64_t kASTTag_ReturnType = 29;
 	
-	const uint64_t kASTTag_IgnoreStatement = 29;
+	const uint64_t kASTTag_IgnoreStatement = 30;
 	
 	const char * const TagNames [] =
 	{
@@ -77,8 +78,9 @@ namespace OakASTTags
 		"FUNCTION_PARAMETER",
 		"STATEMENT_BLOCK",
 		"POINTER_TYPE",
+		"REFERENCE_TYPE",
 		"SELF_PARAMETER",
-		"SELF_PARAMETER_POINTER",
+		"SELF_PARAMETER_REFERENCE",
 		"METHOD_DEFINITION",
 		"METHOD_PARAMETER_LIST",
 		"RETURN_TYPE",

@@ -7,31 +7,29 @@
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
 
-#include <Parsing/Language/OakSelfParameterConstructor.h>
+#include <Parsing/Language/OakReferenceTypeConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
 OakPointerTypeConstructor _OakPointerTypeConstructor_OakPointerTypeConstructorInstance;
+OakReferenceTypeConstructor _OakPointerTypeConstructor_OakReferenceTypeConstructorInstance;
 
 OakBareTypeNameConstructor _OakPointerTypeConstructor_OakBareTypeNameConstructorInstance;
 OakTemplatedTypeNameConstructor _OakPointerTypeConstructor_OakTemplatedTypeNameConstructorInstance;
 OakNamespacedTypeNameConstructor _OakPointerTypeConstructor_OakNamespacedTypeNameConstructorInstance;
 OakNamespacedTemplatedTypeNameConstructor _OakPointerTypeConstructor_OakNamespacedTemplatedTypeNameConstructorInstance;
 
-OakSelfParameterConstructor _OakPointerTypeConstructor_OakSelfParameterConstructorInstance;
-
 OakPointerTypeConstructor :: OakPointerTypeConstructor ():
 	TypeGroup ()
 {
 	
 	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakPointerTypeConstructorInstance, 0 );
+	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakReferenceTypeConstructorInstance, 0 );
 	
 	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakNamespacedTemplatedTypeNameConstructorInstance, 0 );
 	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakNamespacedTypeNameConstructorInstance, 1 );
 	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
 	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakBareTypeNameConstructorInstance, 2 );
-	
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakSelfParameterConstructorInstance, 3 );
 	
 }
 
@@ -110,6 +108,9 @@ void OakPointerTypeConstructor :: TryConstruct ( ASTConstructionInput & Input, A
 	
 	if ( SubTypeTag == OakASTTags :: kASTTag_PointerType )
 		PointerTypeData -> Templated = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> Templated;
+	
+	if ( SubTypeTag == OakASTTags :: kASTTag_ReferenceType )
+		PointerTypeData -> Templated = reinterpret_cast <OakReferenceTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> Templated;
 	
 	if ( SubTypeTag == OakASTTags :: kASTTag_TypeName_Templated )
 		PointerTypeData -> Templated = true;
