@@ -47,7 +47,34 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 	}
 	
-	const Token * CurrentToken = Input.Tokens [ 0 ];
+	uint64_t Offset = 0;
+	
+	bool Public = false;
+	bool Inline = false;
+	
+	const Token * CurrentToken = Input.Tokens [ Offset ];
+	
+	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Public ) )
+	{
+		
+		Public = true;
+		
+		Offset ++;
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+	}
+	
+	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Inline ) )
+	{
+		
+		Inline = true;
+		
+		Offset ++;
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+	}
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Function ) )
 	{
@@ -58,7 +85,9 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 	}
 	
-	CurrentToken = Input.Tokens [ 1 ];
+	Offset ++;
+	
+	CurrentToken = Input.Tokens [ Offset ];
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
@@ -72,24 +101,28 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 	}
 	
+	Offset ++;
+	
 	ElementData * FunctionData = new ElementData ();
 	
 	FunctionData -> Name = CurrentToken -> GetSource ();
+	FunctionData -> Inline = Inline;
+	FunctionData -> Public = Public;
 	FunctionData -> Templated = false;
 	FunctionData -> ReturnTyped = false;
 	
 	ASTElement * FunctionElement = new ASTElement ();
 	
 	FunctionElement -> SetTag ( OakASTTags :: kASTTag_FunctionDefinition );
-	FunctionElement -> AddTokenSection ( & Input.Tokens [ 0 ], 2 );
+	FunctionElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	FunctionElement -> SetData ( FunctionData, & ElementDataDestructor );
 	
 	bool Error = false;
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
-	uint64_t TokenCount = Input.AvailableTokenCount - 2;
+	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
 	
-	if ( TemplateConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ 2 ], TokenCount ) != 0 )
+	if ( TemplateConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Offset ], TokenCount ) != 0 )
 	{
 		
 		FunctionData -> Templated = true;
@@ -139,7 +172,7 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 	}
 	
-	if ( ParameterListConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ 2 ], TokenCount ) == 0 )
+	if ( ParameterListConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
 		delete FunctionElement;
@@ -171,11 +204,14 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	if ( Error )
 	{
+		delete FunctionElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = ErrorString;
 		Output.ErrorProvokingToken = ErrorToken;
+		
+		return;
 		
 	}
 	

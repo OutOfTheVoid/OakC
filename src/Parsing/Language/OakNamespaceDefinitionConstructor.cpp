@@ -5,6 +5,7 @@
 
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakStructBindingConstructor.h>
+#include <Parsing/Language/OakTraitDefinitionConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -14,6 +15,7 @@
 
 OakNamespaceDefinitionConstructor _OakNamespaceDefinitionConstructor_OakNamespaceDefinitionConstructorInstance;
 OakStructDefinitionConstructor _OakNamespaceDefinitionConstructor_OakStructDefinitionConstructorInstance;
+OakTraitDefinitionConstructor _OakNamespaceDefinitionConstructor_OakTraitDefinitionConstructorInstance;
 
 OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
 	NamespaceChildrenGroup ()
@@ -21,6 +23,7 @@ OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
 	
 	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakNamespaceDefinitionConstructorInstance, 0 );
 	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakStructDefinitionConstructorInstance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakTraitDefinitionConstructorInstance, 0 );
 	
 }
 

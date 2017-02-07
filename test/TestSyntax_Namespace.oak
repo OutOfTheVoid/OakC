@@ -1,0 +1,33 @@
+namespace TestNS
+{
+	
+	namespace SubNS
+	{
+		
+		
+		
+	}
+	
+	struct SomeStruct
+	{
+	}
+	
+	trait SomeTrait
+	{
+	}
+	
+}
+
+namespace SomeNS::DirectlyNestedNS
+{
+	
+	
+	
+}
+
+namespace ::SomeGloballyReferencedNS::DirectlyNestedNS
+{
+	
+	
+	
+}

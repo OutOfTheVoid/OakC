@@ -1,10 +1,10 @@
-#ifndef PARSING_LANGUAGE_OAKFUNCTIONDEFINITIONCONSTRUCTOR_H
-#define PARSING_LANGUAGE_OAKFUNCTIONDEFINITIONCONSTRUCTOR_H
+#ifndef PARSING_LANGUAGE_OAKTRAITFUNCTIONCONSTRUCTOR_H
+#define PARSING_LANGUAGE_OAKTRAITFUNCTIONCONSTRUCTOR_H
 
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-class OakFunctionDefinitionConstructor : public virtual IASTConstructor
+class OakTraitFunctionConstructor : public virtual IASTConstructor
 {
 public:
 	
@@ -12,15 +12,13 @@ public:
 	{
 		
 		std :: u32string Name;
-		bool Inline;
-		bool Public;
 		bool Templated;
 		bool ReturnTyped;
 		
 	} ElementData;
 	
-	OakFunctionDefinitionConstructor ();
-	~OakFunctionDefinitionConstructor ();
+	OakTraitFunctionConstructor ();
+	~OakTraitFunctionConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
@@ -31,7 +29,6 @@ private:
 	ASTConstructionGroup TemplateConstructionGroup;
 	ASTConstructionGroup ParameterListConstructionGroup;
 	ASTConstructionGroup ReturnTypeConstructionGroup;
-	ASTConstructionGroup BodyConstructionGroup;
 	
 };
 

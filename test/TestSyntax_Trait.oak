@@ -1,0 +1,15 @@
+trait SomeEmptyTrait;
+
+trait SomeTrait
+{
+}
+
+trait SomeTemplatedTrait <A>
+{
+	
+	function RequiredFunction <B> ( P: i32 ) : void,
+	function OtherRequiredFunction <C> ( P: f32 ) : SomeOtherTrait<A>,
+	function FinalRequiredFunction (),
+	
+}
+
