@@ -1,4 +1,4 @@
-#include <Parsing/Language/OakLiteralRValueConstructor.h>
+#include <Parsing/Language/OakLiteralExpressionConstructor.h>
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakParsingUtils.h>
 
@@ -10,7 +10,7 @@
 
 #include <Utils/TestSet.h>
 
-const uint64_t _OakLiteralRValueConstructor_ValidLiteralTags [] =
+const uint64_t _OakLiteralExpressionConstructor_ValidLiteralTags [] =
 {
 	
 	OakTokenTags :: kTokenTag_StringLiteralDefault,
@@ -38,17 +38,17 @@ const uint64_t _OakLiteralRValueConstructor_ValidLiteralTags [] =
 	
 };
 
-const TestSet <uint64_t> _OakLiteralRValueConstructor_LiteralTagTestSet ( _OakLiteralRValueConstructor_ValidLiteralTags, 22, false );
+const TestSet <uint64_t> _OakLiteralExpressionConstructor_LiteralTagTestSet ( _OakLiteralExpressionConstructor_ValidLiteralTags, 22, false );
 
-OakLiteralRValueConstructor :: OakLiteralRValueConstructor ()
+OakLiteralExpressionConstructor :: OakLiteralExpressionConstructor ()
 {
 }
 
-OakLiteralRValueConstructor :: ~OakLiteralRValueConstructor ()
+OakLiteralExpressionConstructor :: ~OakLiteralExpressionConstructor ()
 {
 }
 
-void OakLiteralRValueConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakLiteralExpressionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
 	if ( Input.AvailableTokenCount == 0 )
@@ -62,7 +62,7 @@ void OakLiteralRValueConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
-	if ( ! ( _OakLiteralRValueConstructor_LiteralTagTestSet.Contains ( CurrentToken -> GetTag () ) || OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Null ) || OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_True ) || OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_False ) ) )
+	if ( ! ( _OakLiteralExpressionConstructor_LiteralTagTestSet.Contains ( CurrentToken -> GetTag () ) || OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Null ) || OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_True ) || OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_False ) ) )
 	{
 		
 		Output.Accepted = false;
@@ -73,7 +73,7 @@ void OakLiteralRValueConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	
 	ASTElement * LiteralElement = new ASTElement ();
 	
-	LiteralElement -> SetTag ( OakASTTags :: kASTTag_LiteralRValue );
+	LiteralElement -> SetTag ( OakASTTags :: kASTTag_LiteralExpression );
 	LiteralElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
 	
 	Output.Accepted = true;

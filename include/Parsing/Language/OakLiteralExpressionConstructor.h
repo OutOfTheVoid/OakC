@@ -3,12 +3,12 @@
 
 #include <Parsing/IASTConstructor.h>
 
-class OakLiteralRValueConstructor : public virtual IASTConstructor
+class OakLiteralExpressionConstructor : public virtual IASTConstructor
 {
 public:
 	
-	OakLiteralRValueConstructor ();
-	~OakLiteralRValueConstructor ();
+	OakLiteralExpressionConstructor ();
+	~OakLiteralExpressionConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	

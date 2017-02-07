@@ -1,11 +1,9 @@
 
-function TestSyntax ()
+function TestSyntax ( SomeParam: u32 ) : void
 {
 	
-	"Hello world";
+	ignore SomeParam;
 	
-	3;
-	
-	0.2f;
+	"Hello world"u16;
 	
 }

@@ -1,24 +1,24 @@
-#include <Parsing/Language/OakRawRValueStatementConstructor.h>
+#include <Parsing/Language/OakExpressionStatementConstructor.h>
 #include <Parsing/Language/OakASTTags.h>
-#include <Parsing/Language/OakRValueConstructor.h>
+#include <Parsing/Language/OakExpressionConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakRValueConstructor _OakRawRValueStatementConstructor_OakRValueConstructorInstance;
+OakExpressionConstructor _OakExpressionStatementConstructor_OakExpressionConstructorInstance;
 
-OakRawRValueStatementConstructor :: OakRawRValueStatementConstructor ():
+OakExpressionStatementConstructor :: OakExpressionStatementConstructor ():
 	RValueGroup ()
 {
 	
-	RValueGroup.AddConstructorCantidate ( & _OakRawRValueStatementConstructor_OakRValueConstructorInstance, 0 );
+	RValueGroup.AddConstructorCantidate ( & _OakExpressionStatementConstructor_OakExpressionConstructorInstance, 0 );
 	
 }
 	
-OakRawRValueStatementConstructor :: ~OakRawRValueStatementConstructor ()
+OakExpressionStatementConstructor :: ~OakExpressionStatementConstructor ()
 {
 }
 
-void OakRawRValueStatementConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakExpressionStatementConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
 	if ( Input.AvailableTokenCount < 2 )
@@ -32,7 +32,7 @@ void OakRawRValueStatementConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	ASTElement * StatementElement = new ASTElement ();
 	
-	StatementElement -> SetTag ( OakASTTags :: kASTTag_RawRValueStatement );
+	StatementElement -> SetTag ( OakASTTags :: kASTTag_ExpressionStatement );
 	
 	bool ConstructionError = false;
 	uint64_t TokenCount = Input.AvailableTokenCount;

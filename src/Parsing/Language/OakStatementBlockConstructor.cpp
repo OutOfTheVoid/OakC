@@ -5,7 +5,7 @@
 
 #include <Parsing/Language/OakIgnoreStatementConstructor.h>
 #include <Parsing/Language/OakLoneSemicolonConstructor.h>
-#include <Parsing/Language/OakRawRValueStatementConstructor.h>
+#include <Parsing/Language/OakExpressionStatementConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
@@ -13,7 +13,7 @@ OakStatementBlockConstructor _OakStatementBlockConstructor_OakStatementBlockCons
 
 OakIgnoreStatementConstructor _OakStatementBlockConstructor_OakIgnoreStatementConstructorInstance;
 OakLoneSemicolonConstructor _OakStatementBlockConstructor_OakLoneSemicolonConstructorInstance;
-OakRawRValueStatementConstructor _OakStatementBlockConstructor_OakRawRValueStatementConstructorInstance;
+OakExpressionStatementConstructor _OakStatementBlockConstructor_OakExpressionStatementConstructorInstance;
 
 OakStatementBlockConstructor :: OakStatementBlockConstructor ():
 	StatementGroup ()
@@ -21,7 +21,7 @@ OakStatementBlockConstructor :: OakStatementBlockConstructor ():
 	
 	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakIgnoreStatementConstructorInstance, 0 );
 	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakLoneSemicolonConstructorInstance, 0 );
-	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakRawRValueStatementConstructorInstance, 1 );
+	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakExpressionStatementConstructorInstance, 1 );
 	
 	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakStatementBlockConstructorInstance, 1 );
 	
