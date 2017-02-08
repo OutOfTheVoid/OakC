@@ -21,8 +21,6 @@ OakTraitDefinitionConstructor :: OakTraitDefinitionConstructor ():
 	TemplateConstructionGroup.AddConstructorCantidate ( & _OakTraitDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
 	TraitBodyConstructionGroup.AddConstructorCantidate ( & _OakTraitDefinitionConstructor_OakTraitFunctionConstructorInstance, 0 );
 	
-	// TODO: Create and add trait definition constructors
-	
 }
 
 OakTraitDefinitionConstructor :: ~OakTraitDefinitionConstructor ()

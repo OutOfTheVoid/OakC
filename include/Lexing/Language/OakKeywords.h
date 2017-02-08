@@ -45,9 +45,6 @@ namespace OakKeywords
 	const std :: string kKeyword_Public ( u8"public" );
 	const std :: string kKeyword_Inline ( u8"inline" );
 	
-	const std :: string kKeyword_New ( u8"new" );
-	const std :: string kKeyword_Delete ( u8"delete" );
-	
 	const std :: string kKeyword_Init ( u8"init" );
 	const std :: string kKeyword_Drop ( u8"drop" );
 	
