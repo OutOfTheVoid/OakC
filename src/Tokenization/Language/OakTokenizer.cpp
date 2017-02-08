@@ -65,13 +65,17 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	// Double Equals
 	ITokenSplitRule * DoubleEqualsRule = new StringMatchSplitRule ( U"==", OakTokenTags :: kTokenTag_DoubleEquals );
 	// Plus Equals
-	ITokenSplitRule * PlusEqualsRule = new StringMatchSplitRule ( U"+=", OakTokenTags :: kTokenTag_PlusEquals );
+	ITokenSplitRule * PlusEqualsRule = new StringMatchSplitRule ( U"+=", OakTokenTags :: kTokenTag_Plus_Equals );
 	// Minus Equals
-	ITokenSplitRule * MinusEqualsRule = new StringMatchSplitRule ( U"-=", OakTokenTags :: kTokenTag_MinusEquals );
+	ITokenSplitRule * MinusEqualsRule = new StringMatchSplitRule ( U"-=", OakTokenTags :: kTokenTag_Minus_Equals );
+	// Double Plus
+	ITokenSplitRule * DoublePlusRule = new StringMatchSplitRule ( U"++", OakTokenTags :: kTokenTag_DoublePlus );
+	// Double Minus
+	ITokenSplitRule * DoubleMinusRule = new StringMatchSplitRule ( U"--", OakTokenTags :: kTokenTag_DoubleMinus );
 	// Star Equals
-	ITokenSplitRule * StarEqualsRule = new StringMatchSplitRule ( U"*=", OakTokenTags :: kTokenTag_StarEquals );
+	ITokenSplitRule * StarEqualsRule = new StringMatchSplitRule ( U"*=", OakTokenTags :: kTokenTag_Star_Equals );
 	// Slash Equals
-	ITokenSplitRule * SlashEqualsRule = new StringMatchSplitRule ( U"/=", OakTokenTags :: kTokenTag_SlashEquals );
+	ITokenSplitRule * SlashEqualsRule = new StringMatchSplitRule ( U"/=", OakTokenTags :: kTokenTag_Slash_Equals );
 	// Double Triangle Bracket Open Equals
 	ITokenSplitRule * DoubleTriangleBracketOpenEqualsRule = new StringMatchSplitRule ( U"<<=", OakTokenTags :: kTokenTag_DoubleTriangleBracket_Open_Equals );
 	// Double Triangle Bracket Close Equals
@@ -86,6 +90,11 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	ITokenSplitRule * QuestionMarkRule = new CharMatchSplitRule ( U'?', OakTokenTags :: kTokenTag_QuestionMark );
 	// Exclamation Mark Equals
 	ITokenSplitRule * ExclamationMarkEqualsRule = new StringMatchSplitRule ( U"!=", OakTokenTags :: kTokenTag_ExclamationMark_Equals );
+	// Percent Equals
+	ITokenSplitRule * PercentEqualsRule = new StringMatchSplitRule (  U"%%=", OakTokenTags :: kTokenTag_Percent_Equals );
+	// Carrot Equals
+	ITokenSplitRule * CarrotEqualsRule = new StringMatchSplitRule (  U"^=", OakTokenTags :: kTokenTag_Carrot_Equals );
+	
 	
 	// Triangle Bracket Open Double Equals
 	ITokenSplitRule * TriangleBracketOpenEqualsRule = new StringMatchSplitRule ( U"<=", OakTokenTags :: kTokenTag_TriangleBracket_Open_Equals );
@@ -117,6 +126,10 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	ITokenSplitRule * VerticalBarEqualsRule = new StringMatchSplitRule ( U"|=", OakTokenTags :: kTokenTag_VerticalBar_Equals );
 	// Exclamation Mark
 	ITokenSplitRule * ExclamationMarkRule = new CharMatchSplitRule ( U'!', OakTokenTags :: kTokenTag_ExclamationMark );
+	// Percent
+	ITokenSplitRule * PercentRule = new CharMatchSplitRule (  U'%', OakTokenTags :: kTokenTag_Percent );
+	// Carrot
+	ITokenSplitRule * CarrotRule = new CharMatchSplitRule (  U'^', OakTokenTags :: kTokenTag_Carrot );
 	
 	// Triangle bracket open
 	ITokenSplitRule * TriangleBracketOpenRule = new CharMatchSplitRule (  U'<', OakTokenTags :: kTokenTag_TriangleBracket_Open );
@@ -153,6 +166,8 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( DotRule, 3 );
 	NewTokenizer -> AddSplitRule ( PlusEqualsRule, 3 );
 	NewTokenizer -> AddSplitRule ( MinusEqualsRule, 3 );
+	NewTokenizer -> AddSplitRule ( DoublePlusRule, 3 );
+	NewTokenizer -> AddSplitRule ( DoubleMinusRule, 3 );
 	NewTokenizer -> AddSplitRule ( StarEqualsRule, 3 );
 	NewTokenizer -> AddSplitRule ( SlashEqualsRule, 3 );
 	NewTokenizer -> AddSplitRule ( DoubleTriangleBracketOpenEqualsRule, 3 );
@@ -163,6 +178,8 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( TildeRule, 3 );
 	NewTokenizer -> AddSplitRule ( QuestionMarkRule, 3 );
 	NewTokenizer -> AddSplitRule ( ExclamationMarkEqualsRule, 3 );
+	NewTokenizer -> AddSplitRule ( PercentEqualsRule, 3 );
+	NewTokenizer -> AddSplitRule ( CarrotEqualsRule, 3 );
 	
 	NewTokenizer -> AddSplitRule ( TriangleBracketOpenEqualsRule, 4 );
 	NewTokenizer -> AddSplitRule ( TriangleBracketCloseEqualsRule, 4 );
@@ -179,6 +196,8 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( AmpersandEqualsRule, 4 );
 	NewTokenizer -> AddSplitRule ( VerticalBarEqualsRule, 4 );
 	NewTokenizer -> AddSplitRule ( ExclamationMarkRule, 4 );
+	NewTokenizer -> AddSplitRule ( PercentRule, 4 );
+	NewTokenizer -> AddSplitRule ( CarrotRule, 4 );
 	
 	NewTokenizer -> AddSplitRule ( TriangleBracketOpenRule, 5 );
 	NewTokenizer -> AddSplitRule ( TriangleBracketCloseRule, 5 );

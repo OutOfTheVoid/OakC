@@ -68,10 +68,10 @@ namespace OakTokenTags
 	const uint64_t kTokenTag_Equals = 43;
 	const uint64_t kTokenTag_DoubleEquals = 44;
 	const uint64_t kTokenTag_Ampersand = 45;
-	const uint64_t kTokenTag_PlusEquals = 46;
-	const uint64_t kTokenTag_MinusEquals = 47;
-	const uint64_t kTokenTag_StarEquals = 48;
-	const uint64_t kTokenTag_SlashEquals = 49;
+	const uint64_t kTokenTag_Plus_Equals = 46;
+	const uint64_t kTokenTag_Minus_Equals = 47;
+	const uint64_t kTokenTag_Star_Equals = 48;
+	const uint64_t kTokenTag_Slash_Equals = 49;
 	const uint64_t kTokenTag_TriangleBracket_Open_Equals = 50;
 	const uint64_t kTokenTag_TriangleBracket_Close_Equals = 51;
 	const uint64_t kTokenTag_DoubleTriangleBracket_Open_Equals = 52;
@@ -89,8 +89,14 @@ namespace OakTokenTags
 	const uint64_t kTokenTag_QuestionMark = 64;
 	const uint64_t kTokenTag_ExclamationMark = 65;
 	const uint64_t kTokenTag_ExclamationMark_Equals = 66;
+	const uint64_t kTokenTag_DoublePlus = 67;
+	const uint64_t kTokenTag_DoubleMinus = 68;
+	const uint64_t kTokenTag_Percent = 69;
+	const uint64_t kTokenTag_Carrot = 70;
+	const uint64_t kTokenTag_Percent_Equals = 71;
+	const uint64_t kTokenTag_Carrot_Equals = 72;
 	
-	const uint64_t kTokenTag_Identifier = 67;
+	const uint64_t kTokenTag_Identifier = 73;
 	
 	//const uint64_t kTokenTag_ = ;
 	
@@ -164,6 +170,12 @@ namespace OakTokenTags
 		"QESTION_MARK",
 		"EXCLAMATION_MARK",
 		"EXCLAMATION_MARK_EQUALS",
+		"DOUBLE_PLUS",
+		"DOUBLE_MINUS",
+		"PERCENT",
+		"CARROT",
+		"PERCENT_EQUALS",
+		"CARROT_EQUALS",
 		"IDENT",
 		
 	};
