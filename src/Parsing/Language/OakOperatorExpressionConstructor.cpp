@@ -156,13 +156,13 @@ bool _OakBareTypeNameConstructor_TryToken_RightBinaryOperator ( const Token * Cu
 	
 	uint64_t Tag = Current -> GetTag ();
 	
-	for ( uint64_t I = 0; I < sizeof ( _OakBareTypeNameConstructor_TryToken_RightBinaryOperator ) / sizeof ( _OperatorEntry_t ); I ++ )
+	for ( uint64_t I = 0; I < sizeof ( _OakBareTypeNameConstructor_AllowedRightBinaryOperatorList ) / sizeof ( _OperatorEntry_t ); I ++ )
 	{
 		
-		if ( Tag == _OakBareTypeNameConstructor_TryToken_RightBinaryOperator [ I ].OperatorTag )
+		if ( Tag == _OakBareTypeNameConstructor_AllowedRightBinaryOperatorList [ I ].OperatorTag )
 		{
 			
-			Entry = & _OakBareTypeNameConstructor_TryToken_RightBinaryOperator [ I ];
+			Entry = & _OakBareTypeNameConstructor_AllowedRightBinaryOperatorList [ I ];
 			
 			return true;
 			
