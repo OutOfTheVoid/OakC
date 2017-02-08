@@ -5,6 +5,9 @@ Tokenization - complete ( possibly extended for more language features ).
 Lexing - complete ( possibly extended for more language features ).
 Parsing - in progres.
 	* Basic parsing architecture complete, just language definition remains.
+		- Finish seperate level 0 operator constructors
+		- Finish level 1+ operator constructor
+		- Add to expression constructor
 	* No current AST visiting system is in place, will take place in an analysis.
 Analysis - TODO.
 	* Conditional compilation

@@ -72,12 +72,6 @@ bool Lexer :: LexTokens ( std :: vector <const Token *> & TokensIn, std :: vecto
 		if ( ! Found )
 		{
 			
-			// TODO: Decide whether to pass unmatched tokens or require a pattern for everything
-			// Validation in the Lexer means a more consistent gaurentee for the patterns, but assuming
-			// They're properly designed, it shouldn't be needed. It would make lexing easier.
-			
-			// For now, just pass un-matched tokens through.
-			
 			TokensOut.push_back ( new Token ( * TokensIn [ TokensInIndex ] ) );
 			
 			TokensInIndex ++;

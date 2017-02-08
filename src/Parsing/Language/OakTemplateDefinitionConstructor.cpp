@@ -9,15 +9,12 @@
 
 #include <Logging/Logging.h>
 
-//TODO: Finish
-
 OakTemplateDefinitionConstructor OakTemplateDefinitionConstructor :: Instance;
 
 OakTemplateDefinitionConstructor :: OakTemplateDefinitionConstructor ():
 	ParameterGroup ()
 {
 	
-	// TODO: Add template parameter constructors
 	ParameterGroup.AddConstructorCantidate ( & OakRestrictedTemplateParameterConstructor :: Instance, 0 );
 	ParameterGroup.AddConstructorCantidate ( & OakUnrestrictedTemplateParameterConstructor :: Instance, 1 );
 	

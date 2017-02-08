@@ -14,16 +14,9 @@
 
 OakRestrictedTemplateParameterConstructor OakRestrictedTemplateParameterConstructor :: Instance;
 
-OakBareTraitNameConstructor _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance;
-OakTemplatedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakTemplatedTraitNameConstructorInstance;
-OakNamespacedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakNamespacedTraitNameConstructorInstance;
-OakNamespacedTemplatedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakNamespacedTemplatedTraitNameConstructorInstance;
-
 OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConstructor ():
 	RestrictionTraitGroup ()
 {
-	
-	// TODO: Add templated, namespaced, and namespace templated trait name constructors.
 	
 	RestrictionTraitGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 );
 	RestrictionTraitGroup.AddConstructorCantidate ( & OakNamespacedTraitNameConstructor :: Instance, 1 );

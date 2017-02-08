@@ -4,8 +4,6 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-//TODO: Finish unicode definitions
-
 OakIdentifierSplitRule :: OakIdentifierSplitRule ():
 	StartSet ( U"", 0, false ),
 	ContinueSet ( U"", 0, false )

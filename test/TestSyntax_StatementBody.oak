@@ -7,7 +7,9 @@ function TestSyntax ( SomeParam: u32 ) : u32
 	"Hello world"u16;
 	
 	{
+		return SomeNamespace::SomeBinding;
 		return SomeParam;
+		return 7;
 	}
 	
 }
