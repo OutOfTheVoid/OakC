@@ -203,4 +203,11 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	// TODO: write operator parsing algorithm...
 	
+	bool ConstructionError = false;
+	uint64_t TokenCount = Input.AvailableTokenCount - 1;
+	const Token * ErrorToken = NULL;
+	std :: string ErrorString;
+	
+	// 
+	
 }

@@ -4,6 +4,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+#include <Logging/Logging.h>
+
 OakExpressionStatementConstructor OakExpressionStatementConstructor :: Instance;
 
 OakExpressionStatementConstructor :: OakExpressionStatementConstructor ():
@@ -46,6 +48,15 @@ void OakExpressionStatementConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		Output.Accepted = false;
 		
+		if ( ConstructionError )
+		{
+			
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+		}
+		
 		return;
 		
 	}
@@ -64,6 +75,20 @@ void OakExpressionStatementConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 	}
 	
+	if ( TokenCount == 0 )
+	{
+		
+		delete StatementElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected semicolon at end of statement";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
+		
+		return;
+		
+	}
+	
 	const Token * CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Semicolon )
@@ -72,6 +97,9 @@ void OakExpressionStatementConstructor :: TryConstruct ( ASTConstructionInput & 
 		delete StatementElement;
 		
 		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected semicolon at end of statement";
+		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
 		

@@ -18,85 +18,85 @@ namespace OakTokenTags
 	const uint64_t kTokenTag_StringLiteralu8 = 4;
 	const uint64_t kTokenTag_StringLiteralu16 = 5;
 	const uint64_t kTokenTag_StringLiteralu32 = 6;
-	const uint64_t kTokenTag_CharLiteralDefault = 7;
-	const uint64_t kTokenTag_CharLiteralu8 = 8;
-	const uint64_t kTokenTag_CharLiteralu16 = 9;
-	const uint64_t kTokenTag_CharLiteralu32 = 10;
 	
-	const uint64_t kTokenTag_FloatLiteralDefaultSize = 11;
-	const uint64_t kTokenTag_FloatLiteral32 = 12;
-	const uint64_t kTokenTag_FloatLiteral64 = 13;
+	const uint64_t kTokenTag_RESERVED_0 = 7;
+	
+	const uint64_t kTokenTag_CharLiteral = 8;
+	
+	const uint64_t kTokenTag_FloatLiteralDefaultSize = 9;
+	const uint64_t kTokenTag_FloatLiteral32 = 10;
+	const uint64_t kTokenTag_FloatLiteral64 = 11;
 	
 	const uint64_t kTokenAuxTax_FloatLiteral_HexFloat = 1;
 	
-	const uint64_t kTokenTag_BoolLiteral = 14;
+	const uint64_t kTokenTag_BoolLiteral = 12;
 	
-	const uint64_t kTokenTag_SignedIntegerLiteralDefault = 15;
-	const uint64_t kTokenTag_SignedIntegerLiteral8 = 16;
-	const uint64_t kTokenTag_SignedIntegerLiteral16 = 17;
-	const uint64_t kTokenTag_SignedIntegerLiteral32 = 18;
-	const uint64_t kTokenTag_SignedIntegerLiteral64 = 19;
+	const uint64_t kTokenTag_SignedIntegerLiteralDefault = 13;
+	const uint64_t kTokenTag_SignedIntegerLiteral8 = 14;
+	const uint64_t kTokenTag_SignedIntegerLiteral16 = 15;
+	const uint64_t kTokenTag_SignedIntegerLiteral32 = 16;
+	const uint64_t kTokenTag_SignedIntegerLiteral64 = 17;
 	
 	const uint64_t kTokenAuxTax_SignedIntegerLiteral_Hex = 1;
 	const uint64_t kTokenAuxTax_SignedIntegerLiteral_Octal = 2;
 	const uint64_t kTokenAuxTax_SignedIntegerLiteral_Binary = 3;
 	
-	const uint64_t kTokenTag_UnsignedIntegerLiteralDefault = 20;
-	const uint64_t kTokenTag_UnsignedIntegerLiteral8 = 21;
-	const uint64_t kTokenTag_UnsignedIntegerLiteral16 = 22;
-	const uint64_t kTokenTag_UnsignedIntegerLiteral32 = 23;
-	const uint64_t kTokenTag_UnsignedIntegerLiteral64 = 24;
+	const uint64_t kTokenTag_UnsignedIntegerLiteralDefault = 18;
+	const uint64_t kTokenTag_UnsignedIntegerLiteral8 = 19;
+	const uint64_t kTokenTag_UnsignedIntegerLiteral16 = 20;
+	const uint64_t kTokenTag_UnsignedIntegerLiteral32 = 21;
+	const uint64_t kTokenTag_UnsignedIntegerLiteral64 = 22;
 	
-	const uint64_t kTokenTag_Semicolon = 25;
-	const uint64_t kTokenTag_Colon = 26;
-	const uint64_t kTokenTag_Comma = 27;
-	const uint64_t kTokenTag_SquareBracket_Open = 28;
-	const uint64_t kTokenTag_SquareBracket_Close = 29;
-	const uint64_t kTokenTag_TriangleBracket_Open = 30;
-	const uint64_t kTokenTag_TriangleBracket_Close = 31;
-	const uint64_t kTokenTag_CurlyBracket_Open = 32;
-	const uint64_t kTokenTag_CurlyBracket_Close = 33;
-	const uint64_t kTokenTag_Parenthesis_Open = 34;
-	const uint64_t kTokenTag_Parenthesis_Close = 35;
-	const uint64_t kTokenTag_Pound = 36;
-	const uint64_t kTokenTag_DoubleColon = 37;
-	const uint64_t kTokenTag_Dot = 38;
-	const uint64_t kTokenTag_Star = 39;
-	const uint64_t kTokenTag_Plus = 40;
-	const uint64_t kTokenTag_Minus = 41;
-	const uint64_t kTokenTag_Slash = 42;
-	const uint64_t kTokenTag_Equals = 43;
-	const uint64_t kTokenTag_DoubleEquals = 44;
-	const uint64_t kTokenTag_Ampersand = 45;
-	const uint64_t kTokenTag_Plus_Equals = 46;
-	const uint64_t kTokenTag_Minus_Equals = 47;
-	const uint64_t kTokenTag_Star_Equals = 48;
-	const uint64_t kTokenTag_Slash_Equals = 49;
-	const uint64_t kTokenTag_TriangleBracket_Open_Equals = 50;
-	const uint64_t kTokenTag_TriangleBracket_Close_Equals = 51;
-	const uint64_t kTokenTag_DoubleTriangleBracket_Open_Equals = 52;
-	const uint64_t kTokenTag_DoubleTriangleBracket_Close_Equals = 53;
-	const uint64_t kTokenTag_DoubleTriangleBracket_Open = 54;
-	const uint64_t kTokenTag_DoubleTriangleBracket_Close = 55;
-	const uint64_t kTokenTag_DoubleAmpersand = 56;
-	const uint64_t kTokenTag_VerticalBar = 57;
-	const uint64_t kTokenTag_DoubleVerticalBar = 58;
-	const uint64_t kTokenTag_Ampersand_Equals = 59;
-	const uint64_t kTokenTag_VerticalBar_Equals = 60;
-	const uint64_t kTokenTag_DoubleAmpersand_Equals = 61;
-	const uint64_t kTokenTag_DoubleVerticalBar_Equals = 62;
-	const uint64_t kTokenTag_Tilde = 63;
-	const uint64_t kTokenTag_QuestionMark = 64;
-	const uint64_t kTokenTag_ExclamationMark = 65;
-	const uint64_t kTokenTag_ExclamationMark_Equals = 66;
-	const uint64_t kTokenTag_DoublePlus = 67;
-	const uint64_t kTokenTag_DoubleMinus = 68;
-	const uint64_t kTokenTag_Percent = 69;
-	const uint64_t kTokenTag_Carrot = 70;
-	const uint64_t kTokenTag_Percent_Equals = 71;
-	const uint64_t kTokenTag_Carrot_Equals = 72;
+	const uint64_t kTokenTag_Semicolon = 23;
+	const uint64_t kTokenTag_Colon = 24;
+	const uint64_t kTokenTag_Comma = 25;
+	const uint64_t kTokenTag_SquareBracket_Open = 26;
+	const uint64_t kTokenTag_SquareBracket_Close = 27;
+	const uint64_t kTokenTag_TriangleBracket_Open = 28;
+	const uint64_t kTokenTag_TriangleBracket_Close = 29;
+	const uint64_t kTokenTag_CurlyBracket_Open = 30;
+	const uint64_t kTokenTag_CurlyBracket_Close = 31;
+	const uint64_t kTokenTag_Parenthesis_Open = 32;
+	const uint64_t kTokenTag_Parenthesis_Close = 33;
+	const uint64_t kTokenTag_Pound = 34;
+	const uint64_t kTokenTag_DoubleColon = 35;
+	const uint64_t kTokenTag_Dot = 36;
+	const uint64_t kTokenTag_Star = 37;
+	const uint64_t kTokenTag_Plus = 38;
+	const uint64_t kTokenTag_Minus = 39;
+	const uint64_t kTokenTag_Slash = 40;
+	const uint64_t kTokenTag_Equals = 41;
+	const uint64_t kTokenTag_DoubleEquals = 42;
+	const uint64_t kTokenTag_Ampersand = 43;
+	const uint64_t kTokenTag_Plus_Equals = 44;
+	const uint64_t kTokenTag_Minus_Equals = 45;
+	const uint64_t kTokenTag_Star_Equals = 46;
+	const uint64_t kTokenTag_Slash_Equals = 47;
+	const uint64_t kTokenTag_TriangleBracket_Open_Equals = 48;
+	const uint64_t kTokenTag_TriangleBracket_Close_Equals = 49;
+	const uint64_t kTokenTag_DoubleTriangleBracket_Open_Equals = 50;
+	const uint64_t kTokenTag_DoubleTriangleBracket_Close_Equals = 51;
+	const uint64_t kTokenTag_DoubleTriangleBracket_Open = 52;
+	const uint64_t kTokenTag_DoubleTriangleBracket_Close = 53;
+	const uint64_t kTokenTag_DoubleAmpersand = 54;
+	const uint64_t kTokenTag_VerticalBar = 55;
+	const uint64_t kTokenTag_DoubleVerticalBar = 56;
+	const uint64_t kTokenTag_Ampersand_Equals = 57;
+	const uint64_t kTokenTag_VerticalBar_Equals = 58;
+	const uint64_t kTokenTag_DoubleAmpersand_Equals = 59;
+	const uint64_t kTokenTag_DoubleVerticalBar_Equals = 60;
+	const uint64_t kTokenTag_Tilde = 61;
+	const uint64_t kTokenTag_QuestionMark = 62;
+	const uint64_t kTokenTag_ExclamationMark = 63;
+	const uint64_t kTokenTag_ExclamationMark_Equals = 64;
+	const uint64_t kTokenTag_DoublePlus = 65;
+	const uint64_t kTokenTag_DoubleMinus = 66;
+	const uint64_t kTokenTag_Percent = 67;
+	const uint64_t kTokenTag_Carrot = 68;
+	const uint64_t kTokenTag_Percent_Equals = 69;
+	const uint64_t kTokenTag_Carrot_Equals = 70;
 	
-	const uint64_t kTokenTag_Identifier = 73;
+	const uint64_t kTokenTag_Identifier = 71;
 	
 	//const uint64_t kTokenTag_ = ;
 	
@@ -110,10 +110,8 @@ namespace OakTokenTags
 		"STRING_LITERAL<UTF8>",
 		"STRING_LITERAL<UTF16>",
 		"STRING_LITERAL<UTF32>",
-		"CHARACHTER_LITERAL<DEFAULT>",
-		"CHARACHTER_LITERAL<UTF8>",
-		"CHARACHTER_LITERAL<UTF16>",
-		"CHARACHTER_LITERAL<UTF32>",
+		"RESERVED",
+		"CHARACHTER_LITERAL",
 		"FLOAT_LITERAL_DEFAULT",
 		"FLOAT_LITERAL_32",
 		"FLOAT_LITERAL_64",

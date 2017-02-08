@@ -122,6 +122,20 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	if ( TemplateConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Offset ], TokenCount ) != 0 )
 	{
 		
+		if ( Error )
+		{
+			
+			delete FunctionElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
 		FunctionData -> Templated = true;
 		
 		ASTElement * TemplateElement = FunctionElement -> GetSubElement ( FunctionElement -> GetSubElementCount () - 1 );
@@ -155,7 +169,8 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		}
 		
 	}
-	else if ( Error )
+	
+	if ( Error )
 	{
 		
 		delete FunctionElement;
@@ -223,6 +238,17 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 		Output.Accepted = false;
 		Output.Error = true;
+		
+		if ( Error )
+		{
+			
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
 		Output.ErrorSuggestion = "Expected body for method";
 		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		

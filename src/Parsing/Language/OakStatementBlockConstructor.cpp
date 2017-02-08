@@ -10,6 +10,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+#include <Logging/Logging.h>
+
 OakStatementBlockConstructor OakStatementBlockConstructor :: Instance;
 
 OakStatementBlockConstructor :: OakStatementBlockConstructor ():
@@ -97,6 +99,15 @@ void OakStatementBlockConstructor :: TryConstruct ( ASTConstructionInput & Input
 			delete BlockElement;
 			
 			Output.Accepted = false;
+			
+			if ( Error )
+			{
+				
+				Output.Error = true;
+				Output.ErrorSuggestion = ErrorString;
+				Output.ErrorProvokingToken = ErrorToken;
+				
+			}
 			
 			return;
 			

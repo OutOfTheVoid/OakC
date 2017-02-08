@@ -46,6 +46,15 @@ void OakExpressionConstructor :: TryConstruct ( ASTConstructionInput & Input, AS
 		
 		Output.Accepted = false;
 		
+		if ( ConstructionError )
+		{
+			
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+		}
+		
 		return;
 		
 	}

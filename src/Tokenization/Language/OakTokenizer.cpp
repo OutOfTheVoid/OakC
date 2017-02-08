@@ -13,6 +13,7 @@
 #include <Tokenization/Language/OakFloatingPointSplitRule.h>
 #include <Tokenization/Language/OakIntegerSplitRule.h>
 #include <Tokenization/Language/OakIdentifierSplitRule.h>
+#include <Tokenization/Language/OakCharSplitRule.h>
 
 const Tokenizer * OakTokenizer :: OakTokenizerInstance = NULL;
 
@@ -39,6 +40,9 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	
 	// Integer literal
 	ITokenSplitRule * IntegerLiteralRule = new OakIntegerSplitRule ();
+	
+	// Char literal
+	ITokenSplitRule * CharLiteralRule = new OakCharSplitRule ();
 	
 	// Semicolon
 	ITokenSplitRule * SemicolonRule = new CharMatchSplitRule ( U';', OakTokenTags :: kTokenTag_Semicolon );
@@ -149,8 +153,10 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( WhitespaceRule, 1 );
 	NewTokenizer -> AddSplitRule ( IdentifierRule, 2 );
 	
-	NewTokenizer -> AddSplitRule ( StringLiteralRule, 2 );
 	NewTokenizer -> AddSplitRule ( FloatLiteralRule, 2 );
+	NewTokenizer -> AddSplitRule ( StringLiteralRule, 2 );
+	NewTokenizer -> AddSplitRule ( CharLiteralRule, 2 );
+	
 	NewTokenizer -> AddSplitRule ( IntegerLiteralRule, 2 );
 	
 	NewTokenizer -> AddSplitRule ( SemicolonRule, 3 );

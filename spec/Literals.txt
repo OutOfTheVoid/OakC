@@ -1,0 +1,27 @@
+Literals
+========
+
+Oak supports a variaty of literals, allowing for default types as well as explicit types.
+Typically, a literal with an explicit type will have a suffix to indicate its type as inspired by rust. For example the literal 4u32 is of the type u32, with the value 4.
+
+The available literal types are
+u8, u16, u32, u64
+i8, i16, i32, i64
+f32, f64
+string string16, string32,
+char,
+bool,
+pointer <T>
+
+Integer literals are constructed with a stream of digits and optionally, non-initial underscores, allowing you to seperate groups of digits. A minus or plus sign may prefix the literal, but is technically an operator on it. For example:
+
+4_000u32 is a u32 literal with the value 4000.
+4_000_000u32 is a a u32 literal with the value 4000.
+4_0_00_000u32 is the same. It doesn't matter where the underscores are, so long as they're not the initial charachter.
+
+-4i32 is an i32 literal with the value 4 that is immediately negated. In practice, the compiler will always fold this to the value -4, so you don't need to worry about the fact that it isn't part of the literal. This is true regardless of builtin method overloading as well, since the compiler will not substitute pre-defined operations on builtin types unless specifically annotated in a block.
+
+Floating point literals are more complex. Without a type annotation, a floating point literal has the type f64, but will be downconverted during constant folding in a context-sensitive manner (for example assigning to an f32). 
+
+
+ 
