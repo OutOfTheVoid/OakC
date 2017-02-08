@@ -8,13 +8,13 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakExpressionConstructor _OakReturnStatementConstructor_OakExpressionConstructorInstance;
+OakReturnStatementConstructor OakReturnStatementConstructor :: Instance;
 
 OakReturnStatementConstructor :: OakReturnStatementConstructor ():
 	ExpressionGroup ()
 {
 	
-	ExpressionGroup.AddConstructorCantidate ( & _OakReturnStatementConstructor_OakExpressionConstructorInstance, 0 );
+	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
 	
 }
 

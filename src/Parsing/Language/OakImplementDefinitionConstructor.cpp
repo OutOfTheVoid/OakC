@@ -11,6 +11,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+OakImplementDefinitionConstructor OakImplementDefinitionConstructor :: Instance;
+
 OakFunctionDefinitionConstructor _OakImplementDefinitionConstructor_OakFunctionDefinitionConstructorInstance;
 OakMethodDefinitionConstructor _OakImplementDefinitionConstructor_OakMethodDefinitionConstructorInstance;
 
@@ -18,8 +20,8 @@ OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
 	ImplementChildrenConstructionGroup ()
 {
 	
-	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & _OakImplementDefinitionConstructor_OakMethodDefinitionConstructorInstance, 0 );
-	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & _OakImplementDefinitionConstructor_OakFunctionDefinitionConstructorInstance, 1 );
+	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & OakMethodDefinitionConstructor :: Instance, 0 );
+	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & OakFunctionDefinitionConstructor :: Instance, 1 );
 	
 }
 

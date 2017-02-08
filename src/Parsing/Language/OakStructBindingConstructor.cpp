@@ -15,25 +15,19 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakPointerTypeConstructor _OakStructBindingConstructor_OakPointerTypeConstructorInstance;
-OakReferenceTypeConstructor _OakStructBindingConstructor_OakReferenceTypeConstructorInstance;
-
-OakBareTypeNameConstructor _OakStructBindingConstructor_OakBareTypeNameConstructorInstance;
-OakTemplatedTypeNameConstructor _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance;
-OakNamespacedTypeNameConstructor _OakStructBindingConstructor_OakNamespacedTypeNameConstructorIstance;
-OakNamespacedTemplatedTypeNameConstructor _OakStructBindingConstructor_OakNamespacedTemplatedTypeNameConstructorInstance;
+OakStructBindingConstructor OakStructBindingConstructor :: Instance;
 
 OakStructBindingConstructor :: OakStructBindingConstructor ():
 	TypeGroup ()
 {
 	
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakPointerTypeConstructorInstance, 0 );
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakReferenceTypeConstructorInstance, 0 );
+	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
+	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
 	
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakNamespacedTemplatedTypeNameConstructorInstance, 0 );
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakNamespacedTypeNameConstructorIstance, 1 );
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
-	TypeGroup.AddConstructorCantidate ( & _OakStructBindingConstructor_OakBareTypeNameConstructorInstance, 2 );
+	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
+	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
+	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
+	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
 	
 }
 

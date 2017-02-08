@@ -9,6 +9,8 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
+OakTemplatedTypeNameConstructor OakTemplatedTypeNameConstructor :: Instance;
+
 uint64_t _OakTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
 {
 	
@@ -36,13 +38,11 @@ uint64_t _OakTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
 
 TestSet <uint64_t> OakTemplatedTypeNameConstructor :: AllowedKeywordTags ( _OakTemplatedTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
-OakTemplateSpecificationConstructor _OakTemplatedTypeNameConstructor_OakTemplateSpecificationConstructorInstance;
-
 OakTemplatedTypeNameConstructor :: OakTemplatedTypeNameConstructor ():
 	TemplateGroup ()
 {
 	
-	TemplateGroup.AddConstructorCantidate ( & _OakTemplatedTypeNameConstructor_OakTemplateSpecificationConstructorInstance, 0 );
+	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
 	
 }
 

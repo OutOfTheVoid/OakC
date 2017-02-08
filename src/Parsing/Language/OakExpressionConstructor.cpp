@@ -4,13 +4,13 @@
 
 #include <Parsing/Language/OakASTTags.h>
 
-OakPrimaryExpressionConstructor _OakExpressionConstructor_OakPrimaryExpressionConstructorInstance;
+OakExpressionConstructor OakExpressionConstructor :: Instance;
 
 OakExpressionConstructor :: OakExpressionConstructor ():
 	SubExpressionGroup ()
 {
 	
-	SubExpressionGroup.AddConstructorCantidate ( & _OakExpressionConstructor_OakPrimaryExpressionConstructorInstance, 0 );
+	SubExpressionGroup.AddConstructorCantidate ( & OakPrimaryExpressionConstructor :: Instance, 0 );
 	
 }
 

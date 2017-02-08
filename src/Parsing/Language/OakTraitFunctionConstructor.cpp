@@ -13,9 +13,7 @@
 
 #include <Logging/Logging.h>
 
-OakTemplateDefinitionConstructor _OakTraitFunctionConstructor_OakTemplateDefinitionConstructorInstance;
-OakFunctionParameterListConstructor _OakTraitFunctionConstructor_OakFunctionParameterListConstructorInstance;
-OakReturnTypeConstructor _OakTraitFunctionConstructor_OakReturnTypeConstructorInstance;
+OakTraitFunctionConstructor OakTraitFunctionConstructor :: Instance;
 
 OakTraitFunctionConstructor :: OakTraitFunctionConstructor ():
 	TemplateConstructionGroup (),
@@ -23,9 +21,9 @@ OakTraitFunctionConstructor :: OakTraitFunctionConstructor ():
 	ReturnTypeConstructionGroup ()
 {
 	
-	TemplateConstructionGroup.AddConstructorCantidate ( & _OakTraitFunctionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
-	ParameterListConstructionGroup.AddConstructorCantidate ( & _OakTraitFunctionConstructor_OakFunctionParameterListConstructorInstance, 0 );
-	ReturnTypeConstructionGroup.AddConstructorCantidate ( & _OakTraitFunctionConstructor_OakReturnTypeConstructorInstance, 0 );
+	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
+	ParameterListConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterListConstructor :: Instance, 0 );
+	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
 	
 }
 

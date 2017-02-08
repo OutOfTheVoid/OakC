@@ -5,6 +5,8 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
+OakUnrestrictedTemplateParameterConstructor OakUnrestrictedTemplateParameterConstructor :: Instance;
+
 OakUnrestrictedTemplateParameterConstructor :: OakUnrestrictedTemplateParameterConstructor ()
 {
 }

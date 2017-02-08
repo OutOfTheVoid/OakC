@@ -37,6 +37,8 @@ uint64_t _OakBareTypeNameConstructor_AllowedKeywordTagList [] =
 
 TestSet <uint64_t> OakBareTypeNameConstructor :: AllowedKeywordTags ( _OakBareTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
+OakBareTypeNameConstructor OakBareTypeNameConstructor :: Instance;
+
 OakBareTypeNameConstructor :: OakBareTypeNameConstructor ()
 {	
 }

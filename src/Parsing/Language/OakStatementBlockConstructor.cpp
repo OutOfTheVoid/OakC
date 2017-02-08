@@ -10,23 +10,18 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakStatementBlockConstructor _OakStatementBlockConstructor_OakStatementBlockConstructorInstance;
-
-OakIgnoreStatementConstructor _OakStatementBlockConstructor_OakIgnoreStatementConstructorInstance;
-OakLoneSemicolonConstructor _OakStatementBlockConstructor_OakLoneSemicolonConstructorInstance;
-OakExpressionStatementConstructor _OakStatementBlockConstructor_OakExpressionStatementConstructorInstance;
-OakReturnStatementConstructor _OakStatementBlockConstructor_OakReturnStatementConstructorInstance;
+OakStatementBlockConstructor OakStatementBlockConstructor :: Instance;
 
 OakStatementBlockConstructor :: OakStatementBlockConstructor ():
 	StatementGroup ()
 {
 	
-	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakIgnoreStatementConstructorInstance, 0 );
-	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakLoneSemicolonConstructorInstance, 0 );
-	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakReturnStatementConstructorInstance, 0 );
-	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakExpressionStatementConstructorInstance, 1 );
+	StatementGroup.AddConstructorCantidate ( & OakIgnoreStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakReturnStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakExpressionStatementConstructor :: Instance, 1 );
 	
-	StatementGroup.AddConstructorCantidate ( & _OakStatementBlockConstructor_OakStatementBlockConstructorInstance, 1 );
+	StatementGroup.AddConstructorCantidate ( & Instance, 1 );
 	
 }
 

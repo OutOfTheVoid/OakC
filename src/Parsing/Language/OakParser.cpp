@@ -31,15 +31,15 @@ const ASTConstructionGroup & OakParser :: GetOakParser ()
 	
 	ASTConstructionGroup * NewParser = new ASTConstructionGroup ();
 	
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakImportStatementConstructorInstance, 0 );
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakStructDefinitionConstructorInstance, 0 );
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakTraitDefinitionConstructorInstance, 0 );
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakNamespaceDefinitionConstructorInstance, 0 );
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakImplementDefinitionConstructorInstance, 0 );
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakFunctionDefinitionConstructorInstance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakImportStatementConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakStructDefinitionConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakTraitDefinitionConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakNamespaceDefinitionConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakImplementDefinitionConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakFunctionDefinitionConstructor :: Instance, 0 );
 	
 	// Just in case
-	NewParser -> AddConstructorCantidate ( & _OakParser_OakLoneSemicolonConstructorInstance, 1 );
+	NewParser -> AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 1 );
 	
 	Instance = NewParser;
 	return * NewParser;

@@ -4,13 +4,13 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakExpressionConstructor _OakExpressionStatementConstructor_OakExpressionConstructorInstance;
+OakExpressionStatementConstructor OakExpressionStatementConstructor :: Instance;
 
 OakExpressionStatementConstructor :: OakExpressionStatementConstructor ():
 	RValueGroup ()
 {
 	
-	RValueGroup.AddConstructorCantidate ( & _OakExpressionStatementConstructor_OakExpressionConstructorInstance, 0 );
+	RValueGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
 	
 }
 	

@@ -12,6 +12,8 @@
 #include <Parsing/Language/OakNamespacedTraitNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTemplatedTraitNameConstructor.h>
 
+OakRestrictedTemplateParameterConstructor OakRestrictedTemplateParameterConstructor :: Instance;
+
 OakBareTraitNameConstructor _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance;
 OakTemplatedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakTemplatedTraitNameConstructorInstance;
 OakNamespacedTraitNameConstructor _OakRestrictedTemplateParameterConstructor_OakNamespacedTraitNameConstructorInstance;
@@ -23,10 +25,10 @@ OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConst
 	
 	// TODO: Add templated, namespaced, and namespace templated trait name constructors.
 	
-	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_OakNamespacedTemplatedTraitNameConstructorInstance, 0 );
-	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_OakNamespacedTraitNameConstructorInstance, 1 );
-	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_OakTemplatedTraitNameConstructorInstance, 1 );
-	RestrictionTraitGroup.AddConstructorCantidate ( & _OakRestrictedTemplateParameterConstructor_BareTraitNameConstructorInstance, 2 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & OakNamespacedTraitNameConstructor :: Instance, 1 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & OakTemplatedTraitNameConstructor :: Instance, 1 );
+	RestrictionTraitGroup.AddConstructorCantidate ( & OakBareTraitNameConstructor :: Instance, 2 );
 	
 }
 

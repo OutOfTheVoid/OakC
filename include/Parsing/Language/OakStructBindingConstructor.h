@@ -20,6 +20,8 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
+	static OakStructBindingConstructor Instance;
+	
 private:
 	
 	static void ElementDataDestructor ( void * Data );

@@ -11,16 +11,15 @@
 
 //TODO: Finish
 
-OakRestrictedTemplateParameterConstructor _OakTemplateDefinitionConstructor_OakRestrictedTemplateParameterConstructorInstance;
-OakUnrestrictedTemplateParameterConstructor _OakTemplateDefinitionConstructor_OakUnrestrictedTemplateParameterConstructorInstance;
+OakTemplateDefinitionConstructor OakTemplateDefinitionConstructor :: Instance;
 
 OakTemplateDefinitionConstructor :: OakTemplateDefinitionConstructor ():
 	ParameterGroup ()
 {
 	
 	// TODO: Add template parameter constructors
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateDefinitionConstructor_OakRestrictedTemplateParameterConstructorInstance, 0 );
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateDefinitionConstructor_OakUnrestrictedTemplateParameterConstructorInstance, 1 );
+	ParameterGroup.AddConstructorCantidate ( & OakRestrictedTemplateParameterConstructor :: Instance, 0 );
+	ParameterGroup.AddConstructorCantidate ( & OakUnrestrictedTemplateParameterConstructor :: Instance, 1 );
 	
 }
 

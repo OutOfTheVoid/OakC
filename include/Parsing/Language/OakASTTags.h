@@ -62,6 +62,8 @@ namespace OakASTTags
 	const uint64_t kASTTag_LiteralExpression = 37;
 	const uint64_t kASTTag_ParenthesizedExpression = 38;
 	
+	const uint64_t kASTTag_BindingAllusion = 39;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -104,6 +106,7 @@ namespace OakASTTags
 		"PRIMARY_EXPRESSION",
 		"LITERAL_EXPRESSION",
 		"PARENTHESIZED_EXPRESSION",
+		"BINDING_ALLUSION",
 		
 	};
 	

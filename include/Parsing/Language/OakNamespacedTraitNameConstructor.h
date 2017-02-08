@@ -24,6 +24,8 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
+	static OakNamespacedTraitNameConstructor Instance;
+	
 private:
 	
 	static void ElementDataDestructor ( void * Data );

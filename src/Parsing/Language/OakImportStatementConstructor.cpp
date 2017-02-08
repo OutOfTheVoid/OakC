@@ -9,6 +9,8 @@
 #include <Tokenization/Language/OakTokenTags.h>
 #include <Tokenization/Token.h>
 
+OakImportStatementConstructor OakImportStatementConstructor :: Instance;
+
 OakImportStatementConstructor :: OakImportStatementConstructor ()
 {	
 }

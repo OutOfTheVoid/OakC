@@ -5,13 +5,13 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakSelfParameterConstructor _OakSelfParameterReferenceConstructor_OakSelfParameterConstructorInstance;
+OakSelfParameterReferenceConstructor OakSelfParameterReferenceConstructor :: Instance;
 
 OakSelfParameterReferenceConstructor :: OakSelfParameterReferenceConstructor ():
 	SelfParamGroup ()
 {
 	
-	SelfParamGroup.AddConstructorCantidate ( & _OakSelfParameterReferenceConstructor_OakSelfParameterConstructorInstance, 0 );
+	SelfParamGroup.AddConstructorCantidate ( & OakSelfParameterConstructor :: Instance, 0 );
 	
 }
 

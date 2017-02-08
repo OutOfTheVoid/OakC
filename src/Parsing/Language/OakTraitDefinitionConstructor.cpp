@@ -10,16 +10,15 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakTemplateDefinitionConstructor _OakTraitDefinitionConstructor_OakTemplateDefinitionConstructorInstance;
-OakTraitFunctionConstructor _OakTraitDefinitionConstructor_OakTraitFunctionConstructorInstance;
+OakTraitDefinitionConstructor OakTraitDefinitionConstructor :: Instance;
 
 OakTraitDefinitionConstructor :: OakTraitDefinitionConstructor ():
 	TemplateConstructionGroup (),
 	TraitBodyConstructionGroup ()
 {
 	
-	TemplateConstructionGroup.AddConstructorCantidate ( & _OakTraitDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
-	TraitBodyConstructionGroup.AddConstructorCantidate ( & _OakTraitDefinitionConstructor_OakTraitFunctionConstructorInstance, 0 );
+	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
+	TraitBodyConstructionGroup.AddConstructorCantidate ( & OakTraitFunctionConstructor :: Instance, 0 );
 	
 }
 

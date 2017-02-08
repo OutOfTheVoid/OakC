@@ -7,13 +7,13 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
-OakTemplateSpecificationConstructor _OakTemplatedTraitNameConstructor_OakTemplateSpecificationConstructorInstance;
+OakTemplatedTraitNameConstructor OakTemplatedTraitNameConstructor :: Instance;
 
 OakTemplatedTraitNameConstructor :: OakTemplatedTraitNameConstructor ():
 	TemplateGroup ()
 {
 	
-	TemplateGroup.AddConstructorCantidate ( & _OakTemplatedTraitNameConstructor_OakTemplateSpecificationConstructorInstance, 0 );
+	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
 	
 }
 

@@ -9,40 +9,13 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
-uint64_t _OakNamespacedTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
-{
-	
-	OakKeywordTokenTags :: kKeywordAuxTags_Ident,
-	OakKeywordTokenTags :: kKeywordAuxTags_Bool,
-	OakKeywordTokenTags :: kKeywordAuxTags_Int8,
-	OakKeywordTokenTags :: kKeywordAuxTags_Int16,
-	OakKeywordTokenTags :: kKeywordAuxTags_Int32,
-	OakKeywordTokenTags :: kKeywordAuxTags_Int64,
-	OakKeywordTokenTags :: kKeywordAuxTags_IntPtr,
-	OakKeywordTokenTags :: kKeywordAuxTags_UInt8,
-	OakKeywordTokenTags :: kKeywordAuxTags_UInt16,
-	OakKeywordTokenTags :: kKeywordAuxTags_UInt32,
-	OakKeywordTokenTags :: kKeywordAuxTags_UInt64,
-	OakKeywordTokenTags :: kKeywordAuxTags_UIntPtr,
-	OakKeywordTokenTags :: kKeywordAuxTags_Void,
-	OakKeywordTokenTags :: kKeywordAuxTags_Char,
-	OakKeywordTokenTags :: kKeywordAuxTags_Float32,
-	OakKeywordTokenTags :: kKeywordAuxTags_Float64,
-	OakKeywordTokenTags :: kKeywordAuxTags_String8,
-	OakKeywordTokenTags :: kKeywordAuxTags_String16,
-	OakKeywordTokenTags :: kKeywordAuxTags_String32
-	
-};
-
-TestSet <uint64_t> OakNamespacedTemplatedTypeNameConstructor :: AllowedKeywordTags ( _OakNamespacedTemplatedTypeNameConstructor_AllowedKeywordTagList, 19, false );
-
-OakTemplateSpecificationConstructor _OakNamespacedTemplatedTypeNameConstructor_OakTemplateSpecificationConstructorInstance;
+OakNamespacedTemplatedTypeNameConstructor OakNamespacedTemplatedTypeNameConstructor :: Instance;
 
 OakNamespacedTemplatedTypeNameConstructor :: OakNamespacedTemplatedTypeNameConstructor ():
 	TemplateGroup ()
 {
 	
-	TemplateGroup.AddConstructorCantidate ( & _OakNamespacedTemplatedTypeNameConstructor_OakTemplateSpecificationConstructorInstance, 0 );
+	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
 	
 }
 
@@ -80,17 +53,7 @@ void OakNamespacedTemplatedTypeNameConstructor :: TryConstruct ( ASTConstruction
 		
 	}
 	
-	
-	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Identifier )
-	{
-		
-		Output.Accepted = false;
-		
-		return;
-		
-	}
-	
-	if ( ! AllowedKeywordTags.Contains ( CurrentToken -> GetAuxTag () ) )
+	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
 		
 		Output.Accepted = false;

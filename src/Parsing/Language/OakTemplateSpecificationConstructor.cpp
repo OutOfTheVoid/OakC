@@ -7,15 +7,14 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakBareTypeNameConstructor _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance;
-OakTemplatedTypeNameConstructor _OakTemplateSpecificationConstructor_OakTemplatedTypeNameConstructorInstance;
+OakTemplateSpecificationConstructor OakTemplateSpecificationConstructor :: Instance;
 
 OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
 	ParameterGroup ()
 {
 	
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateSpecificationConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
-	ParameterGroup.AddConstructorCantidate ( & _OakTemplateSpecificationConstructor_OakBareTypeNameConstructorInstance, 2 );
+	ParameterGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
+	ParameterGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
 	
 }
 

@@ -21,6 +21,8 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
+	static OakImportStatementConstructor Instance;
+	
 private:
 	
 	static void ElementDataDestructor ( void * Data );

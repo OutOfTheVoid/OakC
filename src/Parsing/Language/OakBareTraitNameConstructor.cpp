@@ -7,6 +7,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+OakBareTraitNameConstructor OakBareTraitNameConstructor :: Instance;
+
 OakBareTraitNameConstructor :: OakBareTraitNameConstructor ()
 {	
 }

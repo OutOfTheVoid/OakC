@@ -13,6 +13,8 @@
 
 #include <Logging/Logging.h>
 
+OakMethodParameterListConstructor OakMethodParameterListConstructor :: Instance;
+
 OakSelfParameterConstructor _OakMethodParameterListConstructor_OakSelfParameterConstructorInstance;
 OakSelfParameterReferenceConstructor _OakMethodParameterListConstructor_OakSelfParameterReferenceConstructor;
 
@@ -23,10 +25,10 @@ OakMethodParameterListConstructor :: OakMethodParameterListConstructor ():
 	ParameterConstructionGroup ()
 {
 	
-	SelfParameterConstructionGroup.AddConstructorCantidate ( & _OakMethodParameterListConstructor_OakSelfParameterConstructorInstance, 0 );
-	SelfParameterConstructionGroup.AddConstructorCantidate ( & _OakMethodParameterListConstructor_OakSelfParameterReferenceConstructor, 1 );
+	SelfParameterConstructionGroup.AddConstructorCantidate ( & OakSelfParameterConstructor :: Instance, 0 );
+	SelfParameterConstructionGroup.AddConstructorCantidate ( & OakSelfParameterReferenceConstructor :: Instance, 1 );
 	
-	ParameterConstructionGroup.AddConstructorCantidate ( & _OakMethodParameterListConstructor_OakFunctionParameterConstructorInstance, 0 );
+	ParameterConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterConstructor :: Instance, 0 );
 	
 }
 

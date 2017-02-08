@@ -6,6 +6,8 @@
 	#define NULL nullptr
 #endif
 
+OakLoneSemicolonConstructor OakLoneSemicolonConstructor :: Instance;
+
 OakLoneSemicolonConstructor :: OakLoneSemicolonConstructor ()
 {
 }

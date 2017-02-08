@@ -10,6 +10,8 @@
 
 #include <Utils/TestSet.h>
 
+OakLiteralExpressionConstructor OakLiteralExpressionConstructor :: Instance;
+
 const uint64_t _OakLiteralExpressionConstructor_ValidLiteralTags [] =
 {
 	

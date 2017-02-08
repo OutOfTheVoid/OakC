@@ -14,10 +14,7 @@
 
 #include <Logging/Logging.h>
 
-OakTemplateDefinitionConstructor _OakMethodDefinitionConstructor_OakTemplateDefinitionConstructorInstance;
-OakMethodParameterListConstructor _OakMethodDefinitionConstructor_OakMethodParameterListConstructorInstance;
-OakReturnTypeConstructor _OakMethodDefinitionConstructor_OakReturnTypeConstructorInstance;
-OakStatementBlockConstructor _OakMethodDefinitionConstructor_OakStatementBlockConstructorInstance;
+OakMethodDefinitionConstructor OakMethodDefinitionConstructor :: Instance;
 
 OakMethodDefinitionConstructor :: OakMethodDefinitionConstructor ():
 	TemplateConstructionGroup (),
@@ -26,10 +23,10 @@ OakMethodDefinitionConstructor :: OakMethodDefinitionConstructor ():
 	BodyConstructionGroup ()
 {
 	
-	TemplateConstructionGroup.AddConstructorCantidate ( & _OakMethodDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
-	ParameterListConstructionGroup.AddConstructorCantidate ( & _OakMethodDefinitionConstructor_OakMethodParameterListConstructorInstance, 0 );
-	ReturnTypeConstructionGroup.AddConstructorCantidate ( & _OakMethodDefinitionConstructor_OakReturnTypeConstructorInstance, 0 );
-	BodyConstructionGroup.AddConstructorCantidate ( & _OakMethodDefinitionConstructor_OakStatementBlockConstructorInstance, 0 );
+	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
+	ParameterListConstructionGroup.AddConstructorCantidate ( & OakMethodParameterListConstructor :: Instance, 0 );
+	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
+	BodyConstructionGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
 	
 }
 

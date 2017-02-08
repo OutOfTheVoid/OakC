@@ -20,6 +20,8 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
+	static OakFunctionParameterListConstructor Instance;
+	
 private:
 	
 	static void ElementDataDestructor ( void * Data );

@@ -5,6 +5,8 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
+OakSelfParameterConstructor OakSelfParameterConstructor :: Instance;
+
 OakSelfParameterConstructor :: OakSelfParameterConstructor ()
 {
 }

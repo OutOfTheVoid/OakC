@@ -9,13 +9,15 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+OakFunctionParameterListConstructor OakFunctionParameterListConstructor :: Instance;
+
 OakFunctionParameterConstructor _OakFunctionParameterListConstructor_OakFunctionParameterConstructorInstance;
 
 OakFunctionParameterListConstructor :: OakFunctionParameterListConstructor ():
 	ParameterConstructionGroup ()
 {
 	
-	ParameterConstructionGroup.AddConstructorCantidate ( & _OakFunctionParameterListConstructor_OakFunctionParameterConstructorInstance, 0 );
+	ParameterConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterConstructor :: Instance, 0 );
 	
 }
 

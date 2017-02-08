@@ -11,25 +11,19 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakPointerTypeConstructor _OakPointerTypeConstructor_OakPointerTypeConstructorInstance;
-OakReferenceTypeConstructor _OakPointerTypeConstructor_OakReferenceTypeConstructorInstance;
-
-OakBareTypeNameConstructor _OakPointerTypeConstructor_OakBareTypeNameConstructorInstance;
-OakTemplatedTypeNameConstructor _OakPointerTypeConstructor_OakTemplatedTypeNameConstructorInstance;
-OakNamespacedTypeNameConstructor _OakPointerTypeConstructor_OakNamespacedTypeNameConstructorInstance;
-OakNamespacedTemplatedTypeNameConstructor _OakPointerTypeConstructor_OakNamespacedTemplatedTypeNameConstructorInstance;
+OakPointerTypeConstructor OakPointerTypeConstructor :: Instance;
 
 OakPointerTypeConstructor :: OakPointerTypeConstructor ():
 	TypeGroup ()
 {
 	
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakPointerTypeConstructorInstance, 0 );
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakReferenceTypeConstructorInstance, 0 );
+	TypeGroup.AddConstructorCantidate ( & Instance, 0 );
+	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
 	
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakNamespacedTemplatedTypeNameConstructorInstance, 0 );
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakNamespacedTypeNameConstructorInstance, 1 );
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakTemplatedTypeNameConstructorInstance, 1 );
-	TypeGroup.AddConstructorCantidate ( & _OakPointerTypeConstructor_OakBareTypeNameConstructorInstance, 2 );
+	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
+	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
+	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
+	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
 	
 }
 

@@ -5,13 +5,13 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakExpressionConstructor _OakParenthesizedExpressionConstructor_OakExpressionConstructorInstance;
+OakParenthesizedExpressionConstructor OakParenthesizedExpressionConstructor :: Instance;
 
 OakParenthesizedExpressionConstructor :: OakParenthesizedExpressionConstructor ():
 	ExpressionGroup ()
 {
 	
-	ExpressionGroup.AddConstructorCantidate ( & _OakParenthesizedExpressionConstructor_OakExpressionConstructorInstance, 0 );
+	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
 	
 }
 

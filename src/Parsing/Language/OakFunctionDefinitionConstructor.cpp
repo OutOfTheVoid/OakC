@@ -12,10 +12,7 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakTemplateDefinitionConstructor _OakFunctionDefinitionConstructor_OakTemplateDefinitionConstructorInstance;
-OakFunctionParameterListConstructor _OakFunctionDefinitionConstructor_OakFunctionParameterListConstructorInstance;
-OakReturnTypeConstructor _OakFunctionDefinitionConstructor_OakReturnTypeConstructorInstance;
-OakStatementBlockConstructor _OakFunctionDefinitionConstructor_OakStatementBlockConstructorInstance;
+OakFunctionDefinitionConstructor OakFunctionDefinitionConstructor :: Instance;
 
 OakFunctionDefinitionConstructor :: OakFunctionDefinitionConstructor ():
 	TemplateConstructionGroup (),
@@ -24,10 +21,10 @@ OakFunctionDefinitionConstructor :: OakFunctionDefinitionConstructor ():
 	BodyConstructionGroup ()
 {
 	
-	TemplateConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakTemplateDefinitionConstructorInstance, 0 );
-	ParameterListConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakFunctionParameterListConstructorInstance, 0 );
-	ReturnTypeConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakReturnTypeConstructorInstance, 0 );
-	BodyConstructionGroup.AddConstructorCantidate ( & _OakFunctionDefinitionConstructor_OakStatementBlockConstructorInstance, 0 );
+	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
+	ParameterListConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterListConstructor :: Instance, 0 );
+	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
+	BodyConstructionGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
 	
 }
 

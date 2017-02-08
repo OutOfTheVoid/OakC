@@ -9,6 +9,8 @@
 
 #include <vector>
 
+OakNamespacedTraitNameConstructor OakNamespacedTraitNameConstructor :: Instance;
+
 OakNamespacedTraitNameConstructor :: OakNamespacedTraitNameConstructor ()
 {
 }

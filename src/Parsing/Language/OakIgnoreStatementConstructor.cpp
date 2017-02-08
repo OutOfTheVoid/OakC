@@ -7,6 +7,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+OakIgnoreStatementConstructor OakIgnoreStatementConstructor :: Instance;
+
 OakIgnoreStatementConstructor :: OakIgnoreStatementConstructor ()
 {
 }

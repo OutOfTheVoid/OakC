@@ -13,17 +13,15 @@
 
 #include <Parsing/Language/OakStructDefinitionConstructor.h>
 
-OakNamespaceDefinitionConstructor _OakNamespaceDefinitionConstructor_OakNamespaceDefinitionConstructorInstance;
-OakStructDefinitionConstructor _OakNamespaceDefinitionConstructor_OakStructDefinitionConstructorInstance;
-OakTraitDefinitionConstructor _OakNamespaceDefinitionConstructor_OakTraitDefinitionConstructorInstance;
+OakNamespaceDefinitionConstructor OakNamespaceDefinitionConstructor :: Instance;
 
 OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
 	NamespaceChildrenGroup ()
 {
 	
-	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakNamespaceDefinitionConstructorInstance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakStructDefinitionConstructorInstance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & _OakNamespaceDefinitionConstructor_OakTraitDefinitionConstructorInstance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & Instance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakStructDefinitionConstructor :: Instance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakTraitDefinitionConstructor :: Instance, 0 );
 	
 }
 

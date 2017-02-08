@@ -7,7 +7,7 @@ function TestSyntax ( SomeParam: u32 ) : u32
 	"Hello world"u16;
 	
 	{
-		return 6u32;
+		return SomeParam;
 	}
 	
 }

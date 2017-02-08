@@ -13,6 +13,8 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
+	static OakReturnStatementConstructor Instance;
+	
 private:
 	
 	ASTConstructionGroup ExpressionGroup;

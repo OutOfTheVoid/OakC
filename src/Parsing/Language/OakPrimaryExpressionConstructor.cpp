@@ -5,16 +5,17 @@
 
 #include <Parsing/Language/OakLiteralExpressionConstructor.h>
 #include <Parsing/Language/OakParenthesizedExpressionConstructor.h>
+#include <Parsing/Language/OakBindingAllusionConstructor.h>
 
-OakLiteralExpressionConstructor _OakPrimaryExpressionConstructor_OakLiteralExpressionConstructorInstance;
-OakParenthesizedExpressionConstructor _OakPrimaryExpressionConstructor_OakParenthesizedExpressionConstructorInstance;
+OakPrimaryExpressionConstructor OakPrimaryExpressionConstructor :: Instance;
 
 OakPrimaryExpressionConstructor :: OakPrimaryExpressionConstructor ():
 	PrimaryGroup ()
 {
 	
-	PrimaryGroup.AddConstructorCantidate ( & _OakPrimaryExpressionConstructor_OakParenthesizedExpressionConstructorInstance, 0 );
-	PrimaryGroup.AddConstructorCantidate ( & _OakPrimaryExpressionConstructor_OakLiteralExpressionConstructorInstance, 1 );
+	PrimaryGroup.AddConstructorCantidate ( & OakParenthesizedExpressionConstructor :: Instance, 0 );
+	PrimaryGroup.AddConstructorCantidate ( & OakLiteralExpressionConstructor :: Instance, 1 );
+	PrimaryGroup.AddConstructorCantidate ( & OakBindingAllusionConstructor :: Instance, 2 );
 	
 }
 
