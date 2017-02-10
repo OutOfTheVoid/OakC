@@ -95,8 +95,9 @@ namespace OakTokenTags
 	const uint64_t kTokenTag_Carrot = 68;
 	const uint64_t kTokenTag_Percent_Equals = 69;
 	const uint64_t kTokenTag_Carrot_Equals = 70;
+	const uint64_t kTokenTag_Minus_TriangleBracket_Close = 71;
 	
-	const uint64_t kTokenTag_Identifier = 71;
+	const uint64_t kTokenTag_Identifier = 72;
 	
 	//const uint64_t kTokenTag_ = ;
 	
@@ -174,6 +175,7 @@ namespace OakTokenTags
 		"CARROT",
 		"PERCENT_EQUALS",
 		"CARROT_EQUALS",
+		"MINUS_TRI_BRACKET_CLOSE",
 		"IDENT",
 		
 	};

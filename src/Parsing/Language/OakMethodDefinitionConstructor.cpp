@@ -3,7 +3,6 @@
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
-#include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakMethodParameterListConstructor.h>
 #include <Parsing/Language/OakReturnTypeConstructor.h>
 #include <Parsing/Language/OakStatementBlockConstructor.h>
@@ -17,13 +16,11 @@
 OakMethodDefinitionConstructor OakMethodDefinitionConstructor :: Instance;
 
 OakMethodDefinitionConstructor :: OakMethodDefinitionConstructor ():
-	TemplateConstructionGroup (),
 	ParameterListConstructionGroup (),
 	ReturnTypeConstructionGroup (),
 	BodyConstructionGroup ()
 {
 	
-	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
 	ParameterListConstructionGroup.AddConstructorCantidate ( & OakMethodParameterListConstructor :: Instance, 0 );
 	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
 	BodyConstructionGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
@@ -74,7 +71,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	ElementData * MethodData = new ElementData ();
 	
 	MethodData -> Name = CurrentToken -> GetSource ();
-	MethodData -> Templated = false;
 	MethodData -> ReturnTyped = false;
 	
 	ASTElement * MethodElement = new ASTElement ();
@@ -87,56 +83,6 @@ void OakMethodDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
 	uint64_t TokenCount = Input.AvailableTokenCount - 2;
-	
-	if ( TemplateConstructionGroup.TryConstruction ( MethodElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ 2 ], TokenCount ) != 0 )
-	{
-		
-		MethodData -> Templated = true;
-		
-		ASTElement * TemplateElement = MethodElement -> GetSubElement ( MethodElement -> GetSubElementCount () - 1 );
-		
-		if ( reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> DoubleTemplateClose )
-		{
-			
-			Output.Accepted = false;
-			Output.Error = true;
-			Output.ErrorSuggestion = "Unexpected closing triangle bracket after end of template definition";
-			Output.ErrorProvokingToken = TemplateElement -> GetToken ( TemplateElement -> GetTokenSectionCount () - 1, TemplateElement -> GetTokenCount ( TemplateElement -> GetTokenSectionCount () - 1 ) - 1 );
-			
-			delete MethodElement;
-			
-			return;
-			
-		}
-		
-		if ( TokenCount < 2 )
-		{
-			
-			delete MethodElement;
-			
-			Output.Accepted = false;
-			Output.Error = true;
-			Output.ErrorSuggestion = "Expected body for method definition";
-			Output.ErrorProvokingToken = NULL;
-			
-			return;
-			
-		}
-		
-	}
-	else if ( Error )
-	{
-		
-		delete MethodElement;
-		
-		Output.Accepted = false;
-		Output.Error = true;
-		Output.ErrorSuggestion = ErrorString;
-		Output.ErrorProvokingToken = ErrorToken;
-		
-		return;
-		
-	}
 	
 	if ( ParameterListConstructionGroup.TryConstruction ( MethodElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{

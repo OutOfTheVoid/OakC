@@ -46,7 +46,7 @@ struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <A>>
 implement MyType
 {
 	
-	function Test <A, B: SomeTrait <A>> ( & self, StringValue: & string ): u32
+	function Test ( & self, StringValue: & string ): u32
 	{
 		
 		/*self -> TestString = StringValue;

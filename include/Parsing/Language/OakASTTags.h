@@ -115,6 +115,11 @@ namespace OakASTTags
 	const uint64_t kASTTag_Operator_CompoundBitwiseOr = 78;
 	const uint64_t kASTTag_Operator_CompoundBitwiseXor = 79;
 	
+	const uint64_t kASTTag_Operator_DirectMemberAccess = 80;
+	const uint64_t kASTTag_Operator_IndirectMemberAccess = 80;
+	const uint64_t kASTTag_Operator_ArrayAccess = 80;
+	const uint64_t kASTTag_Operator_FunctionCall = 80;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -198,6 +203,7 @@ namespace OakASTTags
 		"OPERATOR_COMPOUND_BITWISE_AND",
 		"OPERATOR_COMPOUND_BITWISE_OR",
 		"OPERATOR_COMPOUND_BITWISE_XOR",
+		"MEMBER_ACCESS",
 		
 	};
 	
