@@ -2,14 +2,6 @@
 function TestSyntax ( SomeParam: u32 ) : u32
 {
 	
-	ignore SomeParam;
-	
-	"Hello world"u16;
-	
-	{
-		return SomeNamespace::SomeBinding;
-		return SomeParam;
-		return 7;
-	}
+	return ~ SomeParam [ 2 * 3 ] + 1 * 3;
 	
 }

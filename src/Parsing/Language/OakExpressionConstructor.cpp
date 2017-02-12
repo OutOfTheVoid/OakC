@@ -1,6 +1,7 @@
 #include <Parsing/Language/OakExpressionConstructor.h>
 
 #include <Parsing/Language/OakPrimaryExpressionConstructor.h>
+#include <Parsing/Language/OakOperatorExpressionConstructor.h>
 
 #include <Parsing/Language/OakASTTags.h>
 
@@ -10,7 +11,8 @@ OakExpressionConstructor :: OakExpressionConstructor ():
 	SubExpressionGroup ()
 {
 	
-	SubExpressionGroup.AddConstructorCantidate ( & OakPrimaryExpressionConstructor :: Instance, 0 );
+	SubExpressionGroup.AddConstructorCantidate ( & OakOperatorExpressionConstructor :: Instance, 0 );
+	SubExpressionGroup.AddConstructorCantidate ( & OakPrimaryExpressionConstructor :: Instance, 1 );
 	
 }
 

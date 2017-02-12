@@ -43,6 +43,66 @@ void ASTConstructionGroup :: AddConstructorCantidate ( const IASTConstructor * C
 	
 }
 
+ASTElement * ASTConstructionGroup :: TryConstructSingleNoParent ( uint64_t DummyParentTag, bool & Error, std :: string & ErrorSuggestion, const Token * & ErrorProvokingToken, const Token ** TokenList, uint64_t & AvailableTokens ) const
+{
+	
+	if ( Constructors.size () == 0 )
+	{
+		
+		Error = false;
+		
+		return 0;
+		
+	}
+	
+	ASTElement Dummy;
+	
+	Dummy.SetTag ( DummyParentTag );
+	
+	for ( uint64_t I = 0; I < Constructors.size (); I ++ )
+	{
+		
+		IASTConstructor :: ASTConstructionInput Input;
+		IASTConstructor :: ASTConstructionOutput Output;
+		
+		Input.Tokens = TokenList;
+		Input.AvailableTokenCount = AvailableTokens;
+		Input.ParentElement = & Dummy;
+		
+		Output.Accepted = false;
+		Output.Error = false;
+		Output.ErrorSuggestion = "";
+		Output.TokensConsumed = 0;
+		Output.ConstructedElement = NULL;
+		Output.ErrorProvokingToken = NULL;
+		
+		Constructors [ I ].Cantidate -> TryConstruct ( Input, Output );
+		
+		if ( Output.Accepted )
+		{
+			
+			AvailableTokens -= Output.TokensConsumed;
+			
+			return Output.ConstructedElement;
+			
+		}
+		else if ( Output.Error )
+		{
+			
+			Error = true;
+			ErrorSuggestion = Output.ErrorSuggestion;
+			ErrorProvokingToken = Output.ErrorProvokingToken;
+			
+			return NULL;
+			
+		}
+		
+	}
+	
+	return NULL;
+	
+}
+
 uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uint64_t SubElementLimit, bool & Error, std :: string & ErrorSuggestion, const Token * & ErrorProvokingToken, const Token ** TokenList, uint64_t & AvailableTokens ) const
 {
 	

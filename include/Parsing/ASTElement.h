@@ -17,6 +17,9 @@ public:
 	void AddTokenSection ( const Token ** Tokens, uint64_t TokenCount );
 	
 	void ReplaceSubElement ( uint64_t Index, ASTElement * Element );
+	void ReplaceSubElements ( uint64_t Index, uint64_t Count, ASTElement * Element );
+	
+	void RemoveSubElement ( uint64_t Index );
 	
 	void SetData ( void * Data, void ( * DataDestructor ) ( void * Data ) );
 	const void * GetData () const;

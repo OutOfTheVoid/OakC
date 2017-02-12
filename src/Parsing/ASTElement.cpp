@@ -35,6 +35,15 @@ void ASTElement :: AddSubElement ( ASTElement * Element )
 	
 }
 
+void ASTElement :: RemoveSubElement ( uint64_t Index )
+{
+	
+	if ( Index >= SubElements.size () );
+	
+	SubElements.erase ( SubElements.begin () + Index );
+	
+}
+
 void ASTElement :: AddTokenSection ( const Token ** Tokens, uint64_t TokenCount )
 {
 	
@@ -108,6 +117,27 @@ void ASTElement :: ReplaceSubElement ( uint64_t Index, ASTElement * Element )
 	
 	if ( Index >= SubElements.size () )
 		return;
+	
+	ASTElement * Old = SubElements [ Index ];
+	SubElements [ Index ] = Element;
+	
+	delete Old;
+	
+}
+
+void ASTElement :: ReplaceSubElements ( uint64_t Index, uint64_t Count, ASTElement * Element )
+{
+	
+	Count --;
+	
+	if ( Index + Count - 1 >= SubElements.size () )
+		return;
+	
+	for ( uint64_t I = Index + 1; I < Index + 1 + Count; I ++ )
+		delete SubElements [ I ];
+	
+	if ( Count != 0 )
+		SubElements.erase ( SubElements.begin () + Index + 1, SubElements.begin () + Index + 1 + Count );
 	
 	ASTElement * Old = SubElements [ Index ];
 	SubElements [ Index ] = Element;

@@ -84,41 +84,45 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_Operator_LeftShift = 55;
 	const uint64_t kASTTag_Operator_RightShift = 56;
+	const uint64_t kASTTag_Operator_LogicalRightShift = 57;
 	
-	const uint64_t kASTTag_Operator_GreaterThan = 57;
-	const uint64_t kASTTag_Operator_LessThan = 58;
-	const uint64_t kASTTag_Operator_GreaterThanOrEqual = 59;
-	const uint64_t kASTTag_Operator_LessThanOrEqual = 60;
+	const uint64_t kASTTag_Operator_GreaterThan = 58;
+	const uint64_t kASTTag_Operator_LessThan = 59;
+	const uint64_t kASTTag_Operator_GreaterThanOrEqual = 60;
+	const uint64_t kASTTag_Operator_LessThanOrEqual = 61;
 	
-	const uint64_t kASTTag_Operator_NotEqual = 61;
-	const uint64_t kASTTag_Operator_Equal = 62;
+	const uint64_t kASTTag_Operator_NotEqual = 62;
+	const uint64_t kASTTag_Operator_Equal = 63;
 	
-	const uint64_t kASTTag_Operator_BitwiseAnd = 63;
-	const uint64_t kASTTag_Operator_BitwiseXor = 64;
-	const uint64_t kASTTag_Operator_BitwiseOr = 65;
+	const uint64_t kASTTag_Operator_BitwiseAnd = 64;
+	const uint64_t kASTTag_Operator_BitwiseXor = 65;
+	const uint64_t kASTTag_Operator_BitwiseOr = 66;
 	
-	const uint64_t kASTTag_Operator_LogicalAnd = 66;
-	const uint64_t kASTTag_Operator_LogicalOr = 67;
+	const uint64_t kASTTag_Operator_LogicalAnd = 67;
+	const uint64_t kASTTag_Operator_LogicalOr = 68;
 	
-	const uint64_t kASTTag_Operator_Ternary = 68;
+	const uint64_t kASTTag_Operator_Ternary = 69;
 	
-	const uint64_t kASTTag_Operator_Assignment = 69;
+	const uint64_t kASTTag_Operator_Assignment = 70;
 	
-	const uint64_t kASTTag_Operator_CompoundMultiply = 70;
-	const uint64_t kASTTag_Operator_CompoundDivide = 71;
-	const uint64_t kASTTag_Operator_CompoundModulo = 72;
-	const uint64_t kASTTag_Operator_CompoundAdd = 73;
-	const uint64_t kASTTag_Operator_CompoundSubtract = 74;
-	const uint64_t kASTTag_Operator_CompoundLeftShift = 75;
-	const uint64_t kASTTag_Operator_CompoundRightShift = 76;
-	const uint64_t kASTTag_Operator_CompoundBitwiseAnd = 77;
-	const uint64_t kASTTag_Operator_CompoundBitwiseOr = 78;
-	const uint64_t kASTTag_Operator_CompoundBitwiseXor = 79;
+	const uint64_t kASTTag_Operator_CompoundMultiply = 71;
+	const uint64_t kASTTag_Operator_CompoundDivide = 72;
+	const uint64_t kASTTag_Operator_CompoundModulo = 73;
+	const uint64_t kASTTag_Operator_CompoundAdd = 74;
+	const uint64_t kASTTag_Operator_CompoundSubtract = 75;
+	const uint64_t kASTTag_Operator_CompoundLeftShift = 76;
+	const uint64_t kASTTag_Operator_CompoundRightShift = 77;
+	const uint64_t kASTTag_Operator_CompoundBitwiseAnd = 78;
+	const uint64_t kASTTag_Operator_CompoundBitwiseOr = 79;
+	const uint64_t kASTTag_Operator_CompoundBitwiseXor = 80;
+	const uint64_t kASTTag_Operator_CompoundLogicalRightShift = 81;
 	
-	const uint64_t kASTTag_Operator_DirectMemberAccess = 80;
-	const uint64_t kASTTag_Operator_IndirectMemberAccess = 80;
-	const uint64_t kASTTag_Operator_ArrayAccess = 80;
-	const uint64_t kASTTag_Operator_FunctionCall = 80;
+	const uint64_t kASTTag_Operator_DirectMemberAccess = 82;
+	const uint64_t kASTTag_Operator_IndirectMemberAccess = 83;
+	const uint64_t kASTTag_Operator_ArrayAccess = 84;
+	const uint64_t kASTTag_Operator_FunctionCall = 85;
+	
+	const uint64_t kASTTag_OperatorExpressionContainer = 86;
 	
 	const char * const TagNames [] =
 	{
@@ -180,6 +184,7 @@ namespace OakASTTags
 		"OPERATOR_SUBTRACT",
 		"OPERATOR_SHIFT_LEFT",
 		"OPERATOR_SHIFT_RIGHT",
+		"OPERATOR_LOGICAL_SHIFT_RIGHT",
 		"OPERATOR_GREATER_THAN",
 		"OPERATOR_LESS_THAN",
 		"OPERATOR_GREATER_THAN_OR_EQUAL",
@@ -203,7 +208,12 @@ namespace OakASTTags
 		"OPERATOR_COMPOUND_BITWISE_AND",
 		"OPERATOR_COMPOUND_BITWISE_OR",
 		"OPERATOR_COMPOUND_BITWISE_XOR",
-		"MEMBER_ACCESS",
+		"OPERATOR_COMPOUND_LOGICAL_SHIFT_RIGHT",
+		"DIRECT_MEMBER_ACCESS",
+		"INDIRECT_MEMBER_ACCESS",
+		"ARRAY_ACCESS",
+		"FUNCTION_CALL",
+		"OPERATOR_EXPRESSION_CONTAINER",
 		
 	};
 	

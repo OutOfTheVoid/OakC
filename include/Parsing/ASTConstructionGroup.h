@@ -16,6 +16,7 @@ public:
 	void AddConstructorCantidate ( const IASTConstructor * Cantidate, uint32_t Priority );
 	
 	uint64_t TryConstruction ( ASTElement * RootElement, uint64_t SubElementLimit, bool & Error, std :: string & ErrorSuggestion, const Token * & ErrorProvokingToken, const Token ** TokenList, uint64_t & AvailableTokens ) const;
+	ASTElement *  TryConstructSingleNoParent ( uint64_t DummyParentTag, bool & Error, std :: string & ErrorSuggestion, const Token * & ErrorProvokingToken, const Token ** TokenList, uint64_t & AvailableTokens ) const;
 	
 private:
 	

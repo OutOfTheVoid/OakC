@@ -18,7 +18,7 @@ public:
 private:
 	
 	ASTConstructionGroup PrimaryGroup;
-	ASTConstructionGroup MajorGroup;
+	ASTConstructionGroup ExpressionGroup;
 	
 };
 
