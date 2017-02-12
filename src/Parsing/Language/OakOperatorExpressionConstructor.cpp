@@ -433,7 +433,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 		uint32_t LowestPrecedence = 0xFFFFFFFF;
 		uint64_t LowestPrecedenceIndex = 0;
-		const _OperatorEntry_t * LowestPrecedenceOperator;
+		const _OperatorEntry_t * LowestPrecedenceOperator = NULL;
 		
 		int32_t I;
 		
@@ -475,10 +475,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 		}
 		
-		if ( I == ExpressionElements.size () )
+		if ( LowestPrecedenceOperator == NULL )
 		{
 			
 			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = "Expected operator between primaries in expression";
+			Output.ErrorProvokingToken = Input.Tokens [ 0 ];
 			
 			CleanupExpressionElements ( ExpressionElements );
 			

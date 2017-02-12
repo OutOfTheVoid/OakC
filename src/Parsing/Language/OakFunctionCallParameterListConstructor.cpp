@@ -22,10 +22,30 @@ OakFunctionCallParameterListConstructor :: ~OakFunctionCallParameterListConstruc
 void OakFunctionCallParameterListConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
+	if ( Input.AvailableTokenCount < 2 )
+	{
+		
+		Output.Accepted = false;
+		
+		return;
+		
+	}
+	
+	const Token * CurrentToken = Input.Tokens [ 0 ];
+	
+	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Parenthesis_Open )
+	{
+		
+		Output.Accepted = false;
+		
+		return;
+		
+	}
+	
 	bool Error = false;
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
-	uint64_t TokenCount = Input.AvailableTokenCount;
+	uint64_t TokenCount = Input.AvailableTokenCount - 1;
 	
 	ASTElement * ParameterListElement = new ASTElement ();
 	ParameterListElement -> SetTag ( OakASTTags :: kASTTag_FunctionCall_ParameterList );
@@ -115,6 +135,38 @@ void OakFunctionCallParameterListConstructor :: TryConstruct ( ASTConstructionIn
 		}
 		
 	}
+	
+	if ( TokenCount == 0 )
+	{
+		
+		delete ParameterListElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Exected closing parenthesis at end of function call parameters";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
+		
+		return;
+		
+	}
+	
+	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+	
+	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Parenthesis_Close )
+	{
+		
+		delete ParameterListElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Exected closing parenthesis at end of function call parameters";
+		Output.ErrorProvokingToken = CurrentToken;
+		
+		return;
+		
+	}
+	
+	TokenCount --;
 	
 	Output.Accepted = true;
 	Output.ConstructedElement = ParameterListElement;

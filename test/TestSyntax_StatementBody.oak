@@ -1,16 +1,7 @@
 
-function TestSyntax ( SomeParam: * u32 ) : u32
+function TestSyntax ()
 {
 	
-	SomeNamespace :: SomeStructPTR -> A ++;
-	
-	return SomeOtherFunction ( * SomeParam, 1 );
-	
-}
-
-function SomeOtherFunction ( A: u32, B: u32 ) : u32
-{
-	
-	return A + B * B;
+	++ A < B < C;
 	
 }

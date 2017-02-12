@@ -151,7 +151,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 	{
 		
 		if ( ErrorToken != NULL )
-			LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Columb " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
+			LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
 		else
 			LOG_FATALERROR_NOFILE ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : std :: string ( "unkown error" ) );
 		
@@ -165,7 +165,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 		
 		ErrorToken = PostLexTokens [ PostLexTokens.size () - AvailableTokens ];
 		
-		LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Columb " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
+		LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
 		
 	}
 	else

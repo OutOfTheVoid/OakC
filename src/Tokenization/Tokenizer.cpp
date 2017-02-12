@@ -43,6 +43,8 @@ bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vecto
 	uint64_t Line = 0;
 	uint64_t Char = 0;
 	
+	uint64_t LastLineOffset = 0;
+	
 	while ( Offset < Source.size () )
 	{
 		
@@ -73,7 +75,6 @@ bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vecto
 					TokenList.push_back ( new Token ( Source.substr ( Offset, SplitResult.SplitLength ), Char + 1, Line + 1, SplitResult.Tag, SplitResult.AuxTag ) );
 					
 					uint64_t NewOffset = Offset + SplitResult.SplitLength;
-					uint64_t LastLineOffset = Offset;
 					
 					if ( NewOffset >= Source.size () )
 					{
@@ -92,7 +93,7 @@ bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vecto
 						{
 							
 							Line ++;
-							LastLineOffset = Offset;
+							LastLineOffset = Offset + 1;
 							
 						}
 						
