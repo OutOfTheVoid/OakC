@@ -21,6 +21,7 @@ public:
 		std :: u32string Name;
 		
 		bool DoubleTemplateClose;
+		bool TripleTemplateClose;
 		
 	} ElementData;
 	

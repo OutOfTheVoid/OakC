@@ -157,6 +157,9 @@ void OakNamespacedTemplatedTypeNameConstructor :: TryConstruct ( ASTConstruction
 	if ( TemplateSpecData -> DoubleTemplateClose )
 		TypeNameData -> DoubleTemplateClose = true;
 	
+	if ( TemplateSpecData -> TripleTemplateClose )
+		TypeNameData -> TripleTemplateClose = true;
+	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
 	Output.ConstructedElement = TypeNameElement;

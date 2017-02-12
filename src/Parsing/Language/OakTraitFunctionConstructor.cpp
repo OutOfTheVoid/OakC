@@ -92,7 +92,7 @@ void OakTraitFunctionConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 		ASTElement * TemplateElement = TraitFunctionElement -> GetSubElement ( TraitFunctionElement -> GetSubElementCount () - 1 );
 		
-		if ( reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> DoubleTemplateClose )
+		if ( reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> DoubleTemplateClose || reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> TripleTemplateClose )
 		{
 			
 			Output.Accepted = false;

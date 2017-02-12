@@ -89,7 +89,7 @@ void OakStructDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 		ASTElement * TemplateElement = StructElement -> GetSubElement ( StructElement -> GetSubElementCount () - 1 );
 		
-		if ( reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> DoubleTemplateClose )
+		if ( reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> DoubleTemplateClose || reinterpret_cast <OakTemplateDefinitionConstructor :: ElementData *> ( TemplateElement -> GetData () ) -> TripleTemplateClose )
 		{
 			
 			Output.Accepted = false;

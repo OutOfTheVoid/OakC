@@ -109,6 +109,9 @@ void OakNamespacedTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructio
 	
 	TraitNameData -> DirectGlobalReference = true;
 	
+	TraitNameData -> DoubleTemplateClose = false;
+	TraitNameData -> TripleTemplateClose = false;
+	
 	TraitNameData -> Name = LastIdent;
 	
 	TraitNameData -> IdentList = new std :: u32string [ NamespaceChain.size () ];
@@ -156,6 +159,9 @@ void OakNamespacedTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructio
 	
 	if ( TemplateSpecData -> DoubleTemplateClose )
 		TraitNameData -> DoubleTemplateClose = true;
+	
+	if ( TemplateSpecData -> TripleTemplateClose )
+		TraitNameData -> TripleTemplateClose = true;
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;

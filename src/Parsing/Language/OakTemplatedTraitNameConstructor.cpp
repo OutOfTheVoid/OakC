@@ -48,6 +48,7 @@ void OakTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	TypeNameData -> Name = CurrentToken -> GetSource ();
 	TypeNameData -> DoubleTemplateClose = false;
+	TypeNameData -> TripleTemplateClose = false;
 	
 	ASTElement * TypeNameElement = new ASTElement ();
 	TypeNameElement -> SetTag ( OakASTTags :: kASTTag_TraitName_Templated );
@@ -88,6 +89,9 @@ void OakTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructionInput & I
 	
 	if ( TemplateSpecData -> DoubleTemplateClose )
 		TypeNameData -> DoubleTemplateClose = true;
+	
+	if ( TemplateSpecData -> TripleTemplateClose )
+		TypeNameData -> TripleTemplateClose = true;
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;

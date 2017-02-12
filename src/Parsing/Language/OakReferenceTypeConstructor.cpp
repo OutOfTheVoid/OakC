@@ -102,16 +102,40 @@ void OakReferenceTypeConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	uint64_t SubTypeTag = SubTypeElement -> GetTag ();
 	
 	if ( SubTypeTag == OakASTTags :: kASTTag_ReferenceType )
+	{
+		
 		ReferenceTypeData -> Templated = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> Templated;
+		ReferenceTypeData -> DoubleTemplateClose = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> DoubleTemplateClose;
+		ReferenceTypeData -> TripleTemplateClose = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> TripleTemplateClose;
+		
+	}
 	
 	if ( SubTypeTag == OakASTTags :: kASTTag_PointerType )
+	{
+		
 		ReferenceTypeData -> Templated = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> Templated;
+		ReferenceTypeData -> DoubleTemplateClose = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> DoubleTemplateClose;
+		ReferenceTypeData -> TripleTemplateClose = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> TripleTemplateClose;
+		
+	}
 	
 	if ( SubTypeTag == OakASTTags :: kASTTag_TypeName_Templated )
+	{
+		
 		ReferenceTypeData -> Templated = true;
+		ReferenceTypeData -> DoubleTemplateClose = reinterpret_cast <OakTemplatedTypeNameConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> DoubleTemplateClose;
+		ReferenceTypeData -> TripleTemplateClose = reinterpret_cast <OakTemplatedTypeNameConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> TripleTemplateClose;
+		
+	}
 	
 	if ( SubTypeTag == OakASTTags :: kASTTag_TypeName_NamespacedTemplated )
+	{
+		
 		ReferenceTypeData -> Templated = true;
+		ReferenceTypeData -> DoubleTemplateClose = reinterpret_cast <OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> DoubleTemplateClose;
+		ReferenceTypeData -> TripleTemplateClose = reinterpret_cast <OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> TripleTemplateClose;
+		
+	}
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;

@@ -4,6 +4,7 @@
 #include <Parsing/ASTElement.h>
 
 #include <Parsing/Language/OakPointerTypeConstructor.h>
+#include <Parsing/Language/OakReferenceTypeConstructor.h>
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
@@ -18,6 +19,7 @@ OakReturnTypeConstructor :: OakReturnTypeConstructor ():
 {
 	
 	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
+	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
 	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
 	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
 	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
@@ -83,6 +85,64 @@ void OakReturnTypeConstructor :: TryConstruct ( ASTConstructionInput & Input, AS
 		Output.Error = true;
 		Output.ErrorSuggestion = ErrorString;
 		Output.ErrorProvokingToken = ErrorToken;
+		
+		return;
+		
+	}
+	
+	bool TemplateError = false;
+	
+	ASTElement * TypeElement = ReturnTypeElement -> GetSubElement ( ReturnTypeElement -> GetSubElementCount () - 1 );
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_PointerType )
+	{
+		
+		OakPointerTypeConstructor :: ElementData * Data = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_ReferenceType )
+	{
+		
+		OakReferenceTypeConstructor :: ElementData * Data = reinterpret_cast <OakReferenceTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_TypeName_Templated )
+	{
+		
+		OakTemplatedTypeNameConstructor :: ElementData * Data = reinterpret_cast <OakTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_TypeName_NamespacedTemplated )
+	{
+		
+		OakNamespacedTemplatedTypeNameConstructor :: ElementData * Data = reinterpret_cast <OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TemplateError )
+	{
+		
+		delete ReturnTypeElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Unexpected closing triangle bracket after return type";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		return;
 		

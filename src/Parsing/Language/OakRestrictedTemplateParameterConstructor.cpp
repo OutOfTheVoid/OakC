@@ -67,6 +67,7 @@ void OakRestrictedTemplateParameterConstructor :: TryConstruct ( ASTConstruction
 	
 	ParameterData -> Name = Input.Tokens [ 0 ] -> GetSource ();
 	ParameterData -> DoubleTemplateClose = false;
+	ParameterData -> TripleTemplateClose = false;
 	
 	ASTElement * ParameterElement = new ASTElement ();
 	ParameterElement -> SetTag ( OakASTTags :: kASTTag_RestrictedTemplateParameter );
@@ -88,8 +89,8 @@ void OakRestrictedTemplateParameterConstructor :: TryConstruct ( ASTConstruction
 			
 			OakTemplatedTraitNameConstructor :: ElementData * TemplateData = reinterpret_cast <OakTemplatedTraitNameConstructor :: ElementData *> ( RestrictionElement -> GetData () );
 			
-			if ( TemplateData -> DoubleTemplateClose )
-				ParameterData -> DoubleTemplateClose = true;
+			ParameterData -> DoubleTemplateClose = TemplateData -> DoubleTemplateClose;
+			ParameterData -> TripleTemplateClose = TemplateData -> TripleTemplateClose;
 			
 		}
 		else if ( RestrictionElement -> GetTag () == OakASTTags :: kASTTag_TraitName_NamespacedTemplated )
@@ -97,8 +98,8 @@ void OakRestrictedTemplateParameterConstructor :: TryConstruct ( ASTConstruction
 			
 			OakNamespacedTemplatedTraitNameConstructor :: ElementData * TemplateData = reinterpret_cast <OakNamespacedTemplatedTraitNameConstructor :: ElementData *> ( RestrictionElement -> GetData () );
 			
-			if ( TemplateData -> DoubleTemplateClose )
-				ParameterData -> DoubleTemplateClose = true;
+			ParameterData -> DoubleTemplateClose = TemplateData -> DoubleTemplateClose;
+			ParameterData -> TripleTemplateClose = TemplateData -> TripleTemplateClose;
 			
 		}
 		

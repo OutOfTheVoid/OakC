@@ -1,3 +1,4 @@
+// WHOOOOO! THIS CAN ALL BE PARSED NOW!
 
 import "Other.oak";
 
@@ -32,12 +33,13 @@ function MyGlobalFunc ( SomeParam : i32 ) : void
 	
 }
 
-struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <A>>
+struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <Array <A>>>
 {
 	
-	/*bind TestString: string,
+	bind TestString: string,
 	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType <A>,
-	bind TestTempalted: Array<Array<Array<B>>>*/
+	bind TestTempalted: Array<Array<Array<B>>>,
+	bind TestTemplated: Array <Array <Array <A>>>
 	
 }
 
@@ -66,9 +68,9 @@ function Main ( ProgramArguments: Array <string> )
 	
 	ignore ProgramArguments;
 	
-	/*bind MyString: string = "Hello, world!";
+	bind MyString: string = "Hello, world!";
 	bind MyStruct: MyType = MyType ( MyString.copy () );
 	
-	MyType.SayHello ();*/
+	MyType.SayHello ();
 	
 }

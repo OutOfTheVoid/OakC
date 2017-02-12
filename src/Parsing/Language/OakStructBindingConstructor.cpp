@@ -123,6 +123,66 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
+	// TODO: Make sure types aren't double or triple-templated here.
+	
+	bool TemplateError = false;
+	
+	ASTElement * TypeElement = StructBindingElement -> GetSubElement ( StructBindingElement -> GetSubElementCount () - 1 );
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_PointerType )
+	{
+		
+		OakPointerTypeConstructor :: ElementData * Data = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_ReferenceType )
+	{
+		
+		OakReferenceTypeConstructor :: ElementData * Data = reinterpret_cast <OakReferenceTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_TypeName_Templated )
+	{
+		
+		OakTemplatedTypeNameConstructor :: ElementData * Data = reinterpret_cast <OakTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_TypeName_NamespacedTemplated )
+	{
+		
+		OakNamespacedTemplatedTypeNameConstructor :: ElementData * Data = reinterpret_cast <OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+		
+		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
+			TemplateError = true;
+		
+	}
+	
+	if ( TemplateError )
+	{
+		
+		delete StructBindingElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Unexpected closing triangle bracket after return type";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+		
+		return;
+		
+	}
+	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
 	Output.ConstructedElement = StructBindingElement;

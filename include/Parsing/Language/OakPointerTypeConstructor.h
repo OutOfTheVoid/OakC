@@ -12,6 +12,8 @@ public:
 	{
 		
 		bool Templated;
+		bool DoubleTemplateClose;
+		bool TripleTemplateClose;
 		
 	} ElementData;
 	

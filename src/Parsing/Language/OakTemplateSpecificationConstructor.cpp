@@ -4,6 +4,8 @@
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
+#include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
+#include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
@@ -13,6 +15,8 @@ OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
 	ParameterGroup ()
 {
 	
+	ParameterGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
+	ParameterGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
 	ParameterGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
 	ParameterGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
 	
@@ -82,6 +86,49 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 				
 			}
 			
+			if ( Data -> TripleTemplateClose )
+			{
+				
+				TemplateData -> DoubleTemplateClose = true;
+				
+				Output.Accepted = true;
+				Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+				Output.ConstructedElement = TemplateSpecificationElement;
+				
+				return;
+				
+			}
+			
+		}
+		if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_TypeName_NamespacedTemplated )
+		{
+			
+			OakNamespacedTemplatedTypeNameConstructor :: ElementData * Data = reinterpret_cast <OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( ParameterElement -> GetData () );
+			
+			if ( Data -> DoubleTemplateClose )
+			{
+				
+				Output.Accepted = true;
+				Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+				Output.ConstructedElement = TemplateSpecificationElement;
+				
+				return;
+				
+			}
+			
+			if ( Data -> TripleTemplateClose )
+			{
+				
+				TemplateData -> DoubleTemplateClose = true;
+				
+				Output.Accepted = true;
+				Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+				Output.ConstructedElement = TemplateSpecificationElement;
+				
+				return;
+				
+			}
+			
 		}
 		
 		if ( TokenCount == 0 )
@@ -118,6 +165,22 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 		{
 			
 			TemplateData -> DoubleTemplateClose  = true;
+			
+			TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+			
+			TokenCount --;
+			
+			Output.Accepted = true;
+			Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+			Output.ConstructedElement = TemplateSpecificationElement;
+			
+			return;
+			
+		}
+		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TripleTriangleBracket_Close )
+		{
+			
+			TemplateData -> TripleTemplateClose  = true;
 			
 			TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 			
@@ -184,6 +247,22 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 	{
 		
 		TemplateData -> DoubleTemplateClose  = true;
+		
+		TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+		
+		TokenCount --;
+		
+		Output.Accepted = true;
+		Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+		Output.ConstructedElement = TemplateSpecificationElement;
+		
+		return;
+		
+	}
+	else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TripleTriangleBracket_Close )
+	{
+		
+		TemplateData -> TripleTemplateClose  = true;
 		
 		TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 		

@@ -50,6 +50,7 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	ElementData * TemplateData = new ElementData ();
 	
 	TemplateData -> DoubleTemplateClose = false;
+	TemplateData -> TripleTemplateClose = false;
 	
 	ASTElement * TemplateDefinitionElement = new ASTElement ();
 	TemplateDefinitionElement -> SetTag ( OakASTTags :: kASTTag_TemplateDefinition );
@@ -70,6 +71,19 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 		{
 			
 			OakRestrictedTemplateParameterConstructor :: ElementData * Data = reinterpret_cast <OakRestrictedTemplateParameterConstructor :: ElementData *> ( ParameterElement -> GetData () );
+			
+			if ( Data -> TripleTemplateClose )
+			{
+				
+				TemplateData -> DoubleTemplateClose = true;
+				
+				Output.Accepted = true;
+				Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+				Output.ConstructedElement = TemplateDefinitionElement;
+				
+				return;
+				
+			}
 			
 			if ( Data -> DoubleTemplateClose )
 			{
@@ -114,10 +128,26 @@ void OakTemplateDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 			return;
 			
 		}
-		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TriangleBracket_Close )
+		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_DoubleTriangleBracket_Close )
 		{
 			
 			TemplateData -> DoubleTemplateClose  = true;
+			
+			TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+			
+			TokenCount --;
+			
+			Output.Accepted = true;
+			Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+			Output.ConstructedElement = TemplateDefinitionElement;
+			
+			return;
+			
+		}
+		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TripleTriangleBracket_Close )
+		{
+			
+			TemplateData -> TripleTemplateClose  = true;
 			
 			TemplateDefinitionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 			
