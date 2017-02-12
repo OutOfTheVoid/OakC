@@ -6,6 +6,7 @@
 #include <Parsing/Language/OakLiteralExpressionConstructor.h>
 #include <Parsing/Language/OakParenthesizedExpressionConstructor.h>
 #include <Parsing/Language/OakBindingAllusionConstructor.h>
+#include <Parsing/Language/OakSelfAllusionConstructor.h>
 
 OakPrimaryExpressionConstructor OakPrimaryExpressionConstructor :: Instance;
 
@@ -15,6 +16,7 @@ OakPrimaryExpressionConstructor :: OakPrimaryExpressionConstructor ():
 	
 	PrimaryGroup.AddConstructorCantidate ( & OakParenthesizedExpressionConstructor :: Instance, 0 );
 	PrimaryGroup.AddConstructorCantidate ( & OakLiteralExpressionConstructor :: Instance, 1 );
+	PrimaryGroup.AddConstructorCantidate ( & OakSelfAllusionConstructor :: Instance, 2 );
 	PrimaryGroup.AddConstructorCantidate ( & OakBindingAllusionConstructor :: Instance, 2 );
 	
 }
