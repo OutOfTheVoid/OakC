@@ -15,6 +15,15 @@ ASTConstructionGroup :: ASTConstructionGroup ():
 {
 }
 
+ASTConstructionGroup :: ASTConstructionGroup ( StaticInitEntry * EntryList, uint32_t EntryCount ):
+	Constructors ()
+{
+	
+	for ( uint32_t I = 0; I < EntryCount; I ++ )
+		AddConstructorCantidate ( EntryList [ I ].Cantidate, EntryList [ I ].Priority );
+	
+}
+
 ASTConstructionGroup :: ~ASTConstructionGroup ()
 {
 }

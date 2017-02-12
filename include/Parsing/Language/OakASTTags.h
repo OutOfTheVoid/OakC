@@ -124,6 +124,8 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_OperatorExpressionContainer = 86;
 	
+	const uint64_t kASTTag_FunctionCall_ParameterList = 87;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -214,6 +216,7 @@ namespace OakASTTags
 		"ARRAY_ACCESS",
 		"FUNCTION_CALL",
 		"OPERATOR_EXPRESSION_CONTAINER",
+		"FUNCTION_CALL_PARAM_LIST",
 		
 	};
 	

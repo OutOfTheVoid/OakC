@@ -10,7 +10,17 @@ class ASTConstructionGroup
 {
 public:
 	
+	typedef struct
+	{
+		
+		const IASTConstructor * Cantidate;
+		uint32_t Priority;
+		
+	} StaticInitEntry;
+	
 	ASTConstructionGroup ();
+	ASTConstructionGroup ( StaticInitEntry * EntryList, uint32_t EntryCount );
+	
 	~ASTConstructionGroup ();
 	
 	void AddConstructorCantidate ( const IASTConstructor * Cantidate, uint32_t Priority );

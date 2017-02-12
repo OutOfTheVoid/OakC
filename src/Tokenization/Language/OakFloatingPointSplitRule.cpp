@@ -31,21 +31,15 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 	char32_t Char = Source.at ( Offset + Length );
 	char32_t Char2 = Source.at ( Offset + Length + 1 );
 	
-	LOG_VERBOSE ( std :: string ( "* CHAR1: " ) + (char) Char + "\n* CHAR2: " + (char) Char2 );
-	
 	Length ++;
 	
 	//[NON_ZERO_DIGIT] | [[0] ([!x])]??
 	if ( CharTestSet :: NonZeroDigits.Contains ( Char ) || ( ( Char == U'0' ) && ( Char2 == U'.' ) ) )
 	{
 		
-		LOG_VERBOSE ( "A" );
-		
 		//[NON_ZERO_DIGIT] [DIGIT]??
 		while ( ( Offset + Length ) < Source.size () )
 		{
-			
-			LOG_VERBOSE ( "B" );
 			
 			Char = Source.at ( Offset + Length );
 			Length ++;
@@ -53,13 +47,9 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 			if ( ! CharTestSet :: DigitsUnderscore.Contains ( Char ) )
 			{
 				
-				LOG_VERBOSE ( "B_" );
-				
 				// [NON_ZERO_DIGIT] [DIGIT]* [PERIOD]
 				if ( Char == U'.' )
 				{
-					
-					LOG_VERBOSE ( "C" );
 					
 					if ( ( Offset + Length ) >= Source.size () )
 					{
@@ -84,8 +74,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 						
 					}
 					
-					LOG_VERBOSE ( "D" );
-					
 					while ( ( Offset + Length ) < Source.size () )
 					{
 						
@@ -96,8 +84,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 						if ( ! CharTestSet :: DigitsUnderscore.Contains ( Char ) )
 						{
 							
-							LOG_VERBOSE ( "E" );
-							
 							// [NON_ZERO_DIGIT] [DIGIT]* [PERIOD] [NON_ZERO_DIGIT] [DIGIT]* [e]??
 							if ( TestExponent ( Source, Offset, Length - 1, Result ) )
 								return;
@@ -105,8 +91,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 							// [NON_ZERO_DIGIT] [DIGIT]* [PERIOD] [NON_ZERO_DIGIT] [DIGIT]* [f]??
 							if ( TestFloatTypeSpecifier ( Source, Offset, Length - 1, Result ) )
 								return;
-							
-							LOG_VERBOSE ( "F" );
 							
 							Result.Tag = OakTokenTags :: kTokenTag_FloatLiteralDefaultSize;
 							Result.SplitLength = Length - 1;
@@ -140,8 +124,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 	else if ( Char == U'.' )
 	{
 		
-		LOG_VERBOSE ( "G" );
-		
 		Char = Source.at ( Offset + Length );
 		Length ++;
 		
@@ -158,15 +140,11 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 		while ( ( Offset + Length ) < Source.size () )
 		{
 			
-			LOG_VERBOSE ( "H" );
-			
 			Char = Source.at ( Offset + Length );
 			Length ++;
 			
 			if ( ! CharTestSet :: DigitsUnderscore.Contains ( Char ) )
 			{
-				
-				LOG_VERBOSE ( "I" );
 				
 				// [.] [DIGIT]+ [e [+|-]? [NON_ZERO_DIGIT] [DIGIT]* [f [32|64]? ]?]??
 				if ( TestExponent ( Source, Offset, Length - 1, Result ) )
@@ -175,8 +153,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 				// [.] [DIGIT]+ [f [32|64]?]??
 				if ( TestFloatTypeSpecifier ( Source, Offset, Length - 1, Result ) )
 					return;
-				
-				LOG_VERBOSE ( "J" );
 				
 				break;
 				
@@ -194,8 +170,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 	else if ( ( Char == U'0' ) && ( Char2 == U'x' ) )
 	{
 		
-		LOG_VERBOSE ( "S" );
-		
 		Result.AuxTag = OakTokenTags :: kTokenAuxTax_FloatLiteral_HexFloat;
 		
 		Length ++;
@@ -212,8 +186,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 		Char = Source.at ( Offset + Length );
 		Length ++;
 		
-		LOG_VERBOSE ( "T" );
-		
 		if ( ! CharTestSet :: HexDigits.Contains ( Char ) )
 		{
 			
@@ -227,8 +199,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 		
 		while ( ( Offset + Length ) < Source.size () )
 		{
-			
-			LOG_VERBOSE ( "U_" );
 			
 			Char = Source.at ( Offset + Length );
 			Length ++;
@@ -254,8 +224,6 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 bool OakFloatingPointSplitRule :: TestExponent ( const std :: u32string & Source, uint64_t Offset, uint64_t Length, TokenSplitResult & Result )
 {
 	
-	LOG_VERBOSE ( "P" );
-	
 	if ( Offset + Length >= Source.size () )
 		return false;
 	
@@ -265,8 +233,6 @@ bool OakFloatingPointSplitRule :: TestExponent ( const std :: u32string & Source
 	// [e]??
 	if ( Char == U'e' )
 	{
-		
-		LOG_VERBOSE ( "Q" );
 		
 		Char = Source.at ( Offset + Length );
 		Length ++;
@@ -281,8 +247,6 @@ bool OakFloatingPointSplitRule :: TestExponent ( const std :: u32string & Source
 				Result.Accepted = false;
 				Result.PossibleError = true;
 				Result.SuggestedError = "Expected exponent value after \"e\" in floating point literal";
-				
-				LOG_VERBOSE ( "R" );
 				
 				return true;
 				
@@ -300,8 +264,6 @@ bool OakFloatingPointSplitRule :: TestExponent ( const std :: u32string & Source
 			Result.Accepted = false;
 			Result.PossibleError = true;
 			Result.SuggestedError = "Expected exponent value after \"e\" in floating point literal";
-			
-			LOG_VERBOSE ( "S" );
 			
 			return true;
 			
@@ -351,13 +313,9 @@ bool OakFloatingPointSplitRule :: TestExponentHex ( const std :: u32string & Sou
 	
 	char32_t Char = Source.at ( Offset + Length );
 	
-	LOG_VERBOSE ( "R" );
-	
 	// [e]??
 	if ( Char == U'p' )
 	{
-		
-		LOG_VERBOSE ( "S" );
 		
 		Length ++;
 		
@@ -441,26 +399,16 @@ bool OakFloatingPointSplitRule :: TestFloatTypeSpecifier ( const std :: u32strin
 	if ( Offset + Length >= Source.size () )
 		return false;
 	
-	LOG_VERBOSE ( "K_" );
-	
-	LOG_VERBOSE ( std :: string ( "CHAR: " ) + (char) Source.at ( Offset + Length ) );
-	
 	// [f]??
 	if ( Source.at ( Offset + Length ) == U'f' )
 	{
 		
-		LOG_VERBOSE ( "K" );
-		
 		if ( Offset + Length + 2 < Source.size () )
 		{
-			
-			LOG_VERBOSE ( "L" );
 			
 			// [f] [32]??
 			if ( ( Source.at ( Offset + Length + 1 ) == U'3' ) && ( Source.at ( Offset + Length + 2 ) == U'2' ) )
 			{
-				
-				LOG_VERBOSE ( "M" );
 				
 				Result.Accepted = true;
 				Result.SplitLength = Length + 3;
@@ -473,8 +421,6 @@ bool OakFloatingPointSplitRule :: TestFloatTypeSpecifier ( const std :: u32strin
 			else if ( ( Source.at ( Offset + Length + 1 ) == U'6' ) && ( Source.at ( Offset + Length + 2 ) == U'4' ) )
 			{
 				
-				LOG_VERBOSE ( "N" );
-				
 				Result.Accepted = true;
 				Result.SplitLength = Length + 3;
 				Result.Tag = OakTokenTags :: kTokenTag_FloatLiteral64;
@@ -484,8 +430,6 @@ bool OakFloatingPointSplitRule :: TestFloatTypeSpecifier ( const std :: u32strin
 			}
 			
 		}
-		
-		LOG_VERBOSE ( "O" );
 		
 		Result.Accepted = true;
 		Result.SplitLength = Length + 1;

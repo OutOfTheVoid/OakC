@@ -62,6 +62,20 @@ void OakReturnStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 		Output.Accepted = false;
 		
+		if ( ConstructionError )
+		{
+			
+			delete ReturnElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
 		return;
 		
 	}
@@ -87,7 +101,7 @@ void OakReturnStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected parenthesis at end of return statement";
+		Output.ErrorSuggestion = "Expected semicolon at end of return statement";
 		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
 		
 		return;
@@ -103,7 +117,7 @@ void OakReturnStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected parenthesis at end of return statement";
+		Output.ErrorSuggestion = "Expected semicolon at end of return statement";
 		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
 		
 		return;
