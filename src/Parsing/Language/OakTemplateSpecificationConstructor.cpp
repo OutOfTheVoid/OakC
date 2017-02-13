@@ -29,7 +29,7 @@ OakTemplateSpecificationConstructor :: ~OakTemplateSpecificationConstructor ()
 void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
-	if ( Input.AvailableTokenCount < 2 )
+	if ( Input.AvailableTokenCount < 3 )
 	{
 		
 		Output.Accepted = false;
@@ -39,6 +39,17 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 	}
 	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
+	
+	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
+	{
+		
+		Output.Accepted = false;
+		
+		return;
+		
+	}
+	
+	CurrentToken = Input.Tokens [ 1 ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_TriangleBracket_Open )
 	{
@@ -55,11 +66,11 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 	
 	ASTElement * TemplateSpecificationElement = new ASTElement ();
 	TemplateSpecificationElement -> SetTag ( OakASTTags :: kASTTag_TemplateSpecification );
-	TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ 0 ], 2 );
 	TemplateSpecificationElement -> SetData ( TemplateData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;
-	uint64_t TokenCount = Input.AvailableTokenCount - 1;
+	uint64_t TokenCount = Input.AvailableTokenCount - 2;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	

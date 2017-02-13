@@ -263,8 +263,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 					
 					LOG_VERBOSE ( "OP BRACK" );
 					
-					TokenCount --;
-					
 					ASTElement * BracketedExpressionElement = NULL;
 					
 					if ( OperatorEntry -> SpecialGroup != NULL )
@@ -294,6 +292,8 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 					else
 					{
 						
+						TokenCount --;
+						
 						BracketedExpressionElement = ExpressionGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_OperatorExpressionContainer, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 						
 						if ( Error )
@@ -310,44 +310,45 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 							
 						}
 						
+						if ( TokenCount == 0 )
+						{
+							
+							CleanupExpressionElements ( ExpressionElements );
+							
+							Output.Accepted = false;
+							Output.Error = true;
+							Output.ErrorSuggestion = "Expected matching closing bracket in operator";
+							Output.ErrorProvokingToken = OldCurrent;
+							
+							return;
+							
+						}
+						
+						CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+						NewElement.OperatorInfo.SourceTokenIndex2 = Input.AvailableTokenCount - TokenCount;
+						
+						TokenCount --;
+						
+						if ( CurrentToken -> GetTag () != OperatorEntry -> OperatorTag2 )
+						{
+							
+							CleanupExpressionElements ( ExpressionElements );
+							
+							Output.Accepted = false;
+							Output.Error = true;
+							Output.ErrorSuggestion = "Expected matching closing bracket in bracket operator";
+							Output.ErrorProvokingToken = OldCurrent;
+							
+							return;
+							
+						}
+						
+						
+						NewElement.OperatorInfo.BracketedExpression = BracketedExpressionElement;
+						
+						LOG_VERBOSE ( "PUSHING ELEMENT" );
+						
 					}
-					
-					NewElement.OperatorInfo.BracketedExpression = BracketedExpressionElement;
-					
-					if ( TokenCount == 0 )
-					{
-						
-						CleanupExpressionElements ( ExpressionElements );
-						
-						Output.Accepted = false;
-						Output.Error = true;
-						Output.ErrorSuggestion = "Expected matching closing bracket in operator";
-						Output.ErrorProvokingToken = OldCurrent;
-						
-						return;
-						
-					}
-					
-					CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
-					NewElement.OperatorInfo.SourceTokenIndex2 = Input.AvailableTokenCount - TokenCount;
-					
-					TokenCount --;
-					
-					if ( CurrentToken -> GetTag () != OperatorEntry -> OperatorTag2 )
-					{
-						
-						CleanupExpressionElements ( ExpressionElements );
-						
-						Output.Accepted = false;
-						Output.Error = true;
-						Output.ErrorSuggestion = "Expected matching closing bracket in bracket operator";
-						Output.ErrorProvokingToken = OldCurrent;
-						
-						return;
-						
-					}
-					
-					LOG_VERBOSE ( "PUSHING ELEMENT" );
 					
 					ExpressionElements.push_back ( NewElement );
 					

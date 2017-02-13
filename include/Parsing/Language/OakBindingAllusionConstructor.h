@@ -11,9 +11,19 @@ public:
 	typedef struct
 	{
 		
+		std :: u32string Name;
+		
+		bool Templated;
+		ASTElement * TemplateSpecificationElement;
+		
+	} AllusionName;
+	
+	typedef struct
+	{
+		
 		bool DirectGlobalReference;
 		
-		std :: u32string * IdentList;
+		AllusionName * IdentList;
 		uint32_t IdentListLength;
 		
 		std :: u32string Name;

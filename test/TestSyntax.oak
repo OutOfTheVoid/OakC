@@ -29,17 +29,17 @@ namespace MyNamespace::MySubNamespace
 function MyGlobalFunc ( SomeParam : i32 ) : void
 {
 	
-	SomeNamespace::SomeTemplatedClass<u32>.Call ();
+	//SomeNamespace::SomeTemplatedClass:<u32>.Call ();
 	
 }
 
-struct MyType <A, B: SomeNamespace::SomeNamespacedTrait <Array <A>>>
+struct MyType <A, B: SomeNamespace::SomeNamespacedTrait:<Array:<A>>>
 {
 	
 	bind TestString: string,
-	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType <A>,
-	bind TestTempalted: Array<Array<Array<B>>>,
-	bind TestTemplated: Array <Array <Array <A>>>
+	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType:<A>,
+	bind TestTempalted: Array:<Array:<Array:<B>>>,
+	bind TestTemplated: Array:<Array:<Array:<A>>>
 	
 }
 
@@ -49,21 +49,21 @@ implement MyType
 	function Test ( & self, StringValue: & string ): u32
 	{
 		
-		self -> TestString = StringValue;
-		self -> TestInt = 0;
+		//self -> TestString = StringValue;
+		//self -> TestInt = 0;
 		
 	}
 	
 	function SayHello ( & self )
 	{
 		
-		Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
+		//Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
 		
 	}
 	
 }
 
-function Main ( ProgramArguments: Array <string> )
+function Main ( ProgramArguments: Array:<string> )
 {
 	
 	ignore ProgramArguments;

@@ -29,6 +29,7 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	uint64_t Offset = 0;
 	
 	std :: vector <std :: u32string> NamespaceChain;
+	std :: vector <ASTElement *> NamespaceChainTemplates;
 	std :: u32string LastIdent;
 	
 	bool DirectGlobalReference = false;
@@ -64,6 +65,16 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 	}
 	
+	bool Error = false;
+	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
+	const Token * ErrorToken = NULL;
+	std :: string ErrorString;
+	
+	//if ( TempalteSpecificationGroup.TryConstruction (  ) )
+	
+	// TODO: Add template specifications
+	NamespaceChainTemplates.push_back ( NULL );
+	
 	LastIdent = CurrentToken -> GetSource ();
 	Offset ++;
 	
@@ -77,6 +88,9 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 		NamespaceChain.push_back ( LastIdent );
 		Offset ++;
+		
+		// TODO: Add template specifications
+		NamespaceChainTemplates.push_back ( NULL );
 		
 		CurrentToken = Input.Tokens [ Offset ];
 		
@@ -108,10 +122,16 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	if ( NamespaceChain.size () != 0 )
 	{
 		
-		AllusionData -> IdentList = new std :: u32string [ NamespaceChain.size () ];
+		AllusionData -> IdentList = new AllusionName [ NamespaceChain.size () ];
 		
 		for ( uint32_t I = 0; I < NamespaceChain.size (); I ++ )
-			AllusionData -> IdentList [ I ] = NamespaceChain [ I ];
+		{
+			
+			AllusionData -> IdentList [ I ].Name = NamespaceChain [ I ];
+			AllusionData -> IdentList [ I ].Templated = NamespaceChainTemplates [ I ] != NULL;
+			AllusionData -> IdentList [ I ].TemplateSpecificationElement = NamespaceChainTemplates [ I ];
+			
+		}
 		
 	}
 	else

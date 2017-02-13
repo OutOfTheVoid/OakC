@@ -2,6 +2,6 @@
 function TestSyntax ()
 {
 	
-	++ A < B < C;
+	SOMEFUNCTION ( 4 );
 	
 }
