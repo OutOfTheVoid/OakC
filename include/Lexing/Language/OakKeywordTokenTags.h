@@ -46,14 +46,15 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Init = 34;
 	const uint64_t kKeywordAuxTags_Drop = 35;
 	const uint64_t kKeywordAuxTags_If = 36;
-	const uint64_t kKeywordAuxTags_While = 37;
-	const uint64_t kKeywordAuxTags_Do = 38;
-	const uint64_t kKeywordAuxTags_For = 39;
-	const uint64_t kKeywordAuxTags_Match = 40;
-	const uint64_t kKeywordAuxTags_Bind = 41;
-	const uint64_t kKeywordAuxTags_Implement = 42;
-	const uint64_t kKeywordAuxTags_Self = 43;
-	const uint64_t kKeywordAuxTags_Inline = 44;
+	const uint64_t kKeywordAuxTags_Else = 37;
+	const uint64_t kKeywordAuxTags_While = 38;
+	const uint64_t kKeywordAuxTags_Do = 39;
+	const uint64_t kKeywordAuxTags_For = 40;
+	const uint64_t kKeywordAuxTags_Match = 41;
+	const uint64_t kKeywordAuxTags_Bind = 42;
+	const uint64_t kKeywordAuxTags_Implement = 43;
+	const uint64_t kKeywordAuxTags_Self = 44;
+	const uint64_t kKeywordAuxTags_Inline = 45;
 	
 	/// A list of the human-readable forms of kewords.
 	const char * const KeywordAuxTagNames [] =
@@ -96,6 +97,7 @@ namespace OakKeywordTokenTags
 		"INIT",
 		"DROP",
 		"IF",
+		"ELSE",
 		"WHILE",
 		"DO",
 		"FOR",

@@ -49,6 +49,7 @@ namespace OakKeywords
 	const std :: string kKeyword_Drop ( u8"drop" );
 	
 	const std :: string kKeyword_If ( u8"if" );
+	const std :: string kKeyword_Else ( u8"else" );
 	const std :: string kKeyword_While ( u8"while" );
 	const std :: string kKeyword_Do ( u8"do" );
 	const std :: string kKeyword_For ( u8"for" );

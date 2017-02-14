@@ -1,0 +1,49 @@
+function HelloWorld ()
+{
+	
+	// PRINT HELLO WORLD
+	
+}
+
+function TestSyntax ()
+{
+	
+	if ( true )
+	{
+		
+		HelloWorld ();
+		
+	}
+	else if ( 1 < 2 )
+	{
+		
+		HelloWorld ();
+		HelloWorld ();
+		
+	}
+	else
+	{
+		
+		HelloWorld ();
+		400;
+		
+	}
+	
+	bind I: u32 = 0;
+	
+	while ( I < 2 )
+	{
+		
+		I ++;
+		
+	}
+	
+	do
+	{
+		
+		I --;
+		
+	}
+	while ( I != 0 );
+	
+}

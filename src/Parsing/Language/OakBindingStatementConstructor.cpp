@@ -55,7 +55,10 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
-	const Token * CurrentToken = Input.Tokens [ 0 ];
+	uint64_t Offset = 0;
+	bool Mutable = false;
+	
+	const Token * CurrentToken = Input.Tokens [ Offset ];
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Bind ) )
 	{
@@ -66,7 +69,20 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
-	CurrentToken = Input.Tokens [ 1 ];
+	Offset ++;
+	
+	CurrentToken = Input.Tokens [ Offset ];
+	
+	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Mut ) )
+	{
+		
+		Offset ++;
+		
+		Mutable = true;
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+	}
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
@@ -77,7 +93,9 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
-	CurrentToken = Input.Tokens [ 2 ];
+	Offset ++;
+	
+	CurrentToken = Input.Tokens [ Offset ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
 	{
@@ -88,15 +106,18 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
+	Offset ++;
+	
 	ElementData * BindingData = new ElementData ();
 	
-	BindingData -> Name = Input.Tokens [ 1 ] -> GetSource ();
+	BindingData -> Name = Input.Tokens [ Mutable ? 2 : 1 ] -> GetSource ();
 	BindingData -> Initialized = false;
+	BindingData -> Mutable = Mutable;
 	
 	ASTElement * BindingElement = new ASTElement ();
 	
 	BindingElement -> SetTag ( OakASTTags :: kASTTag_StructBinding );
-	BindingElement -> AddTokenSection ( & Input.Tokens [ 0 ], 3 );
+	BindingElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	BindingElement -> SetData ( BindingData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;

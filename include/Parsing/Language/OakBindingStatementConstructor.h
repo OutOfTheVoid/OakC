@@ -13,6 +13,7 @@ public:
 		
 		std :: u32string Name;
 		bool Initialized;
+		bool Mutable;
 		
 	} ElementData;
 	

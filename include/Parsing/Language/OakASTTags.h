@@ -128,6 +128,10 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_SelfAllusion = 88;
 	
+	const uint64_t kASTTag_IfElseStatement = 89;
+	const uint64_t kASTTag_WhileStatement = 90;
+	const uint64_t kASTTag_DoWhileStatement = 91;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -219,7 +223,10 @@ namespace OakASTTags
 		"FUNCTION_CALL",
 		"OPERATOR_EXPRESSION_CONTAINER",
 		"FUNCTION_CALL_PARAM_LIST",
-		"SELF_ALLUSION"
+		"SELF_ALLUSION",
+		"IF_ELSE_STATEMENT",
+		"WHILE_STATEMENT",
+		"DO_WHILE_STATEMENT"
 		
 	};
 	

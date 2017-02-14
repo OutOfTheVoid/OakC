@@ -8,6 +8,9 @@
 #include <Parsing/Language/OakExpressionStatementConstructor.h>
 #include <Parsing/Language/OakReturnStatementConstructor.h>
 #include <Parsing/Language/OakBindingStatementConstructor.h>
+#include <Parsing/Language/OakIfElseStatementConstructor.h>
+#include <Parsing/Language/OakWhileStatementConstructor.h>
+#include <Parsing/Language/OakDoWhileStatementConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
@@ -23,6 +26,9 @@ OakStatementBlockConstructor :: OakStatementBlockConstructor ():
 	StatementGroup.AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 0 );
 	StatementGroup.AddConstructorCantidate ( & OakReturnStatementConstructor :: Instance, 0 );
 	StatementGroup.AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakIfElseStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakWhileStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakDoWhileStatementConstructor :: Instance, 0 );
 	StatementGroup.AddConstructorCantidate ( & OakExpressionStatementConstructor :: Instance, 1 );
 	
 	StatementGroup.AddConstructorCantidate ( & Instance, 1 );

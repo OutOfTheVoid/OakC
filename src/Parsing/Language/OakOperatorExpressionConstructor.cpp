@@ -237,8 +237,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 			const Token * OldCurrent = CurrentToken;
 			
-			LOG_VERBOSE ( "OP" );
-			
 			ExpressionElement NewElement;
 			
 			NewElement.Operator = true;
@@ -248,8 +246,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 			if ( ( OperatorEntry -> Associativity == kOperatorAssociativity_Left_Bracket ) || ( OperatorEntry -> Associativity == kOperatorAssociativity_Right_Bracket ) )
 			{
-				
-				LOG_VERBOSE ( "OP BRACK" );
 				
 				bool Discard = false;
 				
@@ -261,14 +257,10 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				if ( ! Discard )
 				{
 					
-					LOG_VERBOSE ( "OP BRACK" );
-					
 					ASTElement * BracketedExpressionElement = NULL;
 					
 					if ( OperatorEntry -> SpecialGroup != NULL )
 					{
-						
-						LOG_VERBOSE ( "SPECIAL" );
 						
 						BracketedExpressionElement = OperatorEntry -> SpecialGroup -> TryConstructSingleNoParent ( OakASTTags :: kASTTag_OperatorExpressionContainer, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 							
@@ -285,8 +277,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 							return;
 							
 						}
-						
-						LOG_VERBOSE ( "SPECIAL SUCCESS" );
 						
 					}
 					else
@@ -367,14 +357,10 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 		}
 		
-		LOG_VERBOSE ( "PRIM_TEST" );
-		
 		ASTElement * PrimaryElement = PrimaryGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_OperatorExpressionContainer, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 		
 		if ( PrimaryElement != NULL )
 		{
-			
-			LOG_VERBOSE ( "PRIM" );
 			
 			ExpressionElement NewElement;
 			
@@ -423,8 +409,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		return;
 		
 	}
-	
-	LOG_VERBOSE ( "Expression collapsing" );
 	
 	while ( ExpressionElements.size () != 1 )
 	{
@@ -488,8 +472,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		}
 		
 		ExpressionElement & Current = ExpressionElements [ LowestPrecedenceIndex ];
-		
-		LOG_VERBOSE ( std :: string ( "Collapse operator: " ) + OakASTTags :: TagNames [ LowestPrecedenceOperator -> ASTTag ] );
 		
 		switch ( LowestPrecedenceOperator -> Associativity )
 		{
