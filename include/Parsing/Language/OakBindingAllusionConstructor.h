@@ -26,8 +26,6 @@ public:
 		AllusionName * IdentList;
 		uint32_t IdentListLength;
 		
-		std :: u32string Name;
-		
 	} ElementData;
 	
 	OakBindingAllusionConstructor ();
@@ -40,6 +38,8 @@ public:
 private:
 	
 	static void ElementDataDestructor ( void * Data );
+	
+	ASTConstructionGroup TemplateSpecificationGroup;
 	
 };
 

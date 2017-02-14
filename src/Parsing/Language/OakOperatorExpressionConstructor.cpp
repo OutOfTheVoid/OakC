@@ -343,12 +343,9 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 							
 						}
 						
-						
-						NewElement.OperatorInfo.BracketedExpression = BracketedExpressionElement;
-						
-						LOG_VERBOSE ( "PUSHING ELEMENT" );
-						
 					}
+					
+					NewElement.OperatorInfo.BracketedExpression = BracketedExpressionElement;
 					
 					ExpressionElements.push_back ( NewElement );
 					

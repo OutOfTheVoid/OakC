@@ -63,6 +63,7 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 	ElementData * TemplateData = new ElementData ();
 	
 	TemplateData -> DoubleTemplateClose = false;
+	TemplateData -> TripleTemplateClose = false;
 	
 	ASTElement * TemplateSpecificationElement = new ASTElement ();
 	TemplateSpecificationElement -> SetTag ( OakASTTags :: kASTTag_TemplateSpecification );
@@ -80,7 +81,6 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 		ASTElement * ParameterElement = TemplateSpecificationElement -> GetSubElement ( TemplateSpecificationElement -> GetSubElementCount () - 1 );
 		
 		
-		// Any template specification element which may be double-closed
 		if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_TypeName_Templated )
 		{
 			
@@ -175,7 +175,7 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_DoubleTriangleBracket_Close )
 		{
 			
-			TemplateData -> DoubleTemplateClose  = true;
+			TemplateData -> DoubleTemplateClose = true;
 			
 			TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 			
@@ -191,7 +191,7 @@ void OakTemplateSpecificationConstructor :: TryConstruct ( ASTConstructionInput 
 		else if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_TripleTriangleBracket_Close )
 		{
 			
-			TemplateData -> TripleTemplateClose  = true;
+			TemplateData -> TripleTemplateClose = true;
 			
 			TemplateSpecificationElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 			

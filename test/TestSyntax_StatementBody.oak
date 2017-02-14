@@ -2,6 +2,6 @@
 function TestSyntax ()
 {
 	
-	SOMEFUNCTION ( 4 );
+	SomeNS::TypeName : <u32>::StaticMethod ( SomeThing.Method:<u64>( 4 ) );
 	
 }

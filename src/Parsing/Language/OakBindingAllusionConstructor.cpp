@@ -1,4 +1,5 @@
 #include <Parsing/Language/OakBindingAllusionConstructor.h>
+#include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
@@ -15,8 +16,12 @@
 
 OakBindingAllusionConstructor OakBindingAllusionConstructor :: Instance;
 
-OakBindingAllusionConstructor :: OakBindingAllusionConstructor ()
+OakBindingAllusionConstructor :: OakBindingAllusionConstructor ():
+	TemplateSpecificationGroup ()
 {
+	
+	TemplateSpecificationGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
+	
 }
 
 OakBindingAllusionConstructor :: ~OakBindingAllusionConstructor ()
@@ -30,7 +35,6 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	
 	std :: vector <std :: u32string> NamespaceChain;
 	std :: vector <ASTElement *> NamespaceChainTemplates;
-	std :: u32string LastIdent;
 	
 	bool DirectGlobalReference = false;
 	
@@ -65,37 +69,88 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 	}
 	
+	NamespaceChain.push_back ( CurrentToken -> GetSource () );
+	
+	Offset ++;
+	
+	ASTElement * AllusionElement = new ASTElement ();
+	AllusionElement -> SetTag ( OakASTTags :: kASTTag_BindingAllusion );
+	AllusionElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
+	
 	bool Error = false;
 	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	//if ( TempalteSpecificationGroup.TryConstruction (  ) )
+	ASTElement * TemplateElement = TemplateSpecificationGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_BindingAllusion, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 	
-	// TODO: Add template specifications
-	NamespaceChainTemplates.push_back ( NULL );
-	
-	LastIdent = CurrentToken -> GetSource ();
-	Offset ++;
-	
-	while ( ( Offset + 1 ) < Input.AvailableTokenCount )
+	if ( Error )
 	{
 		
-		CurrentToken = Input.Tokens [ Offset ];
+		for ( uint32_t I = 0; I < NamespaceChainTemplates.size (); I ++ )
+			if ( NamespaceChainTemplates [ I ] != NULL )
+				delete NamespaceChainTemplates [ I ];
+		
+		delete AllusionElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = ErrorString;
+		Output.ErrorProvokingToken = ErrorToken;
+		
+		return;
+		
+	}
+	
+	if ( TemplateElement != NULL )
+	{
+		
+		const OakTemplateSpecificationConstructor :: ElementData * TemplateData = reinterpret_cast <const OakTemplateSpecificationConstructor :: ElementData *> ( TemplateElement -> GetData () );
+		
+		if ( TemplateData -> TripleTemplateClose || TemplateData -> DoubleTemplateClose )
+		{
+			
+			delete TemplateElement;
+			
+			for ( uint32_t I = 0; I < NamespaceChainTemplates.size (); I ++ )
+				if ( NamespaceChainTemplates [ I ] != NULL )
+					delete NamespaceChainTemplates [ I ];
+				
+			delete AllusionElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = "Unexpected closing triangle bracket at end of template specification";
+			Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount - 1 ];
+			
+			return;
+			
+		}
+		
+	}
+	
+	NamespaceChainTemplates.push_back ( TemplateElement );
+	
+	while ( TokenCount > 1 )
+	{
+		
+		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_DoubleColon )
 			break;
 		
-		NamespaceChain.push_back ( LastIdent );
-		Offset ++;
+		TokenCount --;
 		
-		// TODO: Add template specifications
-		NamespaceChainTemplates.push_back ( NULL );
+		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
-		CurrentToken = Input.Tokens [ Offset ];
+		TokenCount --;
 		
 		if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 		{
+			
+			for ( uint32_t I = 0; I < NamespaceChainTemplates.size (); I ++ )
+				if ( NamespaceChainTemplates [ I ] != NULL )
+					delete NamespaceChainTemplates [ I ];
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -106,44 +161,81 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 			
 		}
 		
-		LastIdent = CurrentToken -> GetSource ();
+		AllusionElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount - 2 ], 2 );
 		
-		Offset ++;
+		NamespaceChain.push_back ( CurrentToken -> GetSource () );
+		
+		TemplateElement = TemplateSpecificationGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_BindingAllusion, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
+		
+		if ( Error )
+		{
+			
+			for ( uint32_t I = 0; I < NamespaceChainTemplates.size (); I ++ )
+				if ( NamespaceChainTemplates [ I ] != NULL )
+					delete NamespaceChainTemplates [ I ];
+				
+			delete AllusionElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
+		if ( TemplateElement != NULL )
+		{
+			
+			const OakTemplateSpecificationConstructor :: ElementData * TemplateData = reinterpret_cast <const OakTemplateSpecificationConstructor :: ElementData *> ( TemplateElement -> GetData () );
+			
+			if ( TemplateData -> TripleTemplateClose || TemplateData -> DoubleTemplateClose )
+			{
+				
+				delete TemplateElement;
+				
+				for ( uint32_t I = 0; I < NamespaceChainTemplates.size (); I ++ )
+					if ( NamespaceChainTemplates [ I ] != NULL )
+						delete NamespaceChainTemplates [ I ];
+					
+				delete AllusionElement;
+				
+				Output.Accepted = false;
+				Output.Error = true;
+				Output.ErrorSuggestion = "Unexpected closing triangle bracket at end of template specification";
+				Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount - 1 ];
+				
+				return;
+				
+			}
+			
+		}
+		
+		NamespaceChainTemplates.push_back ( TemplateElement );
 		
 	}
 	
 	ElementData * AllusionData = new ElementData ();
 	
-	AllusionData -> DirectGlobalReference = DirectGlobalReference;
-	
-	AllusionData -> Name = LastIdent;
-	AllusionData -> IdentListLength = NamespaceChain.size ();
-	
-	if ( NamespaceChain.size () != 0 )
-	{
-		
-		AllusionData -> IdentList = new AllusionName [ NamespaceChain.size () ];
-		
-		for ( uint32_t I = 0; I < NamespaceChain.size (); I ++ )
-		{
-			
-			AllusionData -> IdentList [ I ].Name = NamespaceChain [ I ];
-			AllusionData -> IdentList [ I ].Templated = NamespaceChainTemplates [ I ] != NULL;
-			AllusionData -> IdentList [ I ].TemplateSpecificationElement = NamespaceChainTemplates [ I ];
-			
-		}
-		
-	}
-	else
-		AllusionData -> IdentList = NULL;
-	
-	ASTElement * AllusionElement = new ASTElement ();
-	AllusionElement -> SetTag ( OakASTTags :: kASTTag_BindingAllusion );
-	AllusionElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	AllusionElement -> SetData ( AllusionData, & ElementDataDestructor );
 	
+	AllusionData -> DirectGlobalReference = DirectGlobalReference;
+	
+	AllusionData -> IdentListLength = NamespaceChain.size ();
+	AllusionData -> IdentList = new AllusionName [ NamespaceChain.size () ];
+	
+	for ( uint32_t I = 0; I < NamespaceChain.size (); I ++ )
+	{
+		
+		AllusionData -> IdentList [ I ].Name = NamespaceChain [ I ];
+		AllusionData -> IdentList [ I ].Templated = NamespaceChainTemplates [ I ] != NULL;
+		AllusionData -> IdentList [ I ].TemplateSpecificationElement = NamespaceChainTemplates [ I ];
+		
+	}
+	
 	Output.Accepted = true;
-	Output.TokensConsumed = Offset;
+	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
 	Output.ConstructedElement = AllusionElement;
 	
 }

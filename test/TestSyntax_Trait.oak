@@ -13,3 +13,14 @@ trait SomeTemplatedTrait <A>
 	
 }
 
+namespace SomeNS
+{
+	
+	trait MyTrait (  )
+	{
+		
+		
+		
+	}
+	
+}
