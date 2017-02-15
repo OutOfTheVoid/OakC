@@ -56,6 +56,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Self = 44;
 	const uint64_t kKeywordAuxTags_Inline = 45;
 	const uint64_t kKeywordAuxTags_Break = 46;
+	const uint64_t kKeywordAuxTags_Loop = 47;
 	
 	/// A list of the human-readable forms of kewords.
 	const char * const KeywordAuxTagNames [] =
@@ -108,6 +109,7 @@ namespace OakKeywordTokenTags
 		"SELF",
 		"INLINE",
 		"BREAK",
+		"LOOP",
 		
 	};
 	

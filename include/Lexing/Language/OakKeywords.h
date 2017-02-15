@@ -55,6 +55,7 @@ namespace OakKeywords
 	const std :: string kKeyword_For ( u8"for" );
 	const std :: string kKeyword_Match ( u8"match" );
 	const std :: string kKeyword_Break ( u8"break" );
+	const std :: string kKeyword_Loop ( u8"loop" );
 	
 	const std :: string kKeyword_Bind ( u8"bind" );
 	

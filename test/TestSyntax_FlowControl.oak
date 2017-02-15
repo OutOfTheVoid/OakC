@@ -49,4 +49,18 @@ function TestSyntax ()
 	}
 	while ( I != 0 );
 	
+	loop `myloop:
+	{
+		
+		loop `myinnerloop:
+		{
+			
+			break `myloop;
+			
+		}
+		
+		break;
+		
+	}
+	
 }
