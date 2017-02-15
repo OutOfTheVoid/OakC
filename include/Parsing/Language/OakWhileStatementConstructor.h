@@ -18,6 +18,7 @@ public:
 private:
 	
 	ASTConstructionGroup ExpressionGroup;
+	ASTConstructionGroup LoopLabelGroup;
 	ASTConstructionGroup StatementBodyGroup;
 	
 };

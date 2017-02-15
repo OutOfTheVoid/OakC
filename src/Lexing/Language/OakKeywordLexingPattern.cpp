@@ -60,6 +60,7 @@ OakKeywordLexingPattern :: OakKeywordLexingPattern ():
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Do.c_str (), OakKeywords :: kKeyword_Do.size (), OakKeywordTokenTags :: kKeywordAuxTags_Do );
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_For.c_str (), OakKeywords :: kKeyword_For.size (), OakKeywordTokenTags :: kKeywordAuxTags_For );
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Match.c_str (), OakKeywords :: kKeyword_Match.size (), OakKeywordTokenTags :: kKeywordAuxTags_Match );
+	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Break.c_str (), OakKeywords :: kKeyword_Break.size (), OakKeywordTokenTags :: kKeywordAuxTags_Break );
 	
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Bind.c_str (), OakKeywords :: kKeyword_Bind.size (), OakKeywordTokenTags :: kKeywordAuxTags_Bind );
 	

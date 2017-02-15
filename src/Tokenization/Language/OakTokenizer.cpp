@@ -44,6 +44,9 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	// Char literal
 	ITokenSplitRule * CharLiteralRule = new OakCharSplitRule ();
 	
+	// Back Tick
+	ITokenSplitRule * BackTickRule = new CharMatchSplitRule ( U'`', OakTokenTags :: kTokenTag_BackTick );
+	
 	// Semicolon
 	ITokenSplitRule * SemicolonRule = new CharMatchSplitRule ( U';', OakTokenTags :: kTokenTag_Semicolon );
 	// Comma
@@ -164,6 +167,7 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( CharLiteralRule, 2 );
 	NewTokenizer -> AddSplitRule ( IntegerLiteralRule, 2 );
 	
+	NewTokenizer -> AddSplitRule ( BackTickRule, 3 );
 	NewTokenizer -> AddSplitRule ( SemicolonRule, 3 );
 	NewTokenizer -> AddSplitRule ( CommaRule, 3 );
 	NewTokenizer -> AddSplitRule ( SquareBracketOpenRule, 3 );

@@ -1,6 +1,7 @@
 #include <Parsing/Language/OakDoWhileStatementConstructor.h>
 #include <Parsing/Language/OakExpressionConstructor.h>
 #include <Parsing/Language/OakStatementBlockConstructor.h>
+#include <Parsing/Language/OakLoopLabelConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
 
@@ -19,6 +20,7 @@ OakDoWhileStatementConstructor :: OakDoWhileStatementConstructor ():
 	
 	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
 	StatementBodyGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
+	LoopLabelGroup.AddConstructorCantidate ( & OakLoopLabelConstructor :: Instance, 0 );
 	
 }
 
@@ -58,6 +60,45 @@ void OakDoWhileStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
 	uint64_t TokenCount = Input.AvailableTokenCount - 1;
+	
+	if ( LoopLabelGroup.TryConstruction ( WhileElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
+	{
+		
+		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+		
+		if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
+		{
+			
+			delete WhileElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = "Expected colon between loop label and loop body";
+			Output.ErrorProvokingToken = CurrentToken;
+			
+			return;
+			
+		}
+		
+		WhileElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+		
+		TokenCount --;
+		
+	}
+	
+	if ( Error )
+	{
+		
+		delete WhileElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = ErrorString;
+		Output.ErrorProvokingToken = ErrorToken;
+		
+		return;
+		
+	}
 	
 	if ( StatementBodyGroup.TryConstruction ( WhileElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{

@@ -25,16 +25,17 @@ function TestSyntax ()
 	{
 		
 		HelloWorld ();
-		400;
 		
 	}
 	
 	bind I: u32 = 0;
 	
 	while ( I < 2 )
-	{
+	`label: {
 		
 		I ++;
+		
+		break `label;
 		
 	}
 	
@@ -42,6 +43,8 @@ function TestSyntax ()
 	{
 		
 		I --;
+		
+		break;
 		
 	}
 	while ( I != 0 );

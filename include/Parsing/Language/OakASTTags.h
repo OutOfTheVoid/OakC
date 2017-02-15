@@ -131,6 +131,11 @@ namespace OakASTTags
 	const uint64_t kASTTag_IfElseStatement = 89;
 	const uint64_t kASTTag_WhileStatement = 90;
 	const uint64_t kASTTag_DoWhileStatement = 91;
+	const uint64_t kASTTag_LoopStatement = 92;
+	
+	const uint64_t kASTTag_LoopLabel = 93;
+	
+	const uint64_t kASTTag_BreakStatement = 94;
 	
 	const char * const TagNames [] =
 	{
@@ -226,7 +231,10 @@ namespace OakASTTags
 		"SELF_ALLUSION",
 		"IF_ELSE_STATEMENT",
 		"WHILE_STATEMENT",
-		"DO_WHILE_STATEMENT"
+		"DO_WHILE_STATEMENT",
+		"LOOP_STATEMENT",
+		"LOOP_LABEL",
+		"BREAK_STATEMENT"
 		
 	};
 	
