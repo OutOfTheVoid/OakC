@@ -19,14 +19,19 @@ OakOperatorExpressionConstructor OakOperatorExpressionConstructor :: Instance;
 typedef enum
 {
 	
-	kOperatorAssociativity_Left_Unary, // Operator sits right of term
-	kOperatorAssociativity_Right_Unary, // Operator sits left of term
-	kOperatorAssociativity_Left_Binary, // Left-associative binary
-	kOperatorAssociativity_Right_Binary, // Right-associative binary
-	kOperatorAssociativity_Left_Bracket, // Left-associative bracketed
-	kOperatorAssociativity_Right_Bracket, // Left-associative bracketed
-	kOperatorAssociativity_Left_Double, // Groups three terms together with 1st and 2nd op tokens, right associative
-	kOperatorAssociativity_Right_Double, // Groups three terms together with 1st and 2nd op tokens, right associative
+	kOperatorAssociativity_Left_Unary = 0, // Operator sits right of term
+	kOperatorAssociativity_Right_Unary = 1, // Operator sits left of term
+	kOperatorAssociativity_Left_Binary = 2, // Left-associative binary
+	kOperatorAssociativity_Right_Binary = 3, // Right-associative binary
+	kOperatorAssociativity_Left_Bracket = 4, // Left-associative bracketed
+	kOperatorAssociativity_Right_Bracket = 5, // Right-associative bracketed ( NOT USED )
+	
+	kOperatorAssociativity_Left_Double = 6, // Groups three terms together with 1st and 2nd op tokens, left associative ( NOT DONE )
+	kOperatorAssociativity_Right_Double = 7, // Groups three terms together with 1st and 2nd op tokens, right associative ( NOT DONE )
+	
+	 // NOT ACTUAL OPERATOR TYPES! EXIST FOR ALGORITHM ONLY
+	kOperatorAssociativity_PrimaryExpression = 8,
+	kOperatorAssociativity_Initial = 9
 	
 } OperatorAssociativity;
 
@@ -50,6 +55,8 @@ typedef struct OperatorEntry_Struct
 	struct OperatorEntry_Struct * FailureMutation;
 	
 	ASTConstructionGroup * SpecialGroup;
+	
+	bool First;
 	
 } _OperatorEntry_t;
 
@@ -105,8 +112,8 @@ _OperatorEntry_t _OakOperatorExpressionConstructor_OperatorList [] =
 	{ OakTokenTags :: kTokenTag_DoubleAmpersand, 0, 11, OakASTTags :: kASTTag_Operator_LogicalAnd, kOperatorAssociativity_Left_Binary, NULL, NULL },
 	{ OakTokenTags :: kTokenTag_DoubleVerticalBar, 0, 12, OakASTTags :: kASTTag_Operator_LogicalOr, kOperatorAssociativity_Left_Binary, NULL, NULL },
 	
-	{ OakTokenTags :: kTokenTag_QuestionMark, 0, 13, OakASTTags :: kASTTag_Operator_Ternary, kOperatorAssociativity_Right_Double, NULL, NULL },
-	{ OakTokenTags :: kTokenTag_Colon, 0, 13, OakASTTags :: kASTTag_Operator_Ternary, kOperatorAssociativity_Right_Double, NULL, NULL },
+	{ OakTokenTags :: kTokenTag_QuestionMark, 0, 13, OakASTTags :: kASTTag_Operator_Ternary, kOperatorAssociativity_Right_Double, NULL, NULL, true },
+	{ OakTokenTags :: kTokenTag_Colon, 0, 13, OakASTTags :: kASTTag_Operator_Ternary, kOperatorAssociativity_Right_Double, NULL, NULL, false },
 	// 35
 	{ OakTokenTags :: kTokenTag_Equals, 0, 14, OakASTTags :: kASTTag_Operator_Assignment, kOperatorAssociativity_Right_Binary, NULL, NULL },
 	{ OakTokenTags :: kTokenTag_Star_Equals, 0, 14, OakASTTags :: kASTTag_Operator_CompoundMultiply, kOperatorAssociativity_Right_Binary, NULL, NULL },
@@ -125,11 +132,31 @@ _OperatorEntry_t _OakOperatorExpressionConstructor_OperatorList [] =
 	
 };
 
-void _OakOperatorExpressionConstructor_FindOperator ( uint64_t TokenTag, const _OperatorEntry_t *& OperatorData )
+bool _OakOperatorExpressionConstructor_FollowingOperatorRules [ 10 ][ 9 ] = 
+{
+	
+	// U-L		U-R		B-L		B-R		BR-L	BR-R	D-L		D-R		Primary
+	{ false,	false,	true,	true,	false,	true,	true,	true,	false	}, // U-L
+	{ false,	true,	false,	false,	false,	false,	false,	false,	true	}, // U-R
+	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-L
+	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-R
+	{ false,	false,	true,	true,	true,	false,	true,	true,	false	}, // BR-L
+	{ false,	true,	true,	false,	false,	true,	false,	false,	true	}, // BR-R
+	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // D-L
+	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // D-R
+	{ true,		false,	true,	true,	true,	false,	true,	true,	false	}, // Primary
+	{ false,	true,	false,	false,	false,	true,	false,	false,	true	} // Initial
+	
+};
+
+void _OakOperatorExpressionConstructor_FindOperator ( uint64_t TokenTag, const bool AllowedAssociativity [], const _OperatorEntry_t *& OperatorData )
 {
 	
 	for ( uint32_t I = 0; I < ( sizeof ( _OakOperatorExpressionConstructor_OperatorList ) / sizeof ( _OperatorEntry_t ) ); I ++ )
 	{
+		
+		if ( ! AllowedAssociativity [ _OakOperatorExpressionConstructor_OperatorList [ I ].Associativity ] )
+			continue;
 		
 		if ( _OakOperatorExpressionConstructor_OperatorList [ I ].OperatorTag == TokenTag )
 		{
@@ -222,6 +249,8 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 	const Token * CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 	const _OperatorEntry_t * OperatorEntry = NULL;
 	
+	OperatorAssociativity LastAssociativity = kOperatorAssociativity_Initial;
+	
 	while ( true )
 	{
 		
@@ -230,7 +259,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		if ( TokenCount == 0 )
 			break;
 		
-		_OakOperatorExpressionConstructor_FindOperator ( CurrentToken -> GetTag (), OperatorEntry );
+		_OakOperatorExpressionConstructor_FindOperator ( CurrentToken -> GetTag (), _OakOperatorExpressionConstructor_FollowingOperatorRules [ LastAssociativity ], OperatorEntry );
 		
 		if ( OperatorEntry != NULL )
 		{
@@ -339,6 +368,58 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 					
 					ExpressionElements.push_back ( NewElement );
 					
+					LastAssociativity = OperatorEntry -> Associativity;
+					
+					continue;
+					
+				}
+				
+			}
+			else if ( ( OperatorEntry -> Associativity == kOperatorAssociativity_Left_Double ) || ( OperatorEntry -> Associativity == kOperatorAssociativity_Right_Double ) )
+			{
+				
+				bool Invalid = true;
+				
+				if ( ! OperatorEntry -> First )
+				{
+					
+					for ( int64_t I = ExpressionElements.size () - 1; I >= 0; I -- )
+					{
+						
+						if ( ExpressionElements [ I ].Operator )
+						{
+							
+							if ( ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity == kOperatorAssociativity_Left_Double ) || ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity == kOperatorAssociativity_Right_Double ) )
+							{
+								
+								if ( ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity != OperatorEntry -> Associativity ) || ( ! ExpressionElements [ I ].OperatorInfo.Operator -> First ) )
+								{
+									
+									Invalid = false;
+									
+									break;
+									
+								}
+								else
+									break;
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+				if ( ! Invalid )
+				{
+					
+					TokenCount --;
+					
+					ExpressionElements.push_back ( NewElement );
+					
+					LastAssociativity = OperatorEntry -> Associativity;
+					
 					continue;
 					
 				}
@@ -351,11 +432,16 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				
 				ExpressionElements.push_back ( NewElement );
 				
+				LastAssociativity = OperatorEntry -> Associativity;
+				
 				continue;
 				
 			}
 			
 		}
+		
+		if ( ! _OakOperatorExpressionConstructor_FollowingOperatorRules [ LastAssociativity ] [ kOperatorAssociativity_PrimaryExpression ] )
+			break;
 		
 		ASTElement * PrimaryElement = PrimaryGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_OperatorExpressionContainer, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 		
@@ -366,6 +452,8 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 			NewElement.Operator = false;
 			NewElement.Primary = PrimaryElement;
+			
+			LastAssociativity = kOperatorAssociativity_PrimaryExpression;
 			
 			ExpressionElements.push_back ( NewElement );
 			
@@ -395,16 +483,34 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 	}
 	
-	LOG_VERBOSE ( std :: string ( "Expression element list size: " ) + std :: to_string ( ExpressionElements.size () ) );
-	
 	if ( ExpressionElements.size () == 0 )
 	{
 		
 		CleanupExpressionElements ( ExpressionElements );
 		
-		LOG_VERBOSE ( "Expression invalid with 0 elements" );
-		
 		Output.Accepted = false;
+		
+		return;
+		
+	}
+	
+	if ( ExpressionElements.size () == 1 )
+	{
+		
+		if ( ExpressionElements [ 0 ].Operator )
+		{
+			
+			CleanupExpressionElements ( ExpressionElements );
+			
+			Output.Accepted = false;
+			
+			return;
+			
+		}
+		
+		Output.Accepted = true;
+		Output.ConstructedElement = ExpressionElements [ 0 ].Primary;
+		Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
 		
 		return;
 		

@@ -49,15 +49,15 @@ implement MyType
 	function Test ( & self, StringValue: & string ): u32
 	{
 		
-		//self -> TestString = StringValue;
-		//self -> TestInt = 0;
+		self -> TestString = StringValue;
+		self -> TestInt = 0;
 		
 	}
 	
 	function SayHello ( & self )
 	{
 		
-		//Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
+		Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
 		
 	}
 	
