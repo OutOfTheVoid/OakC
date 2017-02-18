@@ -20,14 +20,17 @@
 #include <Parsing/Language/OakParser.h>
 #include <Parsing/Language/OakASTTags.h>
 
+#include <EarlyAnalysis/OakImportResolution.h>
+
 #include <iostream>
 
-CompilationUnit :: CompilationUnit ( const std :: string & FilePath ):
+CompilationUnit :: CompilationUnit ( const std :: string & FilePath, FileTable * FTable ):
 	CompilationState ( kCompilationStep_FileLoad ),
 	SourceFile ( FilePath, false ),
 	SourceString (),
 	Tokens (),
-	PostLexTokens ()
+	PostLexTokens (),
+	FTable ( FTable )
 {
 	
 	OakTokenizer :: GetOakTokenizer (); // Ensure initialization pre-run
@@ -176,6 +179,13 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 		_PrintAST ( Root, 0 );
 		
 	}
+	
+	FTable -> AddFile ( SourceFile.GetName (), this );
+	
+	std :: vector <CompilationUnit *> ImportedUnits;
+	
+	if ( ! OakResolveImports ( Root, SourceFile.GetName (), FTable, ImportedUnits ) )
+		return false;
 	
 	return true;
 	

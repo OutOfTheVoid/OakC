@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include <EarlyAnalysis/FileTable.h>
+
 class CompilationUnit
 {
 public:
@@ -31,7 +33,7 @@ public:
 	 * 
 	 * @param FilePath Path to the source file
 	 */
-	CompilationUnit ( const std :: string & FilePath );
+	CompilationUnit ( const std :: string & FilePath, FileTable * FTable );
 	
 	// Destructor
 	~CompilationUnit ();
@@ -58,6 +60,8 @@ private:
 	// Token list
 	std :: vector <const Token *> Tokens;
 	std :: vector <const Token *> PostLexTokens;
+	
+	FileTable * FTable;
 	
 };
 

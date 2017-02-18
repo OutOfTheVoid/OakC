@@ -6,12 +6,20 @@ project "Compiler"
 	kind "ConsoleApp"
 	
 	language "C++"
-	flags { "C++11" }
 	
 	files { "**.h", "**.cpp" }
 	
 	includedirs "include"
 	
+	filter { "not system:windows" }
+		toolset "clang"
+		buildoptions { "-std=c++1z" }
+		
+	filter { "action:vs*" }
+		buildoptions { "/std:c++latest" }
+		
+	filter {}
+		
 	filter { "configurations:Debug" }
 		defines { "DEBUG" }
 		symbols "On"

@@ -1,6 +1,6 @@
 // WHOOOOO! THIS CAN ALL BE PARSED NOW!
 
-import "Other.oak";
+import "test/TestSyntax_Literals.oak";
 
 namespace MyNamespace::MySubNamespace
 {
@@ -63,7 +63,7 @@ implement MyType
 	
 }
 
-function Main ( ProgramArguments: Array:<string> )
+function Main ( ProgramArguments: Array:<string> ) : i32
 {
 	
 	ignore ProgramArguments;
@@ -71,6 +71,10 @@ function Main ( ProgramArguments: Array:<string> )
 	bind MyString: string = "Hello, world!";
 	bind MyStruct: MyType = MyType ( MyString.copy () );
 	
+	bind MyArray: Array : <u32> = [:u32; 0, 1, 2, 3, 4, 5, 6 ];
+	
 	MyType.SayHello ();
+	
+	return 0;
 	
 }

@@ -1,7 +1,7 @@
 #ifndef PARSING_LANGUAGE_OAKBARETRAITNAMECONSTRUCTOR_H
 #define PARSING_LANGUAGE_OAKBARETRAITNAMECONSTRUCTOR_H
 
-#include <parsing/IASTConstructor.h>
+#include <Parsing/IASTConstructor.h>
 
 class OakBareTraitNameConstructor : public virtual IASTConstructor
 {

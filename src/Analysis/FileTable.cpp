@@ -1,6 +1,0 @@
-#ifndef ANALYSYS_FILETABLE_H
-#define ANALYSYS_FILETABLE_H
-
-
-
-#endif

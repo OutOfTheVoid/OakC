@@ -10,6 +10,8 @@
 
 #include <vector>
 
+#include <EarlyAnalysis/FileTable.h>
+
 #define VERSION_STRING "0.0.1a"
 
 void PrintHelp ();
@@ -80,15 +82,19 @@ int main ( int argc, const char * argv [] )
 		
 	}
 	
+	FileTable Files;
+	
 	for ( uint32_t I = 0; I < SourceFileNames.size (); I ++ )
 	{
 		
-		CompilationUnit FileUnit ( SourceFileNames [ I ] );
+		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ], & Files );
 		
-		if ( ! FileUnit.RunIndependantCompilationSteps () )
+		if ( ! FileUnit -> RunIndependantCompilationSteps () )
 			return 0;
 		
 	}
+	
+	Files.DestroyAll ();
 	
 	return 0;
 	

@@ -38,7 +38,8 @@ void ASTElement :: AddSubElement ( ASTElement * Element )
 void ASTElement :: RemoveSubElement ( uint64_t Index )
 {
 	
-	if ( Index >= SubElements.size () );
+	if ( Index >= SubElements.size () )
+		return;
 	
 	SubElements.erase ( SubElements.begin () + Index );
 	
