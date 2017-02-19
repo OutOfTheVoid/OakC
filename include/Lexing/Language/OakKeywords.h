@@ -58,6 +58,7 @@ namespace OakKeywords
 	const std :: string kKeyword_Loop ( u8"loop" );
 	
 	const std :: string kKeyword_Bind ( u8"bind" );
+	const std :: string kKeyword_Const ( u8"const" );
 	
 }
 

@@ -15,11 +15,6 @@
 
 OakMethodParameterListConstructor OakMethodParameterListConstructor :: Instance;
 
-OakSelfParameterConstructor _OakMethodParameterListConstructor_OakSelfParameterConstructorInstance;
-OakSelfParameterReferenceConstructor _OakMethodParameterListConstructor_OakSelfParameterReferenceConstructor;
-
-OakFunctionParameterConstructor _OakMethodParameterListConstructor_OakFunctionParameterConstructorInstance;
-
 OakMethodParameterListConstructor :: OakMethodParameterListConstructor ():
 	SelfParameterConstructionGroup (),
 	ParameterConstructionGroup ()

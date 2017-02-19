@@ -139,6 +139,9 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_ArrayLiteral = 95;
 	
+	const uint64_t kASTTag_BindingStatement = 96;
+	const uint64_t kASTTag_ConstStatement = 97;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -237,7 +240,9 @@ namespace OakASTTags
 		"LOOP_STATEMENT",
 		"LOOP_LABEL",
 		"BREAK_STATEMENT",
-		"ARRAY_LITERAL"
+		"ARRAY_LITERAL",
+		"BINDING_STATEMENT",
+		"CONST_STATEMENT",
 		
 	};
 	

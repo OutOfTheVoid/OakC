@@ -13,9 +13,6 @@
 
 OakImplementDefinitionConstructor OakImplementDefinitionConstructor :: Instance;
 
-OakFunctionDefinitionConstructor _OakImplementDefinitionConstructor_OakFunctionDefinitionConstructorInstance;
-OakMethodDefinitionConstructor _OakImplementDefinitionConstructor_OakMethodDefinitionConstructorInstance;
-
 OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
 	ImplementChildrenConstructionGroup ()
 {

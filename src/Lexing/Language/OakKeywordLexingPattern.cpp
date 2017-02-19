@@ -64,6 +64,7 @@ OakKeywordLexingPattern :: OakKeywordLexingPattern ():
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Loop.c_str (), OakKeywords :: kKeyword_Loop.size (), OakKeywordTokenTags :: kKeywordAuxTags_Loop );
 	
 	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Bind.c_str (), OakKeywords :: kKeyword_Bind.size (), OakKeywordTokenTags :: kKeywordAuxTags_Bind );
+	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Const.c_str (), OakKeywords :: kKeyword_Const.size (), OakKeywordTokenTags :: kKeywordAuxTags_Const );
 	
 }
 

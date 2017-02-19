@@ -11,8 +11,6 @@
 
 OakFunctionParameterListConstructor OakFunctionParameterListConstructor :: Instance;
 
-OakFunctionParameterConstructor _OakFunctionParameterListConstructor_OakFunctionParameterConstructorInstance;
-
 OakFunctionParameterListConstructor :: OakFunctionParameterListConstructor ():
 	ParameterConstructionGroup ()
 {

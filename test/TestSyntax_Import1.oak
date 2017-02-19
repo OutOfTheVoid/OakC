@@ -1,0 +1,2 @@
+import "test/TestSyntax_Import3.oak";
+import "test/TestSyntax_Import2.oak";

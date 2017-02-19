@@ -1,0 +1,43 @@
+bind A: u32 = 0;
+bind public B: f64 = 0.0f;
+bind mut C: bool = false;
+bind public mut D: char = 'A';
+
+namespace NS
+{
+	
+	bind A: u32 = 0;
+	bind public B: f64 = 0.0;
+	bind mut C: bool = false;
+	bind public mut D: char = 'A';
+	
+	function Func () : void
+	{
+		
+		bind A: u32 = 0;
+		bind mut B: bool = false;
+		
+	}
+	
+	struct S
+	{
+		
+		bind A: u32,
+		bind B: f64
+		
+	};
+	
+	implement S
+	{
+		
+		function M ( & self )
+		{
+			
+			bind A: u32 = 0;
+			bind mut B: bool = false;
+			
+		}
+		
+	}
+	
+}

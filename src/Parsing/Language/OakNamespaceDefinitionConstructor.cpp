@@ -6,6 +6,11 @@
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakStructBindingConstructor.h>
 #include <Parsing/Language/OakTraitDefinitionConstructor.h>
+#include <Parsing/Language/OakImplementDefinitionConstructor.h>
+#include <Parsing/Language/OakBindingStatementConstructor.h>
+#include <Parsing/Language/OakConstStatementConstructor.h>
+#include <Parsing/Language/OakLoneSemicolonConstructor.h>
+#include <Parsing/Language/OakFunctionDefinitionConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -22,6 +27,13 @@ OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
 	NamespaceChildrenGroup.AddConstructorCantidate ( & Instance, 0 );
 	NamespaceChildrenGroup.AddConstructorCantidate ( & OakStructDefinitionConstructor :: Instance, 0 );
 	NamespaceChildrenGroup.AddConstructorCantidate ( & OakTraitDefinitionConstructor :: Instance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakConstStatementConstructor :: Instance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakFunctionDefinitionConstructor :: Instance, 0 );
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakImplementDefinitionConstructor :: Instance, 0 );
+	
+	// Just in case
+	NamespaceChildrenGroup.AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 1 );
 	
 }
 

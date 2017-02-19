@@ -13,6 +13,8 @@
 #include <Parsing/Language/OakDoWhileStatementConstructor.h>
 #include <Parsing/Language/OakLoopStatementConstructor.h>
 #include <Parsing/Language/OakBreakStatementConstructor.h>
+#include <Parsing/Language/OakBindingStatementConstructor.h>
+#include <Parsing/Language/OakConstStatementConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
@@ -33,6 +35,8 @@ OakStatementBlockConstructor :: OakStatementBlockConstructor ():
 	StatementGroup.AddConstructorCantidate ( & OakDoWhileStatementConstructor :: Instance, 0 );
 	StatementGroup.AddConstructorCantidate ( & OakBreakStatementConstructor :: Instance, 0 );
 	StatementGroup.AddConstructorCantidate ( & OakLoopStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakConstStatementConstructor :: Instance, 0 );
+	StatementGroup.AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
 	StatementGroup.AddConstructorCantidate ( & OakExpressionStatementConstructor :: Instance, 1 );
 	
 	StatementGroup.AddConstructorCantidate ( & Instance, 1 );

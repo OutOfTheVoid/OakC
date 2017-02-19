@@ -171,6 +171,8 @@ std :: u16string CodeConversion :: ConvertUTF32ToUTF16 ( const std :: u32string 
 		
 	}
 	
+	return OutBuff;
+	
 }
 
 std :: u32string CodeConversion :: ConvertUTF16ToUTF32 ( const std :: u16string & UTF16String )
@@ -206,6 +208,10 @@ std :: u32string CodeConversion :: ConvertUTF16ToUTF32 ( const std :: u16string 
 		}
 		
 	}
+	
+	OutBuff.resize ( OutIndex );
+	
+	return OutBuff;
 	
 }
 
@@ -303,11 +309,18 @@ std :: string CodeConversion :: ConvertUTF16ToUTF8 ( const std :: u16string & UT
 		if ( ( CharachterCode & 0xF800 ) == 0xD800 )
 		{
 			
-			uint32_t CharachterCode2 = UTF16String.at ( Index + 1 );
-			
-			OutCode = ( ( CharachterCode & 0x03FF ) << 10 ) | ( CharachterCode2 & 0x03FF );
-			
-			Index ++;
+			if ( Index + 1 < UTF16String.size () )
+			{	
+				
+				uint32_t CharachterCode2 = UTF16String.at ( Index + 1 );
+				
+				OutCode = ( ( CharachterCode & 0x03FF ) << 10 ) | ( CharachterCode2 & 0x03FF );
+				
+				Index ++;
+				
+			}
+			else
+				break;
 			
 		}
 		else
@@ -317,6 +330,7 @@ std :: string CodeConversion :: ConvertUTF16ToUTF8 ( const std :: u16string & UT
 		{
 			
 			OutBuff [ OutIndex ] = static_cast <char> ( OutCode );
+			
 			OutIndex ++;
 			
 		}
@@ -352,5 +366,9 @@ std :: string CodeConversion :: ConvertUTF16ToUTF8 ( const std :: u16string & UT
 		}
 		
 	}
+	
+	OutBuff.resize ( OutIndex );
+	
+	return OutBuff;
 	
 }

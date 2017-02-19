@@ -1,10 +1,10 @@
-#ifndef PARSING_LANGUAGE_OAKBINDINGSTATEMENTCONSTRUCTOR_H
-#define PARSING_LANGUAGE_OAKBINDINGSTATEMENTCONSTRUCTOR_H
+#ifndef PARSING_LANGUAGE_OAKCONSTSTATEMENTCONSTRUCTOR_H
+#define PARSING_LANGUAGE_OAKCONSTSTATEMENTCONSTRUCTOR_H
 
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-class OakBindingStatementConstructor : public virtual IASTConstructor
+class OakConstStatementConstructor : public virtual IASTConstructor
 {
 public:
 	
@@ -12,18 +12,16 @@ public:
 	{
 		
 		std :: u32string Name;
-		bool Initialized;
-		bool Mutable;
 		bool Public;
 		
 	} ElementData;
 	
-	OakBindingStatementConstructor ();
-	~OakBindingStatementConstructor ();
+	OakConstStatementConstructor ();
+	~OakConstStatementConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakBindingStatementConstructor Instance;
+	static OakConstStatementConstructor Instance;
 	
 private:
 	

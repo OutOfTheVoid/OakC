@@ -1,4 +1,4 @@
-#include <Parsing/Language/OakBindingStatementConstructor.h>
+#include <Parsing/Language/OakConstStatementConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
@@ -17,9 +17,9 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakBindingStatementConstructor OakBindingStatementConstructor :: Instance;
+OakConstStatementConstructor OakConstStatementConstructor :: Instance;
 
-OakBindingStatementConstructor :: OakBindingStatementConstructor ():
+OakConstStatementConstructor :: OakConstStatementConstructor ():
 	TypeGroup (),
 	InitializerValueGroup ()
 {
@@ -36,14 +36,11 @@ OakBindingStatementConstructor :: OakBindingStatementConstructor ():
 	
 }
 
-OakBindingStatementConstructor :: ~OakBindingStatementConstructor ()
+OakConstStatementConstructor :: ~OakConstStatementConstructor ()
 {
-	
-	
-	
 }
 
-void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakConstStatementConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
 	if ( Input.AvailableTokenCount < 5 )
@@ -56,12 +53,11 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	}
 	
 	uint64_t Offset = 0;
-	bool Mutable = false;
-	bool Public = false;
+	bool Public;
 	
 	const Token * CurrentToken = Input.Tokens [ Offset ];
 	
-	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Bind ) )
+	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Const ) )
 	{
 		
 		Output.Accepted = false;
@@ -85,16 +81,7 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
-	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Mut ) )
-	{
-		
-		Offset ++;
-		
-		Mutable = true;
-		
-		CurrentToken = Input.Tokens [ Offset ];
-		
-	}
+	CurrentToken = Input.Tokens [ Offset ];
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
@@ -120,28 +107,26 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	
 	Offset ++;
 	
-	ElementData * BindingData = new ElementData ();
+	ElementData * ConstData = new ElementData ();
 	
-	BindingData -> Name = Input.Tokens [ Offset - 2 ] -> GetSource ();
-	BindingData -> Initialized = false;
-	BindingData -> Mutable = Mutable;
-	BindingData -> Public = Public;
+	ConstData -> Name = Input.Tokens [ Offset - 2 ] -> GetSource ();
+	ConstData -> Public = Public;
 	
-	ASTElement * BindingElement = new ASTElement ();
+	ASTElement * ConstElement = new ASTElement ();
 	
-	BindingElement -> SetTag ( OakASTTags :: kASTTag_BindingStatement );
-	BindingElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
-	BindingElement -> SetData ( BindingData, & ElementDataDestructor );
+	ConstElement -> SetTag ( OakASTTags :: kASTTag_ConstStatement );
+	ConstElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
+	ConstElement -> SetData ( ConstData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;
 	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	if ( TypeGroup.TryConstruction ( BindingElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
+	if ( TypeGroup.TryConstruction ( ConstElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		if ( ConstructionError )
 		{
@@ -157,7 +142,7 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected type name after colon in struct binding";
+		Output.ErrorSuggestion = "Expected type name after colon in constant";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
@@ -167,7 +152,7 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	if ( ConstructionError )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -181,11 +166,11 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	if ( TokenCount == 0 )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected semicolon or assignment after variable binding statement";
+		Output.ErrorSuggestion = "Expected assignment after const statement";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
@@ -194,43 +179,26 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	
 	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 	
-	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_Semicolon )
-	{
-		
-		BindingData -> Initialized = false;
-		
-		BindingElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
-		
-		Output.Accepted = true;
-		Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-		Output.ConstructedElement = BindingElement;
-		
-		return;
-		
-	}
-	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Equals )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected semicolon or assignment after variable binding statement";
+		Output.ErrorSuggestion = "Expected assignment after const statement";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
 		
 	}
 	
-	BindingData -> Initialized = true;
-	
 	TokenCount --;
 	
-	if ( InitializerValueGroup.TryConstruction ( BindingElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
+	if ( InitializerValueGroup.TryConstruction ( ConstElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		if ( ConstructionError )
 		{
@@ -256,7 +224,7 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	if ( ConstructionError )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -270,11 +238,11 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	if ( TokenCount == 0 )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected semicolon after variable binding statement";
+		Output.ErrorSuggestion = "Expected semicolon after const statement";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
@@ -286,28 +254,26 @@ void OakBindingStatementConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Semicolon )
 	{
 		
-		delete BindingElement;
+		delete ConstElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected semicolon after variable binding statement";
+		Output.ErrorSuggestion = "Expected semicolon after const statement";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
 		
 	}
 	
-	TokenCount --;
-	
-	BindingElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+	ConstElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-	Output.ConstructedElement = BindingElement;
+	Output.ConstructedElement = ConstElement;
 	
 }
 
-void OakBindingStatementConstructor :: ElementDataDestructor ( void * Data )
+void OakConstStatementConstructor :: ElementDataDestructor ( void * Data )
 {
 	
 	delete reinterpret_cast <ElementData *> ( Data );
