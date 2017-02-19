@@ -10,6 +10,9 @@
 
 #include <EarlyAnalysis/FileTable.h>
 
+class ASTElement;
+class OilNamespaceDefinition;
+
 class CompilationUnit
 {
 public:
@@ -21,10 +24,7 @@ public:
 		kCompilationStep_Tokenization,
 		kCompilationStep_Lexer,
 		kCompilationStep_Parser,
-		kCompilationStep_Analyzer,
-		kCompilationStep_SymbolGeneration,
-		kCompilationStep_ObjectLinking,
-		kCompilationStep_Error
+		kCompilationStep_OILTranslation,
 		
 	};
 	
@@ -33,7 +33,7 @@ public:
 	 * 
 	 * @param FilePath Path to the source file
 	 */
-	CompilationUnit ( const std :: string & FilePath, FileTable * FTable );
+	CompilationUnit ( const std :: string & FilePath );
 	
 	// Destructor
 	~CompilationUnit ();
@@ -45,8 +45,10 @@ public:
 	 * 
 	 * @return Whether or not the compilation succeeded
 	 */
-	bool RunIndependantCompilationSteps ();
+	bool RunIndependantCompilationSteps ( FileTable & FTable );
+	bool RunAnalysis ( OilNamespaceDefinition & RootObject );
 	
+	const std :: string & GetFileName ();
 	
 	
 private:
@@ -61,7 +63,7 @@ private:
 	std :: vector <const Token *> Tokens;
 	std :: vector <const Token *> PostLexTokens;
 	
-	FileTable * FTable;
+	ASTElement * ASTRoot;
 	
 };
 

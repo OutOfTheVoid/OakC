@@ -15,7 +15,10 @@ public:
 	
 	void AddFile ( const std :: string & FileName, CompilationUnit * FileComilationUnit );
 	
+	uint32_t GetCount ();
+	
 	CompilationUnit * GetUnit ( const std :: string FileName );
+	CompilationUnit * GetUnit ( uint32_t Index );
 	
 	void DestroyAll ();
 	

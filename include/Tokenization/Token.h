@@ -4,12 +4,14 @@
 #include <string>
 #include <stdint.h>
 
+class CompilationUnit;
+
 class Token
 {
 public:
 	
 	/// Token constructor. Sets associated fields.
-	Token ( const std :: u32string & Source, uint64_t Char, uint64_t Line, uint64_t Tag, uint64_t AuxTag );
+	Token ( const std :: u32string & Source, uint64_t Char, uint64_t Line, uint64_t Tag, uint64_t AuxTag, CompilationUnit * SourceUnit );
 	/// Copy constructor.
 	Token ( const Token & CopyFrom );
 	/// Destructor.
@@ -26,6 +28,8 @@ public:
 	uint64_t GetTag () const;
 	/// Gets the optional tag-specific auxiliary tag.
 	uint64_t GetAuxTag () const;
+	/// Gets the comilation unit that generated the token.
+	CompilationUnit * GetSourceUnit () const;
 	
 private:
 	
@@ -35,6 +39,8 @@ private:
 	uint64_t Line;
 	uint64_t Tag;
 	uint64_t AuxTag;
+	
+	CompilationUnit * SourceUnit;
 	
 };
 

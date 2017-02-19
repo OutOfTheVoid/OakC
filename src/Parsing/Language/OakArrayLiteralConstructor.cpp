@@ -20,8 +20,8 @@
 OakArrayLiteralConstructor OakArrayLiteralConstructor :: Instance;
 
 OakArrayLiteralConstructor :: OakArrayLiteralConstructor ():
-	TypeGroup (),
-	ExpressionGroup ()
+	ExpressionGroup (),
+	TypeGroup ()
 {
 	
 	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );

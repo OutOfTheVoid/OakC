@@ -36,7 +36,7 @@ public:
 	 * 
 	 * @return Whether or not the tokenization succeeded without errors
 	 */
-	bool TokenizeString ( const std :: u32string & Source, std :: vector <const Token *> & TokenList, const std :: string & ErrorFileName ) const;
+	bool TokenizeString ( const std :: u32string & Source, std :: vector <const Token *> & TokenList, const std :: string & ErrorFileName, CompilationUnit * SourceUnit ) const;
 	
 private:
 	

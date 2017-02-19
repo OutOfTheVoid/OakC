@@ -26,6 +26,13 @@ void FileTable :: AddFile ( const std :: string & RFileName, CompilationUnit * F
 	
 }
 
+uint32_t FileTable :: GetCount ()
+{
+	
+	return FileMap.size ();
+	
+}
+
 CompilationUnit * FileTable :: GetUnit ( const std :: string RFileName )
 {
 	
@@ -35,6 +42,20 @@ CompilationUnit * FileTable :: GetUnit ( const std :: string RFileName )
 		return NULL;
 	
 	return FileMap [ FileName ];
+	
+}
+
+CompilationUnit * FileTable :: GetUnit ( uint32_t Index )
+{
+	
+	std :: map <std :: string, CompilationUnit *> :: iterator Iter = FileMap.begin ();
+	
+	std :: advance ( Iter, Index );
+	
+	if ( Iter == FileMap.end () )
+		return NULL;
+	
+	return Iter -> second;
 	
 }
 

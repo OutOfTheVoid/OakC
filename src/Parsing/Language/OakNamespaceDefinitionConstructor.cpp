@@ -49,8 +49,6 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	std :: vector <std :: u32string> NamespaceChain;
 	std :: u32string LastIdent;
 	
-	bool DirectGlobalReference = false;
-	
 	if ( Input.AvailableTokenCount < 4 )
 	{
 		
@@ -72,19 +70,7 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	}
 	
 	Offset ++;
-	
 	CurrentToken = Input.Tokens [ Offset ];
-	
-	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_DoubleColon )
-	{
-		
-		DirectGlobalReference = true;
-		
-		Offset ++;
-		
-		CurrentToken = Input.Tokens [ Offset ];
-		
-	}
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
@@ -145,7 +131,7 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	ElementData * NamespaceData = new ElementData ();
 	
-	NamespaceData -> DirectGlobalReference = DirectGlobalReference;
+	NamespaceData -> DirectGlobalReference = NamespaceChain.size () == 0;
 	
 	NamespaceData -> Name = LastIdent;
 	

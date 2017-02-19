@@ -35,7 +35,7 @@ void Tokenizer :: AddSplitRule ( ITokenSplitRule * Rule, uint32_t Precedence )
 	
 }
 
-bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vector <const Token *> & TokenList, const std :: string & ErrorFileName ) const
+bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vector <const Token *> & TokenList, const std :: string & ErrorFileName, CompilationUnit * SourceUnit ) const
 {
 	
 	uint64_t Offset = 0;
@@ -72,7 +72,7 @@ bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vecto
 					
 					Found = true;
 					
-					TokenList.push_back ( new Token ( Source.substr ( Offset, SplitResult.SplitLength ), Char + 1, Line + 1, SplitResult.Tag, SplitResult.AuxTag ) );
+					TokenList.push_back ( new Token ( Source.substr ( Offset, SplitResult.SplitLength ), Char + 1, Line + 1, SplitResult.Tag, SplitResult.AuxTag, SourceUnit ) );
 					
 					uint64_t NewOffset = Offset + SplitResult.SplitLength;
 					

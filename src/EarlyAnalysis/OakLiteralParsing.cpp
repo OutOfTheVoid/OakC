@@ -19,6 +19,9 @@ uint32_t HexCodeToValue ( char32_t Code )
 bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string & Out, std :: string & Error )
 {
 	
+	if ( Source.size () == 0 )
+		return false;
+	
 	uint64_t Index = 1;
 	
 	while ( Index < Source.size () )
@@ -388,5 +391,250 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 	Error = "Expected closing quotation mark at end of string literal";
 	
 	return false;
+	
+}
+
+void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value, bool & Overflow64 )
+{
+	
+	uint64_t Index = 0;
+	char32_t Char = Source.at ( Index );
+	
+	bool PotentialOverflow64 = false;
+	Overflow64 = false;
+	
+	if ( Char != U'0' )
+	{
+		
+		uint64_t Temp = 0;
+		
+		do
+		{
+			
+			Char = Source.at ( Index );
+			
+			if ( Char != U'_' )
+			{
+				
+				uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+				
+				if ( COffset > 9 )
+				{
+					
+					Value = Temp;
+					return;
+					
+				}
+				
+				Temp *= 10;
+				Temp += COffset;
+				
+				if ( PotentialOverflow64 )
+					Overflow64 = true;
+				
+				if ( UINT64_MAX / Temp < 10 )
+					PotentialOverflow64 = true;
+				
+				Index ++;
+				
+			}
+			else
+				Index ++;
+			
+		}
+		while ( Index < Source.size () );
+		
+		Value = Temp;
+		return;
+		
+	}
+	else
+	{
+		
+		Index ++;
+		
+		if ( Index >= Source.size () )
+		{
+			
+			Value = 0;
+			return;
+			
+		}
+		
+		Char = Source.at ( Index );
+		
+		switch ( Char )
+		{
+			
+			case 'X':
+			case 'x':
+			case 'H':
+			case 'h':
+			{
+				
+				Index ++;
+				
+				Char = Source.at ( Index );
+				
+				uint64_t Temp = 0;
+				
+				do
+				{
+					
+					uint64_t COffsetDec = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+					uint64_t COffsetAlphLow = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'a' );
+					uint64_t COffsetAlphUp = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'A' );
+					
+					if ( COffsetDec <= 9 )
+					{
+						
+						Temp <<= 4;
+						Temp |= COffsetDec;
+						
+						Index ++;
+						
+					}
+					if ( COffsetAlphLow <= 5 )
+					{
+						
+						Temp <<= 4;
+						Temp |= ( COffsetAlphLow + 10 );
+						
+						Index ++;
+						
+					}
+					if ( COffsetAlphUp <= 5 )
+					{
+						
+						Temp <<= 4;
+						Temp |= ( COffsetAlphUp + 10 );
+						
+						Index ++;
+						
+					}
+					else
+					{
+						
+						Value = Temp;
+						return;
+						
+					}
+					
+					if ( PotentialOverflow64 )
+						Overflow64 = true;
+					
+					if ( UINT64_MAX / Temp < 16 )
+						PotentialOverflow64 = true;
+					
+				}
+				while ( Index < Source.size () );
+				
+				Value = Temp;
+				return;
+				
+			}
+			break;
+			
+			case 'b':
+			case 'B':
+			{
+				
+				Index ++;
+				
+				Char = Source.at ( Index );
+				
+				uint64_t Temp = 0;
+				
+				do
+				{
+					
+					uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+					
+					if ( COffset < 2 )
+					{
+						
+						Temp <<= 1;
+						Temp |= COffset;
+						
+						Index ++;
+						
+						if ( PotentialOverflow64 )
+							Overflow64 = true;
+						
+						if ( UINT64_MAX / Temp < 2 )
+							PotentialOverflow64 = true;
+						
+					}
+					else
+					{
+						
+						Value = Temp;
+						return;
+						
+					}
+					
+				}
+				while ( Index < Source.size () );
+				
+				Value = Temp;
+				return;
+				
+			}
+			break;
+			
+			case 'o':
+			case 'O':
+			{
+				
+				Index ++;
+				
+				Char = Source.at ( Index );
+				
+				uint64_t Temp = 0;
+				
+				do
+				{
+					
+					uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+					
+					if ( COffset < 8 )
+					{
+						
+						Temp <<= 3;
+						Temp |= COffset;
+						
+						Index ++;
+						
+						if ( PotentialOverflow64 )
+							Overflow64 = true;
+						
+						if ( UINT64_MAX / Temp < 8 )
+							PotentialOverflow64 = true;
+						
+					}
+					else
+					{
+						
+						Value = Temp;
+						return;
+						
+					}
+					
+				}
+				while ( Index < Source.size () );
+				
+				Value = Temp;
+				return;
+				
+			}
+			break;
+			
+			default:
+				Value = 0;
+				return;
+			
+		}
+		
+	}
 	
 }

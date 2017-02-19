@@ -99,7 +99,7 @@ void OakKeywordLexingPattern :: TryPattern ( ILexingInput & Input, ILexingResult
 	uint64_t AuxTag = KeywordAuxTags.Get ( SourceUTF8.c_str (), SourceUTF8.size () );
 	
 	Result.Accepted = true;
-	Result.TokenOutput.push_back ( new Token ( Current -> GetSource (), Current -> GetChar (), Current -> GetLine (), OakTokenTags :: kTokenTag_Identifier, AuxTag ) );
+	Result.TokenOutput.push_back ( new Token ( Current -> GetSource (), Current -> GetChar (), Current -> GetLine (), OakTokenTags :: kTokenTag_Identifier, AuxTag, Current -> GetSourceUnit () ) );
 	Result.TokensConsumed = 1;
 	
 }

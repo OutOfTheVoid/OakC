@@ -12,11 +12,11 @@ project "Compiler"
 	includedirs "include"
 	
 	filter { "not system:windows" }
-		toolset "clang"
-		buildoptions { "-std=c++1z" }
+		--toolset "clang"
+		buildoptions { "-std=c++11" }
 		
 	filter { "action:vs*" }
-		buildoptions { "/std:c++latest" }
+		buildoptions { "/std:c++11" }
 		
 	filter {}
 		

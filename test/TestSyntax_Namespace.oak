@@ -25,7 +25,7 @@ namespace SomeNS::DirectlyNestedNS
 	
 }
 
-namespace ::SomeGloballyReferencedNS::DirectlyNestedNS
+namespace SomeGloballyReferencedNS::DirectlyNestedNS
 {
 	
 	

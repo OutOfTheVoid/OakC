@@ -12,7 +12,10 @@
 
 #include <EarlyAnalysis/FileTable.h>
 
-#define VERSION_STRING "0.0.1a"
+#include <OIL/OilDebugPrint.h>
+#include <OIL/OilNamespaceDefinition.h>
+
+#define VERSION_STRING "0.0.1b"
 
 void PrintHelp ();
 
@@ -87,12 +90,28 @@ int main ( int argc, const char * argv [] )
 	for ( uint32_t I = 0; I < SourceFileNames.size (); I ++ )
 	{
 		
-		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ], & Files );
+		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ] );
 		
-		if ( ! FileUnit -> RunIndependantCompilationSteps () )
+		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files ) )
 			return 0;
 		
 	}
+	
+	OilNamespaceDefinition OilRoot ( U"[global]" );
+	
+	for ( uint32_t I = 0; I < Files.GetCount (); I ++ )
+	{
+		
+		CompilationUnit * Unit = Files.GetUnit ( I );
+		
+		if ( ! Unit -> RunAnalysis ( OilRoot ) )
+			return 0;
+		
+	}
+	
+	LOG_VERBOSE ( "\n" );
+	
+	OilPrint ( OilRoot );
 	
 	Files.DestroyAll ();
 	

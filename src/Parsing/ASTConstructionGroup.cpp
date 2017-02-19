@@ -31,6 +31,9 @@ ASTConstructionGroup :: ~ASTConstructionGroup ()
 void ASTConstructionGroup :: AddConstructorCantidate ( const IASTConstructor * Cantidate, uint32_t Priority )
 {
 	
+	if ( Cantidate == NULL )
+		return;
+	
 	ConstructorRecord Record;
 	
 	Record.Priority = Priority;
@@ -45,6 +48,15 @@ void ASTConstructionGroup :: AddConstructorCantidate ( const IASTConstructor * C
 			break;
 		
 		Index ++;
+		
+	}
+	
+	if ( Index >= Constructors.size () )
+	{
+		
+		Constructors.push_back ( Record );
+		
+		return;
 		
 	}
 	

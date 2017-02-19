@@ -13,7 +13,7 @@
 
 bool GetImportName ( const ASTElement * ImportStatementElement, std :: u32string & FileName, std :: string & ParseError );
 
-bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable * GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut )
+bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut )
 {
 	
 	uint64_t SubElementCount = FileRootElement -> GetSubElementCount ();
@@ -47,14 +47,14 @@ bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string
 			
 			std :: string UTF8FileName = CodeConversion :: ConvertUTF32ToUTF8 ( FileName );
 			
-			CompilationUnit * FileUnit = GlobalFileTable -> GetUnit ( UTF8FileName );
+			CompilationUnit * FileUnit = GlobalFileTable.GetUnit ( UTF8FileName );
 			
 			if ( FileUnit == NULL )
 			{
 				
-				FileUnit = new CompilationUnit ( UTF8FileName, GlobalFileTable );
+				FileUnit = new CompilationUnit ( UTF8FileName );
 				
-				if ( ! FileUnit -> RunIndependantCompilationSteps () )
+				if ( ! FileUnit -> RunIndependantCompilationSteps ( GlobalFileTable ) )
 					return false;
 					
 			}

@@ -21,16 +21,17 @@
 #include <Parsing/Language/OakASTTags.h>
 
 #include <EarlyAnalysis/OakImportResolution.h>
+#include <EarlyAnalysis/OakOilTranslation.h>
 
 #include <iostream>
 
-CompilationUnit :: CompilationUnit ( const std :: string & FilePath, FileTable * FTable ):
+CompilationUnit :: CompilationUnit ( const std :: string & FilePath ):
 	CompilationState ( kCompilationStep_FileLoad ),
 	SourceFile ( FilePath, false ),
 	SourceString (),
 	Tokens (),
 	PostLexTokens (),
-	FTable ( FTable )
+	ASTRoot ( NULL )
 {
 	
 	OakTokenizer :: GetOakTokenizer (); // Ensure initialization pre-run
@@ -41,6 +42,10 @@ CompilationUnit :: CompilationUnit ( const std :: string & FilePath, FileTable *
 
 CompilationUnit :: ~CompilationUnit ()
 {
+	
+	if ( ASTRoot != NULL )
+		delete ASTRoot;
+	
 }
 
 void _PrintAST ( const ASTElement * Root, uint32_t Indent )
@@ -62,7 +67,14 @@ void _PrintAST ( const ASTElement * Root, uint32_t Indent )
 	
 }
 
-bool CompilationUnit :: RunIndependantCompilationSteps ()
+const std :: string & CompilationUnit :: GetFileName ()
+{
+	
+	return SourceFile.GetName ();
+	
+}
+
+bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 {
 	
 	if ( CompilationState != kCompilationStep_FileLoad )
@@ -117,7 +129,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 	
 	const Tokenizer & TokenizerInstance = OakTokenizer :: GetOakTokenizer ();
 	
-	if ( ! TokenizerInstance.TokenizeString ( SourceString, Tokens, SourceFile.GetName () ) )
+	if ( ! TokenizerInstance.TokenizeString ( SourceString, Tokens, SourceFile.GetName (), this ) )
 		return false;
 	
 	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: Lexing." );
@@ -141,14 +153,16 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 	
 	const ASTConstructionGroup & ParserInstance = OakParser :: GetOakParser ();
 	
-	ASTElement * Root = new ASTElement ();
+	ASTRoot = new ASTElement ();
+	
+	ASTRoot -> SetTag ( OakASTTags :: kASTTag_File );
 	
 	bool ConstructionError = false;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorSuggestion;
 	uint64_t AvailableTokens = PostLexTokens.size ();
 	
-	ParserInstance.TryConstruction ( Root, 0xFFFFFFFFFFFFFFFUL, ConstructionError, ErrorSuggestion, ErrorToken, & PostLexTokens [ 0 ], AvailableTokens );
+	ParserInstance.TryConstruction ( ASTRoot, 0xFFFFFFFFFFFFFFFUL, ConstructionError, ErrorSuggestion, ErrorToken, & PostLexTokens [ 0 ], AvailableTokens );
 	
 	if ( ConstructionError )
 	{
@@ -158,7 +172,8 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 		else
 			LOG_FATALERROR_NOFILE ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : std :: string ( "unkown error" ) );
 		
-		delete Root;
+		delete ASTRoot;
+		ASTRoot = NULL;
 		
 		return false;
 		
@@ -176,15 +191,30 @@ bool CompilationUnit :: RunIndependantCompilationSteps ()
 		
 		std :: cout << "AST: " << std :: endl;
 		
-		_PrintAST ( Root, 0 );
+		_PrintAST ( ASTRoot, 0 );
 		
 	}
 	
-	FTable -> AddFile ( SourceFile.GetName (), this );
+	FTable.AddFile ( SourceFile.GetName (), this );
 	
 	std :: vector <CompilationUnit *> ImportedUnits;
 	
-	if ( ! OakResolveImports ( Root, SourceFile.GetName (), FTable, ImportedUnits ) )
+	if ( ! OakResolveImports ( ASTRoot, SourceFile.GetName (), FTable, ImportedUnits ) )
+		return false;
+	
+	CompilationState = kCompilationStep_OILTranslation;
+	
+	return true;
+	
+}
+
+bool CompilationUnit :: RunAnalysis ( OilNamespaceDefinition & RootNS )
+{
+	
+	if ( CompilationState != kCompilationStep_OILTranslation )
+		return false;
+	
+	if ( ! OakTranslateFileTreeToOil ( ASTRoot, RootNS ) )
 		return false;
 	
 	return true;
