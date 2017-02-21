@@ -14,7 +14,7 @@ OilStructBinding :: ~OilStructBinding ()
 	
 }
 
-const std :: u32string & OilStructBinding :: GetName ()
+const std :: u32string & OilStructBinding :: GetName () const
 {
 	
 	return Name;
@@ -22,6 +22,13 @@ const std :: u32string & OilStructBinding :: GetName ()
 }
 
 OilTypeRef * OilStructBinding :: GetTypeRef ()
+{
+	
+	return TypeRef;
+	
+}
+
+const OilTypeRef * OilStructBinding :: GetTypeRef () const
 {
 	
 	return TypeRef;

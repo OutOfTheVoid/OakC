@@ -109,7 +109,7 @@ void OakNamespacedTemplatedTypeNameConstructor :: TryConstruct ( ASTConstruction
 	
 	TypeNameData -> DirectGlobalReference = true;
 	
-	TypeNameData -> Name = LastIdent;
+	TypeNameData -> TypeName = LastIdent;
 	
 	TypeNameData -> IdentList = new std :: u32string [ NamespaceChain.size () ];
 	TypeNameData -> IdentListLength = NamespaceChain.size ();

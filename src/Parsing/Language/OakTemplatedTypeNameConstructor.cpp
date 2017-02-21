@@ -85,7 +85,7 @@ void OakTemplatedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & In
 	
 	ElementData * TypeNameData = new ElementData ();
 	
-	TypeNameData -> Name = CurrentToken -> GetSource ();
+	TypeNameData -> TypeName = CurrentToken -> GetSource ();
 	TypeNameData -> DoubleTemplateClose = false;
 	TypeNameData -> TripleTemplateClose = false;
 	

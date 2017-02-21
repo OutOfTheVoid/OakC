@@ -21,13 +21,21 @@ namespace TestNS
 namespace SomeNS::DirectlyNestedNS
 {
 	
-	
+	struct Struct2
+	{
+	}
 	
 }
 
 namespace SomeGloballyReferencedNS::DirectlyNestedNS
 {
 	
+	struct Struct3
+	{
+	}
 	
+	struct Struct1
+	{
+	}
 	
 }

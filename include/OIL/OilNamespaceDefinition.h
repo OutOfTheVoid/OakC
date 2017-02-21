@@ -23,6 +23,8 @@ public:
 	
 	const uint32_t GetStructDefinitionCount () const;
 	
+	void AddStructDefinition ( OilStructDefinition * StructDef );
+	
 	OilStructDefinition * GetStructDefinition ( uint32_t Index );
 	const OilStructDefinition * GetStructDefinition ( uint32_t Index ) const;
 	const OilStructDefinition * FindStructDefinition ( const std :: u32string & ID ) const;

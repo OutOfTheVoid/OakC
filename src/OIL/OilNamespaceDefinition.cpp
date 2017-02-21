@@ -100,6 +100,20 @@ const OilNamespaceDefinition * OilNamespaceDefinition :: FindNamespaceDefinition
 	
 }
 
+void OilNamespaceDefinition :: AddStructDefinition ( OilStructDefinition * StructDef )
+{
+	
+	StructDefs [ StructDef -> GetID () ] = StructDef;
+	
+}
+
+const uint32_t OilNamespaceDefinition :: GetStructDefinitionCount () const
+{
+	
+	return StructDefs.size ();
+	
+}
+
 OilStructDefinition * OilNamespaceDefinition :: GetStructDefinition ( uint32_t Index )
 {
 	

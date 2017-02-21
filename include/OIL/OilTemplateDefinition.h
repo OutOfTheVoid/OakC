@@ -17,7 +17,7 @@ public:
 	
 	uint32_t GetTemplateParameterCount ();
 	
-	OilTemplateDefinitionParameter * GetTempalteParameter ( uint32_t Index );
+	OilTemplateDefinitionParameter * GetTemplateParameter ( uint32_t Index );
 	OilTemplateDefinitionParameter * GetTemplateParameter ( const std :: u32string & Name );
 	
 private:

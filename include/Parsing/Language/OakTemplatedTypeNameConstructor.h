@@ -13,7 +13,7 @@ public:
 	typedef struct
 	{
 		
-		std :: u32string Name;
+		std :: u32string TypeName;
 		
 		bool DoubleTemplateClose;
 		bool TripleTemplateClose;

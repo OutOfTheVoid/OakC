@@ -29,11 +29,11 @@ namespace MyNamespace::MySubNamespace
 function MyGlobalFunc ( SomeParam : i32 ) : void
 {
 	
-	//SomeNamespace::SomeTemplatedClass:<u32>.Call ();
+	SomeNamespace::SomeTemplatedClass:<u32>.Call ();
 	
 }
 
-struct MyType <A, B: SomeNamespace::SomeNamespacedTrait:<Array:<A>>>
+struct MyType <A, B>
 {
 	
 	bind TestString: string,

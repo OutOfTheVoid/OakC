@@ -246,7 +246,7 @@ void OakBindingAllusionConstructor :: ElementDataDestructor ( void * Data )
 	ElementData * EData = reinterpret_cast <ElementData *> ( Data );
 	
 	if ( EData -> IdentList != NULL )
-		delete EData -> IdentList;
+		delete [] EData -> IdentList;
 	
 	delete EData;
 	

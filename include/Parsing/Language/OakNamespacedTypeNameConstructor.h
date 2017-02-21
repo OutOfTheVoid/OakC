@@ -17,7 +17,7 @@ public:
 		std :: u32string * IdentList;
 		uint32_t IdentListLength;
 		
-		std :: u32string Name;
+		std :: u32string TypeName;
 		
 	} ElementData;
 	

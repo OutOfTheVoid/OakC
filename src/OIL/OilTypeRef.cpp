@@ -1,18 +1,20 @@
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilTemplateSpecification.h>
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name ):
+OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
 	Name ( Name ),
 	NamespaceNameList ( NULL ),
 	NamespaceNameCount ( 0 ),
-	TemplateSpecification ( NULL )
+	TemplateSpecification ( NULL ),
+	Flags ( Flags )
 {
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount ):
+OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags ):
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
-	TemplateSpecification ( NULL )
+	TemplateSpecification ( NULL ),
+	Flags ( Flags )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -22,18 +24,20 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification ):
+OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
 	Name ( Name ),
 	NamespaceNameList ( NULL ),
 	NamespaceNameCount ( 0 ),
-	TemplateSpecification ( TemplateSpecification )
+	TemplateSpecification ( TemplateSpecification ),
+	Flags ( Flags )
 {
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification ):
+OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags ):
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
-	TemplateSpecification ( TemplateSpecification )
+	TemplateSpecification ( TemplateSpecification ),
+	Flags ( Flags )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -95,5 +99,12 @@ OilTemplateSpecification * OilTypeRef :: GetTemplateSpecification ()
 {
 	
 	return TemplateSpecification;
+	
+}
+
+OilTypeRef :: RefFlag OilTypeRef :: GetFlags ()
+{
+	
+	return Flags;
 	
 }

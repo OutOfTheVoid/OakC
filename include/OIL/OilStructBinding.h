@@ -12,8 +12,9 @@ public:
 	OilStructBinding ( const std :: u32string & Name, OilTypeRef * TypeRef );
 	~OilStructBinding ();
 	
-	const std :: u32string & GetName ();
+	const std :: u32string & GetName () const;
 	
+	const OilTypeRef * GetTypeRef () const;
 	OilTypeRef * GetTypeRef ();
 	
 private:

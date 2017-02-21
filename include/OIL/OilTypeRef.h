@@ -9,10 +9,15 @@ class OilTypeRef
 {
 public:
 	
-	OilTypeRef ( const std :: u32string & Name );
-	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount );
-	OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * OilTemplateSpecification );
-	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification );
+	typedef uint32_t RefFlag;
+	
+	static const RefFlag kRefFlag_None = 0;
+	static const RefFlag kRefFlag_Trait = 1;
+	
+	OilTypeRef ( const std :: u32string & Name, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
 	~OilTypeRef ();
 	
 	bool IsNamespaced ();
@@ -25,12 +30,18 @@ public:
 	
 	OilTemplateSpecification * GetTemplateSpecification ();
 	
+	RefFlag GetFlags ();
+	
 private:
 	
 	const std :: u32string Name;
+	
 	std :: u32string * NamespaceNameList;
 	const uint32_t NamespaceNameCount;
+	
 	OilTemplateSpecification * TemplateSpecification;
+	
+	RefFlag Flags;
 	
 };
 

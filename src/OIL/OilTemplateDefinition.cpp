@@ -1,4 +1,5 @@
 #include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilTemplateDefinitionParameter.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -12,7 +13,7 @@ OilTemplateDefinition :: OilTemplateDefinition ():
 OilTemplateDefinition :: ~OilTemplateDefinition ()
 {
 	
-	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.start ();
+	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.begin ();
 	
 	while ( Iter != Parameters.end () )
 	{
@@ -30,8 +31,6 @@ void OilTemplateDefinition :: AddParameter ( OilTemplateDefinitionParameter * Pa
 	
 	Parameters [ Parameter -> GetName () ] = Parameter;
 	
-	return true;
-	
 }
 
 uint32_t OilTemplateDefinition :: GetTemplateParameterCount ()
@@ -41,7 +40,7 @@ uint32_t OilTemplateDefinition :: GetTemplateParameterCount ()
 	
 }
 
-OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTempalteParameter ( uint32_t Index )
+OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter ( uint32_t Index )
 {
 	
 	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.begin ();
@@ -58,7 +57,7 @@ OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTempalteParameter (
 OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter ( const std :: u32string & Name )
 {
 	
-	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.find ( Parameter -> GetName () );
+	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.find ( Name );
 	
 	if ( Iter == Parameters.end () )
 		return NULL;
