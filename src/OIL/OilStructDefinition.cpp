@@ -121,3 +121,10 @@ OilTemplateDefinition * OilStructDefinition :: GetTemplateDefinition ()
 	return TemplateDefinition;
 	
 }
+
+bool OilStructDefinition :: IsTemplated () const
+{
+	
+	return TemplateDefinition != NULL;
+	
+}

@@ -33,17 +33,17 @@ void OilTemplateDefinition :: AddParameter ( OilTemplateDefinitionParameter * Pa
 	
 }
 
-uint32_t OilTemplateDefinition :: GetTemplateParameterCount ()
+uint32_t OilTemplateDefinition :: GetTemplateParameterCount () const
 {
 	
 	return Parameters.size ();
 	
 }
 
-OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter ( uint32_t Index )
+OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter ( uint32_t Index ) const
 {
 	
-	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.begin ();
+	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: const_iterator Iter = Parameters.begin ();
 	
 	std :: advance ( Iter, Index );
 	
@@ -54,10 +54,10 @@ OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter (
 	
 }
 
-OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter ( const std :: u32string & Name )
+OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParameter ( const std :: u32string & Name ) const
 {
 	
-	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: iterator Iter = Parameters.find ( Name );
+	std :: map <std :: u32string, OilTemplateDefinitionParameter *> :: const_iterator Iter = Parameters.find ( Name );
 	
 	if ( Iter == Parameters.end () )
 		return NULL;

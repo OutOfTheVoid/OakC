@@ -15,10 +15,10 @@ public:
 	
 	void AddParameter ( OilTemplateDefinitionParameter * Parameter );
 	
-	uint32_t GetTemplateParameterCount ();
+	uint32_t GetTemplateParameterCount () const;
 	
-	OilTemplateDefinitionParameter * GetTemplateParameter ( uint32_t Index );
-	OilTemplateDefinitionParameter * GetTemplateParameter ( const std :: u32string & Name );
+	OilTemplateDefinitionParameter * GetTemplateParameter ( uint32_t Index ) const;
+	OilTemplateDefinitionParameter * GetTemplateParameter ( const std :: u32string & Name ) const;
 	
 private:
 	

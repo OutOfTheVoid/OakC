@@ -1,0 +1,12 @@
+namespace SomeNS
+{
+	
+	struct TestStruct <A: SomeTrait, B>
+	{
+		
+		bind Member1:A,
+		bind Member2:B
+		
+	}
+	
+}

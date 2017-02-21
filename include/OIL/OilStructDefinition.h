@@ -27,6 +27,8 @@ public:
 	
 	const std :: u32string GetID () const;
 	
+	bool IsTemplated () const;
+	
 	OilTemplateDefinition * GetTemplateDefinition ();
 	const OilTemplateDefinition * GetTemplateDefinition () const;
 	

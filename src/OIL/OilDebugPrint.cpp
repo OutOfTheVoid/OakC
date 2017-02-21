@@ -2,6 +2,8 @@
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilStructBinding.h>
+#include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilTemplateDefinitionParameter.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -12,7 +14,7 @@
 void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent );
 void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent );
 void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent );
-void OilPrintTemplateDefinition ( const OilTemplateDefinition & Template, uint32_t Indent );
+std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -92,7 +94,17 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 	
 	PrintString += "[STRUCT \"";
 	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Struct.GetID () );
-	PrintString += "\"]\n";
+	
+	if ( Struct.IsTemplated () )
+	{
+		
+		PrintString += "\" Template: ";
+		PrintString += OilStringTemplateDefinition ( * Struct.GetTemplateDefinition () );
+		PrintString += "]\n";
+		
+	}
+	else
+		PrintString += "\"]\n";
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
@@ -130,12 +142,30 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 	
 }
 
-std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template, uint32_t Indent )
+std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template )
 {
 	
 	std :: string OutString;
 	
 	OutString += "<";
+	
+	uint32_t ParamCount = Template.GetTemplateParameterCount ();
+	
+	for ( uint32_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		OilTemplateDefinitionParameter * Param = Template.GetTemplateParameter ( I );
+		
+		OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Param -> GetName () );
+		
+		if ( I != ParamCount - 1 )
+			OutString += ", ";
+		
+	}
+	
+	OutString += ">";
+	
+	return OutString;
 	
 }
 

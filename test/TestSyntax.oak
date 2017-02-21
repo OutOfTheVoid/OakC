@@ -43,6 +43,10 @@ struct MyType <A, B>
 	
 }
 
+struct SomeStruct <A: SomeTrait + AnotherTrait, B, C, D: SomeTrait>
+{
+}
+
 implement MyType
 {
 	
