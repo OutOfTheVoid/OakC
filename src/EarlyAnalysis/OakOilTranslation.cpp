@@ -1,12 +1,12 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 
+#include <OIL/OilTypeRef.h>
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateSpecification.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilStructBinding.h>
-#include <OIL/OilTypeRef.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
