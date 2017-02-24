@@ -8,7 +8,7 @@ OilIntegerLiteral :: OilIntegerLiteral ( IntType Type, uint64_t UValue ):
 
 OilIntegerLiteral :: OilIntegerLiteral ( IntType Type, int64_t SValue ):
 	Type ( Type ),
-	IValue ( SValue )
+	SValue ( SValue )
 {
 }
 
@@ -42,7 +42,7 @@ int64_t OilIntegerLiteral :: GetSValue () const
 	
 }
 
-IntType OilIntegerLiteral :: GetType () const
+OilIntegerLiteral :: IntType OilIntegerLiteral :: GetType () const
 {
 	
 	return Type;

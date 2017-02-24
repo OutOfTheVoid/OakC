@@ -1,13 +1,15 @@
 #ifndef OIL_OILLITERAL_H
 #define OIL_OILLITERAL_H
 
-#include <IOilPrimary.h>
+#include <OIL/IOilPrimary.h>
+
+#include <stdint.h>
 
 class OilIntegerLiteral : public virtual IOilPrimary
 {
 public:
 	
-	typedef struct
+	typedef enum
 	{
 		
 		kIntType_Explicit_U8 = 0x00,
@@ -51,7 +53,7 @@ private:
 	{
 		
 		uint64_t UValue;
-		uint64_t IValue;
+		int64_t SValue;
 		
 	};
 	

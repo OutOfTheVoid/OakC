@@ -1,12 +1,20 @@
 #ifndef OIL_OILFUNCTIONDEFINITION_H
 #define OIL_OILFUNCTIONDEFINITION_H
 
+#include <string>
+#include <map>
+
+class OilFunctionParameterList;
+class OilStatementBody;
+class OilTemplateDefinition;
+class OilTypeRef;
+
 class OilFunctionDefinition
 {
 public:
 	
-	OilFunctionDefinition ( const std :: u32string & Name, OilFunctionParameterList * ParamList, OilStatementBody * Body );
-	OilFunctionDefinition ( const std :: u32string & Name, OilFunctionParameterList * ParamList, OilStatementBody * Body, OilTemplateDefinition * Template );
+	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType );
+	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
 	~OilFunctionDefinition ();
 	
 	const std :: u32string GetName () const;
@@ -20,10 +28,17 @@ public:
 	const OilTemplateDefinition * GetTemplateDefinition () const;
 	OilTemplateDefinition * GetTemplateDefinition ();
 	
+	bool IsTemplated () const;
+	bool ConstantTerms () const;
+	
 private:
 	
 	const std :: u32string Name;
 	
-}
+	OilTemplateDefinition * TemplateDefinition;
+	OilFunctionParameterList * ParameterList;
+	OilStatementBody * StatementBody;
+	
+};
 
 #endif

@@ -39,21 +39,21 @@ OilTemplateDefinitionParameter :: ~OilTemplateDefinitionParameter ()
 	
 }
 
-const std :: u32string & OilTemplateDefinitionParameter :: GetName ()
+const std :: u32string & OilTemplateDefinitionParameter :: GetName () const
 {
 	
 	return Name;
 	
 }
 
-bool OilTemplateDefinitionParameter :: IsRestricted ()
+bool OilTemplateDefinitionParameter :: IsRestricted () const
 {
 	
 	return RestrictionTypes != NULL;
 	
 }
 
-uint32_t OilTemplateDefinitionParameter :: GetRestrictionCount ()
+uint32_t OilTemplateDefinitionParameter :: GetRestrictionCount () const
 {
 	
 	return RestrictionCount;
@@ -61,6 +61,16 @@ uint32_t OilTemplateDefinitionParameter :: GetRestrictionCount ()
 }
 
 OilTypeRef * OilTemplateDefinitionParameter :: GetRestriction ( uint32_t Index )
+{
+	
+	if ( Index >= RestrictionCount )
+		return NULL;
+	
+	return RestrictionTypes [ Index ];
+	
+}
+
+const OilTypeRef * OilTemplateDefinitionParameter :: GetRestriction ( uint32_t Index ) const
 {
 	
 	if ( Index >= RestrictionCount )

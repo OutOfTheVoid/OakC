@@ -12,8 +12,9 @@ public:
 	OilTemplateSpecification ( OilTypeRef ** TypeRefList, uint32_t TypeRefCount );
 	~OilTemplateSpecification ();
 	
-	uint32_t GetTypeRefCount ();
+	uint32_t GetTypeRefCount () const;
 	OilTypeRef * GetTypeRef ( uint32_t Index );
+	const OilTypeRef * GetTypeRef ( uint32_t Index ) const;
 	
 	//bool IsResolved ();
 	

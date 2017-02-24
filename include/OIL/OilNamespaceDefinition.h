@@ -5,6 +5,7 @@
 #include <map>
 
 class OilStructDefinition;
+class OilFunctionDefinition;
 
 class OilNamespaceDefinition
 {
@@ -27,7 +28,17 @@ public:
 	
 	OilStructDefinition * GetStructDefinition ( uint32_t Index );
 	const OilStructDefinition * GetStructDefinition ( uint32_t Index ) const;
+	
+	OilStructDefinition * FindStructDefinition ( const std :: u32string & ID );
 	const OilStructDefinition * FindStructDefinition ( const std :: u32string & ID ) const;
+	
+	void AddFunctionDefinition ( OilFunctionDefinition * FuncDef );
+	
+	OilFunctionDefinition * GetFunctionDefinition ( uint32_t Index );
+	const OilFunctionDefinition * GetFunctionDefinition ( uint32_t Index ) const;
+	
+	OilFunctionDefinition * FindFunctionDefinition ( const std :: u32string & ID );
+	const OilFunctionDefinition * FindFunctionDefinition ( const std :: u32string & ID ) const;
 	
 	const std :: u32string GetID () const;
 	
@@ -37,6 +48,7 @@ private:
 	
 	std :: map <std :: u32string, OilNamespaceDefinition *> SubNamespaces;
 	std :: map <std :: u32string, OilStructDefinition *> StructDefs;
+	std :: map <std :: u32string, OilFunctionDefinition *> FuncDefs;
 	
 };
 

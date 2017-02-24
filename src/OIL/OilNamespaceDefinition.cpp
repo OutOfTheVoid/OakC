@@ -1,5 +1,6 @@
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilStructDefinition.h>
+#include <OIL/OilFunctionDefinition.h>
 
 #include <map>
 #include <iterator>
@@ -7,7 +8,8 @@
 OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID ):
 	ID ( ID ),
 	SubNamespaces (),
-	StructDefs ()
+	StructDefs (),
+	FuncDefs ()
 {
 }
 
@@ -142,12 +144,84 @@ const OilStructDefinition * OilNamespaceDefinition :: GetStructDefinition ( uint
 	
 }
 
+OilStructDefinition * OilNamespaceDefinition :: FindStructDefinition ( const std :: u32string & ID )
+{
+	
+	std :: map <std :: u32string, OilStructDefinition *> :: iterator FindIterator = StructDefs.find ( ID );
+	
+	if ( FindIterator != StructDefs.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
 const OilStructDefinition * OilNamespaceDefinition :: FindStructDefinition ( const std :: u32string & ID ) const
 {
 	
 	std :: map <std :: u32string, OilStructDefinition *> :: const_iterator FindIterator = StructDefs.find ( ID );
 	
 	if ( FindIterator != StructDefs.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+void OilNamespaceDefinition :: AddFunctionDefinition ( OilFunctionDefinition * FuncDef )
+{
+	
+	FuncDefs [ FuncDef -> GetName () ] = FuncDef;
+	
+}
+
+OilFunctionDefinition * OilNamespaceDefinition :: GetFunctionDefinition ( uint32_t Index )
+{
+	
+	std :: map <std :: u32string, OilFunctionDefinition *> :: iterator IndexIter = FuncDefs.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == FuncDefs.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+const OilFunctionDefinition * OilNamespaceDefinition :: GetFunctionDefinition ( uint32_t Index ) const
+{
+	
+	std :: map <std :: u32string, OilFunctionDefinition *> :: const_iterator IndexIter = FuncDefs.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == FuncDefs.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+OilFunctionDefinition * OilNamespaceDefinition :: FindFunctionDefinition ( const std :: u32string & ID )
+{
+	
+	std :: map <std :: u32string, OilFunctionDefinition *> :: iterator FindIterator = FuncDefs.find ( ID );
+	
+	if ( FindIterator != FuncDefs.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+
+const OilFunctionDefinition * OilNamespaceDefinition :: FindFunctionDefinition ( const std :: u32string & ID ) const
+{
+	
+	std :: map <std :: u32string, OilFunctionDefinition *> :: const_iterator FindIterator = FuncDefs.find ( ID );
+	
+	if ( FindIterator != FuncDefs.end () )
 		return FindIterator -> second;
 	
 	return NULL;

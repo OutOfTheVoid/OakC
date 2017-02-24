@@ -154,7 +154,7 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 	for ( uint32_t I = 0; I < ParamCount; I ++ )
 	{
 		
-		OilTemplateDefinitionParameter * Param = Template.GetTemplateParameter ( I );
+		const OilTemplateDefinitionParameter * Param = Template.GetTemplateParameter ( I );
 		
 		OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Param -> GetName () );
 		

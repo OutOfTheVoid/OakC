@@ -13,12 +13,13 @@ public:
 	OilTemplateDefinitionParameter ( const std :: u32string & Name, OilTypeRef ** RestrictionTypes, uint32_t RestrictionCount );
 	~OilTemplateDefinitionParameter ();
 	
-	const std :: u32string & GetName ();
+	const std :: u32string & GetName () const;
 	
-	bool IsRestricted ();
+	bool IsRestricted () const;
 	
-	uint32_t GetRestrictionCount ();
+	uint32_t GetRestrictionCount () const;
 	OilTypeRef * GetRestriction ( uint32_t Index );
+	const OilTypeRef * GetRestriction ( uint32_t Index ) const;
 	
 private:
 	

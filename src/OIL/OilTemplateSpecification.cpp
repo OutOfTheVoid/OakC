@@ -23,7 +23,7 @@ OilTemplateSpecification :: ~OilTemplateSpecification ()
 	
 }
 
-uint32_t OilTemplateSpecification :: GetTypeRefCount ()
+uint32_t OilTemplateSpecification :: GetTypeRefCount () const
 {
 	
 	return TypeRefCount;
@@ -31,6 +31,16 @@ uint32_t OilTemplateSpecification :: GetTypeRefCount ()
 }
 
 OilTypeRef * OilTemplateSpecification :: GetTypeRef ( uint32_t Index )
+{
+	
+	if ( Index > TypeRefCount )
+		return NULL;
+	
+	return TypeRefList [ Index ];
+	
+}
+
+const OilTypeRef * OilTemplateSpecification :: GetTypeRef ( uint32_t Index ) const
 {
 	
 	if ( Index > TypeRefCount )
