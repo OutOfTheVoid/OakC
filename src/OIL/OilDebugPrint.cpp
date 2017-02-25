@@ -4,6 +4,9 @@
 #include <OIL/OilStructBinding.h>
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
+#include <OIL/OilFunctionDefinition.h>
+#include <OIL/OilFunctionParameter.h>
+#include <OIL/OilFunctionParameterList.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -15,6 +18,7 @@ void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Inde
 void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent );
 void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent );
 std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template );
+void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -47,6 +51,17 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		const OilStructDefinition * Definition = Namespace.GetStructDefinition ( I );
 		
 		OilPrintStruct ( * Definition, Indent );
+		
+	}
+	
+	TempCount = Namespace.GetFunctionDefinitionCount ();
+	
+	for ( uint64_t I = 0; I < TempCount; I ++ )
+	{
+		
+		const OilFunctionDefinition * Definition = Namespace.GetFunctionDefinition ( I );
+		
+		OilPrintFunction ( * Definition, Indent );
 		
 	}
 	
@@ -166,6 +181,88 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 	OutString += ">";
 	
 	return OutString;
+	
+}
+
+void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent )
+{
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[FUNCTION \"";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Function.GetName () );
+	PrintString += "\"";
+	
+	if ( Function.IsInline () || Function.IsPublic () )
+	{
+		
+		PrintString += " {";
+		
+		if ( Function.IsPublic () )
+			PrintString += " public";
+		
+		if ( Function.IsInline () )
+			PrintString += " inline";
+		
+		PrintString += " }";
+		
+	}
+	
+	if ( Function.IsTemplated () )
+	{
+		
+		PrintString += " Template: ";
+		PrintString += OilStringTemplateDefinition ( * Function.GetTemplateDefinition () );
+		
+	}
+	
+	const OilFunctionParameterList * ParamList = Function.GetParameterList ();
+	
+	if ( ParamList -> GetParameterCount () != 0 )
+	{
+		
+		PrintString += " Parameters: (";
+		
+		for ( uint32_t I = 0; I < ParamList -> GetParameterCount (); I ++ )
+		{
+			
+			const OilFunctionParameter * Parameter = ParamList -> GetFunctionParameter ( I );
+			
+			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Parameter -> GetName () );
+			if ( I != ParamList -> GetParameterCount () - 1 )
+				PrintString += ", ";
+			
+		}
+		
+		PrintString += ")";
+		
+	}
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	// TODO: Print function body
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
 	
 }
 

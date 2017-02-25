@@ -5,6 +5,8 @@
 
 OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType ):
 	Name ( Name ),
+	Public ( Public ),
+	Inline ( Inline ),
 	TemplateDefinition ( NULL ),
 	ParameterList ( ParameterList ),
 	StatementBody ( StatementBody )
@@ -13,6 +15,8 @@ OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, 
 	
 OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
 	Name ( Name ),
+	Public ( Public ),
+	Inline ( Inline ),
 	TemplateDefinition ( TemplateDefinition ),
 	ParameterList ( ParameterList ),
 	StatementBody ( StatementBody )
@@ -76,6 +80,20 @@ OilTemplateDefinition * OilFunctionDefinition :: GetTemplateDefinition ()
 {
 	
 	return TemplateDefinition;
+	
+}
+
+bool OilFunctionDefinition :: IsPublic () const
+{
+	
+	return Public;
+	
+}
+
+bool OilFunctionDefinition :: IsInline () const
+{
+	
+	return Inline;
 	
 }
 

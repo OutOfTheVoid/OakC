@@ -2,7 +2,8 @@
 #include <OIL/OilFunctionParameter.h>
 
 OilFunctionParameterList :: OilFunctionParameterList ():
-	Parameters ()
+	Parameters (),
+	IgnoreCount ( 0 )
 {
 }
 
@@ -43,7 +44,7 @@ const OilFunctionParameter * OilFunctionParameterList :: GetFunctionParameter ( 
 	
 	std :: advance ( Iter, Index );
 	
-	if ( Iter == Parameters.end () )
+	if ( Iter != Parameters.end () )
 		return Iter -> second;
 	
 	return NULL;

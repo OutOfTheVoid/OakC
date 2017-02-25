@@ -32,6 +32,8 @@ public:
 	OilStructDefinition * FindStructDefinition ( const std :: u32string & ID );
 	const OilStructDefinition * FindStructDefinition ( const std :: u32string & ID ) const;
 	
+	uint32_t GetFunctionDefinitionCount () const;
+	
 	void AddFunctionDefinition ( OilFunctionDefinition * FuncDef );
 	
 	OilFunctionDefinition * GetFunctionDefinition ( uint32_t Index );

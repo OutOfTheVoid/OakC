@@ -168,6 +168,13 @@ const OilStructDefinition * OilNamespaceDefinition :: FindStructDefinition ( con
 	
 }
 
+uint32_t OilNamespaceDefinition :: GetFunctionDefinitionCount () const
+{
+	
+	return FuncDefs.size ();
+	
+}
+
 void OilNamespaceDefinition :: AddFunctionDefinition ( OilFunctionDefinition * FuncDef )
 {
 	

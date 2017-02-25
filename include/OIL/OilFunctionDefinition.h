@@ -31,9 +31,15 @@ public:
 	bool IsTemplated () const;
 	bool ConstantTerms () const;
 	
+	bool IsPublic () const;
+	bool IsInline () const;
+	
 private:
 	
 	const std :: u32string Name;
+	
+	bool Public;
+	bool Inline;
 	
 	OilTemplateDefinition * TemplateDefinition;
 	OilFunctionParameterList * ParameterList;
