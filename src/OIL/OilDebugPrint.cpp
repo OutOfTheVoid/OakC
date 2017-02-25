@@ -7,6 +7,8 @@
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilFunctionParameterList.h>
+#include <OIL/OilTypeRef.h>
+#include <OIL/OilTemplateSpecification.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -18,7 +20,9 @@ void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Inde
 void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent );
 void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent );
 std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template );
+std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template );
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
+std :: string OilStringTypeRef ( const OilTypeRef & Ref );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -173,6 +177,23 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 		
 		OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Param -> GetName () );
 		
+		if ( Param -> IsRestricted () )
+		{
+			
+			OutString += ": ";
+			
+			for ( uint32_t I = 0; I < Param -> GetRestrictionCount (); I ++ )
+			{
+				
+				OutString += OilStringTypeRef ( * Param -> GetRestriction ( I ) );
+				
+				if ( I != Param -> GetRestrictionCount () - 1 )
+					OutString += " + ";
+				
+			}
+			
+		}
+		
 		if ( I != ParamCount - 1 )
 			OutString += ", ";
 		
@@ -231,6 +252,11 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 			const OilFunctionParameter * Parameter = ParamList -> GetFunctionParameter ( I );
 			
 			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Parameter -> GetName () );
+			
+			PrintString += ": ";
+			
+			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			
 			if ( I != ParamList -> GetParameterCount () - 1 )
 				PrintString += ", ";
 			
@@ -266,3 +292,64 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	
 }
 
+std :: string OilStringTypeRef ( const OilTypeRef & Ref )
+{
+	
+	if ( ! Ref.IsDirectType () )
+	{
+		
+		if ( Ref.IsReference () )
+			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType () );
+		else
+			return std :: string ( "*" ) + OilStringTypeRef ( * Ref.GetSubType () );
+			
+	}
+	
+	std :: string OutString;
+	
+	if ( Ref.IsNamespaced () )
+	{
+		
+		for ( uint32_t I = 0; I < Ref.GetNamespaceNameCount (); I ++ )
+		{
+			
+			OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetNamespaceName ( I ) );
+			OutString += "::";
+			
+		}
+		
+	}
+	
+	OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetName () );
+	
+	if ( Ref.IsTemplated () )
+		OutString += OilStringTemplateSpecification ( * Ref.GetTemplateSpecification () );
+	
+	return OutString;
+	
+}
+
+std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template )
+{
+	
+	std :: string OutString;
+	
+	OutString += ":<";
+	
+	uint32_t ParamCount = Template.GetTypeRefCount ();
+	
+	for ( uint32_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		OutString += OilStringTypeRef ( * Template.GetTypeRef ( I ) );
+		
+		if ( I != ParamCount - 1 )
+			OutString += ", ";
+		
+	}
+	
+	OutString += ">";
+	
+	return OutString;
+	
+}

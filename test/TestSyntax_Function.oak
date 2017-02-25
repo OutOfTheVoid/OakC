@@ -1,4 +1,4 @@
-public inline function TemplatedAdd <A> ( a:A, b:A ) : A
+public inline function TemplatedAdd <A: Add> ( a:A, b:A ) : A
 {
 	
 	return a + b;
@@ -12,7 +12,7 @@ namespace NS
 	{
 	}
 	
-	public function OtherFunc <A, B> () : u32
+	public function OtherFunc <A, B> ( U: Array:<A> ) : u32
 	{
 		
 		
