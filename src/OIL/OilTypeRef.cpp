@@ -2,18 +2,22 @@
 #include <OIL/OilTemplateSpecification.h>
 
 OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
+	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameList ( NULL ),
 	NamespaceNameCount ( 0 ),
 	TemplateSpecification ( NULL ),
+	SubType ( NULL ),
 	Flags ( Flags )
 {
 }
 
 OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags ):
+	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
 	TemplateSpecification ( NULL ),
+	SubType ( NULL ),
 	Flags ( Flags )
 {
 	
@@ -25,18 +29,22 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 }
 
 OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
+	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameList ( NULL ),
 	NamespaceNameCount ( 0 ),
 	TemplateSpecification ( TemplateSpecification ),
+	SubType ( NULL ),
 	Flags ( Flags )
 {
 }
 
 OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags ):
+	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
 	TemplateSpecification ( TemplateSpecification ),
+	SubType ( NULL ),
 	Flags ( Flags )
 {
 	
@@ -47,36 +55,81 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	
 }
 
+OilTypeRef :: OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, RefFlag Flags ):
+	Mode ( kTypeMode_Reference ),
+	Name ( U"" ),
+	NamespaceNameList ( NULL ),
+	NamespaceNameCount ( 0 ),
+	TemplateSpecification ( NULL ),
+	SubType ( SubType ),
+	Flags ( Flags )
+{
+	
+	(void) RMType;
+	
+}
+
+OilTypeRef :: OilTypeRef ( PointerMarkerType PMType, OilTypeRef * SubType, RefFlag Flags ):
+	Mode ( kTypeMode_Pointer ),
+	Name ( U"" ),
+	NamespaceNameList ( NULL ),
+	NamespaceNameCount ( 0 ),
+	TemplateSpecification ( NULL ),
+	SubType ( SubType ),
+	Flags ( Flags )
+{
+	
+	(void) PMType;
+	
+}
+
 OilTypeRef :: ~OilTypeRef ()
 {
 	
 	if ( NamespaceNameList != NULL )
 		delete [] NamespaceNameList;
 	
+	if ( Mode != kTypeMode_Direct )
+		delete SubType;
+	
 }
 
-bool OilTypeRef :: IsNamespaced ()
+bool OilTypeRef :: IsDirectType () const
+{
+	
+	return Mode == kTypeMode_Direct;
+	
+}
+
+bool OilTypeRef :: IsReference () const
+{
+	
+	return Mode == kTypeMode_Reference;
+	
+}
+
+bool OilTypeRef :: IsNamespaced () const
 {
 	
 	return NamespaceNameCount != 0;
 	
 }
 
-bool OilTypeRef :: IsTemplated ()
+bool OilTypeRef :: IsTemplated () const
 {
 	
 	return TemplateSpecification != NULL;
 	
 }
 
-const std :: u32string & OilTypeRef :: GetName ()
+const std :: u32string & OilTypeRef :: GetName () const
 {
 	
 	return Name;
 	
 }
 
-uint32_t OilTypeRef :: GetNamespaceNameCount ()
+uint32_t OilTypeRef :: GetNamespaceNameCount () const
 {
 	
 	return NamespaceNameCount;
@@ -85,10 +138,10 @@ uint32_t OilTypeRef :: GetNamespaceNameCount ()
 
 const std :: u32string _OilTypeRef_EmptyNSName;
 
-const std :: u32string & OilTypeRef :: GetNamespaceName ( uint32_t Index )
+const std :: u32string & OilTypeRef :: GetNamespaceName ( uint32_t Index ) const
 {
 	
-	if ( Index >= NamespaceNameCount )
+	if ( Index < NamespaceNameCount )
 		return NamespaceNameList [ Index ];
 	
 	return _OilTypeRef_EmptyNSName;
@@ -102,9 +155,30 @@ OilTemplateSpecification * OilTypeRef :: GetTemplateSpecification ()
 	
 }
 
-OilTypeRef :: RefFlag OilTypeRef :: GetFlags ()
+const OilTemplateSpecification * OilTypeRef :: GetTemplateSpecification () const
+{
+	
+	return TemplateSpecification;
+	
+}
+
+OilTypeRef :: RefFlag OilTypeRef :: GetFlags () const
 {
 	
 	return Flags;
+	
+}
+
+OilTypeRef * OilTypeRef :: GetSubType ()
+{
+	
+	return SubType;
+	
+}
+
+const OilTypeRef * OilTypeRef :: GetSubType () const
+{
+	
+	return SubType;
 	
 }

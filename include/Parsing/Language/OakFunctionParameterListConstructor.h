@@ -8,13 +8,6 @@ class OakFunctionParameterListConstructor : public virtual IASTConstructor
 {
 public:
 	
-	typedef struct
-	{
-		
-		std :: u32string Name;
-		
-	} ElementData;
-	
 	OakFunctionParameterListConstructor ();
 	~OakFunctionParameterListConstructor ();
 	
@@ -23,8 +16,6 @@ public:
 	static OakFunctionParameterListConstructor Instance;
 	
 private:
-	
-	static void ElementDataDestructor ( void * Data );
 	
 	ASTConstructionGroup ParameterConstructionGroup;
 	

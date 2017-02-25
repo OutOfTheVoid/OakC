@@ -9,6 +9,7 @@
 #include <OIL/OilStructBinding.h>
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilFunctionParameterList.h>
+#include <OIL/OilFunctionParameter.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -26,6 +27,9 @@
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 #include <Parsing/Language/OakStructBindingConstructor.h>
 #include <Parsing/Language/OakFunctionDefinitionConstructor.h>
+#include <Parsing/Language/OakPointerTypeConstructor.h>
+#include <Parsing/Language/OakReferenceTypeConstructor.h>
+#include <Parsing/Language/OakFunctionParameterConstructor.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -44,6 +48,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement );
 OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingElement );
 OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement * FunctionDefElement );
 OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTElement * ParameterListElement );
+OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS )
 {
@@ -503,6 +508,34 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			
 		}
 		
+		case OakASTTags :: kASTTag_PointerType:
+		{
+			
+			const OakPointerTypeConstructor :: ElementData * PointerData = reinterpret_cast <const OakPointerTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
+			
+			OilTypeRef * SubTypeRef = OakTranslateTypeRefToOil ( TypeElement -> GetSubElement ( 0 ) );
+			
+			if ( SubTypeRef == NULL )
+				return NULL;
+			
+			return new OilTypeRef ( OilTypeRef :: kPointer, SubTypeRef );
+			
+		}
+		
+		case OakASTTags :: kASTTag_ReferenceType:
+		{
+			
+			const OakReferenceTypeConstructor :: ElementData * ReferenceData = reinterpret_cast <const OakReferenceTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
+			
+			OilTypeRef * SubTypeRef = OakTranslateTypeRefToOil ( TypeElement -> GetSubElement ( 0 ) );
+			
+			if ( SubTypeRef == NULL )
+				return NULL;
+			
+			return new OilTypeRef ( OilTypeRef :: kReference, SubTypeRef );
+			
+		}
+		
 	}
 	
 	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
@@ -560,7 +593,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		
 		OilFunctionParameterList * FunctionParamList = OakTranslateFunctionParameterListToOil ( FunctionDefElement -> GetSubElement ( 1 ) );
 		
-		if ( StatementBody == NULL )
+		if ( FunctionParamList == NULL )
 		{
 			
 			delete TemplateDefinition;
@@ -572,7 +605,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		if ( FunctionDefData -> ReturnTyped )
 		{
 			
-			OilTypeRef * ReturnType = OakTranslateReturnType ( FunctionDefElement -> GetSubElement ( 2 ) );
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( FunctionDefElement -> GetSubElement ( 2 ) );
 			
 			if ( ReturnType == NULL )
 			{
@@ -584,7 +617,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			OilStatementBody * StatementBody = OakTranslateStatementBody ( FunctionDefElement -> GetSubElement ( 3 ) );
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( FunctionDefElement -> GetSubElement ( 3 ) );
 			
 			if ( StatementBody == NULL )
 			{
@@ -603,7 +636,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		else
 		{
 			
-			OilStatementBody * StatementBody = OakTranslateStatementBody ( FunctionDefElement -> GetSubElement ( 2 ) );
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( FunctionDefElement -> GetSubElement ( 2 ) );
 			
 			if ( StatementBody == NULL )
 			{
@@ -624,15 +657,15 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 	else
 	{
 		
-		OilFunctionParameterList * FunctionParamList = OakFunctionParameterList ( FunctionDefElement -> GetSubElement ( 0 ) );
+		OilFunctionParameterList * FunctionParamList = OakTranslateFunctionParameterListToOil ( FunctionDefElement -> GetSubElement ( 0 ) );
 		
-		if ( StatementBody == NULL )
+		if ( FunctionParamList == NULL )
 			return NULL;
 		
 		if ( FunctionDefData -> ReturnTyped )
 		{
 			
-			OilTypeRef * ReturnType = OakTranslateReturnType ( FunctionDefElement -> GetSubElement ( 1 ) );
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( FunctionDefElement -> GetSubElement ( 1 ) );
 			
 			if ( ReturnType == NULL )
 			{
@@ -643,7 +676,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			OilStatementBody * StatementBody = OakTranslateStatementBody ( FunctionDefElement -> GetSubElement ( 2 ) );
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( FunctionDefElement -> GetSubElement ( 2 ) );
 			
 			if ( StatementBody == NULL )
 			{
@@ -661,7 +694,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		else
 		{
 			
-			OilStatementBody * StatementBody = OakTranslateStatementBody ( FunctionDefElement -> GetSubElement ( 1 ) );
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( FunctionDefElement -> GetSubElement ( 1 ) );
 			
 			if ( StatementBody == NULL )
 			{
@@ -721,6 +754,66 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 		
 	}
 	
+	std :: vector <OilFunctionParameter *> Parameters;
 	
+	uint64_t ParamCount = ParameterListElement -> GetSubElementCount ();
+	
+	for ( uint64_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		const ASTElement * ParameterElement = ParameterListElement -> GetSubElement ( I );
+		
+		if ( ( ParameterElement == NULL ) || ( ParameterElement -> GetTag () != OakASTTags :: kASTTag_FunctionParameter ) )
+		{
+			
+			for ( uint64_t J = 0; J < Parameters.size (); J ++ )
+				delete Parameters [ J ];
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		const OakFunctionParameterConstructor :: ElementData * ParameterData = reinterpret_cast <const OakFunctionParameterConstructor :: ElementData *> ( ParameterElement -> GetData () );
+		
+		OilTypeRef * Type = OakTranslateTypeRefToOil ( ParameterElement -> GetSubElement ( 0 ) );
+		
+		if ( Type == NULL )
+		{
+			
+			for ( uint64_t J = 0; J < Parameters.size (); I ++ )
+				delete Parameters [ J ];
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		Parameters.push_back ( new OilFunctionParameter ( ParameterData -> Name, Type ) );
+		
+	}
+	
+	OilFunctionParameterList * ParamList = new OilFunctionParameterList ();
+	
+	for ( uint64_t I = 0; I < Parameters.size (); I ++ )
+		ParamList -> AddParameter ( Parameters [ I ] );
+	
+	return ParamList;
+	
+}
+
+OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement )
+{
+	
+	if ( ( ReturnElement == NULL ) || ( ReturnElement -> GetTag () != OakASTTags :: kASTTag_ReturnType ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
 	
 }

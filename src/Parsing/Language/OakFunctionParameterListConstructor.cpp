@@ -120,10 +120,3 @@ void OakFunctionParameterListConstructor :: TryConstruct ( ASTConstructionInput 
 	Output.ConstructedElement = FunctionParamsElement;
 	
 }
-
-void OakFunctionParameterListConstructor :: ElementDataDestructor ( void * Data )
-{
-	
-	delete reinterpret_cast <ElementData *> ( Data );
-	
-}
