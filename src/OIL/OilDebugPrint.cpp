@@ -9,6 +9,8 @@
 #include <OIL/OilFunctionParameterList.h>
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilTemplateSpecification.h>
+#include <OIL/OilStatementBody.h>
+#include <OIL/IOilStatement.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -23,6 +25,7 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template );
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
 std :: string OilStringTypeRef ( const OilTypeRef & Ref );
+void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -270,25 +273,7 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	
 	LOG_VERBOSE ( PrintString );
 	
-	PrintString = "";
-	
-	for ( uint32_t I = 0; I < Indent; I ++ )
-		PrintString += OIL_PRINT_INDENTSTRING;
-	
-	PrintString += "{";
-	
-	LOG_VERBOSE ( PrintString );
-	
-	// TODO: Print function body
-	
-	PrintString = "";
-	
-	for ( uint32_t I = 0; I < Indent; I ++ )
-		PrintString += OIL_PRINT_INDENTSTRING;
-	
-	PrintString += "}";
-	
-	LOG_VERBOSE ( PrintString );
+	OilPrintStatementBody ( * Function.GetStatementBody (), Indent );
 	
 }
 
@@ -351,5 +336,64 @@ std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & 
 	OutString += ">";
 	
 	return OutString;
+	
+}
+
+void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Body.GetIgnoredParamCount (); I ++ )
+	{
+		
+		PrintString = "";
+		
+		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "Ignored: ";
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Body.GetIgnoredParamName ( I ) );
+		
+		LOG_VERBOSE ( PrintString );
+		
+	}
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	for ( uint64_t I = 0; I < Body.GetStatementCount (); I ++ )
+	{
+		
+		const IOilStatement * Statement = Body.GetStatement ( I );
+		
+		switch ( Statement -> GetStatementType () )
+		{
+			
+			case IOilStatement :: kStatementType_Body:
+				OilPrintStatementBody ( * dynamic_cast <const OilStatementBody *> ( Statement ), Indent + 1 );
+				break;
+			
+			default:
+				break;
+			
+		}
+		
+	}
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
 	
 }

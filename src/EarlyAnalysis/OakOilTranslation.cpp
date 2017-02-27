@@ -31,6 +31,7 @@
 #include <Parsing/Language/OakPointerTypeConstructor.h>
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
 #include <Parsing/Language/OakFunctionParameterConstructor.h>
+#include <Parsing/Language/OakIgnoreStatementConstructor.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -847,8 +848,75 @@ OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement )
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement )
 {
 	
-	// TODO: Implement
-	return new OilStatementBody ();
+	if ( ( BodyElement == NULL ) || ( BodyElement -> GetTag () != OakASTTags :: kASTTag_StatementBlock ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	OilStatementBody * Body = new OilStatementBody ();
+	
+	uint64_t SubElementCount = BodyElement -> GetSubElementCount ();
+	
+	for ( uint64_t I = 0; I < SubElementCount; I ++ )
+	{
+		
+		const ASTElement * StatementElement = BodyElement -> GetSubElement ( I );
+		
+		if ( StatementElement == NULL )
+		{
+			
+			delete Body;
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		switch ( StatementElement -> GetTag () )
+		{
+			
+			case OakASTTags :: kASTTag_IgnoreStatement:
+			{
+				
+				const OakIgnoreStatementConstructor :: ElementData * IgnoreData = reinterpret_cast <const OakIgnoreStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
+				
+				Body -> AddIgnoredParameter ( IgnoreData -> IgnoredName );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_StatementBlock:
+			{
+				
+				OilStatementBody * SubBody = OakTranslateStatementBodyToOil ( StatementElement );
+				
+				if ( SubBody == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Body -> TakeIgnoredParams ( * SubBody );
+				Body -> AddStatement ( SubBody ); 
+				
+			}
+			
+			default:
+				break;
+			
+		}
+		
+	}
+	
+	return Body;
 	
 }
 

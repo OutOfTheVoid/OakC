@@ -3,7 +3,7 @@
 #include <OIL/OilFunctionParameterList.h>
 #include <OIL/OilStatementBody.h>
 
-OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType ):
+OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType ):
 	Name ( Name ),
 	Public ( Public ),
 	Inline ( Inline ),
@@ -13,7 +13,7 @@ OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, 
 {
 }
 	
-OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
+OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
 	Name ( Name ),
 	Public ( Public ),
 	Inline ( Inline ),

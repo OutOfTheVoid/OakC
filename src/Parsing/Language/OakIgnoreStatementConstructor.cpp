@@ -70,7 +70,7 @@ void OakIgnoreStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	
 	ElementData * IgnoreData = new ElementData ();
 	
-	IgnoreData -> IgnoredName = CurrentToken -> GetSource ();
+	IgnoreData -> IgnoredName = Input.Tokens [ 1 ] -> GetSource ();
 	
 	ASTElement * IgnoreElement = new ASTElement ();
 	
