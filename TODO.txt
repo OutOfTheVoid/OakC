@@ -1,22 +1,21 @@
 TODO
 ====
 
-Tokenization - complete ( possibly extended for more language features ).
-Lexing - complete ( possibly extended for more language features ).
-Parsing - in progres.
-	* Basic parsing architecture complete, just language definition remains.
-		- Finish seperate level 0 operator constructors
-		- Finish level 1+ operator constructor
-		- Add to expression constructor
-	* No current AST visiting system is in place, will take place in an analysis.
-Analysis - TODO.
-	* Conditional compilation
-	* Overall validation
-	* Constant folding
+Tokenization - Complete.
+Lexing - Complete.
+Parsing - Mostly Complete.
+Analysis
+	* IL Translation
+		- In progress. Working on:
+		- Expression translation
+		- Literal parsing
+		- Constant folding
+		- Symbol tables
 	* Name resolution
+	* Template specification resolution
 	* Structure specification
 	* Type resolution
-	* Attribute resolution
+	* Trait resolution
 ( Possibly ) Optimization - TODO.
 	* Dead code elimination
 	* Intransitive repositioning
