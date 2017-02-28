@@ -23,7 +23,6 @@ const uint64_t _OakLiteralExpressionConstructor_ValidLiteralTags [] =
 	OakTokenTags :: kTokenTag_FloatLiteralDefaultSize,
 	OakTokenTags :: kTokenTag_FloatLiteral32,
 	OakTokenTags :: kTokenTag_FloatLiteral64,
-	OakTokenTags :: kTokenTag_BoolLiteral,
 	OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault,
 	OakTokenTags :: kTokenTag_SignedIntegerLiteral8,
 	OakTokenTags :: kTokenTag_SignedIntegerLiteral16,

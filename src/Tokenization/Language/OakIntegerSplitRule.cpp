@@ -47,7 +47,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 					return;
 				
 				Result.Accepted = true;
-				Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+				Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 				Result.SplitLength = Length;
 				
 				return;
@@ -68,7 +68,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 		{
 			
 			Result.Accepted = true;
-			Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = 1;
 			
 			return;
@@ -94,7 +94,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 						return;
 					
 					Result.Accepted = true;
-					Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+					Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 					Result.SplitLength = Length;
 					
 					return;
@@ -106,7 +106,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 			}
 			
 			Result.Accepted = true;
-			Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = Length - 1;
 			
 			return;
@@ -114,9 +114,6 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 		}
 		else if ( ( Char == U'X' ) || ( Char == U'x' ) || ( Char == U'H' ) || ( Char == U'h' ) )
 		{
-			
-			Result.AuxTag = OakTokenTags :: kTokenAuxTax_SignedIntegerLiteral_Hex;
-			
 			Length ++;
 			
 			while ( ( Offset + Length ) < Source.size () )
@@ -131,7 +128,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 						return;
 					
 					Result.Accepted = true;
-					Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+					Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 					Result.SplitLength = Length;
 					
 					return;
@@ -143,7 +140,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 			}
 			
 			Result.Accepted = true;
-			Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = Length - 1;
 			
 			return;
@@ -151,8 +148,6 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 		}
 		else if ( ( Char == U'b' ) || ( Char == U'B' ) )
 		{
-			
-			Result.AuxTag = OakTokenTags :: kTokenAuxTax_SignedIntegerLiteral_Binary;
 			
 			Length ++;
 			
@@ -168,7 +163,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 						return;
 					
 					Result.Accepted = true;
-					Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+					Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 					Result.SplitLength = Length;
 					
 					return;
@@ -180,7 +175,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 			}
 			
 			Result.Accepted = true;
-			Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = Length - 1;
 			
 			return;
@@ -188,8 +183,6 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 		}
 		else if ( ( Char == U'o' ) || ( Char == U'O' ) )
 		{
-			
-			Result.AuxTag = OakTokenTags :: kTokenAuxTax_SignedIntegerLiteral_Octal;
 			
 			Length ++;
 			
@@ -205,7 +198,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 						return;
 					
 					Result.Accepted = true;
-					Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+					Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 					Result.SplitLength = Length;
 					
 					return;
@@ -217,7 +210,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 			}
 			
 			Result.Accepted = true;
-			Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = Length - 1;
 			
 			return;
@@ -227,7 +220,7 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 		{
 			
 			Result.Accepted = true;
-			Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
+			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = 1;
 			
 			return;
@@ -375,7 +368,7 @@ bool OakIntegerSplitRule :: TestTypeSpecifier ( const std :: u32string & Source,
 		}
 		
 		Result.Accepted = true;
-		Result.Tag = OakTokenTags :: kTokenTag_UnsignedIntegerLiteralDefault;
+		Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault;
 		Result.SplitLength = Length + 1;
 		
 		return true;

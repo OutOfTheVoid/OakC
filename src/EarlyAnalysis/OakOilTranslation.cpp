@@ -20,6 +20,7 @@
 #include <OIL/OilBoolLiteral.h>
 #include <OIL/OilNullPointerLiteral.h>
 #include <OIL/OilStringLiteral.h>
+#include <OIL/OilIntegerLiteral.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -1422,7 +1423,45 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x80 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI8, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x80 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI8_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			if ( Value < 0x8000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI16, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x8000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI16_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			if ( Value < 0x80000000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI32, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x80000000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI32_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			if ( Value < 0x8000000000000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI64, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x8000000000000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI64_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
 			
 			return NULL;
 			
@@ -1432,7 +1471,27 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_SignedIntegerLiteral8:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 8-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x80 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I8, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x80 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I8_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			WriteError ( LiteralElement, "Integer literal overflows signed 8-bit precision" );
 			
 			return NULL;
 			
@@ -1442,7 +1501,27 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_SignedIntegerLiteral16:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 16-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x8000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I16, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x8000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I16_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			WriteError ( LiteralElement, "Integer literal overflows signed 16-bit precision" );
 			
 			return NULL;
 			
@@ -1452,7 +1531,27 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_SignedIntegerLiteral32:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 32-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x80000000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I32, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x80000000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I32_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			WriteError ( LiteralElement, "Integer literal overflows signed 32-bit precision" );
 			
 			return NULL;
 			
@@ -1462,7 +1561,27 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_SignedIntegerLiteral64:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x8000000000000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I64, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x8000000000000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I64_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
 			
 			return NULL;
 			
@@ -1472,9 +1591,30 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteralDefault:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
 			
-			return NULL;
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x100 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU8, Value );
+			
+			if ( Value < 0x10000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU16, Value );
+			
+			if ( Value < 0x100000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU32, Value );
+			
+			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU64, Value );
 			
 		}
 		break;
@@ -1482,7 +1622,24 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral8:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows unsigned 8-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x100 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U8, Value );
+			
+			WriteError ( LiteralElement, "Integer literal overflows unsigned 8-bit precision" );
 			
 			return NULL;
 			
@@ -1492,7 +1649,24 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral16:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows unsigned 16-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x100 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U16, Value );
+			
+			WriteError ( LiteralElement, "Integer literal overflows unsigned 16-bit precision" );
 			
 			return NULL;
 			
@@ -1502,7 +1676,24 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral32:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows unsigned 32-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x100000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U32, Value );
+			
+			WriteError ( LiteralElement, "Integer literal overflows unsigned 32-bit precision" );
 			
 			return NULL;
 			
@@ -1512,7 +1703,67 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral64:
 		{
 			
-			// TODO: Finish
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows unsigned 32-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral:
+		{
+			
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows unsigned 64-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			if ( Value < 0x80 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI8, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x80 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI8_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			if ( Value < 0x8000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI16, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x8000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI16_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			if ( Value < 0x80000000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI32, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x80000000 )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI32_IfNegative, static_cast <int64_t> ( Value ) );
+			
+			if ( Value < 0x8000000000000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI64, static_cast <int64_t> ( Value ) );
+			
+			if ( Value == 0x8000000000000000ULL )
+				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI64_IfNegative, Value );
+			
+			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
 			
 			return NULL;
 			

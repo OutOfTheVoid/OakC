@@ -29,7 +29,7 @@ namespace OakTokenTags
 	
 	const uint64_t kTokenAuxTax_FloatLiteral_HexFloat = 1;
 	
-	const uint64_t kTokenTag_BoolLiteral = 12;
+	const uint64_t kTokenTag_IndeterminateIntegerLiteral = 12;
 	
 	const uint64_t kTokenTag_SignedIntegerLiteralDefault = 13;
 	const uint64_t kTokenTag_SignedIntegerLiteral8 = 14;
@@ -37,9 +37,9 @@ namespace OakTokenTags
 	const uint64_t kTokenTag_SignedIntegerLiteral32 = 16;
 	const uint64_t kTokenTag_SignedIntegerLiteral64 = 17;
 	
-	const uint64_t kTokenAuxTax_SignedIntegerLiteral_Hex = 1;
-	const uint64_t kTokenAuxTax_SignedIntegerLiteral_Octal = 2;
-	const uint64_t kTokenAuxTax_SignedIntegerLiteral_Binary = 3;
+	const uint64_t kTokenAuxTax_IntegerLiteral_Hex = 1;
+	const uint64_t kTokenAuxTax_IntegerLiteral_Octal = 2;
+	const uint64_t kTokenAuxTax_IntegerLiteral_Binary = 3;
 	
 	const uint64_t kTokenTag_UnsignedIntegerLiteralDefault = 18;
 	const uint64_t kTokenTag_UnsignedIntegerLiteral8 = 19;
@@ -119,7 +119,7 @@ namespace OakTokenTags
 		"FLOAT_LITERAL_DEFAULT",
 		"FLOAT_LITERAL_32",
 		"FLOAT_LITERAL_64",
-		"BOOL_LITERAL",
+		"(U)INT_LITERAL_UNSPECIFIED",
 		"INT_LITERAL_DEFAULT",
 		"INT_LITERAL_8",
 		"INT_LITERAL_16",
