@@ -7,7 +7,7 @@ public:
 	
 	inline virtual ~IOilPrimary () {};
 	
-	virtual bool IsConstant () = 0;
+	virtual bool IsConstant () const = 0;
 	
 };
 

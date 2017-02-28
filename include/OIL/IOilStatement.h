@@ -8,7 +8,8 @@ public:
 	typedef enum
 	{
 		
-		kStatementType_Body
+		kStatementType_Body,
+		kStatementType_Binding
 		
 	} StatementType;
 	

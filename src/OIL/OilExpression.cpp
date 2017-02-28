@@ -114,3 +114,13 @@ void OilExpression :: DisownTerm ()
 		OperatorTerm = NULL;
 	
 }
+
+bool OilExpression :: IsConstant ()
+{
+	
+	if ( TermIsPrimary )
+		return PrimaryTerm -> IsConstant ();
+	
+	return OperatorTerm -> ConstantTerms ();
+	
+}

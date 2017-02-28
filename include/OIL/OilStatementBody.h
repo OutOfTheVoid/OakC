@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+class OilBindingStatement;
+
 class OilStatementBody : public virtual IOilStatement
 {
 public:
@@ -26,12 +28,24 @@ public:
 	const IOilStatement * GetStatement ( uint64_t Index ) const;
 	IOilStatement * GetStatement ( uint64_t Index );
 	
+	uint64_t AddLocalBinding ( OilBindingStatement * LocalBinding );
+	
 	StatementType GetStatementType () const;
 	
 private:
 	
+	typedef struct
+	{
+		
+		uint64_t InitializationStatementIndex;
+		OilBindingStatement * LocalBinding;
+		
+	} LocalData;
+	
 	std :: vector <std :: u32string> IgnoredParameters;
 	std :: vector <IOilStatement *> Statements;
+	
+	std :: vector <LocalData> Locals;
 	
 };
 

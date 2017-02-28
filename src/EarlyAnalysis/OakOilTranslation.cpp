@@ -1,4 +1,5 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
+#include <EarlyAnalysis/OakLiteralParsing.h>
 
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilNamespaceDefinition.h>
@@ -11,6 +12,14 @@
 #include <OIL/OilFunctionParameterList.h>
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilStatementBody.h>
+#include <OIL/OilBindingStatement.h>
+#include <OIL/OilAllusion.h>
+#include <OIL/IOilPrimary.h>
+#include <OIL/IOilOperator.h>
+#include <OIL/OilExpression.h>
+#include <OIL/OilBoolLiteral.h>
+#include <OIL/OilNullPointerLiteral.h>
+#include <OIL/OilStringLiteral.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -32,6 +41,12 @@
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
 #include <Parsing/Language/OakFunctionParameterConstructor.h>
 #include <Parsing/Language/OakIgnoreStatementConstructor.h>
+#include <Parsing/Language/OakBindingStatementConstructor.h>
+#include <Parsing/Language/OakBindingAllusionConstructor.h>
+
+#include <Lexing/Language/OakKeywordTokenTags.h>
+
+#include <Tokenization/Language/OakTokenTags.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -52,6 +67,13 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTElement * ParameterListElement );
 OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement );
+OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement * StatementElement );
+
+OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
+IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
+IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
+
+IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement );
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS )
 {
@@ -909,6 +931,24 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				
 			}
 			
+			case OakASTTags :: kASTTag_BindingStatement:
+			{
+				
+				OilBindingStatement * Binding = OakTranslateLocalBindingStatementToOil ( StatementElement );
+				
+				if ( Binding == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				// Add local
+				
+			}
+			
 			default:
 				break;
 			
@@ -917,6 +957,578 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 	}
 	
 	return Body;
+	
+}
+
+OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement * StatementElement )
+{
+	
+	if ( ( StatementElement == NULL ) || ( StatementElement -> GetTag () != OakASTTags :: kASTTag_BindingStatement ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
+	
+	if ( BindingData -> Public )
+	{
+		
+		WriteError ( StatementElement, std :: string ( "Local binding \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( BindingData -> Name ) + "\" cannot be made public since it is a scoped local binding" );
+		
+		return NULL;
+		
+	}
+	
+	OilTypeRef * Type = OakTranslateTypeRefToOil ( StatementElement -> GetSubElement ( 0 ) );
+	
+	if ( Type == NULL )
+		return NULL;
+	
+	if ( BindingData -> Initialized )
+	{
+		
+		// TODO: Handle initilizer values in locals...
+		// ATTN: THIS JUST DROPS THEM
+		return new OilBindingStatement ( BindingData -> Name, BindingData -> Mutable, Type );
+		
+	}
+	else
+		return new OilBindingStatement ( BindingData -> Name, BindingData -> Mutable, Type );
+	
+}
+
+OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement )
+{
+	
+	if ( ( ExpressionElement == NULL ) || ( ExpressionElement -> GetTag () != OakASTTags :: kASTTag_Expression ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const ASTElement * SubExpressionElement = ExpressionElement -> GetSubElement ( 0 );
+	
+	if ( SubExpressionElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+	{
+		
+		//IOilPrimary * Primary = OakTranslatePrimaryExpressionToOil ( SubExpressionElement );
+		
+		
+		
+	}
+	else if ( SubExpressionElement -> GetTag () == OakASTTags :: kASTTag_OperatorExpressionContainer )
+	{
+		
+		//IOilOperator * Operator = OakTranslateOperatorToOil ( SubExpressionElement );
+		
+	}
+	
+	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+	
+	return NULL;
+	
+}
+
+IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement )
+{
+	
+	const ASTElement * SubElement = PrimaryElement -> GetSubElement ( 0 );
+	
+	if ( SubElement == NULL )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	switch ( SubElement -> GetTag () )
+	{
+		
+		case OakASTTags :: kASTTag_ParenthesizedExpression:
+			return OakTranslateExpressionToOil ( PrimaryElement -> GetSubElement ( 0 ) );
+		
+		case OakASTTags :: kASTTag_LiteralExpression:
+			return OakTranslateLiteralToOil ( PrimaryElement );
+		
+		case OakASTTags :: kASTTag_ArrayLiteral:
+		{
+			
+			// TODO: Implement
+			
+		}
+		break;
+		
+		case OakASTTags :: kASTTag_SelfAllusion:
+			return new OilAllusion ( OilAllusion :: SELF_ALLUSION );
+		
+		case OakASTTags :: kASTTag_BindingAllusion:
+		{
+			
+			const OakBindingAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakBindingAllusionConstructor :: ElementData *> ( PrimaryElement -> GetData () );
+			
+			if ( AllusionData -> IdentListLength > 1 )
+			{
+				
+				if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Templated )
+				{
+					
+					if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Templated )
+					{
+						
+						std :: vector <std :: u32string> NSNames;
+						
+						for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 2; I ++ )
+						{
+							
+							if ( AllusionData -> IdentList [ I ].Templated )
+							{
+								
+								WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+								
+								return NULL;
+								
+							}
+							
+							NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
+							
+						}
+						
+						NSNames.push_back ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Name );
+						
+						OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].TemplateSpecificationElement );
+						
+						if ( DirectTemplateSpec == NULL )
+							return NULL;
+						
+						OilTemplateSpecification * IndirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].TemplateSpecificationElement );
+						
+						if ( DirectTemplateSpec == NULL )
+						{
+							
+							delete IndirectTemplateSpec;
+							
+							return NULL;
+							
+						}
+						
+						return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
+						
+					}
+					else
+					{
+						
+						std :: vector <std :: u32string> NSNames;
+						
+						for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 1; I ++ )
+						{
+							
+							if ( AllusionData -> IdentList [ I ].Templated )
+							{
+								
+								WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+								
+								return NULL;
+								
+							}
+							
+							NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
+							
+						}
+						
+						OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].TemplateSpecificationElement );
+						
+						if ( DirectTemplateSpec == NULL )
+							return NULL;
+						
+						return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
+						
+					}
+					
+				}
+				else if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Templated )
+				{
+					
+					std :: vector <std :: u32string> NSNames;
+					
+					for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 2; I ++ )
+					{
+						
+						if ( AllusionData -> IdentList [ I ].Templated )
+						{
+								
+							WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+							
+							return NULL;
+							
+						}
+						
+						NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
+						
+					}
+					
+					NSNames.push_back ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Name );
+					
+					OilTemplateSpecification * IndirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].TemplateSpecificationElement );
+					
+					if ( IndirectTemplateSpec == NULL )
+						return NULL;
+					
+					return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
+					
+				}
+				else
+				{
+					
+					std :: vector <std :: u32string> NSNames;
+					
+					for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 1; I ++ )
+					{
+						
+						if ( AllusionData -> IdentList [ I ].Templated )
+						{
+								
+							WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+							
+							return NULL;
+							
+						}
+						
+						NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
+						
+					}
+					
+					return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
+					
+				}
+				
+			}
+			else
+			{
+				
+				if ( AllusionData -> IdentList [ 0 ].Templated )
+				{
+					
+					OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ 0 ].TemplateSpecificationElement );
+					
+					if ( DirectTemplateSpec == NULL )
+						return NULL;
+					
+					return new OilAllusion ( AllusionData -> IdentList [ 0 ].Name, DirectTemplateSpec );
+					
+				}
+				else
+					return new OilAllusion ( AllusionData -> IdentList [ 0 ].Name );
+				
+			}
+			
+		}
+		break;
+		
+	}
+	
+	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+	
+	return NULL;
+	
+}
+
+IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
+{
+	
+	if ( ( LiteralElement == NULL ) || ( LiteralElement -> GetTag () != OakASTTags :: kASTTag_LiteralExpression ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const Token * LiteralToken = LiteralElement -> GetToken ( 0, 0 );
+	
+	switch ( LiteralToken -> GetTag () )
+	{
+		
+		case OakTokenTags :: kTokenTag_Identifier:
+		{
+			
+			switch ( LiteralToken -> GetAuxTag () )
+			{
+				
+				case OakKeywordTokenTags :: kKeywordAuxTags_True:
+					return new OilBoolLiteral ( true );
+				
+				case OakKeywordTokenTags :: kKeywordAuxTags_False:
+					return new OilBoolLiteral ( false );
+				
+				case OakKeywordTokenTags :: kKeywordAuxTags_Null:
+					return new OilNullPointerLiteral ();
+					
+				default:
+				{
+					
+					LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+					
+					return NULL;
+					
+				}
+				
+			}
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_StringLiteralDefault:
+		{
+			
+			std :: string ErrorString;
+			std :: u32string ValueString;
+			
+			if ( ! OakParseStringLiteral ( LiteralToken -> GetSource (), ValueString, ErrorString ) )
+			{
+				
+				if ( ErrorString != "" )
+					WriteError ( LiteralElement, ErrorString );
+				else
+					WriteError ( LiteralElement, "Invalid string literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_Indeterminate, ValueString );
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_StringLiteralu8:
+		{
+			
+			std :: string ErrorString;
+			std :: u32string ValueString;
+			
+			if ( ! OakParseStringLiteral ( LiteralToken -> GetSource (), ValueString, ErrorString ) )
+			{
+				
+				if ( ErrorString != "" )
+					WriteError ( LiteralElement, ErrorString );
+				else
+					WriteError ( LiteralElement, "Invalid string literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_UTF8, ValueString );
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_StringLiteralu16:
+		{
+			
+			std :: string ErrorString;
+			std :: u32string ValueString;
+			
+			if ( ! OakParseStringLiteral ( LiteralToken -> GetSource (), ValueString, ErrorString ) )
+			{
+				
+				if ( ErrorString != "" )
+					WriteError ( LiteralElement, ErrorString );
+				else
+					WriteError ( LiteralElement, "Invalid string literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_UTF16, ValueString );
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_StringLiteralu32:
+		{
+			
+			std :: string ErrorString;
+			std :: u32string ValueString;
+			
+			if ( ! OakParseStringLiteral ( LiteralToken -> GetSource (), ValueString, ErrorString ) )
+			{
+				
+				if ( ErrorString != "" )
+					WriteError ( LiteralElement, ErrorString );
+				else
+					WriteError ( LiteralElement, "Invalid string literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_UTF32, ValueString );
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_CharLiteral:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_FloatLiteralDefaultSize:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_FloatLiteral32:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_FloatLiteral64:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_SignedIntegerLiteral8:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_SignedIntegerLiteral16:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_SignedIntegerLiteral32:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_SignedIntegerLiteral64:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteralDefault:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral8:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral16:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral32:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteral64:
+		{
+			
+			// TODO: Finish
+			
+			return NULL;
+			
+		}
+		break;
+		
+	}
+	
+}
+
+IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
+{
+	
+	// TODO: Implement
+	
+	return NULL;
 	
 }
 

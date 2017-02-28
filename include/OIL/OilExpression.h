@@ -1,10 +1,11 @@
 #ifndef OIL_OILEXPRESSION_H
 #define OIL_OILEXPRESSION_H
 
-class IOilOperator;
-class IOilPrimary;
+#include <OIL/IOilPrimary.h>
 
-class OilExpression
+class IOilOperator;
+
+class OilExpression : public virtual IOilPrimary
 {
 public:
 	
@@ -21,6 +22,8 @@ public:
 	void SetTerm ( IOilPrimary * Primary );
 	
 	void DisownTerm ();
+	
+	bool IsConstant ();
 	
 private:
 	
