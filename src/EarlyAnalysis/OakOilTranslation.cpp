@@ -84,7 +84,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 		
 		LOG_FATALERROR ( "Invalid AST passed to OIL parser with NULL element" );
 		
-		return NULL;
+		return false;
 		
 	}
 	
@@ -161,7 +161,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 		
 		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
 		
-		return NULL;
+		return false;
 		
 	}
 	
@@ -250,7 +250,7 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 		
 		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
 		
-		return NULL;
+		return false;
 		
 	}
 	
@@ -1771,6 +1771,10 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		break;
 		
 	}
+	
+	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+	
+	return NULL;
 	
 }
 

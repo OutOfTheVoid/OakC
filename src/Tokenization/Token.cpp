@@ -16,7 +16,7 @@ Token :: Token ( const Token & CopyFrom ):
 	Line ( CopyFrom.Line ),
 	Tag ( CopyFrom.Tag ),
 	AuxTag ( CopyFrom.AuxTag ),
-	SourceUnit ( SourceUnit )
+	SourceUnit ( CopyFrom.SourceUnit )
 {
 }
 

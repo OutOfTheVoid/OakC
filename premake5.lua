@@ -12,7 +12,7 @@ project "Compiler"
 	includedirs "include"
 	
 	filter { "not system:windows" }
-		--toolset "clang"
+		toolset "gcc"
 		buildoptions { "-std=c++11" }
 		
 	filter { "action:vs*" }

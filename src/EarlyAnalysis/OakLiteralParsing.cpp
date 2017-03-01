@@ -416,9 +416,9 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 			if ( Char != U'_' )
 			{
 				
-				uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+				int64_t COffset = static_cast <int64_t> ( Char ) - static_cast <int64_t> ( U'0' );
 				
-				if ( COffset > 9 )
+				if ( ( COffset < 0 ) || ( COffset > 9 ) )
 				{
 					
 					Value = Temp;
@@ -426,20 +426,17 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 					
 				}
 				
-				Temp *= 10;
-				Temp += COffset;
+				uint64_t Check = Temp;
 				
-				if ( PotentialOverflow64 )
+				Temp *= 10ULL;
+				Temp += static_cast <uint64_t> ( COffset );
+				
+				if ( Temp / 10ULL != Check )
 					Overflow64 = true;
 				
-				if ( UINT64_MAX / Temp < 10 )
-					PotentialOverflow64 = true;
-				
-				Index ++;
-				
 			}
-			else
-				Index ++;
+			
+			Index ++;
 			
 		}
 		while ( Index < Source.size () );
@@ -474,57 +471,58 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 				
 				Index ++;
 				
-				Char = Source.at ( Index );
-				
 				uint64_t Temp = 0;
 				
 				do
 				{
 					
-					uint64_t COffsetDec = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
-					uint64_t COffsetAlphLow = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'a' );
-					uint64_t COffsetAlphUp = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'A' );
+					Char = Source.at ( Index );
 					
-					if ( COffsetDec <= 9 )
+					if ( Char != U'_' )
 					{
 						
-						Temp <<= 4;
-						Temp |= COffsetDec;
+						int64_t COffsetDec = static_cast <int64_t> ( Char ) - static_cast <int64_t> ( U'0' );
+						int64_t COffsetAlphLow = static_cast <int64_t> ( Char ) - static_cast <int64_t> ( U'a' );
+						int64_t COffsetAlphUp = static_cast <int64_t> ( Char ) - static_cast <int64_t> ( U'A' );
 						
-						Index ++;
+						if ( ( COffsetDec >= 0 ) && ( COffsetDec <= 9 ) )
+						{
+							
+							Temp <<= 4;
+							Temp |= COffsetDec;
+							
+						}
+						else if ( ( COffsetAlphLow >= 0 ) && ( COffsetAlphLow <= 5 ) )
+						{
+							
+							Temp <<= 4;
+							Temp |= ( COffsetAlphLow + 10 );
+							
+						}
+						else if ( ( COffsetAlphUp >= 0 ) && ( COffsetAlphUp <= 5 ) )
+						{
+							
+							Temp <<= 4;
+							Temp |= ( COffsetAlphUp + 10 );
+							
+						}
+						else
+						{
+							
+							Value = Temp;
+							return;
+							
+						}
 						
-					}
-					if ( COffsetAlphLow <= 5 )
-					{
+						if ( PotentialOverflow64 )
+							Overflow64 = true;
 						
-						Temp <<= 4;
-						Temp |= ( COffsetAlphLow + 10 );
-						
-						Index ++;
-						
-					}
-					if ( COffsetAlphUp <= 5 )
-					{
-						
-						Temp <<= 4;
-						Temp |= ( COffsetAlphUp + 10 );
-						
-						Index ++;
-						
-					}
-					else
-					{
-						
-						Value = Temp;
-						return;
+						if ( ( Temp & 0xF000000000000000 ) != 0 )
+							PotentialOverflow64 = true;
 						
 					}
 					
-					if ( PotentialOverflow64 )
-						Overflow64 = true;
-					
-					if ( UINT64_MAX / Temp < 16 )
-						PotentialOverflow64 = true;
+					Index ++;
 					
 				}
 				while ( Index < Source.size () );
@@ -541,37 +539,42 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 				
 				Index ++;
 				
-				Char = Source.at ( Index );
-				
 				uint64_t Temp = 0;
 				
 				do
 				{
 					
-					uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+					Char = Source.at ( Index );
 					
-					if ( COffset < 2 )
+					if ( Char != U'_' )
 					{
 						
-						Temp <<= 1;
-						Temp |= COffset;
+						uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
 						
-						Index ++;
-						
-						if ( PotentialOverflow64 )
-							Overflow64 = true;
-						
-						if ( UINT64_MAX / Temp < 2 )
-							PotentialOverflow64 = true;
+						if ( COffset < 2 )
+						{
+							
+							Temp <<= 1;
+							Temp |= COffset;
+							
+							if ( PotentialOverflow64 )
+								Overflow64 = true;
+							
+							if ( Temp & 0x8000000000000000 )
+								PotentialOverflow64 = true;
+							
+						}
+						else
+						{
+							
+							Value = Temp;
+							return;
+							
+						}
 						
 					}
-					else
-					{
-						
-						Value = Temp;
-						return;
-						
-					}
+					
+					Index ++;
 					
 				}
 				while ( Index < Source.size () );
@@ -588,37 +591,50 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 				
 				Index ++;
 				
-				Char = Source.at ( Index );
+				if ( Index >= Source.size () )
+				{
+					
+					Value = 0;
+					return;
+					
+				}
 				
 				uint64_t Temp = 0;
 				
 				do
 				{
 					
-					uint64_t COffset = static_cast <uint64_t> ( Char ) - static_cast <uint64_t> ( U'0' );
+					Char = Source.at ( Index );
 					
-					if ( COffset < 8 )
+					if ( Char != U'_' )
 					{
 						
-						Temp <<= 3;
-						Temp |= COffset;
+						int64_t COffset = static_cast <int64_t> ( Char ) - static_cast <int64_t> ( U'0' );
 						
-						Index ++;
-						
-						if ( PotentialOverflow64 )
-							Overflow64 = true;
-						
-						if ( UINT64_MAX / Temp < 8 )
-							PotentialOverflow64 = true;
+						if ( ( COffset >= 0 ) && ( COffset < 8 ) )
+						{
+							
+							Temp <<= 3;
+							Temp |= COffset;
+							
+							if ( PotentialOverflow64 )
+								Overflow64 = true;
+							
+							if ( ( Temp & 0xE000000000000000ULL ) != 0 )
+								PotentialOverflow64 = true;
+							
+						}
+						else
+						{
+							
+							Value = Temp;
+							return;
+							
+						}
 						
 					}
-					else
-					{
-						
-						Value = Temp;
-						return;
-						
-					}
+					
+					Index ++;
 					
 				}
 				while ( Index < Source.size () );

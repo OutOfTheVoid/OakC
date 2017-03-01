@@ -39,7 +39,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecificati
 {
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags ):
+OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
 	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
