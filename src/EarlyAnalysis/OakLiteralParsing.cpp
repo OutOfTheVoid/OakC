@@ -300,77 +300,65 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 						else
 						{
 							
-							uint32_t Sum = 0;
-							bool Resolved = false;
-							uint64_t I = 1;
+							Index ++;
 							
-							while ( Index + I < Source.size () )
+							uint32_t Count = 0;
+							uint32_t Sum = 0;
+							
+							while ( Index < Source.size () )
 							{
 								
-								uint32_t HexVal = HexCodeToValue ( Source.at ( Index + I ) );
+								Char = Source.at ( Index );
+								uint32_t HexVal = HexCodeToValue ( Char );
 								
 								if ( HexVal == 0xFFFFFFFF )
 								{
 									
-									if ( I == 1 )
+									if ( Count == 0 )
 									{
 										
-										Error = std :: string ( "Expected hexadecimal value in escape code in string literal!" ) + std :: to_string ( Source.at ( Index + I ) );
-									
+										Error = "Expected hexadecimal value after opening curly bracket in unicode escape in string literal";
+										
 										return false;
 										
 									}
 									
-									Index += I;
-									
-									if ( Source.at ( Index ) != U'}' )
+									if ( Char != U'}' )
 									{
 										
-										Error = "Expected closing bracket in hexadecimal escape code in string literal";
+										Error = "Expected closing curly bracket in unicode escape in string literal";
 										
 										return false;
 										
 									}
-										
-									Out += static_cast <char32_t> ( Sum );
-									Resolved = true;
+									
 									Index ++;
-									
+									Out += static_cast <char32_t> ( Sum );
 									break;
+									
+								}
+								
+								if ( Count == 8 )
+								{
+									
+									Error = "Expected no more than 8 hex digits in unicode escape in string literal";
+									
+									return false;
 									
 								}
 								
 								Sum <<= 4;
-							 	Sum |= HexVal;
-							 	
-							 	I ++;
-							 	
-							 	if ( I > 8 )
-							 	{
-							 		
-							 		Index += 9;
-							 		
-							 		break;
-							 		
-							 	}
+								Sum |= HexVal;
+								
+								Count ++;
+								Index ++;
 								
 							}
 							
-							if ( ! Resolved )
+							if ( Index >= Source.size () )
 							{
 								
-								if ( Source.at ( Index + I ) == U'}' )
-								{
-									
-									Index += I + 2;
-									
-									Out += static_cast <char32_t> ( Sum );
-									
-									break;
-									
-								}
-								
-								Error = "Expected closing bracket in hexadecimal escape code in string literal";
+								Error = "Expected closing curly bracket in unicode escape in string literal";
 								
 								return false;
 								

@@ -176,16 +176,16 @@ void TestArea ()
 	
 	ErrorString = "";
 	
-	if ( ! OakParseStringLiteral ( U"\"\\x{000041}\"", OutString, ErrorString ) )
+	if ( ! OakParseStringLiteral ( U"\"\\x{000041}a\"", OutString, ErrorString ) )
 		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( OutString != U"A" )
+	if ( OutString != U"Aa" )
 		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ! OakParseStringLiteral ( U"\"\\x{00002211}\"", OutString, ErrorString ) )
+	if ( ! OakParseStringLiteral ( U"\"\\x{00002211}a\"", OutString, ErrorString ) )
 		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( OutString != U"∑" )
+	if ( OutString != U"∑a" )
 		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
 	
