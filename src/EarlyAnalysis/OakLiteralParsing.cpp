@@ -3,13 +3,13 @@
 uint32_t HexCodeToValue ( char32_t Code )
 {
 	
-	if ( ( Code >= U'0' ) && ( Code >= U'9' ) )
+	if ( ( Code >= U'0' ) && ( Code <= U'9' ) )
 		return static_cast <uint32_t> ( Code ) - static_cast <uint32_t> ( U'0' );
 	
-	if ( ( Code >= U'A' ) && ( Code >= U'F' ) )
+	if ( ( Code >= U'A' ) && ( Code <= U'F' ) )
 		return 10 + static_cast <uint32_t> ( Code ) - static_cast <uint32_t> ( U'A' );
 	
-	if ( ( Code >= U'a' ) && ( Code >= U'f' ) )
+	if ( ( Code >= U'a' ) && ( Code <= U'f' ) )
 		return 10 + static_cast <uint32_t> ( Code ) - static_cast <uint32_t> ( U'a' );
 	
 	return 0xFFFFFFFF;
@@ -21,6 +21,8 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 	
 	if ( Source.size () == 0 )
 		return false;
+	
+	Out.clear ();
 	
 	uint64_t Index = 1;
 	
@@ -187,7 +189,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 							if ( HexVal == 0xFFFFFFFF )
 							{
 								
-								Error = "Unexpected non-hex code in unicode escape in string literal";
+								Error = "Unexpected non-hex code in unicode escape in string literal!";
 					
 								return false;
 								
@@ -252,10 +254,10 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 						
 						Index ++;
 						
-						if ( Index + 3 >= Source.size () )
+						if ( Index + 2 > Source.size () )
 						{
 							
-							Error = "Expected 4 hex digits after unicode 16-bit escape in string literal";
+							Error = "Expected s hex digits after unicode 16-bit escape in string literal";
 					
 							return false;
 							
@@ -290,6 +292,8 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 								
 							}
 							
+							Out += static_cast <char32_t> ( HexVal );
+							
 							Index += 2;
 							
 						}
@@ -298,9 +302,9 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 							
 							uint32_t Sum = 0;
 							bool Resolved = false;
-							uint64_t I;
-						
-							for ( I = 0; I < ( Source.size () - 3 < Index + 8 ) ? Source.size () - 3 : 8; ++ I )
+							uint64_t I = 1;
+							
+							while ( Index + I < Source.size () )
 							{
 								
 								uint32_t HexVal = HexCodeToValue ( Source.at ( Index + I ) );
@@ -308,27 +312,47 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 								if ( HexVal == 0xFFFFFFFF )
 								{
 									
-									if ( Source.at ( Index + I ) == U'}' )
+									if ( I == 1 )
 									{
 										
-										Index += I + 1;
-										
-										Out += static_cast <char32_t> ( Sum );
-										
-										Resolved = true;
-										
-										break;
+										Error = std :: string ( "Expected hexadecimal value in escape code in string literal!" ) + std :: to_string ( Source.at ( Index + I ) );
+									
+										return false;
 										
 									}
 									
-									Error = "Expected closing bracket in hexadecimal escape code in string literal";
+									Index += I;
 									
-									return false;
+									if ( Source.at ( Index ) != U'}' )
+									{
+										
+										Error = "Expected closing bracket in hexadecimal escape code in string literal";
+										
+										return false;
+										
+									}
+										
+									Out += static_cast <char32_t> ( Sum );
+									Resolved = true;
+									Index ++;
+									
+									break;
 									
 								}
 								
 								Sum <<= 4;
-								Sum |= HexVal;
+							 	Sum |= HexVal;
+							 	
+							 	I ++;
+							 	
+							 	if ( I > 8 )
+							 	{
+							 		
+							 		Index += 9;
+							 		
+							 		break;
+							 		
+							 	}
 								
 							}
 							
@@ -338,7 +362,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 								if ( Source.at ( Index + I ) == U'}' )
 								{
 									
-									Index += I + 1;
+									Index += I + 2;
 									
 									Out += static_cast <char32_t> ( Sum );
 									

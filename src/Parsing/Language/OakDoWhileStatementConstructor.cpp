@@ -13,15 +13,15 @@
 
 OakDoWhileStatementConstructor OakDoWhileStatementConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakDoWhileStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakDoWhileStatementConstructor_StatementBodyGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakDoWhileStatementConstructor_LoopLabelGroupEntries [] = { { & OakLoopLabelConstructor :: Instance, 0 } };
+
 OakDoWhileStatementConstructor :: OakDoWhileStatementConstructor ():
-	ExpressionGroup (),
-	StatementBodyGroup ()
+	ExpressionGroup ( _OakDoWhileStatementConstructor_ExpressionGroupEntries, 1 ),
+	StatementBodyGroup ( _OakDoWhileStatementConstructor_StatementBodyGroupEntries, 1 ),
+	LoopLabelGroup ( _OakDoWhileStatementConstructor_LoopLabelGroupEntries, 1 )
 {
-	
-	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	StatementBodyGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
-	LoopLabelGroup.AddConstructorCantidate ( & OakLoopLabelConstructor :: Instance, 0 );
-	
 }
 
 OakDoWhileStatementConstructor :: ~OakDoWhileStatementConstructor ()

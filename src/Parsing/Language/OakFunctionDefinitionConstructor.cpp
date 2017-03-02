@@ -14,18 +14,17 @@
 
 OakFunctionDefinitionConstructor OakFunctionDefinitionConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_ParameterListConstructionGroupGroupEntries [] = { { & OakFunctionParameterListConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_ReturnTypeConstructionGroupEntries [] = { { & OakReturnTypeConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_BodyConstructionGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+
 OakFunctionDefinitionConstructor :: OakFunctionDefinitionConstructor ():
-	TemplateConstructionGroup (),
-	ParameterListConstructionGroup (),
-	ReturnTypeConstructionGroup (),
-	BodyConstructionGroup ()
+	TemplateConstructionGroup ( _OakFunctionDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
+	ParameterListConstructionGroup ( _OakFunctionDefinitionConstructor_ParameterListConstructionGroupGroupEntries, 1 ),
+	ReturnTypeConstructionGroup ( _OakFunctionDefinitionConstructor_ReturnTypeConstructionGroupEntries, 1 ),
+	BodyConstructionGroup ( _OakFunctionDefinitionConstructor_BodyConstructionGroupEntries, 1 )
 {
-	
-	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
-	ParameterListConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterListConstructor :: Instance, 0 );
-	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
-	BodyConstructionGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
-	
 }
 
 OakFunctionDefinitionConstructor :: ~OakFunctionDefinitionConstructor ()

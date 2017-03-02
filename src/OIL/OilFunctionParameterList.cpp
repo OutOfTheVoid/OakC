@@ -33,7 +33,7 @@ void OilFunctionParameterList :: AddParameter ( OilFunctionParameter * Parameter
 uint32_t OilFunctionParameterList :: GetParameterCount () const
 {
 	
-	Parameters.size ();
+	return Parameters.size ();
 	
 }
 

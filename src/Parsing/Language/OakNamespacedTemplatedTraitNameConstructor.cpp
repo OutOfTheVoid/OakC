@@ -11,12 +11,11 @@
 
 OakNamespacedTemplatedTraitNameConstructor OakNamespacedTemplatedTraitNameConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakNamespacedTemplatedTraitNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+
 OakNamespacedTemplatedTraitNameConstructor :: OakNamespacedTemplatedTraitNameConstructor ():
-	TemplateGroup ()
+	TemplateGroup ( _OakNamespacedTemplatedTraitNameConstructor_TemplateGroupEntries, 1 )
 {
-	
-	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
-	
 }
 
 OakNamespacedTemplatedTraitNameConstructor :: ~OakNamespacedTemplatedTraitNameConstructor ()
@@ -50,6 +49,8 @@ void OakNamespacedTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructio
 		DirectGlobalReference = true;
 		
 		Offset ++;
+		
+		CurrentToken = Input.Tokens [ Offset ];
 		
 	}
 	
@@ -133,7 +134,21 @@ void OakNamespacedTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructio
 	if ( TemplateGroup.TryConstruction ( TraitNameElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		ElementDataDestructor ( TraitNameData );
+		if ( ConstructionError )
+		{
+			
+			delete TraitNameElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
+		delete TraitNameElement;
 		
 		Output.Accepted = false;
 		
@@ -144,7 +159,7 @@ void OakNamespacedTemplatedTraitNameConstructor :: TryConstruct ( ASTConstructio
 	if ( ConstructionError )
 	{
 		
-		ElementDataDestructor ( TraitNameData );
+		delete TraitNameElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;

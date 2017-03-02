@@ -213,14 +213,13 @@ void CleanupExpressionElements ( std :: vector <ExpressionElement> & ExpressionE
 	
 }
 
+ASTConstructionGroup :: StaticInitEntry _OakOperatorExpressionConstructor_PrimaryGroupEntries [] = { { & OakPrimaryExpressionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakOperatorExpressionConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+
 OakOperatorExpressionConstructor :: OakOperatorExpressionConstructor ():
-	PrimaryGroup (),
-	ExpressionGroup ()
+	PrimaryGroup ( _OakOperatorExpressionConstructor_PrimaryGroupEntries, 1 ),
+	ExpressionGroup ( _OakOperatorExpressionConstructor_ExpressionGroupEntries, 1 )
 {
-	
-	PrimaryGroup.AddConstructorCantidate ( & OakPrimaryExpressionConstructor :: Instance, 0 );
-	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	
 }
 
 OakOperatorExpressionConstructor :: ~OakOperatorExpressionConstructor ()

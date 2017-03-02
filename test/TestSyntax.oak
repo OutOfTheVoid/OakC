@@ -1,24 +1,22 @@
-// WHOOOOO! THIS CAN ALL BE PARSED NOW!
-
 import "test/TestSyntax_Literals.oak";
 
-namespace MyNamespace::MySubNamespace
+namespace my_namespace::sub_namespace
 {
 	
-	struct MyNamespacedStruct
+	struct namespaced_struct
 	{
 		
-		bind Yay:u32,
+		bind yay:u32,
 		
 	}
 	
-	namespace SubSubNamespace
+	namespace sub_sub_namespace
 	{
 		
-		struct MySubSubNamespaceStruct
+		struct another_struct
 		{
 			
-			bind SomeBinding:f64
+			bind floating_binding:f64
 			
 		}
 		
@@ -26,20 +24,20 @@ namespace MyNamespace::MySubNamespace
 	
 }
 
-function MyGlobalFunc ( SomeParam : i32 ) : void
+function my_global_func ( some_param : i32 ) : void
 {
 	
-	SomeNamespace::SomeTemplatedClass:<u32>.Call ();
+	some_namespace :: SomeTemplatedType: <u32>.static_method ();
 	
 }
 
 struct MyType <A, B>
 {
 	
-	bind TestString: string,
-	bind TestInt: MyNamespace :: MySubNamespace :: MyNamespacedType:<A>,
-	bind TestTempalted: Array:<Array:<Array:<B>>>,
-	bind TestTemplated: Array:<Array:<Array:<A>>>
+	bind test_string: str,
+	bind test_int: some_ns::a_struct,
+	bind test_array: Array:<Array:<Array:<B>>>,
+	bind test_array2: Array:<Array:<Array:<A>>>
 	
 }
 
@@ -50,11 +48,11 @@ struct SomeStruct <A: SomeTrait + AnotherTrait, B, C, D: SomeTrait>
 implement MyType
 {
 	
-	function Test ( & self, StringValue: & string ): u32
+	function test ( & self, string_value: & string ): u32
 	{
 		
-		self -> TestString = StringValue;
-		self -> TestInt = 0;
+		self -> test_string = string_value;
+		self -> test_int = 1u;
 		
 	}
 	
@@ -73,9 +71,9 @@ function Main ( ProgramArguments: Array:<string> ) : i32
 	ignore ProgramArguments;
 	
 	bind MyString: string = "Hello, world!";
-	bind MyStruct: MyType = MyType ( MyString.copy () );
+	bind MyStruct: MyType = ::MyType::new ( MyString.copy () );
 	
-	bind MyArray: Array : <u32> = [:u32; 0, 1, 2, 3, 4, 5, 6 ];
+	bind MyArray: Array : <u32> = [:u32; 0u32, 1_u32, 2, 3, 4, 5, 6 ];
 	
 	MyType.SayHello ();
 	

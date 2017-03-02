@@ -11,15 +11,19 @@
 
 OakTemplateSpecificationConstructor OakTemplateSpecificationConstructor :: Instance;
 
-OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
-	ParameterGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakTemplateSpecificationConstructor_ParameterGroupEntries [] =
 {
 	
-	ParameterGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
-	ParameterGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
-	ParameterGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
-	ParameterGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
+	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
+	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
+};
+
+OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
+	ParameterGroup ( _OakTemplateSpecificationConstructor_ParameterGroupEntries, 4 )
+{
 }
 
 OakTemplateSpecificationConstructor :: ~OakTemplateSpecificationConstructor ()

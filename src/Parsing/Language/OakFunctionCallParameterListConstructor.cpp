@@ -7,12 +7,11 @@
 
 OakFunctionCallParameterListConstructor OakFunctionCallParameterListConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakFunctionCallParameterListConstructor_ParameterGroup [] = { { & OakExpressionConstructor :: Instance, 0 } };
+
 OakFunctionCallParameterListConstructor :: OakFunctionCallParameterListConstructor ():
-	ParameterGroup ()
+	ParameterGroup ( _OakFunctionCallParameterListConstructor_ParameterGroup, 1 )
 {
-	
-	ParameterGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	
 }
 
 OakFunctionCallParameterListConstructor :: ~OakFunctionCallParameterListConstructor ()

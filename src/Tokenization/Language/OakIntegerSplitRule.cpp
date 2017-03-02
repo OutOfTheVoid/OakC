@@ -219,6 +219,9 @@ void OakIntegerSplitRule :: TrySplit ( const std :: u32string & Source, uint64_t
 		else
 		{
 			
+			if ( TestTypeSpecifier ( Source, Offset, Length, Result ) )
+				return;
+			
 			Result.Accepted = true;
 			Result.Tag = OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral;
 			Result.SplitLength = 1;

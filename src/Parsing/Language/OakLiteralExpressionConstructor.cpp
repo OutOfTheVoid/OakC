@@ -23,6 +23,7 @@ const uint64_t _OakLiteralExpressionConstructor_ValidLiteralTags [] =
 	OakTokenTags :: kTokenTag_FloatLiteralDefaultSize,
 	OakTokenTags :: kTokenTag_FloatLiteral32,
 	OakTokenTags :: kTokenTag_FloatLiteral64,
+	OakTokenTags :: kTokenTag_IndeterminateIntegerLiteral,
 	OakTokenTags :: kTokenTag_SignedIntegerLiteralDefault,
 	OakTokenTags :: kTokenTag_SignedIntegerLiteral8,
 	OakTokenTags :: kTokenTag_SignedIntegerLiteral16,
@@ -36,7 +37,7 @@ const uint64_t _OakLiteralExpressionConstructor_ValidLiteralTags [] =
 	
 };
 
-const TestSet <uint64_t> _OakLiteralExpressionConstructor_LiteralTagTestSet ( _OakLiteralExpressionConstructor_ValidLiteralTags, 22, false );
+const TestSet <uint64_t> _OakLiteralExpressionConstructor_LiteralTagTestSet ( _OakLiteralExpressionConstructor_ValidLiteralTags, 19, false );
 
 OakLiteralExpressionConstructor :: OakLiteralExpressionConstructor ()
 {

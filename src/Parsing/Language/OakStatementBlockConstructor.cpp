@@ -22,25 +22,28 @@
 
 OakStatementBlockConstructor OakStatementBlockConstructor :: Instance;
 
-OakStatementBlockConstructor :: OakStatementBlockConstructor ():
-	StatementGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakStatementBlockConstructor_StatementGroupEntries [] =
 {
 	
-	StatementGroup.AddConstructorCantidate ( & OakIgnoreStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakReturnStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakIfElseStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakWhileStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakDoWhileStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakBreakStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakLoopStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakConstStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
-	StatementGroup.AddConstructorCantidate ( & OakExpressionStatementConstructor :: Instance, 1 );
+	{ & OakIgnoreStatementConstructor :: Instance, 0 },
+	{ & OakLoneSemicolonConstructor :: Instance, 0 },
+	{ & OakReturnStatementConstructor :: Instance, 0 },
+	{ & OakIfElseStatementConstructor :: Instance, 0 },
+	{ & OakWhileStatementConstructor :: Instance, 0 },
+	{ & OakDoWhileStatementConstructor :: Instance, 0 },
+	{ & OakBreakStatementConstructor :: Instance, 0 },
+	{ & OakLoopStatementConstructor :: Instance, 0 },
+	{ & OakConstStatementConstructor :: Instance, 0 },
+	{ & OakBindingStatementConstructor :: Instance, 0 },
+	{ & OakExpressionStatementConstructor :: Instance, 1 },
 	
-	StatementGroup.AddConstructorCantidate ( & Instance, 1 );
+	{ & OakStatementBlockConstructor :: Instance, 1 },
 	
+};
+
+OakStatementBlockConstructor :: OakStatementBlockConstructor ():
+	StatementGroup ( _OakStatementBlockConstructor_StatementGroupEntries, 13 )
+{
 }
 
 OakStatementBlockConstructor :: ~OakStatementBlockConstructor ()
@@ -60,18 +63,11 @@ void OakStatementBlockConstructor :: TryConstruct ( ASTConstructionInput & Input
 	}
 	
 	bool IsBlock = false;
-	uint64_t Offset = 0;
 	
-	const Token * CurrentToken = Input.Tokens [ Offset ];
+	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
 	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_CurlyBracket_Open )
-	{
-		
 		IsBlock = true;
-		
-		Offset ++;
-		
-	}
 	
 	if ( Input.ParentElement -> GetTag () == OakASTTags :: kASTTag_StatementBlock )
 	{
@@ -104,9 +100,9 @@ void OakStatementBlockConstructor :: TryConstruct ( ASTConstructionInput & Input
 	bool Error = false;
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
-	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
+	uint64_t TokenCount = Input.AvailableTokenCount - ( IsBlock ? 1 : 0 );
 	
-	if ( StatementGroup.TryConstruction ( BlockElement, IsBlock ? 0xFFFFFFFFFFFFFFFF : 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Offset ], TokenCount ) == 0 )
+	if ( StatementGroup.TryConstruction ( BlockElement, IsBlock ? 0xFFFFFFFFFFFFFFFF : 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
 		if ( ! IsBlock )
@@ -153,7 +149,7 @@ void OakStatementBlockConstructor :: TryConstruct ( ASTConstructionInput & Input
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = "expected closing curly bracket at end of block";
-		Output.ErrorProvokingToken = Input.Tokens [ Offset ];
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		return;
 		
@@ -172,7 +168,7 @@ void OakStatementBlockConstructor :: TryConstruct ( ASTConstructionInput & Input
 			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = "expected closing curly bracket at end of block";
-			Output.ErrorProvokingToken = Input.Tokens [ Offset ];
+			Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 			
 			return;
 			

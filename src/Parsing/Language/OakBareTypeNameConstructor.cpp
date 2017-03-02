@@ -79,6 +79,15 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
+	// DEBUG:
+	{
+		
+		CurrentToken = Input.Tokens [ 1 ];
+		
+		LOG_VERBOSE ( std :: string ( "Next token: " ) + OakTokenTags :: TagNames [ CurrentToken -> GetTag () ] );
+		
+	}
+	
 	ElementData * BareTypeNameData = new ElementData ();
 	
 	BareTypeNameData -> TypeName = CurrentToken -> GetSource ();

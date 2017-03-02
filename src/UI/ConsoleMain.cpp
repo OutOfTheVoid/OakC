@@ -17,6 +17,8 @@
 
 #include <EarlyAnalysis/OakLiteralParsing.h>
 
+#include <Encoding/CodeConversion.h>
+
 #define VERSION_STRING "0.0.1b"
 
 void PrintHelp ();
@@ -142,77 +144,49 @@ void PrintHelp ()
 void TestArea ()
 {
 	
-	uint64_t Value;
-	bool Overflow64;
+	std :: string ErrorString;
+	std :: u32string OutString;
 	
-	OakParseIntegerLiteral ( U"0", Value, Overflow64 );
+	if ( ! OakParseStringLiteral ( U"\"Hello world!\"", OutString, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ( Value != 0 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	ErrorString = "";
 	
-	OakParseIntegerLiteral ( U"1000_000", Value, Overflow64 );
+	if ( ! OakParseStringLiteral ( U"\"\\u20B8\"", OutString, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ( Value != 1000000 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	if ( OutString != U"₸" )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	OakParseIntegerLiteral ( U"0xF00", Value, Overflow64 );
+	ErrorString = "";
 	
-	if ( ( Value != 0xF00 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	if ( ! OakParseStringLiteral ( U"\"\\U00002211\"", OutString, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	OakParseIntegerLiteral ( U"0xF_00_00_00_00_00", Value, Overflow64 );
+	if ( OutString != U"∑" )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ( Value != 0xF0000000000 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	ErrorString = "";
 	
-	OakParseIntegerLiteral ( U"0x10000000000000000", Value, Overflow64 );
+	if ( ! OakParseStringLiteral ( U"\"\\x41\"", OutString, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ! Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	if ( OutString != U"A" )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	OakParseIntegerLiteral ( U"18_446_744_073_709_551_615", Value, Overflow64 );
+	ErrorString = "";
 	
-	if ( ( Value != 0xFFFFFFFFFFFFFFFF ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	if ( ! OakParseStringLiteral ( U"\"\\x{000041}\"", OutString, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	OakParseIntegerLiteral ( U"18_446_744_073_709_551_617", Value, Overflow64 );
+	if ( OutString != U"A" )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ! Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
+	if ( ! OakParseStringLiteral ( U"\"\\x{00002211}\"", OutString, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	OakParseIntegerLiteral ( U"0b100", Value, Overflow64 );
+	if ( OutString != U"∑" )
+		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
-	if ( ( Value != 4 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
-	
-	OakParseIntegerLiteral ( U"0b1000_0000_0000", Value, Overflow64 );
-	
-	if ( ( Value != 2048 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
-	
-	OakParseIntegerLiteral ( U"0b1_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000", Value, Overflow64 );
-	
-	if ( ! Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
-	
-	OakParseIntegerLiteral ( U"0o10", Value, Overflow64 );
-	
-	if ( ( Value != 8 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
-	
-	OakParseIntegerLiteral ( U"0o100", Value, Overflow64 );
-	
-	if ( ( Value != 64 ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
-	
-	OakParseIntegerLiteral ( U"0o17_7777_7777_7777_7777_7777", Value, Overflow64 );
-	
-	if ( ( Value != 0xFFFFFFFFFFFFFFFF ) || Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
-	
-	OakParseIntegerLiteral ( U"0o2000000000000000000000", Value, Overflow64 );
-	
-	if ( ! Overflow64 )
-		LOG_FATALERROR ( std :: string ( "Parsing error! value: " ) + std :: to_string ( Value ) + ( Overflow64 ? " <Overflow64>" : "" ) );
 	
 }

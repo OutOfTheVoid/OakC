@@ -7,6 +7,8 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
+#include <Logging/Logging.h>
+
 #include <vector>
 
 OakNamespacedTypeNameConstructor OakNamespacedTypeNameConstructor :: Instance;
@@ -47,10 +49,11 @@ void OakNamespacedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & I
 		
 		Offset ++;
 		
+		CurrentToken = Input.Tokens [ Offset ];
+		
 	}
 	
-	
-	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
+	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
 		
 		Output.Accepted = false;
@@ -99,6 +102,15 @@ void OakNamespacedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & I
 		Output.Accepted = false;
 		
 		return;
+		
+	}
+	
+	// DEBUG:
+	{
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+		LOG_VERBOSE ( std :: string ( "Next token: " ) + OakTokenTags :: TagNames [ CurrentToken -> GetTag () ] );
 		
 	}
 	

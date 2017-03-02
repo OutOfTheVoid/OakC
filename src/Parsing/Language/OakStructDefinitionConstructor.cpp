@@ -16,14 +16,13 @@
 
 OakStructDefinitionConstructor OakStructDefinitionConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakStructDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakStructDefinitionConstructor_StructBodyConstructionGroupEntries [] = { { & OakStructBindingConstructor :: Instance, 0 } };
+
 OakStructDefinitionConstructor :: OakStructDefinitionConstructor ():
-	TemplateConstructionGroup (),
-	StructBodyConstructionGroup ()
+	TemplateConstructionGroup ( _OakStructDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
+	StructBodyConstructionGroup ( _OakStructDefinitionConstructor_StructBodyConstructionGroupEntries, 1 )
 {
-	
-	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
-	StructBodyConstructionGroup.AddConstructorCantidate ( & OakStructBindingConstructor :: Instance, 0 );
-	
 }
 
 OakStructDefinitionConstructor :: ~OakStructDefinitionConstructor ()

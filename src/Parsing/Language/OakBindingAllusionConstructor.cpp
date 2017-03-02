@@ -16,12 +16,16 @@
 
 OakBindingAllusionConstructor OakBindingAllusionConstructor :: Instance;
 
-OakBindingAllusionConstructor :: OakBindingAllusionConstructor ():
-	TemplateSpecificationGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakBindingAllusionConstructor_TemplateSpecificationGroupEntries [] =
 {
 	
-	TemplateSpecificationGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
+	{ & OakTemplateSpecificationConstructor :: Instance, 0 }
 	
+};
+
+OakBindingAllusionConstructor :: OakBindingAllusionConstructor ():
+	TemplateSpecificationGroup ( _OakBindingAllusionConstructor_TemplateSpecificationGroupEntries, 1 )
+{
 }
 
 OakBindingAllusionConstructor :: ~OakBindingAllusionConstructor ()

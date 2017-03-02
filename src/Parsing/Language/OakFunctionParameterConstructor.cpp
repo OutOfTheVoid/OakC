@@ -17,19 +17,22 @@
 
 OakFunctionParameterConstructor OakFunctionParameterConstructor :: Instance;
 
-OakFunctionParameterConstructor :: OakFunctionParameterConstructor ():
-	TypeGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakFunctionParameterConstructor_TypeGroupEntries [] =
 {
 	
-	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
+	{ & OakPointerTypeConstructor :: Instance, 0 },
+	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
+	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
+	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
-	
+};
+
+OakFunctionParameterConstructor :: OakFunctionParameterConstructor ():
+	TypeGroup (_OakFunctionParameterConstructor_TypeGroupEntries, 6 )
+{
 }
 
 OakFunctionParameterConstructor :: ~OakFunctionParameterConstructor ()

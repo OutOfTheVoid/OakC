@@ -7,12 +7,11 @@
 
 OakSelfParameterReferenceConstructor OakSelfParameterReferenceConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakSelfParameterReferenceConstructor_SelfParamGroupEntries [] = { { & OakSelfParameterConstructor :: Instance, 0 } };
+
 OakSelfParameterReferenceConstructor :: OakSelfParameterReferenceConstructor ():
-	SelfParamGroup ()
+	SelfParamGroup ( _OakSelfParameterReferenceConstructor_SelfParamGroupEntries, 1 )
 {
-	
-	SelfParamGroup.AddConstructorCantidate ( & OakSelfParameterConstructor :: Instance, 0 );
-	
 }
 
 OakSelfParameterReferenceConstructor :: ~OakSelfParameterReferenceConstructor ()

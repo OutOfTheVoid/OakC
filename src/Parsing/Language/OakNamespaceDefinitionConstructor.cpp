@@ -20,21 +20,24 @@
 
 OakNamespaceDefinitionConstructor OakNamespaceDefinitionConstructor :: Instance;
 
-OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
-	NamespaceChildrenGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakNamespaceDefinitionConstructor_NamespaceChildrenGroupEntries [] =
 {
 	
-	NamespaceChildrenGroup.AddConstructorCantidate ( & Instance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakStructDefinitionConstructor :: Instance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakTraitDefinitionConstructor :: Instance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakConstStatementConstructor :: Instance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakFunctionDefinitionConstructor :: Instance, 0 );
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakImplementDefinitionConstructor :: Instance, 0 );
+	{ & OakNamespaceDefinitionConstructor :: Instance, 0 },
+	{ & OakStructDefinitionConstructor :: Instance, 0 },
+	{ & OakTraitDefinitionConstructor :: Instance, 0 },
+	{ & OakBindingStatementConstructor :: Instance, 0 },
+	{ & OakConstStatementConstructor :: Instance, 0 },
+	{ & OakFunctionDefinitionConstructor :: Instance, 0 },
+	{ & OakImplementDefinitionConstructor :: Instance, 0 },
 	
-	// Just in case
-	NamespaceChildrenGroup.AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 1 );
+	{ & OakLoneSemicolonConstructor :: Instance, 1 },
 	
+};
+
+OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
+	NamespaceChildrenGroup ( _OakNamespaceDefinitionConstructor_NamespaceChildrenGroupEntries, 8 )
+{
 }
 
 OakNamespaceDefinitionConstructor :: ~OakNamespaceDefinitionConstructor ()

@@ -15,16 +15,15 @@
 
 OakMethodDefinitionConstructor OakMethodDefinitionConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_ParameterListConstructionEntries [] = { { & OakMethodParameterListConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_ReturnTypeConstructionEntries [] = { { & OakReturnTypeConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_BodyConstructionGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+
 OakMethodDefinitionConstructor :: OakMethodDefinitionConstructor ():
-	ParameterListConstructionGroup (),
-	ReturnTypeConstructionGroup (),
-	BodyConstructionGroup ()
+	ParameterListConstructionGroup ( _OakMethodDefinitionConstructor_ParameterListConstructionEntries, 1 ),
+	ReturnTypeConstructionGroup ( _OakMethodDefinitionConstructor_ReturnTypeConstructionEntries, 1 ),
+	BodyConstructionGroup ( _OakMethodDefinitionConstructor_BodyConstructionGroupEntries, 1 )
 {
-	
-	ParameterListConstructionGroup.AddConstructorCantidate ( & OakMethodParameterListConstructor :: Instance, 0 );
-	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
-	BodyConstructionGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
-	
 }
 
 OakMethodDefinitionConstructor :: ~OakMethodDefinitionConstructor ()

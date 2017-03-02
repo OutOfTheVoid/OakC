@@ -11,16 +11,20 @@
 
 OakPrimaryExpressionConstructor OakPrimaryExpressionConstructor :: Instance;
 
-OakPrimaryExpressionConstructor :: OakPrimaryExpressionConstructor ():
-	PrimaryGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakPrimaryExpressionConstructor_PrimaryGroupEntries [] =
 {
 	
-	PrimaryGroup.AddConstructorCantidate ( & OakParenthesizedExpressionConstructor :: Instance, 0 );
-	PrimaryGroup.AddConstructorCantidate ( & OakLiteralExpressionConstructor :: Instance, 1 );
-	PrimaryGroup.AddConstructorCantidate ( & OakArrayLiteralConstructor :: Instance, 1 );
-	PrimaryGroup.AddConstructorCantidate ( & OakSelfAllusionConstructor :: Instance, 2 );
-	PrimaryGroup.AddConstructorCantidate ( & OakBindingAllusionConstructor :: Instance, 2 );
+	{ & OakParenthesizedExpressionConstructor :: Instance, 0 },
+	{ & OakLiteralExpressionConstructor :: Instance, 1 },
+	{ & OakArrayLiteralConstructor :: Instance, 1 },
+	{ & OakSelfAllusionConstructor :: Instance, 2 },
+	{ & OakBindingAllusionConstructor :: Instance, 2 },
 	
+};
+
+OakPrimaryExpressionConstructor :: OakPrimaryExpressionConstructor ():
+	PrimaryGroup ( _OakPrimaryExpressionConstructor_PrimaryGroupEntries, 5 )
+{
 }
 
 OakPrimaryExpressionConstructor :: ~OakPrimaryExpressionConstructor ()

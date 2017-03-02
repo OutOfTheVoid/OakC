@@ -26,9 +26,9 @@ namespace OakKeywords
 	const std :: string kKeyword_Char ( u8"char" );
 	const std :: string kKeyword_Float32 ( u8"f32" );
 	const std :: string kKeyword_Float64 ( u8"f64" );
-	const std :: string kKeyword_String8 ( u8"string" );
-	const std :: string kKeyword_String16 ( u8"string16" );
-	const std :: string kKeyword_String32 ( u8"string32" );
+	const std :: string kKeyword_String8 ( u8"str" );
+	const std :: string kKeyword_String16 ( u8"str16" );
+	const std :: string kKeyword_String32 ( u8"str32" );
 	
 	const std :: string kKeyword_Namespace ( u8"namespace" );
 	const std :: string kKeyword_Import ( u8"import" );

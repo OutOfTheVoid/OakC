@@ -19,21 +19,30 @@
 
 OakArrayLiteralConstructor OakArrayLiteralConstructor :: Instance;
 
-OakArrayLiteralConstructor :: OakArrayLiteralConstructor ():
-	ExpressionGroup (),
-	TypeGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_TypeGroupEntries [] =
 {
 	
-	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
+	{ & OakPointerTypeConstructor :: Instance, 0 },
+	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
+	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
+	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
-	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
+};
+
+ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_ExpressionGroupEntries [] =
+{
 	
+	{ & OakExpressionConstructor :: Instance, 0 }
+	
+};
+
+OakArrayLiteralConstructor :: OakArrayLiteralConstructor ():
+	TypeGroup ( _OakArrayLiteralConstructor_TypeGroupEntries, 6 ),
+	ExpressionGroup ( _OakArrayLiteralConstructor_ExpressionGroupEntries, 1 )
+{
 }
 
 OakArrayLiteralConstructor :: ~OakArrayLiteralConstructor ()

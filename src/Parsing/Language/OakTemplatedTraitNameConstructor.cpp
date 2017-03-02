@@ -9,12 +9,11 @@
 
 OakTemplatedTraitNameConstructor OakTemplatedTraitNameConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakTemplatedTraitNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+
 OakTemplatedTraitNameConstructor :: OakTemplatedTraitNameConstructor ():
-	TemplateGroup ()
+	TemplateGroup ( _OakTemplatedTraitNameConstructor_TemplateGroupEntries, 1 )
 {
-	
-	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
-	
 }
 
 OakTemplatedTraitNameConstructor :: ~OakTemplatedTraitNameConstructor ()

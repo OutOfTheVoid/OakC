@@ -11,15 +11,14 @@
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
 OakLoopStatementConstructor OakLoopStatementConstructor :: Instance;
-	
+
+ASTConstructionGroup :: StaticInitEntry _OakLoopStatementConstructor_LoopLabelGroupEntries [] = { { & OakLoopLabelConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakLoopStatementConstructor_StatementBodyGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+
 OakLoopStatementConstructor :: OakLoopStatementConstructor ():
-	LoopLabelGroup (),
-	StatementBodyGroup ()
+	LoopLabelGroup ( _OakLoopStatementConstructor_LoopLabelGroupEntries, 1 ),
+	StatementBodyGroup ( _OakLoopStatementConstructor_StatementBodyGroupEntries, 1 )
 {
-	
-	LoopLabelGroup.AddConstructorCantidate ( & OakLoopLabelConstructor :: Instance, 0 );
-	StatementBodyGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
-	
 }
 
 OakLoopStatementConstructor :: ~OakLoopStatementConstructor ()

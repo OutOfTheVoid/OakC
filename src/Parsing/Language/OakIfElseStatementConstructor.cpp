@@ -11,14 +11,13 @@
 
 OakIfElseStatementConstructor OakIfElseStatementConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakIfElseStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakIfElseStatementConstructor_EStatementBodyGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+
 OakIfElseStatementConstructor :: OakIfElseStatementConstructor ():
-	ExpressionGroup (),
-	StatementBodyGroup ()
+	ExpressionGroup ( _OakIfElseStatementConstructor_ExpressionGroupEntries, 1 ),
+	StatementBodyGroup ( _OakIfElseStatementConstructor_EStatementBodyGroupEntries, 1 )
 {
-	
-	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	StatementBodyGroup.AddConstructorCantidate ( & OakStatementBlockConstructor :: Instance, 0 );
-	
 }
 
 OakIfElseStatementConstructor :: ~OakIfElseStatementConstructor ()

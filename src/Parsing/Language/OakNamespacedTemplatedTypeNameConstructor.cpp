@@ -11,12 +11,11 @@
 
 OakNamespacedTemplatedTypeNameConstructor OakNamespacedTemplatedTypeNameConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakNamespacedTemplatedTypeNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+
 OakNamespacedTemplatedTypeNameConstructor :: OakNamespacedTemplatedTypeNameConstructor ():
-	TemplateGroup ()
+	TemplateGroup ( _OakNamespacedTemplatedTypeNameConstructor_TemplateGroupEntries, 1 )
 {
-	
-	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
-	
 }
 
 OakNamespacedTemplatedTypeNameConstructor :: ~OakNamespacedTemplatedTypeNameConstructor ()
@@ -50,6 +49,8 @@ void OakNamespacedTemplatedTypeNameConstructor :: TryConstruct ( ASTConstruction
 		DirectGlobalReference = true;
 		
 		Offset ++;
+		
+		CurrentToken = Input.Tokens [ Offset ];
 		
 	}
 	
@@ -130,7 +131,21 @@ void OakNamespacedTemplatedTypeNameConstructor :: TryConstruct ( ASTConstruction
 	if ( TemplateGroup.TryConstruction ( TypeNameElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		ElementDataDestructor ( TypeNameData );
+		if ( ConstructionError )
+		{
+			
+			delete TypeNameElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
+		delete TypeNameElement;
 		
 		Output.Accepted = false;
 		
@@ -141,7 +156,7 @@ void OakNamespacedTemplatedTypeNameConstructor :: TryConstruct ( ASTConstruction
 	if ( ConstructionError )
 	{
 		
-		ElementDataDestructor ( TypeNameData );
+		delete TypeNameElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;

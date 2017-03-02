@@ -10,12 +10,11 @@
 
 OakReturnStatementConstructor OakReturnStatementConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakReturnStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+
 OakReturnStatementConstructor :: OakReturnStatementConstructor ():
-	ExpressionGroup ()
+	ExpressionGroup ( _OakReturnStatementConstructor_ExpressionGroupEntries, 1 )
 {
-	
-	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	
 }
 
 OakReturnStatementConstructor :: ~OakReturnStatementConstructor ()

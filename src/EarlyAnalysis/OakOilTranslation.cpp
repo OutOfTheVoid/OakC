@@ -932,7 +932,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				
 			}
 			
-			case OakASTTags :: kASTTag_BindingStatement:
+			/*case OakASTTags :: kASTTag_BindingStatement:
 			{
 				
 				OilBindingStatement * Binding = OakTranslateLocalBindingStatementToOil ( StatementElement );
@@ -948,7 +948,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				
 				// Add local
 				
-			}
+			}*/
 			
 			default:
 				break;

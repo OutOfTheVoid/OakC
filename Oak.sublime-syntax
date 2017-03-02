@@ -1,0 +1,57 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: Oak
+file_extensions: [ oak ]
+scope: source.oak
+
+variables:
+  identifier: '(?:[[:alpha:]][_[:alnum:]]*|_[_[:alnum:]]+)'
+  int_suffixes: '(?:i8|i16|i32|i64|iptr|u8|u16|u32|u64|uptr|i|u)'
+  builtin_types: '(?:i8|i16|i32|i64|u8|u16|u32|u64|f32|f64|bool|char|str|str16|str32|void|array)'
+
+contexts:
+  main:
+    
+    - match: \/\*[^(\*\/)]*
+      push: block_comment
+      
+    - match: \/\/[^\n]*
+      scope: comment.line.double-slash.oak
+      
+    - match: \b(function|bind|if|else|while|public|mut|struct|trait|implement|import|namespace|self|ignore|return)\b
+      scope: keyword.control.oak
+      
+    - match: \b{{builtin_types}}\b
+      scope: storage.type.oak
+      
+    - match: \btrue|false|null\b
+      scope: constant.language.oak
+      
+    - match: \b{{identifier}}\b
+      scope: identifier.language.oak
+      
+    - match: \b(?:(?:(?:[0-9][0-9_]*)(?:\.[0-9][0-9_]*)?)(?:(?:e[\+\-]?[0-9][0-9_]*(?:f32|f64|f))|(?:f32|f64|f)))|(?:0x[0-9a-fA-F][0-9A-Fa-f_]*p[\+\-]?[0-9][0-9_]*(?:f32|f64|f)?)|(?:(?:(?:0[oO][0-7][0-7_]*)|(?:0[bB][01][01_]*)|(?:0[xXhH][a-fA-F0-9][a-fA-F0-9_]*)|(?:[0-9][0-9_]*))(?:(?:(?:u|i)(?:8|16|32|64)?))?)|(?:\.(?:[0-9][0-9_]*)(?:e[\+\-]?[0-9][0-9_]*)?(?:f32|f64)?)\b
+      scope: constant.language.oak
+      
+    - match: '"'
+      push: string
+      
+    - match: ''''
+      push: char
+      
+  string:
+    - meta_scope: string.double.quoted
+    - match: '"(?:u8|u16|u32)?'
+      pop: true
+      
+  char:
+    - meta_scope: constant.character.oak
+    - match: ''''
+      pop: true
+      
+  block_comment:
+    - meta_scope: comment.block.oak
+    - match: \*\/
+      pop: true
+      

@@ -47,6 +47,8 @@ void OakNamespacedTraitNameConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		Offset ++;
 		
+		CurrentToken = Input.Tokens [ Offset ];
+		
 	}
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
@@ -114,7 +116,7 @@ void OakNamespacedTraitNameConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	ASTElement * TraitNameElement = new ASTElement ();
 	TraitNameElement -> SetTag ( OakASTTags :: kASTTag_TraitName_Namespaced );
-	TraitNameElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	TraitNameElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	TraitNameElement -> SetData ( TraitNameData, & ElementDataDestructor );
 	
 	Output.Accepted = true;

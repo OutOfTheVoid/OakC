@@ -13,13 +13,17 @@
 
 OakImplementDefinitionConstructor OakImplementDefinitionConstructor :: Instance;
 
-OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
-	ImplementChildrenConstructionGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries [] =
 {
 	
-	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & OakMethodDefinitionConstructor :: Instance, 0 );
-	ImplementChildrenConstructionGroup.AddConstructorCantidate ( & OakFunctionDefinitionConstructor :: Instance, 1 );
+	{ & OakMethodDefinitionConstructor :: Instance, 0 },
+	{ & OakFunctionDefinitionConstructor :: Instance, 1 }
 	
+};
+
+OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
+	ImplementChildrenConstructionGroup ( _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries, 2 )
+{
 }
 
 OakImplementDefinitionConstructor :: ~OakImplementDefinitionConstructor ()

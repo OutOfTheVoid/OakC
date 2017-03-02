@@ -38,12 +38,11 @@ uint64_t _OakTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
 
 TestSet <uint64_t> OakTemplatedTypeNameConstructor :: AllowedKeywordTags ( _OakTemplatedTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
+ASTConstructionGroup :: StaticInitEntry _OakTemplatedTypeNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+
 OakTemplatedTypeNameConstructor :: OakTemplatedTypeNameConstructor ():
-	TemplateGroup ()
+	TemplateGroup ( _OakTemplatedTypeNameConstructor_TemplateGroupEntries, 1 )
 {
-	
-	TemplateGroup.AddConstructorCantidate ( & OakTemplateSpecificationConstructor :: Instance, 0 );
-	
 }
 
 OakTemplatedTypeNameConstructor :: ~OakTemplatedTypeNameConstructor ()

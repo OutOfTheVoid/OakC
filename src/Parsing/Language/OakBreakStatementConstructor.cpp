@@ -9,12 +9,16 @@
 
 OakBreakStatementConstructor OakBreakStatementConstructor :: Instance;
 
-OakBreakStatementConstructor :: OakBreakStatementConstructor ():
-	LabelGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakBreakStatementConstructor_LabelGroupEntries []
 {
 	
-	LabelGroup.AddConstructorCantidate ( & OakLoopLabelConstructor :: Instance, 0 );
+	{ & OakLoopLabelConstructor :: Instance, 0 }
 	
+};
+
+OakBreakStatementConstructor :: OakBreakStatementConstructor ():
+	LabelGroup ( _OakBreakStatementConstructor_LabelGroupEntries, 1 )
+{
 }
 
 OakBreakStatementConstructor :: ~OakBreakStatementConstructor ()

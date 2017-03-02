@@ -8,12 +8,11 @@
 
 OakExpressionStatementConstructor OakExpressionStatementConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakExpressionStatementConstructor_RValueGroupGroup [] = { { & OakExpressionConstructor :: Instance, 0 } };
+
 OakExpressionStatementConstructor :: OakExpressionStatementConstructor ():
-	RValueGroup ()
+	RValueGroup ( _OakExpressionStatementConstructor_RValueGroupGroup, 1 )
 {
-	
-	RValueGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	
 }
 	
 OakExpressionStatementConstructor :: ~OakExpressionStatementConstructor ()

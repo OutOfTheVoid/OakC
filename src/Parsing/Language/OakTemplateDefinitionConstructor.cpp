@@ -11,13 +11,17 @@
 
 OakTemplateDefinitionConstructor OakTemplateDefinitionConstructor :: Instance;
 
-OakTemplateDefinitionConstructor :: OakTemplateDefinitionConstructor ():
-	ParameterGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakTemplateDefinitionConstructor_ParameterGroupEntries [] =
 {
 	
-	ParameterGroup.AddConstructorCantidate ( & OakRestrictedTemplateParameterConstructor :: Instance, 0 );
-	ParameterGroup.AddConstructorCantidate ( & OakUnrestrictedTemplateParameterConstructor :: Instance, 1 );
+	{ & OakRestrictedTemplateParameterConstructor :: Instance, 0 },
+	{ & OakUnrestrictedTemplateParameterConstructor :: Instance, 1 }
 	
+};
+
+OakTemplateDefinitionConstructor :: OakTemplateDefinitionConstructor ():
+	ParameterGroup ( _OakTemplateDefinitionConstructor_ParameterGroupEntries, 2 )
+{
 }
 
 OakTemplateDefinitionConstructor :: ~OakTemplateDefinitionConstructor ()

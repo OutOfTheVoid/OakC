@@ -7,12 +7,11 @@
 
 OakParenthesizedExpressionConstructor OakParenthesizedExpressionConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakParenthesizedExpressionConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+
 OakParenthesizedExpressionConstructor :: OakParenthesizedExpressionConstructor ():
-	ExpressionGroup ()
+	ExpressionGroup ( _OakParenthesizedExpressionConstructor_ExpressionGroupEntries, 1 )
 {
-	
-	ExpressionGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	
 }
 
 OakParenthesizedExpressionConstructor :: ~OakParenthesizedExpressionConstructor ()

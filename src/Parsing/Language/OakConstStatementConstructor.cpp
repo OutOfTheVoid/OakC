@@ -19,21 +19,25 @@
 
 OakConstStatementConstructor OakConstStatementConstructor :: Instance;
 
-OakConstStatementConstructor :: OakConstStatementConstructor ():
-	TypeGroup (),
-	InitializerValueGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakConstStatementConstructor_TypeGroupEntries [] =
 {
 	
-	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
+	{ & OakPointerTypeConstructor :: Instance, 0 },
+	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
+	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
+	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
-	InitializerValueGroup.AddConstructorCantidate ( & OakExpressionConstructor :: Instance, 0 );
-	
+};
+
+ASTConstructionGroup :: StaticInitEntry _OakConstStatementConstructor_InitializerValueGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+
+OakConstStatementConstructor :: OakConstStatementConstructor ():
+	TypeGroup ( _OakConstStatementConstructor_TypeGroupEntries, 6 ),
+	InitializerValueGroup ( _OakConstStatementConstructor_InitializerValueGroupEntries, 1 )
+{
 }
 
 OakConstStatementConstructor :: ~OakConstStatementConstructor ()

@@ -14,17 +14,22 @@
 
 OakReturnTypeConstructor OakReturnTypeConstructor :: Instance;
 
-OakReturnTypeConstructor :: OakReturnTypeConstructor ():
-	TypeGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakReturnTypeConstructor_TypeGroupEntries [] =
 {
 	
-	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
+	{ & OakPointerTypeConstructor :: Instance, 0 },
+	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
+	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
+	{ & OakBareTypeNameConstructor :: Instance, 2 },
+	
+};
+
+OakReturnTypeConstructor :: OakReturnTypeConstructor ():
+	TypeGroup ( _OakReturnTypeConstructor_TypeGroupEntries, 6 )
+{
 }
 
 OakReturnTypeConstructor :: ~OakReturnTypeConstructor ()
@@ -64,6 +69,20 @@ void OakReturnTypeConstructor :: TryConstruct ( ASTConstructionInput & Input, AS
 	
 	if ( TypeGroup.TryConstruction ( ReturnTypeElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
+		
+		if ( ConstructionError )
+		{
+			
+			delete ReturnTypeElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
 		
 		delete ReturnTypeElement;
 		

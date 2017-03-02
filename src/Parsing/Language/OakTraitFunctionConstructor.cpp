@@ -15,16 +15,15 @@
 
 OakTraitFunctionConstructor OakTraitFunctionConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakTraitFunctionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakTraitFunctionConstructor_ParameterListConstructionGroupEntries [] = { { & OakFunctionParameterListConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakTraitFunctionConstructor_ReturnTypeConstructionGroupEntries [] = { { & OakReturnTypeConstructor :: Instance, 0 } };
+
 OakTraitFunctionConstructor :: OakTraitFunctionConstructor ():
-	TemplateConstructionGroup (),
-	ParameterListConstructionGroup (),
-	ReturnTypeConstructionGroup ()
+	TemplateConstructionGroup ( _OakTraitFunctionConstructor_TemplateConstructionGroupEntries, 1 ),
+	ParameterListConstructionGroup ( _OakTraitFunctionConstructor_ParameterListConstructionGroupEntries, 1 ),
+	ReturnTypeConstructionGroup ( _OakTraitFunctionConstructor_ReturnTypeConstructionGroupEntries, 1 )
 {
-	
-	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
-	ParameterListConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterListConstructor :: Instance, 0 );
-	ReturnTypeConstructionGroup.AddConstructorCantidate ( & OakReturnTypeConstructor :: Instance, 0 );
-	
 }
 
 OakTraitFunctionConstructor :: ~OakTraitFunctionConstructor ()

@@ -17,18 +17,22 @@
 
 OakStructBindingConstructor OakStructBindingConstructor :: Instance;
 
-OakStructBindingConstructor :: OakStructBindingConstructor ():
-	TypeGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakStructBindingConstructor_TypeGroupEntries [] =
 {
 	
-	TypeGroup.AddConstructorCantidate ( & OakPointerTypeConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakReferenceTypeConstructor :: Instance, 0 );
+	{ & OakPointerTypeConstructor :: Instance, 0 },
+	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 );
-	TypeGroup.AddConstructorCantidate ( & OakNamespacedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakTemplatedTypeNameConstructor :: Instance, 1 );
-	TypeGroup.AddConstructorCantidate ( & OakBareTypeNameConstructor :: Instance, 2 );
+	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
+	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
+};
+
+OakStructBindingConstructor :: OakStructBindingConstructor ():
+	TypeGroup ( _OakStructBindingConstructor_TypeGroupEntries, 6 )
+{
 }
 
 OakStructBindingConstructor :: ~OakStructBindingConstructor ()

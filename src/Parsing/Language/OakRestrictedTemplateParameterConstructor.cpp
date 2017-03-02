@@ -14,15 +14,19 @@
 
 OakRestrictedTemplateParameterConstructor OakRestrictedTemplateParameterConstructor :: Instance;
 
-OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConstructor ():
-	RestrictionTraitGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakRestrictedTemplateParameterConstructor_RestrictionTraitGroupEntries [] =
 {
 	
-	RestrictionTraitGroup.AddConstructorCantidate ( & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 );
-	RestrictionTraitGroup.AddConstructorCantidate ( & OakNamespacedTraitNameConstructor :: Instance, 1 );
-	RestrictionTraitGroup.AddConstructorCantidate ( & OakTemplatedTraitNameConstructor :: Instance, 1 );
-	RestrictionTraitGroup.AddConstructorCantidate ( & OakBareTraitNameConstructor :: Instance, 2 );
+	{ & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 },
+	{ & OakNamespacedTraitNameConstructor :: Instance, 1 },
+	{ & OakTemplatedTraitNameConstructor :: Instance, 1 },
+	{ & OakBareTraitNameConstructor :: Instance, 2 },
 	
+};
+
+OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConstructor ():
+	RestrictionTraitGroup ( _OakRestrictedTemplateParameterConstructor_RestrictionTraitGroupEntries, 4 )
+{
 }
 
 OakRestrictedTemplateParameterConstructor :: ~OakRestrictedTemplateParameterConstructor ()

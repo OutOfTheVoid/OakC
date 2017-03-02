@@ -7,13 +7,17 @@
 
 OakExpressionConstructor OakExpressionConstructor :: Instance;
 
-OakExpressionConstructor :: OakExpressionConstructor ():
-	SubExpressionGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakExpressionConstructor_SubExpressionGroup [] =
 {
 	
-	SubExpressionGroup.AddConstructorCantidate ( & OakOperatorExpressionConstructor :: Instance, 0 );
-	SubExpressionGroup.AddConstructorCantidate ( & OakPrimaryExpressionConstructor :: Instance, 1 );
+	{ & OakOperatorExpressionConstructor :: Instance, 0 },
+	{ & OakPrimaryExpressionConstructor :: Instance, 1 }
 	
+};
+
+OakExpressionConstructor :: OakExpressionConstructor ():
+	SubExpressionGroup (_OakExpressionConstructor_SubExpressionGroup, 2 )
+{
 }
 
 OakExpressionConstructor :: ~OakExpressionConstructor ()

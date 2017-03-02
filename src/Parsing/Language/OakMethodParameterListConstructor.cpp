@@ -15,16 +15,20 @@
 
 OakMethodParameterListConstructor OakMethodParameterListConstructor :: Instance;
 
-OakMethodParameterListConstructor :: OakMethodParameterListConstructor ():
-	SelfParameterConstructionGroup (),
-	ParameterConstructionGroup ()
+ASTConstructionGroup :: StaticInitEntry _OakMethodParameterListConstructor_SelfParameterConstructionGroupEntries [] =
 {
 	
-	SelfParameterConstructionGroup.AddConstructorCantidate ( & OakSelfParameterConstructor :: Instance, 0 );
-	SelfParameterConstructionGroup.AddConstructorCantidate ( & OakSelfParameterReferenceConstructor :: Instance, 1 );
+	{ & OakSelfParameterConstructor :: Instance, 0 },
+	{ & OakSelfParameterReferenceConstructor :: Instance, 1 }
 	
-	ParameterConstructionGroup.AddConstructorCantidate ( & OakFunctionParameterConstructor :: Instance, 0 );
-	
+};
+
+ASTConstructionGroup :: StaticInitEntry _OakMethodParameterListConstructor_ParameterConstructionGroupEntries [] = { { & OakFunctionParameterConstructor :: Instance, 0 } };
+
+OakMethodParameterListConstructor :: OakMethodParameterListConstructor ():
+	SelfParameterConstructionGroup ( _OakMethodParameterListConstructor_SelfParameterConstructionGroupEntries, 2 ),
+	ParameterConstructionGroup ( _OakMethodParameterListConstructor_ParameterConstructionGroupEntries, 1 )
+{
 }
 
 OakMethodParameterListConstructor :: ~OakMethodParameterListConstructor ()

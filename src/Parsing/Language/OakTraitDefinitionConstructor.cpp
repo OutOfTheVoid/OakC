@@ -12,14 +12,13 @@
 
 OakTraitDefinitionConstructor OakTraitDefinitionConstructor :: Instance;
 
+ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
+ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries [] = { { & OakTraitFunctionConstructor :: Instance, 0 } };
+
 OakTraitDefinitionConstructor :: OakTraitDefinitionConstructor ():
-	TemplateConstructionGroup (),
-	TraitBodyConstructionGroup ()
+	TemplateConstructionGroup ( _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
+	TraitBodyConstructionGroup ( _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries, 1 )
 {
-	
-	TemplateConstructionGroup.AddConstructorCantidate ( & OakTemplateDefinitionConstructor :: Instance, 0 );
-	TraitBodyConstructionGroup.AddConstructorCantidate ( & OakTraitFunctionConstructor :: Instance, 0 );
-	
 }
 
 OakTraitDefinitionConstructor :: ~OakTraitDefinitionConstructor ()
