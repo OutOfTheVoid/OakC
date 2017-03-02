@@ -15,8 +15,8 @@ public:
 	
 	inline virtual ~IOilOperator () {};
 	
-	virtual bool ConstantTerms () = 0;
-	virtual OperatorType GetOperatorType () = 0;
+	virtual bool ConstantTerms () const = 0;
+	virtual OperatorType GetOperatorType () const = 0;
 	
 };
 

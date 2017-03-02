@@ -28,8 +28,6 @@ private:
 	
 	std :: map <std :: u32string, OilFunctionParameter *> Parameters;
 	
-	uint32_t IgnoreCount;
-	
 };
 
 #endif

@@ -383,6 +383,6 @@ void OakArrayLiteralConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 void OakArrayLiteralConstructor :: ElementDataDestructor ( void * Data )
 {
 	
-	
+	delete reinterpret_cast <ElementData *> ( Data );
 	
 }

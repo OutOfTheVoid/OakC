@@ -11,6 +11,9 @@ OilAllusion :: OilAllusion ( SelfType SELF_ALLUSION ):
 	IndirectTemplateSpecification ( NULL ),
 	Target ( kAllusionTarget_Self )
 {
+	
+	(void) SELF_ALLUSION;
+	
 }
 
 OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name ):
@@ -72,7 +75,7 @@ OilAllusion :: OilAllusion ( const std :: u32string & Name, OilTemplateSpecifica
 	NamespaceNameCount ( 0 ),
 	NamespaceNameList ( NULL ),
 	Name ( Name ),
-	DirectTemplateSpecification ( NULL ),
+	DirectTemplateSpecification ( TemplateSpecification ),
 	IndirectTemplateSpecification ( NULL ),
 	Target ( kAllusionTarget_Contextual_Templated )
 {

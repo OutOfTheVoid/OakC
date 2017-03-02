@@ -28,11 +28,16 @@ public:
 	const OilTemplateDefinition * GetTemplateDefinition () const;
 	OilTemplateDefinition * GetTemplateDefinition ();
 	
+	const OilTypeRef * GetReturnType () const;
+	OilTypeRef * GetReturnType ();
+	
 	bool IsTemplated () const;
 	bool ConstantTerms () const;
 	
 	bool IsPublic () const;
 	bool IsInline () const;
+	
+	bool HasReturnType () const;
 	
 private:
 	
@@ -43,6 +48,7 @@ private:
 	
 	OilTemplateDefinition * TemplateDefinition;
 	OilFunctionParameterList * ParameterList;
+	OilTypeRef * ReturnType;
 	OilStatementBody * StatementBody;
 	
 };

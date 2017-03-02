@@ -8,15 +8,15 @@
 
 OilUnaryOperator :: OilUnaryOperator ( Operator Op, OilExpression * Term ):
 	Op ( Op ),
-	ExpressionTerm ( Term ),
-	TermIsPrimary ( false )
+	TermIsPrimary ( false ),
+	ExpressionTerm ( Term )
 {
 }
 	
 OilUnaryOperator :: OilUnaryOperator ( Operator Op, IOilPrimary * Term ):
 	Op ( Op ),
-	PrimaryTerm ( Term ),
-	TermIsPrimary ( true )
+	TermIsPrimary ( true ),
+	PrimaryTerm ( Term )
 {
 }
 

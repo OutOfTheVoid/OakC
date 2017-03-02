@@ -40,7 +40,7 @@ int main ( int argc, const char * argv [] )
 	
 	std :: vector <std :: string> SourceFileNames;
 	
-	for ( uint32_t I = 1; I < argc; I ++ )
+	for ( int32_t I = 1; I < argc; I ++ )
 	{
 		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "h", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "help", 0, true ) )

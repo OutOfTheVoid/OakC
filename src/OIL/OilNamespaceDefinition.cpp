@@ -40,7 +40,7 @@ OilNamespaceDefinition :: ~OilNamespaceDefinition ()
 	
 }
 
-const uint32_t OilNamespaceDefinition :: GetSubNamespaceDefinitionCount () const
+uint32_t OilNamespaceDefinition :: GetSubNamespaceDefinitionCount () const
 {
 	
 	return SubNamespaces.size ();
@@ -109,7 +109,7 @@ void OilNamespaceDefinition :: AddStructDefinition ( OilStructDefinition * Struc
 	
 }
 
-const uint32_t OilNamespaceDefinition :: GetStructDefinitionCount () const
+uint32_t OilNamespaceDefinition :: GetStructDefinitionCount () const
 {
 	
 	return StructDefs.size ();

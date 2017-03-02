@@ -1,14 +1,14 @@
 #include <OIL/OilIntegerLiteral.h>
 
 OilIntegerLiteral :: OilIntegerLiteral ( IntType Type, uint64_t UValue ):
-	Type ( Type ),
-	UValue ( UValue )
+	UValue ( UValue ),
+	Type ( Type )
 {
 }
 
 OilIntegerLiteral :: OilIntegerLiteral ( IntType Type, int64_t SValue ):
-	Type ( Type ),
-	SValue ( SValue )
+	SValue ( SValue ),
+	Type ( Type )
 {
 }
 

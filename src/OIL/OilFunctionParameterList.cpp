@@ -2,8 +2,7 @@
 #include <OIL/OilFunctionParameter.h>
 
 OilFunctionParameterList :: OilFunctionParameterList ():
-	Parameters (),
-	IgnoreCount ( 0 )
+	Parameters ()
 {
 }
 

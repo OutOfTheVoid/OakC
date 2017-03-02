@@ -1817,8 +1817,8 @@ OakIdentifierSplitRule :: OakIdentifierSplitRule ():
 	
 	/*========================*/
 	
-	StartChars = std :: move ( XID_Start_Compositor.CompositeString () );
-	ContinueChars = std :: move ( XID_Continue_Compositor.CompositeString () );
+	StartChars = XID_Start_Compositor.CompositeString ();
+	ContinueChars = XID_Continue_Compositor.CompositeString ();
 	
 	StartSet.SetChars ( & StartChars [ 0 ], StartChars.size (), false );
 	ContinueSet.SetChars ( & ContinueChars [ 0 ], ContinueChars.size (), false );

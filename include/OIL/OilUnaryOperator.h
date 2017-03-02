@@ -49,6 +49,8 @@ public:
 	
 private:
 	
+	Operator Op;
+	
 	bool TermIsPrimary;
 	
 	union
@@ -58,8 +60,6 @@ private:
 		OilExpression * ExpressionTerm;
 		
 	};
-	
-	Operator Op;
 	
 };
 

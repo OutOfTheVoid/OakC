@@ -75,6 +75,8 @@ public:
 	
 private:
 	
+	Operator Op;
+	
 	bool LeftIsPrimary;
 	bool RightIsPrimary;
 	
@@ -93,8 +95,6 @@ private:
 		IOilPrimary * RightPrimaryTerm;
 		
 	};
-	
-	Operator Op;
 	
 };
 

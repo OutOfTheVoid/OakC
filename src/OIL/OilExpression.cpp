@@ -115,7 +115,7 @@ void OilExpression :: DisownTerm ()
 	
 }
 
-bool OilExpression :: IsConstant ()
+bool OilExpression :: IsConstant () const
 {
 	
 	if ( TermIsPrimary )

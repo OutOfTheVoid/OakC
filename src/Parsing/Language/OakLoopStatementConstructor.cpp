@@ -48,12 +48,15 @@ void OakLoopStatementConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
-	ElementData * Data = new ElementData ();
+	ElementData * LoopData = new ElementData ();
+	
+	LoopData -> Labeled = false;
 	
 	ASTElement * LoopElement = new ASTElement ();
 	
 	LoopElement -> SetTag ( OakASTTags :: kASTTag_LoopStatement );
 	LoopElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	LoopElement -> SetData ( LoopData, & ElementDataDestructor );
 	
 	bool Error = false;
 	std :: string ErrorString;
@@ -78,6 +81,8 @@ void OakLoopStatementConstructor :: TryConstruct ( ASTConstructionInput & Input,
 			return;
 			
 		}
+		
+		LoopData -> Labeled = true;
 		
 		LoopElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
 		

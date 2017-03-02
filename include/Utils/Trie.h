@@ -110,7 +110,7 @@ private:
 		if ( Length == 0 )
 			return Root.Element;
 		
-		TrieElement * ChildElement = Root.Children [ * Identifier ];
+		TrieElement * ChildElement = Root.Children [ static_cast <uint32_t> ( * Identifier ) ];
 		
 		if ( ChildElement == NULL )
 			return DefaultValue;

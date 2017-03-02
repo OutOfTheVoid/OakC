@@ -20,18 +20,18 @@ const CharTestSet CharTestSet :: OctalDigitsUnderscore ( U"_01234567", 9, false 
 // TODO: optimize for sets which are mostly linear, or otherwise exist within a sufficiently small range, using a simple bool [] corresponding to charachters.
 
 CharTestSet :: CharTestSet ( const char32_t * CharSet, uint32_t SetSize, bool DeleteOnDestruct ):
-	SubSet ( NULL ),
 	CharSet ( CharSet ),
 	SetSize ( SetSize ),
-	DeleteOnDestruct ( DeleteOnDestruct )
+	DeleteOnDestruct ( DeleteOnDestruct ),
+	SubSet ( NULL )
 {
 }
 
 CharTestSet :: CharTestSet ( const CharTestSet * SubSet, const char32_t * CharSet, uint32_t SetSize, bool DeleteOnDestruct ):
-	SubSet ( SubSet ),
 	CharSet ( CharSet ),
 	SetSize ( SetSize ),
-	DeleteOnDestruct ( DeleteOnDestruct )
+	DeleteOnDestruct ( DeleteOnDestruct ),
+	SubSet ( SubSet )
 {
 }
 

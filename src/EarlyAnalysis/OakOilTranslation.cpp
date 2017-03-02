@@ -450,7 +450,9 @@ OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTEle
 		
 	}
 	
-	const OakTemplateSpecificationConstructor :: ElementData * SpecificationData = reinterpret_cast <const OakTemplateSpecificationConstructor :: ElementData *> ( TemplateSpecificationElement -> GetData () );
+	//const OakTemplateSpecificationConstructor :: ElementData * SpecificationData = reinterpret_cast <const OakTemplateSpecificationConstructor :: ElementData *> ( TemplateSpecificationElement -> GetData () );
+	
+	
 	
 	return new OilTemplateSpecification ( & TypeList [ 0 ], TypeList.size () );
 	
@@ -583,8 +585,6 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 		case OakASTTags :: kASTTag_PointerType:
 		{
 			
-			const OakPointerTypeConstructor :: ElementData * PointerData = reinterpret_cast <const OakPointerTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
-			
 			OilTypeRef * SubTypeRef = OakTranslateTypeRefToOil ( TypeElement -> GetSubElement ( 0 ) );
 			
 			if ( SubTypeRef == NULL )
@@ -596,8 +596,6 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 		
 		case OakASTTags :: kASTTag_ReferenceType:
 		{
-			
-			const OakReferenceTypeConstructor :: ElementData * ReferenceData = reinterpret_cast <const OakReferenceTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
 			OilTypeRef * SubTypeRef = OakTranslateTypeRefToOil ( TypeElement -> GetSubElement ( 0 ) );
 			
@@ -1782,6 +1780,8 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 {
 	
 	// TODO: Implement
+	
+	(void) OperatorElement;
 	
 	return NULL;
 	

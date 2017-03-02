@@ -14,7 +14,7 @@ public:
 	OilNamespaceDefinition ( const std :: u32string & ID );
 	~OilNamespaceDefinition ();
 	
-	const uint32_t GetSubNamespaceDefinitionCount () const;
+	uint32_t GetSubNamespaceDefinitionCount () const;
 	
 	OilNamespaceDefinition * GetNamespaceDefinition ( uint32_t Index );
 	const OilNamespaceDefinition * GetNamespaceDefinition ( uint32_t Index ) const;
@@ -22,7 +22,7 @@ public:
 	OilNamespaceDefinition * FindOrCreateNamespaceDefinition ( const std :: u32string & ID );
 	const OilNamespaceDefinition * FindNamespaceDefinition ( const std :: u32string & ID ) const;
 	
-	const uint32_t GetStructDefinitionCount () const;
+	uint32_t GetStructDefinitionCount () const;
 	
 	void AddStructDefinition ( OilStructDefinition * StructDef );
 	

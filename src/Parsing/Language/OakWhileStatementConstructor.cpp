@@ -19,8 +19,8 @@ ASTConstructionGroup :: StaticInitEntry _OakWhileStatementConstructor_LoopLabelG
 
 OakWhileStatementConstructor :: OakWhileStatementConstructor ():
 	ExpressionGroup ( _OakWhileStatementConstructor_ExpressionGroupEntries, 1 ),
-	StatementBodyGroup ( _OakWhileStatementConstructor_StatementBodyGroupEntries, 1 ),
-	LoopLabelGroup ( _OakWhileStatementConstructor_LoopLabelGroupEntries, 1 )
+	LoopLabelGroup ( _OakWhileStatementConstructor_LoopLabelGroupEntries, 1 ),
+	StatementBodyGroup ( _OakWhileStatementConstructor_StatementBodyGroupEntries, 1 )
 {
 }
 

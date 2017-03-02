@@ -23,7 +23,7 @@ public:
 	
 	void DisownTerm ();
 	
-	bool IsConstant ();
+	bool IsConstant () const;
 	
 private:
 	

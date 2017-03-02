@@ -8,37 +8,37 @@
 
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, OilExpression * LeftTerm, OilExpression * RightTerm ):
 	Op ( Op ),
-	LeftExpressionTerm ( LeftTerm ),
-	RightExpressionTerm ( RightTerm ),
 	LeftIsPrimary ( false ),
-	RightIsPrimary ( false )
+	RightIsPrimary ( false ),
+	LeftExpressionTerm ( LeftTerm ),
+	RightExpressionTerm ( RightTerm )
 {
 }
 
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, OilExpression * LeftTerm, IOilPrimary * RightTerm ):
 	Op ( Op ),
-	LeftExpressionTerm ( LeftTerm ),
-	RightPrimaryTerm ( RightTerm ),
 	LeftIsPrimary ( false ),
-	RightIsPrimary ( true )
+	RightIsPrimary ( true ),
+	LeftExpressionTerm ( LeftTerm ),
+	RightPrimaryTerm ( RightTerm )
 {
 }
 
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, OilExpression * RightTerm ):
 	Op ( Op ),
+	LeftIsPrimary ( false ),
+	RightIsPrimary ( true ),
 	LeftPrimaryTerm ( LeftTerm ),
-	RightExpressionTerm ( RightTerm ),
-	LeftIsPrimary ( true ),
-	RightIsPrimary ( false )
+	RightExpressionTerm ( RightTerm )
 {
 }
 
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm ):
 	Op ( Op ),
+	LeftIsPrimary ( false ),
+	RightIsPrimary ( true ),
 	LeftPrimaryTerm ( LeftTerm ),
-	RightPrimaryTerm ( RightTerm ),
-	LeftIsPrimary ( true ),
-	RightIsPrimary ( true )
+	RightPrimaryTerm ( RightTerm )
 {
 }
 
