@@ -13,7 +13,7 @@ project "Compiler"
 	
 	filter { "not system:windows" }
 		toolset "clang"
-		buildoptions { "-std=c++11 -Wall -Wextra" }
+		buildoptions { "-std=c++11 -Wall -Wextra -pedantic-errors" }
 		
 	filter { "action:vs*" }
 		buildoptions { "/std:c++11" }

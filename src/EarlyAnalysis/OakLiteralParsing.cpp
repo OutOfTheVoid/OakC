@@ -172,7 +172,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 						{
 							
 							Error = "Expected 4 hex digits after unicode 16-bit escape in string literal";
-					
+							
 							return false;
 							
 						}
@@ -190,7 +190,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 							{
 								
 								Error = "Unexpected non-hex code in unicode escape in string literal!";
-					
+								
 								return false;
 								
 							}
@@ -215,7 +215,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 						{
 							
 							Error = "Expected 4 hex digits after unicode 16-bit escape in string literal";
-					
+							
 							return false;
 							
 						}
@@ -233,7 +233,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 							{
 								
 								Error = "Unexpected non-hex code in unicode escape in string literal";
-					
+								
 								return false;
 								
 							}
@@ -258,7 +258,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 						{
 							
 							Error = "Expected s hex digits after unicode 16-bit escape in string literal";
-					
+							
 							return false;
 							
 						}
@@ -384,7 +384,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 			break;
 			
 			case U'\"':
-				return true;
+			return true;
 			
 			default:
 			{
@@ -392,7 +392,7 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 				Out += Char;
 				
 				Index ++;
-			
+				
 			}
 			break;
 			
@@ -403,6 +403,250 @@ bool OakParseStringLiteral ( const std :: u32string & Source, std :: u32string &
 	Error = "Expected closing quotation mark at end of string literal";
 	
 	return false;
+	
+}
+
+bool OakParseCharLiteral ( const std :: u32string & Source, char32_t & Out, std :: string & Error )
+{
+	
+	if ( Source.size () < 3 )
+	{
+		
+		Error = "Invalid char literal";
+		
+		return false;
+		
+	}
+	
+	uint32_t Index = 1;
+	
+	char32_t Char = Source.at ( Index );
+	
+	if ( Char == U'\'' )
+	{
+		
+		Index ++;
+		
+		Char = Source.at ( Index );
+		
+		switch ( Char )
+		{
+			
+			case U'n':
+			{
+				
+				Out = U'\n';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U't':
+			{
+				
+				Out = U'\t';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'v':
+			{
+				
+				Out = U'\v';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'b':
+			{
+				
+				Out = U'\b';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'r':
+			{
+				
+				Out = U'\r';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'f':
+			{
+				
+				Out = U'\f';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'a':
+			{
+				
+				Out = U'\a';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'0':
+			{
+				
+				Out = U'\0';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'\\':
+			{
+				
+				Out = U'\\';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'\'':
+			{
+				
+				Out = U'\'';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'\"':
+			{
+				
+				Out = U'\"';
+				
+				Index ++;
+				
+			}
+			break;
+			
+			case U'u':
+			{
+				
+				Index ++;
+				
+				if ( ( Source.size () - Index ) < 4 )
+				{
+					
+					Error = "Expected 4 hexadecimal digits after unicode escape specifier in char literal";
+					
+					return false;
+					
+				}
+				
+				uint32_t Sum = 0;
+				
+				for ( uint32_t I = 0; I < 4; I ++ )
+				{
+					
+					uint32_t HexVal = HexCodeToValue ( Source.at ( I + Index ) );
+					
+					if ( HexVal == 0xFFFFFFFF )
+					{
+						
+						Error = "Expected 4 hexadecimal digits after unicode escape specifier in char literal";
+						
+						return false;
+						
+					}
+					
+					Sum <<= 4;
+					Sum |= HexVal;
+					
+				}
+				
+				Out = Sum;
+				
+			}
+			break;
+			
+			case U'U':
+			{
+				
+				Index ++;
+				
+				if ( ( Source.size () - Index ) < 8 )
+				{
+					
+					Error = "Expected 8 hexadecimal digits after unicode escape specifier in char literal";
+					
+					return false;
+					
+				}
+				
+				uint32_t Sum = 0;
+				
+				for ( uint32_t I = 0; I < 8; I ++ )
+				{
+					
+					uint32_t HexVal = HexCodeToValue ( Source.at ( I + Index ) );
+					
+					if ( HexVal == 0xFFFFFFFF )
+					{
+						
+						Error = "Expected 8 hexadecimal digits after unicode escape specifier in char literal";
+						
+						return false;
+						
+					}
+					
+					Sum <<= 4;
+					Sum |= HexVal;
+					
+				}
+				
+				Out = Sum;
+				
+			}
+			break;
+			
+			case U'x':
+			{
+				
+				// TODO:
+				
+				
+			}
+			break;
+			
+		}
+		
+	}
+	else
+		Out = Char;
+	
+	if ( Index >= Source.size () || ( Source.at ( Index ) != U'\'' ) )
+	{
+		
+		Error = "Expected closing single quotation at end of charachter literal";
+		
+		return false;
+		
+	}
+	
+	return true;
 	
 }
 
@@ -658,8 +902,8 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 			break;
 			
 			default:
-				Value = 0;
-				return;
+			Value = 0;
+			return;
 			
 		}
 		
