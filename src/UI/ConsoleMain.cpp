@@ -22,7 +22,17 @@
 #define VERSION_STRING "0.0.1b"
 
 void PrintHelp ();
-void TestArea ();
+int Test ();
+int Compile ( const std :: vector <std :: string> & SourceFileNames );
+
+typedef enum
+{
+	
+	kMainAction_Compile,
+	kMainAction_Test,
+	kMainAction_Help
+	
+} MainAction;
 
 int main ( int argc, const char * argv [] )
 {
@@ -38,6 +48,8 @@ int main ( int argc, const char * argv [] )
 	bool Verbose = false;
 	bool LogFileSet = false;
 	
+	MainAction Action = kMainAction_Compile;
+	
 	std :: vector <std :: string> SourceFileNames;
 	
 	for ( int32_t I = 1; I < argc; I ++ )
@@ -46,18 +58,19 @@ int main ( int argc, const char * argv [] )
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "h", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "help", 0, true ) )
 		{
 			
-			PrintHelp ();
+			Action = kMainAction_Help;
 			
-			return 0;
+			continue;
 			
 		}
 		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "t", 0, true ) )
 		{
 			
-			TestArea ();
+			if ( Action == kMainAction_Compile )
+				Action = kMainAction_Test;
 			
-			return 0;
+			continue;
 			
 		}
 		
@@ -90,6 +103,33 @@ int main ( int argc, const char * argv [] )
 	
 	Logging :: SetVerbose ( Verbose );
 	
+	switch ( Action )
+	{
+		
+		case kMainAction_Compile:
+			return Compile ( SourceFileNames );
+			
+		case kMainAction_Test:
+			return Test ();
+			
+		case kMainAction_Help:
+		{
+			
+			PrintHelp ();
+			
+			return 0;
+			
+		}
+		
+	}
+	
+	return 0;
+	
+}
+
+int Compile ( const std :: vector <std :: string> & SourceFileNames )
+{
+	
 	if ( SourceFileNames.size () == 0 )
 	{
 		
@@ -107,7 +147,7 @@ int main ( int argc, const char * argv [] )
 		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ] );
 		
 		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files ) )
-			return 0;
+			return 1;
 		
 	}
 	
@@ -119,7 +159,7 @@ int main ( int argc, const char * argv [] )
 		CompilationUnit * Unit = Files.GetUnit ( I );
 		
 		if ( ! Unit -> RunAnalysis ( OilRoot ) )
-			return 0;
+			return 1;
 		
 	}
 	
@@ -141,7 +181,7 @@ void PrintHelp ()
 	
 }
 
-void TestArea ()
+int Test ()
 {
 	
 	std :: string ErrorString;
@@ -188,5 +228,33 @@ void TestArea ()
 	if ( OutString != U"∑a" )
 		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
 	
+	char32_t OutChar = U' ';
+	
+	if ( ! OakParseCharLiteral ( U"\'a\'", OutChar, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( OutChar != U'a' )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( ! OakParseCharLiteral ( U"\'\\x41\'", OutChar, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( OutChar != U'A' )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( ! OakParseCharLiteral ( U"\'\\u0042\'", OutChar, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( OutChar != U'B' )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( ! OakParseCharLiteral ( U"\'\\U00000043\'", OutChar, ErrorString ) )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	if ( OutChar != U'C' )
+		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	
+	
+	return 0;
 	
 }
