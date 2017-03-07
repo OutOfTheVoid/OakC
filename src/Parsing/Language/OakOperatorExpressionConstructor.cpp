@@ -193,7 +193,7 @@ typedef struct
 		
 		ASTElement * Primary;
 		
-	};
+	} Element;
 	
 } ExpressionElement;
 
@@ -204,10 +204,10 @@ void CleanupExpressionElements ( std :: vector <ExpressionElement> & ExpressionE
 	{
 		
 		if ( ! ExpressionElements [ I ].Operator )
-			delete ExpressionElements [ I ].Primary;
+			delete ExpressionElements [ I ].Element.Primary;
 		else
-			if ( ExpressionElements [ I ].OperatorInfo.BracketedExpression != NULL )
-				delete ExpressionElements [ I ].OperatorInfo.BracketedExpression;
+			if ( ExpressionElements [ I ].Element.OperatorInfo.BracketedExpression != NULL )
+				delete ExpressionElements [ I ].Element.OperatorInfo.BracketedExpression;
 		
 	}
 	
@@ -268,9 +268,9 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			ExpressionElement NewElement;
 			
 			NewElement.Operator = true;
-			NewElement.OperatorInfo.Operator = OperatorEntry;
-			NewElement.OperatorInfo.BracketedExpression = NULL;
-			NewElement.OperatorInfo.SourceTokenIndex = Input.AvailableTokenCount - TokenCount;
+			NewElement.Element.OperatorInfo.Operator = OperatorEntry;
+			NewElement.Element.OperatorInfo.BracketedExpression = NULL;
+			NewElement.Element.OperatorInfo.SourceTokenIndex = Input.AvailableTokenCount - TokenCount;
 			
 			if ( ( OperatorEntry -> Associativity == kOperatorAssociativity_Left_Bracket ) || ( OperatorEntry -> Associativity == kOperatorAssociativity_Right_Bracket ) )
 			{
@@ -343,7 +343,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						}
 						
 						CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
-						NewElement.OperatorInfo.SourceTokenIndex2 = Input.AvailableTokenCount - TokenCount;
+						NewElement.Element.OperatorInfo.SourceTokenIndex2 = Input.AvailableTokenCount - TokenCount;
 						
 						TokenCount --;
 						
@@ -363,7 +363,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						
 					}
 					
-					NewElement.OperatorInfo.BracketedExpression = BracketedExpressionElement;
+					NewElement.Element.OperatorInfo.BracketedExpression = BracketedExpressionElement;
 					
 					ExpressionElements.push_back ( NewElement );
 					
@@ -388,10 +388,10 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						if ( ExpressionElements [ I ].Operator )
 						{
 							
-							if ( ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity == kOperatorAssociativity_Left_Double ) || ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity == kOperatorAssociativity_Right_Double ) )
+							if ( ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Associativity == kOperatorAssociativity_Left_Double ) || ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Associativity == kOperatorAssociativity_Right_Double ) )
 							{
 								
-								if ( ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity != OperatorEntry -> Associativity ) || ( ! ExpressionElements [ I ].OperatorInfo.Operator -> First ) )
+								if ( ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Associativity != OperatorEntry -> Associativity ) || ( ! ExpressionElements [ I ].Element.OperatorInfo.Operator -> First ) )
 								{
 									
 									Invalid = false;
@@ -450,7 +450,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			ExpressionElement NewElement;
 			
 			NewElement.Operator = false;
-			NewElement.Primary = PrimaryElement;
+			NewElement.Element.Primary = PrimaryElement;
 			
 			LastAssociativity = kOperatorAssociativity_PrimaryExpression;
 			
@@ -508,7 +508,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		}
 		
 		Output.Accepted = true;
-		Output.ConstructedElement = ExpressionElements [ 0 ].Primary;
+		Output.ConstructedElement = ExpressionElements [ 0 ].Element.Primary;
 		Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
 		
 		return;
@@ -530,12 +530,12 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			if ( ExpressionElements [ I ].Operator )
 			{
 				
-				if ( ( ExpressionElements [ I ].OperatorInfo.Operator -> Precedence < LowestPrecedence ) && _OakOperatorExpressionConstructor_AssociativityIsLeft ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity ) )
+				if ( ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Precedence < LowestPrecedence ) && _OakOperatorExpressionConstructor_AssociativityIsLeft ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Associativity ) )
 				{
 					
 					LowestPrecedenceIndex = I;
-					LowestPrecedence = ExpressionElements [ I ].OperatorInfo.Operator -> Precedence;
-					LowestPrecedenceOperator = ExpressionElements [ I ].OperatorInfo.Operator;
+					LowestPrecedence = ExpressionElements [ I ].Element.OperatorInfo.Operator -> Precedence;
+					LowestPrecedenceOperator = ExpressionElements [ I ].Element.OperatorInfo.Operator;
 					
 				}
 				
@@ -549,12 +549,12 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			if ( ExpressionElements [ I ].Operator )
 			{
 				
-				if ( ( ExpressionElements [ I ].OperatorInfo.Operator -> Precedence < LowestPrecedence ) && ! _OakOperatorExpressionConstructor_AssociativityIsLeft ( ExpressionElements [ I ].OperatorInfo.Operator -> Associativity ) )
+				if ( ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Precedence < LowestPrecedence ) && ! _OakOperatorExpressionConstructor_AssociativityIsLeft ( ExpressionElements [ I ].Element.OperatorInfo.Operator -> Associativity ) )
 				{
 					
 					LowestPrecedenceIndex = I;
-					LowestPrecedence = ExpressionElements [ I ].OperatorInfo.Operator -> Precedence;
-					LowestPrecedenceOperator = ExpressionElements [ I ].OperatorInfo.Operator;
+					LowestPrecedence = ExpressionElements [ I ].Element.OperatorInfo.Operator -> Precedence;
+					LowestPrecedenceOperator = ExpressionElements [ I ].Element.OperatorInfo.Operator;
 					
 				}
 				
@@ -595,13 +595,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted unary left-associative operator after ooperator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -620,13 +620,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted unary left-associative operator after ooperator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Previous.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Previous.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -635,10 +635,10 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				ASTElement * OperationElement = new ASTElement ();
 				
 				OperationElement -> SetTag ( LowestPrecedenceOperator -> ASTTag );
-				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ], 1 );
-				OperationElement -> AddSubElement ( Previous.Primary );
+				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ], 1 );
+				OperationElement -> AddSubElement ( Previous.Element.Primary );
 				
-				ExpressionElements [ LowestPrecedenceIndex - 1 ].Primary = OperationElement;
+				ExpressionElements [ LowestPrecedenceIndex - 1 ].Element.Primary = OperationElement;
 				ExpressionElements.erase ( ExpressionElements.begin () + LowestPrecedenceIndex );
 				
 			}
@@ -658,13 +658,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted unary right-associative operator at end of expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -686,13 +686,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 							Output.Error = true;
 							Output.Accepted = false;
 							Output.ErrorSuggestion = "Unexpexted unary right-associative operator after expression";
-							Output.ErrorProvokingToken = Input.Tokens [ Previous.OperatorInfo.SourceTokenIndex ];
+							Output.ErrorProvokingToken = Input.Tokens [ Previous.Element.OperatorInfo.SourceTokenIndex ];
 							
 							return;
 							
 						}
 						
-						Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+						Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 						
 						break;
 						
@@ -713,13 +713,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted unary right-associative operator before operator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Next.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Next.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -728,10 +728,10 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				ASTElement * OperationElement = new ASTElement ();
 				
 				OperationElement -> SetTag ( LowestPrecedenceOperator -> ASTTag );
-				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ], 1 );
-				OperationElement -> AddSubElement ( Next.Primary );
+				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ], 1 );
+				OperationElement -> AddSubElement ( Next.Element.Primary );
 				
-				ExpressionElements [ LowestPrecedenceIndex ].Primary = OperationElement;
+				ExpressionElements [ LowestPrecedenceIndex ].Element.Primary = OperationElement;
 				ExpressionElements [ LowestPrecedenceIndex ].Operator = false;
 				ExpressionElements.erase ( ExpressionElements.begin () + LowestPrecedenceIndex + 1 );
 				
@@ -754,13 +754,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted binary left-associative operator at end of expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -777,13 +777,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted binary left-associative operator at beginning of expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -804,13 +804,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted operator after left-associative operator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Next.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Next.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -827,13 +827,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted operator before left-associative operator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Next.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Next.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -842,11 +842,11 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				ASTElement * OperationElement = new ASTElement ();
 				
 				OperationElement -> SetTag ( LowestPrecedenceOperator -> ASTTag );
-				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ], 1 );
-				OperationElement -> AddSubElement ( Previous.Primary );
-				OperationElement -> AddSubElement ( Next.Primary );
+				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ], 1 );
+				OperationElement -> AddSubElement ( Previous.Element.Primary );
+				OperationElement -> AddSubElement ( Next.Element.Primary );
 				
-				ExpressionElements [ LowestPrecedenceIndex - 1 ].Primary = OperationElement;
+				ExpressionElements [ LowestPrecedenceIndex - 1 ].Element.Primary = OperationElement;
 				ExpressionElements.erase ( ExpressionElements.begin () + LowestPrecedenceIndex, ExpressionElements.begin () + LowestPrecedenceIndex + 2 );
 				
 			}
@@ -866,13 +866,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted binary right-associative operator at end of expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -889,13 +889,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted binary right-associative operator at beginning of expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -916,13 +916,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted operator after right-associative operator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Next.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Next.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -939,13 +939,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted operator before right-associative operator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Next.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Next.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -954,11 +954,11 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				ASTElement * OperationElement = new ASTElement ();
 				
 				OperationElement -> SetTag ( LowestPrecedenceOperator -> ASTTag );
-				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ], 1 );
-				OperationElement -> AddSubElement ( Previous.Primary );
-				OperationElement -> AddSubElement ( Next.Primary );
+				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ], 1 );
+				OperationElement -> AddSubElement ( Previous.Element.Primary );
+				OperationElement -> AddSubElement ( Next.Element.Primary );
 				
-				ExpressionElements [ LowestPrecedenceIndex - 1 ].Primary = OperationElement;
+				ExpressionElements [ LowestPrecedenceIndex - 1 ].Element.Primary = OperationElement;
 				ExpressionElements.erase ( ExpressionElements.begin () + LowestPrecedenceIndex, ExpressionElements.begin () + LowestPrecedenceIndex + 2 );
 				
 			}
@@ -978,13 +978,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted unary left-associative bracket operator after ooperator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -1003,13 +1003,13 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 						Output.Error = true;
 						Output.Accepted = false;
 						Output.ErrorSuggestion = "Unexpexted unary left-associative bracket operator after ooperator in expression";
-						Output.ErrorProvokingToken = Input.Tokens [ Previous.OperatorInfo.SourceTokenIndex ];
+						Output.ErrorProvokingToken = Input.Tokens [ Previous.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
-					Current.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
+					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
 					
@@ -1018,11 +1018,11 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				ASTElement * OperationElement = new ASTElement ();
 				
 				OperationElement -> SetTag ( LowestPrecedenceOperator -> ASTTag );
-				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.OperatorInfo.SourceTokenIndex ], 1 );
-				OperationElement -> AddSubElement ( Previous.Primary );
-				OperationElement -> AddSubElement ( Current.OperatorInfo.BracketedExpression );
+				OperationElement -> AddTokenSection ( & Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ], 1 );
+				OperationElement -> AddSubElement ( Previous.Element.Primary );
+				OperationElement -> AddSubElement ( Current.Element.OperatorInfo.BracketedExpression );
 				
-				ExpressionElements [ LowestPrecedenceIndex - 1 ].Primary = OperationElement;
+				ExpressionElements [ LowestPrecedenceIndex - 1 ].Element.Primary = OperationElement;
 				ExpressionElements.erase ( ExpressionElements.begin () + LowestPrecedenceIndex );
 				
 			}
@@ -1050,7 +1050,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 	ASTElement * OperatorExpressionElement = new ASTElement ();
 	
 	OperatorExpressionElement -> SetTag ( OakASTTags :: kASTTag_OperatorExpressionContainer );
-	OperatorExpressionElement -> AddSubElement ( ExpressionElements [ 0 ].Primary );
+	OperatorExpressionElement -> AddSubElement ( ExpressionElements [ 0 ].Element.Primary );
 	
 	Output.Accepted = true;
 	Output.ConstructedElement = OperatorExpressionElement;
