@@ -15,7 +15,7 @@
 #include <OIL/OilDebugPrint.h>
 #include <OIL/OilNamespaceDefinition.h>
 
-#include <EarlyAnalysis/OakLiteralParsing.h>
+#include <Math/BigInteger.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -184,76 +184,86 @@ void PrintHelp ()
 int Test ()
 {
 	
-	std :: string ErrorString;
-	std :: u32string OutString;
+	BigInteger A ( 0x7FFFFFFFFFFFFFFFULL );
+	BigInteger B ( 2LL );
 	
-	if ( ! OakParseStringLiteral ( U"\"Hello world!\"", OutString, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	if ( A.Get64Bits ( 0 ) != 0x7FFFFFFFFFFFFFFFULL )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	ErrorString = "";
+	A.Increment ();
 	
-	if ( ! OakParseStringLiteral ( U"\"\\u20B8\"", OutString, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	if ( A.Get64Bits ( 0 ) != 0x8000000000000000ULL )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( OutString != U"₸" )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	A.Decrement ();
 	
-	ErrorString = "";
+	if ( A.Get64Bits ( 0 ) != 0x7FFFFFFFFFFFFFFFULL )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( ! OakParseStringLiteral ( U"\"\\U00002211\"", OutString, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	A.Add ( B );
 	
-	if ( OutString != U"∑" )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	if ( A.Get64Bits ( 0 ) != 0x8000000000000001ULL )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	ErrorString = "";
+	A.Subtract ( B );
 	
-	if ( ! OakParseStringLiteral ( U"\"\\x41\"", OutString, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	if ( A.Get64Bits ( 0 ) != 0x7FFFFFFFFFFFFFFFULL )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( OutString != U"A" )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	A = 80LL;
+	B = 5LL;
 	
-	ErrorString = "";
+	A.Subtract ( B );
 	
-	if ( ! OakParseStringLiteral ( U"\"\\x{000041}a\"", OutString, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	if ( A.Get64Bits ( 0 ) != 75ULL )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( OutString != U"Aa" )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	A.Set ( { 0xFFFFFFFFFFFFFFFFULL }, BigInteger :: kSign_Positive );
+	A.Increment ();
 	
-	if ( ! OakParseStringLiteral ( U"\"\\x{00002211}a\"", OutString, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	if ( ( A.Get64Bits ( 0 ) != 0ULL ) || ( A.Get64Bits ( 64 ) != 1ULL ) )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( OutString != U"∑a" )
-		LOG_FATALERROR ( std :: string ( "String parse failed: " ) + ErrorString + "\n* Value: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( OutString ) + "\"" );
+	B.Set ( 200LL );
+	A.Add ( B );
 	
-	char32_t OutChar = U' ';
+	if ( ( A.Get64Bits ( 0 ) != 200ULL ) || ( A.Get64Bits ( 64 ) != 1ULL ) )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( ! OakParseCharLiteral ( U"\'a\'", OutChar, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	A.Subtract ( B );
 	
-	if ( OutChar != U'a' )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	if ( ( A.Get64Bits ( 0 ) != 0ULL ) || ( A.Get64Bits ( 64 ) != 1ULL ) )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( ! OakParseCharLiteral ( U"\'\\x41\'", OutChar, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	B.Set ( - 1LL );
+	A.Add ( B );
 	
-	if ( OutChar != U'A' )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	if ( ( A.Get64Bits ( 0 ) != 0xFFFFFFFFFFFFFFFFULL ) || ( A.Get64Bits ( 64 ) != 0ULL ) )
+		LOG_FATALERROR ( "bigint failed" );
 	
-	if ( ! OakParseCharLiteral ( U"\'\\u0042\'", OutChar, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	A.Set ( 1 );
 	
-	if ( OutChar != U'B' )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	//LOG_VERBOSE ( std :: to_string ( A.Get64Bits ( 0 ) ) );
 	
-	if ( ! OakParseCharLiteral ( U"\'\\U00000043\'", OutChar, ErrorString ) )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	A.LeftShift ( 1 );
 	
-	if ( OutChar != U'C' )
-		LOG_FATALERROR ( std :: string ( "Char parse failed: " ) + ErrorString + "\n* Value: \'" + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( OutChar, 1 ) ) + "\'" );
+	if ( A.Get64Bits ( 0 ) != 2 )
+		LOG_FATALERROR ( "bigint failed" );
 	
+	A.LeftShift ( 2 );
+	
+	if ( A.Get64Bits ( 0 ) != 8 )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.RightShift ( 3 );
+	
+	if ( A.Get64Bits ( 0 ) != 1 )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.Multiply ( 47LL );
+	
+	if ( A.Get64Bits ( 0 ) != 47 )
+		LOG_FATALERROR ( "bigint failed" );
 	
 	return 0;
 	

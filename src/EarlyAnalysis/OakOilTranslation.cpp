@@ -21,6 +21,7 @@
 #include <OIL/OilNullPointerLiteral.h>
 #include <OIL/OilStringLiteral.h>
 #include <OIL/OilIntegerLiteral.h>
+#include <OIL/OilCharLiteral.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -1381,9 +1382,23 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_CharLiteral:
 		{
 			
-			// TODO: Finish
+			std :: string ErrorString;
 			
-			return NULL;
+			char32_t Charachter;
+			
+			if ( ! OakParseCharLiteral ( LiteralToken -> GetSource (), Charachter, ErrorString ) )
+			{
+				
+				if ( ErrorString != "" )
+					WriteError ( LiteralElement, ErrorString );
+				else
+					WriteError ( LiteralElement, "Invalid char literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilCharLiteral ( Charachter );
 			
 		}
 		break;

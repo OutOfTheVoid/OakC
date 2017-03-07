@@ -1043,3 +1043,31 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 	}
 	
 }
+
+bool OakParseFloatLiteral ( const std :: u32string Source, double & Value, bool & OverflowDouble )
+{
+	
+	(void) OverflowDouble;
+	
+	if ( Source.size () < 2 )
+	{
+		
+		Value = 0.0;
+		
+		return false;
+		
+	}
+	
+	uint32_t Index = 0;
+	char32_t Char = Source.at ( Index );
+	
+	if ( Char != 0 )
+	{
+		
+		
+		
+	}
+	
+	return false;
+	
+}
