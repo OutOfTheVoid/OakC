@@ -13,7 +13,7 @@ public:
 	static const bool kSign_Positive = true;
 	static const bool kSign_Negative = false;
 	
-	BigInteger ( std :: initializer_list <uint64_t> WordData, bool Sign );
+	explicit BigInteger ( std :: initializer_list <uint64_t> WordData, bool Sign );
 	BigInteger ( int64_t Value );
 	BigInteger ( const BigInteger & Value );
 	~BigInteger ();

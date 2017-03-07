@@ -433,12 +433,14 @@ void BigInteger :: Multiply ( const BigInteger & RValue )
 	{
 		
 		if ( RValue.GetBit ( I ) )
-			Add ( SelfCopy );
+			AddMagnitude ( SelfCopy );
 		
 		if ( I != ( RValue.BitCount - 1 ) )
 			SelfCopy.LeftShift ( 1ULL );
 		
 	}
+	
+	Sign = RValue.Sign ? SelfCopy.Sign : ! SelfCopy.Sign;
 	
 }
 

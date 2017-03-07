@@ -260,9 +260,19 @@ int Test ()
 	if ( A.Get64Bits ( 0 ) != 1 )
 		LOG_FATALERROR ( "bigint failed" );
 	
-	A.Multiply ( 47LL );
+	A.Set ( - 3LL );
 	
-	if ( A.Get64Bits ( 0 ) != 47 )
+	LOG_VERBOSE ( std :: to_string ( A.Get64Bits ( 0 ) ) );
+	
+	B.Set ( - 9LL );
+	
+	LOG_VERBOSE ( std :: to_string ( B.Get64Bits ( 0 ) ) );
+	
+	A.Multiply ( B );
+	
+	LOG_VERBOSE ( std :: to_string ( A.Get64Bits ( 0 ) ) );
+	
+	if ( A.Get64Bits ( 0 ) != 27ULL )
 		LOG_FATALERROR ( "bigint failed" );
 	
 	return 0;
