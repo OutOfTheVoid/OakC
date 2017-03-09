@@ -1,5 +1,6 @@
 #include <Math/BigInteger.h>
 #include <math.h>
+#include <algorithm>
 
 BigInteger :: BigInteger ( int64_t Value ):
 	Sign ( Value >= 0 ),
@@ -19,6 +20,9 @@ BigInteger :: BigInteger ( std :: initializer_list <uint64_t> WordData, bool Sig
 	BitCount ( WordData.size () * 64 ),
 	Data ( WordData )
 {
+	
+	std :: reverse ( Data.begin (), Data.end () );
+	
 }
 
 BigInteger :: BigInteger ( const BigInteger & Value ):
@@ -32,6 +36,7 @@ void BigInteger :: Set ( std :: initializer_list <uint64_t> WordData, bool Sign 
 {
 	
 	Data.assign ( WordData );
+	std :: reverse ( Data.begin (), Data.end () );
 	
 	this -> Sign = Sign;
 	this -> BitCount = WordData.size () * 64;
@@ -140,7 +145,7 @@ inline bool BigInteger :: GetBit ( uint64_t Position ) const
 	uint64_t Major = Position >> 6;
 	uint64_t Minor = Position & 0x3F;
 	
-	if ( Major > Data.size () )
+	if ( Major >= Data.size () )
 		return false;
 	
 	return ( ( Data [ Major ] >> Minor ) & 1ULL ) != 0;
@@ -439,6 +444,20 @@ void BigInteger :: RightSubtract ( const BigInteger & RValue )
 	
 }
 
+void BigInteger :: operator *= ( int64_t RValue )
+{
+	
+	Multiply ( RValue );
+	
+}
+
+void BigInteger :: operator *= ( const BigInteger & RValue )
+{
+	
+	Multiply ( RValue );
+	
+}
+
 void BigInteger :: Multiply ( int64_t RValue )
 {
 	
@@ -472,11 +491,26 @@ void BigInteger :: Multiply ( const BigInteger & RValue )
 			AddMagnitude ( SelfCopy );
 		
 		if ( I != ( RValue.BitCount - 1 ) )
-			SelfCopy.LeftShift ( 1ULL );
+			SelfCopy <<= 1ULL;
 		
 	}
 	
 	Sign = RValue.Sign ? SelfCopy.Sign : ! SelfCopy.Sign;
+	
+}
+
+
+void BigInteger :: operator /= ( int64_t RValue )
+{
+	
+	Divide ( RValue );
+	
+}
+
+void BigInteger :: operator /= ( const BigInteger & RValue )
+{
+	
+	Divide ( RValue );
 	
 }
 
@@ -510,7 +544,7 @@ bool BigInteger :: Divide ( const BigInteger & RValue )
 	{
 		
 		Set ( 0LL );
-		Sign = NumeratorSign == DenominatorSign;
+		Sign = ( NumeratorSign == DenominatorSign );
 		
 		return true;
 		
@@ -520,7 +554,7 @@ bool BigInteger :: Divide ( const BigInteger & RValue )
 	{
 		
 		Set ( 1LL );
-		Sign = NumeratorSign == DenominatorSign;
+		Sign = ( NumeratorSign == DenominatorSign );
 		
 		return true;
 		
@@ -528,18 +562,18 @@ bool BigInteger :: Divide ( const BigInteger & RValue )
 	
 	Set ( 0LL );
 	
-	while ( Numerator > Denominator )
+	while ( Numerator >= Denominator )
 	{
 		
-		Current.LeftShift ( 1LL );
-		Denominator.LeftShift ( 1LL );
+		Current <<= 1LL;
+		Denominator <<= 1LL;
 		
 	}
 	
-	Current.RightShift ( 1LL );
-	Denominator.RightShift ( 1LL );
+	Current >>= 1LL;
+	Denominator >>= 1LL;
 	
-	while ( ! ( Current == 0LL ) )
+	while ( Current != 0LL )
 	{
 		
 		if ( Numerator >= Denominator )
@@ -555,7 +589,7 @@ bool BigInteger :: Divide ( const BigInteger & RValue )
 		
 	}
 	
-	Sign = NumeratorSign == DenominatorSign;
+	Sign = ( NumeratorSign == DenominatorSign );
 	
 	return true;
 	
@@ -803,7 +837,7 @@ bool BigInteger :: Equal ( int64_t Value ) const
 			return false;
 		
 	}
-	else if ( Value != 0 )
+	else if ( Value > 0 )
 	{
 		
 		if ( ! Sign )
@@ -811,7 +845,7 @@ bool BigInteger :: Equal ( int64_t Value ) const
 		
 	}
 	
-	if ( Data [ 0 ] != static_cast <uint64_t> ( Value ) )
+	if ( Data [ 0 ] != static_cast <uint64_t> ( ( Value > 0 ) ? Value : - Value ) )
 		return false;
 	
 	for ( uint64_t I = 1; I < Data.size (); I ++ )
@@ -967,26 +1001,26 @@ bool BigInteger :: GreaterThan ( const BigInteger & RValue ) const
 	if ( RValue.Data.size () > Data.size () )
 	{
 		
-		I = RValue.Data.size () - 1;
-		Target = Data.size () - 1;
+		I = RValue.Data.size ();
+		Target = Data.size ();
 		
 		while ( I != Target )
 		{
 			
+			I --;
+			
 			if ( RValue.Data [ I ] != 0 )
 				return ! Sign;
-			
-			I --;
 			
 		}
 		
 		do
 		{
 			
-			if ( Data [ I ] <= RValue.Data [ I ] )
-				return ! Sign;
-			
 			I --;
+			
+			if ( Data [ I ] > RValue.Data [ I ] )
+				return Sign;
 			
 		}
 		while ( I != 0 );
@@ -1013,15 +1047,15 @@ bool BigInteger :: GreaterThan ( const BigInteger & RValue ) const
 			
 			I --;
 			
-			if ( Data [ I ] <= RValue.Data [ I ] )
-				return ! Sign;
+			if ( Data [ I ] > RValue.Data [ I ] )
+				return Sign;
 			
 		}
 		while ( I != 0 );
 		
 	}
 		
-	return Sign;
+	return ! Sign;
 	
 }
 
@@ -1208,5 +1242,54 @@ uint64_t BigInteger :: GetOrder2 () const
 {
 	
 	return log2 ( Data.size () ) + 7;
+	
+}
+
+char _BigInteger_GetHexChar ( uint32_t CharVal )
+{
+	
+	if ( CharVal < 10 )
+		return "0123456789" [ CharVal ];
+	
+	if ( CharVal < 16 )
+		return "ABCDEFG" [ CharVal - 10 ];
+	
+	return '?';
+	
+}
+
+std :: string BigInteger :: ToHexString () const
+{
+	
+	std :: string Out;
+	
+	uint64_t I = Data.size ();
+	
+	Out += Sign ? '+' : '-';
+	
+	do
+	{
+		
+		I --;
+		
+		uint64_t Word = Data [ I ];
+		
+		uint32_t B = 0;
+		
+		while ( B < 64 )
+		{
+			
+			B += 4;
+			Out += _BigInteger_GetHexChar ( ( Word >> ( 64 - B ) ) & 0xF );
+			
+		}
+		
+		if ( I != 0 )
+			Out += '_';
+		
+	}
+	while ( I != 0 );
+	
+	return Out;
 	
 }

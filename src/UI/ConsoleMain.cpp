@@ -300,6 +300,29 @@ int Test ()
 	A.Divide ( B );
 	
 	if ( A != 3LL )
+	{
+		
+		LOG_FATALERROR ( "bigint failed" );
+		
+		LOG_VERBOSE ( std :: string ( "A: " ) + std :: to_string ( A.Get64Bits ( 0 ) ) );
+		LOG_VERBOSE ( std :: string ( "B: " ) + std :: to_string ( B.Get64Bits ( 0 ) ) );
+		
+	}
+	
+	A.Set ( { 0x8000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL }, BigInteger :: kSign_Positive );
+	B.Set ( { 0x1000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL }, BigInteger :: kSign_Positive );
+	
+	A.Divide ( B );
+	
+	if ( A != 8LL )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.Set ( { 0x8000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL }, BigInteger :: kSign_Positive );
+	B.FlipSign ();
+	
+	A.Divide ( B );
+	
+	if ( A != - 8LL )
 		LOG_FATALERROR ( "bigint failed" );
 	
 	return 0;

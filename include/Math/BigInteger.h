@@ -45,6 +45,11 @@ public:
 	void operator <<= ( int64_t RValue );
 	void operator <<= ( const BigInteger & RValue );
 	
+	void operator *= ( int64_t RValue );
+	void operator *= ( const BigInteger & RValue );
+	void operator /= ( int64_t RValue );
+	void operator /= ( const BigInteger & RValue );
+	
 	void Set ( std :: initializer_list <uint64_t> WordData, bool Sign );
 	void Set ( int64_t Value );
 	void Set ( const BigInteger & Value );
@@ -96,6 +101,8 @@ public:
 	
 	inline bool GetBit ( uint64_t Position ) const;
 	inline void SetBit ( uint64_t Position, bool Value );
+	
+	std :: string ToHexString () const;
 	
 private:
 	

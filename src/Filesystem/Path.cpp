@@ -36,7 +36,7 @@ std :: string CanonicalizePath ( const std :: string & Path )
 		
 		AbsPathUTF16.assign ( reinterpret_cast <const char16_t *> ( Temporary ) );
 		
-		delete Temporary;
+		delete [] Temporary;
 		
 	}
 	

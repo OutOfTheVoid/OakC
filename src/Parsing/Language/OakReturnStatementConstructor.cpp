@@ -64,9 +64,6 @@ void OakReturnStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		if ( ConstructionError )
 		{
 			
-			delete ReturnElement;
-			
-			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = ErrorString;
 			Output.ErrorProvokingToken = ErrorToken;
