@@ -1174,7 +1174,7 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 		I = RValue.Data.size ();
 		Target = Data.size ();
 		
-		do
+		while ( I != Target )
 		{
 			
 			I --;
@@ -1183,15 +1183,14 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 				return Sign;
 			
 		}
-		while ( I != Target );
 		
 		do
 		{
 			
 			I --;
 			
-			if ( Data [ I ] <= RValue.Data [ I ] )
-				return Sign;
+			if ( Data [ I ] > RValue.Data [ I ] )
+				return ! Sign;
 			
 		}
 		while ( I != 0 );
@@ -1203,7 +1202,7 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 		I = Data.size ();
 		Target = RValue.Data.size ();
 		
-		do
+		while ( I != Target )
 		{
 			
 			I --;
@@ -1212,14 +1211,13 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 				return ! Sign;
 			
 		}
-		while ( I != Target );
 		
 		do
 		{
 			
 			I --;
 			
-			if ( Data [ I ] <= RValue.Data [ I ] )
+			if ( Data [ I ] > RValue.Data [ I ] )
 				return Sign;
 			
 		}
@@ -1227,7 +1225,7 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 		
 	}
 	
-	return ! Sign;
+	return Sign;
 	
 }
 

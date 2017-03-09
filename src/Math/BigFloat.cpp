@@ -195,11 +195,64 @@ void BigFloat :: Multiply ( const BigFloat & RValue )
 void BigFloat :: Divide ( const BigFloat & RValue )
 {
 	
+	BigFloat Temporary ( RValue );
+	
+	// Take significands to same powers
+	if ( Temporary.Power10 < Power10 )
+	{
+		
+		while ( Temporary.Power10 < Power10 )
+		{
+			
+			Significand *= 10LL;
+			Power10 --;
+			
+		}
+		
+	}
+	else if ( Temporary.Power10 > Power10 )
+	{
+		
+		while ( Temporary.Power10 > Power10 )
+		{
+			
+			Temporary.Significand *= 10LL;
+			Temporary.Power10 --;
+			
+		}
+		
+	}
+	
+	if ( Temporary.Power2 < Power2 )
+	{
+		
+		while ( Temporary.Power2 < Power2 )
+		{
+			
+			Significand <<= 2;
+			Power2 --;
+			
+		}
+		
+	}
+	else if ( Temporary.Power2 > Power2 )
+	{
+		
+		while ( Temporary.Power2 > Power2 )
+		{
+			
+			Temporary.Significand <<= 2;
+			Temporary.Power2 --;
+			
+		}
+		
+	}
+	
 	Significand <<= BIGFLOAT_DIVIDE_POWER2_PRECISIONEXPANSION;
 	Power2 -= BIGFLOAT_DIVIDE_POWER2_PRECISIONEXPANSION;
 	
-	Power2 -= RValue.Power2;
-	Power10 -= RValue.Power10;
-	Significand /= RValue.Significand;
+	Power2 -= Temporary.Power2;
+	Power10 -= Temporary.Power10;
+	Significand /= Temporary.Significand;
 	
 }
