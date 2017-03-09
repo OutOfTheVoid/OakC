@@ -261,18 +261,45 @@ int Test ()
 		LOG_FATALERROR ( "bigint failed" );
 	
 	A.Set ( - 3LL );
-	
-	LOG_VERBOSE ( std :: to_string ( A.Get64Bits ( 0 ) ) );
-	
 	B.Set ( - 9LL );
-	
-	LOG_VERBOSE ( std :: to_string ( B.Get64Bits ( 0 ) ) );
 	
 	A.Multiply ( B );
 	
-	LOG_VERBOSE ( std :: to_string ( A.Get64Bits ( 0 ) ) );
-	
 	if ( A.Get64Bits ( 0 ) != 27ULL )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.Set ( 0LL );
+	
+	if ( A <= - 1LL )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	if ( A != 0LL )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.Set ( 6 );
+	B.Set ( 2 );
+	
+	if ( ! ( A > B ) )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	if ( B > A )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.Set ( { 0xFFFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL }, BigInteger :: kSign_Positive );
+	B.Set ( { 0xEFFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL }, BigInteger :: kSign_Positive );
+	
+	if ( A <= B )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	if ( B >= A )
+		LOG_FATALERROR ( "bigint failed" );
+	
+	A.Set ( 6LL );
+	B.Set ( 2LL );
+	
+	A.Divide ( B );
+	
+	if ( A != 3LL )
 		LOG_FATALERROR ( "bigint failed" );
 	
 	return 0;

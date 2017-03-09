@@ -190,6 +190,14 @@ void BigInteger :: ForceWordCount ( uint64_t Count )
 	
 }
 
+void BigInteger :: Absolute ()
+{
+	
+	if ( ! Sign )
+		FlipSign ();
+	
+}
+
 void BigInteger :: FlipSign ()
 {
 	
@@ -201,6 +209,34 @@ bool BigInteger :: GetSign () const
 {
 	
 	return Sign;
+	
+}
+
+void BigInteger :: operator += ( int64_t RValue )
+{
+	
+	Add ( RValue );
+	
+}
+
+void BigInteger :: operator += ( const BigInteger & RValue )
+{
+	
+	Add ( RValue );
+	
+}
+
+void BigInteger :: operator -= ( int64_t RValue )
+{
+	
+	Subtract ( RValue );
+	
+}
+
+void BigInteger :: operator -= ( const BigInteger & RValue )
+{
+	
+	Subtract ( RValue );
 	
 }
 
@@ -444,6 +480,121 @@ void BigInteger :: Multiply ( const BigInteger & RValue )
 	
 }
 
+bool BigInteger :: Divide ( int64_t RValue )
+{
+	
+	BigInteger BigRValue ( RValue );
+	return Divide ( BigRValue );
+	
+}
+
+#include <Logging/Logging.h>
+
+bool BigInteger :: Divide ( const BigInteger & RValue )
+{
+	
+	BigInteger Denominator ( RValue );
+	BigInteger Current ( 1LL );
+	BigInteger Numerator ( * this );
+	
+	bool NumeratorSign = Numerator.Sign;
+	bool DenominatorSign = Denominator.Sign;
+	
+	Denominator.Absolute ();
+	Numerator.Absolute ();
+	
+	if ( Denominator == 0LL )
+		return false;
+	
+	if ( Denominator > Numerator )
+	{
+		
+		Set ( 0LL );
+		Sign = NumeratorSign == DenominatorSign;
+		
+		return true;
+		
+	}
+	
+	if ( Numerator.Equal ( Denominator ) )
+	{
+		
+		Set ( 1LL );
+		Sign = NumeratorSign == DenominatorSign;
+		
+		return true;
+		
+	}
+	
+	Set ( 0LL );
+	
+	while ( Numerator > Denominator )
+	{
+		
+		Current.LeftShift ( 1LL );
+		Denominator.LeftShift ( 1LL );
+		
+	}
+	
+	Current.RightShift ( 1LL );
+	Denominator.RightShift ( 1LL );
+	
+	while ( ! ( Current == 0LL ) )
+	{
+		
+		if ( Numerator >= Denominator )
+		{
+			
+			Numerator -= Denominator;
+			BinaryOR ( Current );
+			
+		}
+		
+		Current >>= 1;
+		Denominator >>= 1;
+		
+	}
+	
+	Sign = NumeratorSign == DenominatorSign;
+	
+	return true;
+	
+}
+
+void BigInteger :: operator >>= ( int64_t RValue )
+{
+	
+	RightShift ( RValue );
+	
+}
+
+void BigInteger :: operator >>= ( const BigInteger & RValue )
+{
+	
+	if ( ( RValue >= INT64_MAX ) )
+		Set ( 0 );
+	else
+		RightShift ( RValue.GetValue64 () );
+	
+}
+
+void BigInteger :: operator <<= ( int64_t RValue )
+{
+	
+	LeftShift ( RValue );
+	
+}
+
+void BigInteger :: operator <<= ( const BigInteger & RValue )
+{
+	
+	if ( ( RValue >= INT64_MAX ) )
+		Set ( 0 );
+	else
+		LeftShift ( RValue.GetValue64 () );
+	
+}
+
 void BigInteger :: LeftShift ( uint64_t Count )
 {
 	
@@ -456,10 +607,11 @@ void BigInteger :: LeftShift ( uint64_t Count )
 	{
 		
 		I --;
+		
 		SetBit ( I + Count, GetBit ( I ) );
 		
 	}
-	while ( I != 0 );
+	while ( I != 0ULL );
 	
 	I = Count;
 	
@@ -467,6 +619,7 @@ void BigInteger :: LeftShift ( uint64_t Count )
 	{
 		
 		I --;
+		
 		SetBit ( I, false );
 		
 	}
@@ -476,6 +629,9 @@ void BigInteger :: LeftShift ( uint64_t Count )
 
 void BigInteger :: RightShift ( uint64_t Count )
 {
+	
+	if ( Count <= 0 )
+		return;
 	
 	if ( Count >= BitCount )
 	{
@@ -609,17 +765,31 @@ uint64_t BigInteger :: GetMagnitude64 () const
 	
 }
 
-bool BigInteger :: operator== ( int64_t RValue ) const
+bool BigInteger :: operator == ( int64_t RValue ) const
 {
 	
 	return Equal ( RValue );
 	
 }
 
-bool BigInteger :: operator== ( const BigInteger & RValue ) const
+bool BigInteger :: operator == ( const BigInteger & RValue ) const
 {
 	
 	return Equal ( RValue );
+	
+}
+
+bool BigInteger :: operator != ( int64_t RValue ) const
+{
+	
+	return ! Equal ( RValue );
+	
+}
+
+bool BigInteger :: operator != ( const BigInteger & RValue ) const
+{
+	
+	return ! Equal ( RValue );
 	
 }
 
@@ -682,6 +852,348 @@ bool BigInteger :: Equal ( const BigInteger & Value ) const
 	}
 	
 	return true;
+	
+}
+
+bool BigInteger :: operator > ( int64_t RValue ) const
+{
+	
+	return GreaterThan ( RValue );
+	
+}
+
+bool BigInteger :: operator > ( const BigInteger & RValue ) const
+{
+	
+	return GreaterThan ( RValue );
+	
+}
+
+bool BigInteger :: operator >= ( int64_t RValue ) const
+{
+	
+	return GreaterThan ( RValue ) || Equal ( RValue );
+	
+}
+
+bool BigInteger :: operator >= ( const BigInteger & RValue ) const
+{
+	
+	return GreaterThan ( RValue ) || Equal ( RValue );
+	
+}
+
+bool BigInteger :: GreaterThan ( int64_t Value ) const
+{
+	
+	if ( ( Value < 0 ) && Sign )
+		return true;
+	else if ( ( Value > 0 ) && ( ! Sign ) )
+		return false;
+	
+	if ( Sign )
+	{
+		
+		if ( ( Data [ 0 ] & 0x8000000000000000 ) == 0 )
+		{
+			
+			if ( BitCount == 64 )
+				return static_cast <int64_t> ( Data [ 0 ] ) > Value;
+			
+			if ( static_cast <int64_t> ( Data [ 0 ] ) > Value )
+				return true;
+			
+			for ( uint64_t I = 1; I < Data.size (); I ++ )
+				if ( Data [ I ] != 0ULL )
+					return true;
+			
+			return false;
+			
+		}
+		
+		return true;
+		
+	}
+	else
+	{
+		
+		if ( ( Data [ 0 ] & 0x8000000000000000 ) == 0 )
+		{
+			
+			if ( BitCount == 64 )
+				return static_cast <int64_t> ( Data [ 0 ] ) < - Value;
+			
+			if ( static_cast <int64_t> ( Data [ 0 ] ) < - Value )
+				return true;
+			
+			for ( uint64_t I = 1; I < Data.size (); I ++ )
+				if ( Data [ I ] != 0ULL )
+					return false;
+				
+			return true;
+			
+		}
+		
+		return ! ( ( Value != - INT64_MIN ) || ( ( Data [ 0 ] & 0x7FFFFFFFFFFFFFFFULL ) != 0 ) );
+		
+	}
+	
+}
+
+bool BigInteger :: GreaterThan ( const BigInteger & RValue ) const
+{
+	
+	uint64_t I;
+	uint64_t Target;
+	
+	if ( Equal ( 0LL ) && RValue.Equal ( 0LL ) )
+		return false;
+	
+	if ( Sign )
+	{
+		
+		if ( ! RValue.Sign )
+			return true;
+		
+	}
+	else
+	{
+		
+		if ( RValue.Sign )
+			return false;
+		
+	}
+	
+	if ( RValue.Data.size () > Data.size () )
+	{
+		
+		I = RValue.Data.size () - 1;
+		Target = Data.size () - 1;
+		
+		while ( I != Target )
+		{
+			
+			if ( RValue.Data [ I ] != 0 )
+				return ! Sign;
+			
+			I --;
+			
+		}
+		
+		do
+		{
+			
+			if ( Data [ I ] <= RValue.Data [ I ] )
+				return ! Sign;
+			
+			I --;
+			
+		}
+		while ( I != 0 );
+		
+	}
+	else
+	{
+		
+		I = Data.size ();
+		Target = RValue.Data.size ();
+		
+		while ( I != Target )
+		{
+			
+			I --;
+			
+			if ( Data [ I ] != 0 )
+				return Sign;
+			
+		}
+		
+		do
+		{
+			
+			I --;
+			
+			if ( Data [ I ] <= RValue.Data [ I ] )
+				return ! Sign;
+			
+		}
+		while ( I != 0 );
+		
+	}
+		
+	return Sign;
+	
+}
+
+bool BigInteger :: operator < ( int64_t RValue ) const
+{
+	
+	return LessThan ( RValue );
+	
+}
+
+bool BigInteger :: operator < ( const BigInteger & RValue ) const
+{
+	
+	return LessThan ( RValue );
+	
+}
+
+bool BigInteger :: operator <= ( int64_t RValue ) const
+{
+	
+	return LessThan ( RValue ) || Equal ( RValue );
+	
+}
+
+bool BigInteger :: operator <= ( const BigInteger & RValue ) const
+{
+	
+	return LessThan ( RValue ) || Equal ( RValue );
+	
+}
+
+bool BigInteger :: LessThan ( int64_t Value ) const
+{
+	
+	if ( ( Value < 0 ) && Sign )
+		return false;
+	else if ( ( Value > 0 ) && ( ! Sign ) )
+		return true;
+	
+	if ( Sign )
+	{
+		
+		if ( ( Data [ 0 ] & 0x8000000000000000 ) == 0 )
+		{
+			
+			if ( BitCount == 64 )
+				return static_cast <int64_t> ( Data [ 0 ] ) < Value;
+			
+			if ( static_cast <int64_t> ( Data [ 0 ] ) >= Value )
+				return false;
+			
+			for ( uint64_t I = 1; I < Data.size (); I ++ )
+				if ( Data [ I ] != 0ULL )
+					return false;
+			
+			return true;
+			
+		}
+		
+		return false;
+		
+	}
+	else
+	{
+		
+		if ( ( Data [ 0 ] & 0x8000000000000000 ) == 0 )
+		{
+			
+			if ( BitCount == 64 )
+				return static_cast <int64_t> ( Data [ 0 ] ) > - Value;
+			
+			if ( static_cast <int64_t> ( Data [ 0 ] ) > - Value )
+				return true;
+			
+			for ( uint64_t I = 1; I < Data.size (); I ++ )
+				if ( Data [ I ] != 0ULL )
+					return true;
+				
+			return false;
+			
+		}
+		//
+		return ( Value != INT64_MIN ) || ( ( Data [ 0 ] & 0x7FFFFFFFFFFFFFFFULL ) != 0 );
+		
+	}
+	
+}
+
+bool BigInteger :: LessThan ( const BigInteger & RValue ) const
+{
+	
+	uint64_t I;
+	uint64_t Target;
+	
+	if ( Equal ( 0LL ) && RValue.Equal ( 0LL ) )
+		return false;
+	
+	if ( Sign )
+	{
+		
+		if ( ! RValue.Sign )
+			return false;
+		
+	}
+	else
+	{
+		
+		if ( RValue.Sign )
+			return true;
+		
+	}
+	
+	if ( RValue.Data.size () > Data.size () )
+	{
+		
+		I = RValue.Data.size ();
+		Target = Data.size ();
+		
+		do
+		{
+			
+			I --;
+			
+			if ( RValue.Data [ I ] != 0 )
+				return Sign;
+			
+		}
+		while ( I != Target );
+		
+		do
+		{
+			
+			I --;
+			
+			if ( Data [ I ] <= RValue.Data [ I ] )
+				return Sign;
+			
+		}
+		while ( I != 0 );
+		
+	}
+	else
+	{
+		
+		I = Data.size ();
+		Target = RValue.Data.size ();
+		
+		do
+		{
+			
+			I --;
+			
+			if ( Data [ I ] != 0 )
+				return ! Sign;
+			
+		}
+		while ( I != Target );
+		
+		do
+		{
+			
+			I --;
+			
+			if ( Data [ I ] <= RValue.Data [ I ] )
+				return Sign;
+			
+		}
+		while ( I != 0 );
+		
+	}
+	
+	return ! Sign;
 	
 }
 

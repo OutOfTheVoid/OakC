@@ -18,10 +18,32 @@ public:
 	BigInteger ( const BigInteger & Value );
 	~BigInteger ();
 	
-	BigInteger & operator= ( int64_t RValue );
+	BigInteger & operator = ( int64_t RValue );
 	
-	bool operator== ( int64_t RValue ) const;
-	bool operator== ( const BigInteger & RValue ) const;
+	bool operator == ( int64_t RValue ) const;
+	bool operator == ( const BigInteger & RValue ) const;
+	bool operator != ( int64_t RValue ) const;
+	bool operator != ( const BigInteger & RValue ) const;
+	
+	bool operator > ( int64_t RValue ) const;
+	bool operator > ( const BigInteger & RValue ) const;
+	bool operator >= ( int64_t RValue ) const;
+	bool operator >= ( const BigInteger & RValue ) const;
+	
+	bool operator < ( int64_t RValue ) const;
+	bool operator < ( const BigInteger & RValue ) const;
+	bool operator <= ( int64_t RValue ) const;
+	bool operator <= ( const BigInteger & RValue ) const;
+	
+	void operator += ( int64_t RValue );
+	void operator += ( const BigInteger & RValue );
+	void operator -= ( int64_t RValue );
+	void operator -= ( const BigInteger & RValue );
+	
+	void operator >>= ( int64_t RValue );
+	void operator >>= ( const BigInteger & RValue );
+	void operator <<= ( int64_t RValue );
+	void operator <<= ( const BigInteger & RValue );
 	
 	void Set ( std :: initializer_list <uint64_t> WordData, bool Sign );
 	void Set ( int64_t Value );
@@ -29,6 +51,7 @@ public:
 	
 	void TruncateRep ();
 	
+	void Absolute ();
 	void FlipSign ();
 	bool GetSign () const;
 	
@@ -40,6 +63,8 @@ public:
 	void RightSubtract ( const BigInteger & RValue );
 	void Multiply ( int64_t RValue );
 	void Multiply ( const BigInteger & RValue );
+	bool Divide ( int64_t RValue );
+	bool Divide ( const BigInteger & RValue );
 	
 	void BinaryNOT ();
 	
@@ -55,6 +80,12 @@ public:
 	
 	bool Equal ( const BigInteger & RValue ) const;
 	bool Equal ( int64_t Value ) const;
+	
+	bool GreaterThan ( int64_t Value ) const;
+	bool GreaterThan ( const BigInteger & RValue ) const;
+	
+	bool LessThan ( int64_t Value ) const;
+	bool LessThan ( const BigInteger & RValue ) const;
 	
 	uint64_t GetRepSizeBits () const;
 	uint64_t GetOrder2 () const;
