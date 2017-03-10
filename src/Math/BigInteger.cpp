@@ -1054,7 +1054,7 @@ bool BigInteger :: GreaterThan ( const BigInteger & RValue ) const
 		while ( I != 0 );
 		
 	}
-		
+	
 	return ! Sign;
 	
 }
@@ -1153,6 +1153,8 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 	if ( Equal ( 0LL ) && RValue.Equal ( 0LL ) )
 		return false;
 	
+	// OPT
+	
 	if ( Sign )
 	{
 		
@@ -1218,7 +1220,7 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 			I --;
 			
 			if ( Data [ I ] > RValue.Data [ I ] )
-				return Sign;
+				return ! Sign;
 			
 		}
 		while ( I != 0 );
