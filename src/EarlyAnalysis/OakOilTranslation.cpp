@@ -1021,18 +1021,35 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 	if ( SubExpressionElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
 	{
 		
-		//IOilPrimary * Primary = OakTranslatePrimaryExpressionToOil ( SubExpressionElement );
+		IOilPrimary * Primary = OakTranslatePrimaryExpressionToOil ( SubExpressionElement );
 		
-		// TODO: Finish
+		if ( Primary == NULL )
+			return NULL;
+		
+		return new OilExpression ( Primary );
 		
 		
 	}
 	else if ( SubExpressionElement -> GetTag () == OakASTTags :: kASTTag_OperatorExpressionContainer )
 	{
 		
-		//IOilOperator * Operator = OakTranslateOperatorToOil ( SubExpressionElement );
+		const ASTElement * OperatorExpression = SubExpressionElement -> GetSubElement ( 0 );
 		
-		// TODO: Finish
+		if ( OperatorExpression == NULL )
+		{
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		IOilOperator * Operator = OakTranslateOperatorToOil ( OperatorExpression );
+		
+		if ( Operator == NULL )
+			return NULL;
+		
+		return new OilExpression ( Operator );
 		
 	}
 	
