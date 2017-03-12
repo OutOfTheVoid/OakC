@@ -7,7 +7,7 @@ class BigFloat
 {
 public:
 	
-	explicit BigFloat ( const BigInteger & Significand, int64_t Power10, int64_t Power2 );
+	explicit BigFloat ( const BigInteger & Significand, int64_t Power2, int64_t Power10 );
 	explicit BigFloat ( const BigInteger & Significand, int64_t Power2 );
 	explicit BigFloat ( const BigFloat & CopyFrom );
 	
@@ -17,7 +17,7 @@ public:
 	void operator = ( const BigInteger & Value );
 	void operator = ( int64_t Value );
 	
-	void Set ( const BigInteger & Significand, int64_t Power10, int64_t Power2 );
+	void Set ( const BigInteger & Significand, int64_t Power2, int64_t Power10 );
 	void Set ( const BigInteger & Significand, int64_t Power2 );
 	void Set ( const BigInteger & Significand );
 	void Set ( const BigFloat & CopyFrom );

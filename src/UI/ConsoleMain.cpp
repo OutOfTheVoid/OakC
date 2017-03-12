@@ -356,6 +356,8 @@ int Test ()
 	if ( ! OakParseFloatLiteral ( U"0.12", C ) )
 		LOG_FATALERROR ( "float parse failed" );
 	
+	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
+	
 	LOG_VERBOSE ( "Z" );
 	
 	if ( ! C.Equal ( BigFloat ( 12LL, 0LL, - 2LL ) ) )
@@ -369,6 +371,18 @@ int Test ()
 	LOG_VERBOSE ( "Z" );
 	
 	if ( ! C.Equal ( BigFloat ( 1LL, 0LL, 0LL ) ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
+	
+	if ( ! OakParseFloatLiteral ( U"0x10FF45p-2f64", C ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( "Z" );
+	
+	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
+	
+	if ( ! C.Equal ( BigFloat ( 0x10FF45LL, - 2LL, 0LL ) ) )
 		LOG_FATALERROR ( "float parse failed" );
 	
 	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );

@@ -2,7 +2,7 @@
 
 #include <Logging/Logging.h>
 
-BigFloat :: BigFloat ( const BigInteger & Significand, int64_t Power10, int64_t Power2 ):
+BigFloat :: BigFloat ( const BigInteger & Significand, int64_t Power2, int64_t Power10 ):
 	Significand ( Significand ),
 	Power10 ( Power10 ),
 	Power2 ( Power2 )
@@ -28,7 +28,7 @@ BigFloat :: ~BigFloat ()
 {
 }
 
-void BigFloat :: Set ( const BigInteger & Significand, int64_t Power10, int64_t Power2 )
+void BigFloat :: Set ( const BigInteger & Significand, int64_t Power2, int64_t Power10 )
 {
 	
 	this -> Significand = Significand;
@@ -126,7 +126,7 @@ void BigFloat :: MatchScale ( BigFloat & Other )
 	if ( Other.Power10 < Power10 )
 	{
 		
-		LOG_VERBOSE ( "MS: 0" );
+		LOG_VERBOSE ( std :: string ( "MS: 0, P10: " ) + std :: to_string ( Power10 ) + " O_P10: " + std :: to_string ( Other.Power10 ) );
 		
 		while ( Other.Power10 < Power10 )
 		{
@@ -140,7 +140,7 @@ void BigFloat :: MatchScale ( BigFloat & Other )
 	else if ( Other.Power10 > Power10 )
 	{
 		
-		LOG_VERBOSE ( "MS: 1" );
+		LOG_VERBOSE ( std :: string ( "MS: 1, P10: " ) + std :: to_string ( Power10 ) + " O_P10: " + std :: to_string ( Other.Power10 ) );
 		
 		while ( Other.Power10 > Power10 )
 		{
@@ -169,7 +169,7 @@ void BigFloat :: MatchScale ( BigFloat & Other )
 	else if ( Other.Power2 > Power2 )
 	{
 		
-		LOG_VERBOSE ( "MS: 3" );
+		LOG_VERBOSE ( std :: string ( "MS: 3, P2: " ) + std :: to_string ( Power2 ) + " O_P2: " + std :: to_string ( Other.Power2 ) );
 		
 		while ( Other.Power2 > Power2 )
 		{
