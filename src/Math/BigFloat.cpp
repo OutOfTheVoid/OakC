@@ -59,7 +59,7 @@ void BigFloat :: Set ( const BigFloat & CopyFrom )
 {
 	
 	this -> Significand = CopyFrom.Significand;
-	this -> Power10 = CopyFrom.Power2;
+	this -> Power10 = CopyFrom.Power10;
 	this -> Power2 = CopyFrom.Power2;
 	
 }
