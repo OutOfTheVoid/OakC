@@ -167,7 +167,7 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 		return;
 		
 	}
-	else if ( ( Char == U'0' ) && ( Char2 == U'x' ) )
+	else if ( ( Char == U'0' ) && ( ( Char2 == U'x' ) || ( Char2 == U'X' ) ) )
 	{
 		
 		Result.AuxTag = OakTokenTags :: kTokenAuxTax_FloatLiteral_HexFloat;

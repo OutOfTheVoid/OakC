@@ -249,7 +249,7 @@ void BigInteger :: Add ( int64_t RValue )
 {
 	
 	BigInteger BigRValue ( RValue );
-	Subtract ( BigRValue );
+	Add ( BigRValue );
 	
 }
 
@@ -522,8 +522,6 @@ bool BigInteger :: Divide ( int64_t RValue )
 	
 }
 
-#include <Logging/Logging.h>
-
 bool BigInteger :: Divide ( const BigInteger & RValue )
 {
 	
@@ -689,6 +687,57 @@ void BigInteger :: BinaryNOT ()
 	
 }
 
+void BigInteger :: operator |= ( int64_t RValue )
+{
+	
+	BinaryOR ( RValue );
+	
+}
+
+void BigInteger :: operator |= ( const BigInteger & RValue )
+{
+	
+	BinaryOR ( RValue );
+	
+}
+
+void BigInteger :: operator &= ( int64_t RValue )
+{
+	
+	BinaryAND ( RValue );
+	
+}
+
+void BigInteger :: operator &= ( const BigInteger & RValue )
+{
+	
+	BinaryAND ( RValue );
+	
+}
+
+void BigInteger :: operator ^= ( int64_t RValue )
+{
+	
+	BinaryXOR ( RValue );
+	
+}
+
+void BigInteger :: operator ^= ( const BigInteger & RValue )
+{
+	
+	BinaryXOR ( RValue );
+	
+}
+
+
+void BigInteger :: BinaryOR ( uint64_t RValue )
+{
+	
+	BigInteger BigRValue ( { RValue }, true );
+	BinaryOR ( BigRValue );
+	
+}
+
 void BigInteger :: BinaryOR ( const BigInteger & RValue )
 {
 	
@@ -704,6 +753,14 @@ void BigInteger :: BinaryOR ( const BigInteger & RValue )
 	
 }
 
+void BigInteger :: BinaryXOR ( uint64_t RValue )
+{
+	
+	BigInteger BigRValue ( { RValue }, true );
+	BinaryXOR ( BigRValue );
+	
+}
+
 void BigInteger :: BinaryXOR ( const BigInteger & RValue )
 {
 	
@@ -716,6 +773,14 @@ void BigInteger :: BinaryXOR ( const BigInteger & RValue )
 		Data.push_back ( RValue.Data [ I ] );
 	
 	BitCount = Data.size () * 64;
+	
+}
+
+void BigInteger :: BinaryAND ( uint64_t RValue )
+{
+	
+	BigInteger BigRValue ( { RValue }, true );
+	BinaryAND ( BigRValue );
 	
 }
 
@@ -1228,6 +1293,43 @@ bool BigInteger :: LessThan ( const BigInteger & RValue ) const
 	}
 	
 	return Sign;
+	
+}
+
+uint64_t BigInteger :: GetTopSetBit () const
+{
+	
+	uint64_t I = Data.size ();
+	
+	do
+	{
+		
+		I --;
+		
+		if ( Data [ I ] != 0ULL )
+		{
+			
+			uint64_t B = 64;
+			
+			do
+			{
+				
+				B --;
+				
+				if ( ( ( Data [ B ] >> B ) & 1 ) != 0 )
+					return B + I * 64;
+				
+			}
+			while ( B != 0 );
+			
+			return I * 64;
+			
+		}
+		
+	}
+	while ( I != 0 );
+	
+	return 0;
 	
 }
 

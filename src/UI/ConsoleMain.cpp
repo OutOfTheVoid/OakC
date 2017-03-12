@@ -16,8 +16,11 @@
 #include <OIL/OilNamespaceDefinition.h>
 
 #include <Math/BigInteger.h>
+#include <Math/BigFloat.h>
 
 #include <Encoding/CodeConversion.h>
+
+#include <EarlyAnalysis/OakLiteralParsing.h>
 
 #define VERSION_STRING "0.0.1b"
 
@@ -324,6 +327,52 @@ int Test ()
 	
 	if ( A != - 8LL )
 		LOG_FATALERROR ( "bigint failed" );
+	
+	BigFloat C ( BigInteger ( 3LL ), -1, 0 ); // 0.3
+	BigFloat D ( BigInteger ( 2LL ), 1, 0 ); // 20.0
+	
+	C.Multiply ( D );
+	
+	if ( ! C.Equal ( BigFloat ( BigInteger ( 6LL ), 0, 0 ) ) )
+		LOG_FATALERROR ( "bigfloat failed" );
+	
+	D = BigFloat ( BigInteger ( 2LL ), 0, 0 );
+	
+	C.Divide ( D );
+	
+	if ( ! C.Equal ( BigFloat ( BigInteger ( 3LL ), 0, 0 ) ) )
+		LOG_FATALERROR ( "bigfloat failed" );
+	
+	if ( ! OakParseFloatLiteral ( U"0.1f", C ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( "Z" );
+	
+	if ( ! C.Equal ( BigFloat ( 1LL, 0LL, - 1LL ) ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) );
+	
+	if ( ! OakParseFloatLiteral ( U"0.12", C ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( "Z" );
+	
+	if ( ! C.Equal ( BigFloat ( 12LL, 0LL, - 2LL ) ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) );
+	
+	if ( ! OakParseFloatLiteral ( U"0x1p+0", C ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( "Z" );
+	
+	if ( ! C.Equal ( BigFloat ( 1LL, 0LL, 0LL ) ) )
+		LOG_FATALERROR ( "float parse failed" );
+	
+	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
+	
 	
 	return 0;
 	

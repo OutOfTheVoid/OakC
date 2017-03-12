@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <stdint.h>
+#include <string>
 
 #include <initializer_list>
 
@@ -50,6 +51,13 @@ public:
 	void operator /= ( int64_t RValue );
 	void operator /= ( const BigInteger & RValue );
 	
+	void operator |= ( int64_t RValue );
+	void operator |= ( const BigInteger & RValue );
+	void operator &= ( int64_t RValue );
+	void operator &= ( const BigInteger & RValue );
+	void operator ^= ( int64_t RValue );
+	void operator ^= ( const BigInteger & RValue );
+	
 	void Set ( std :: initializer_list <uint64_t> WordData, bool Sign );
 	void Set ( int64_t Value );
 	void Set ( const BigInteger & Value );
@@ -77,8 +85,11 @@ public:
 	void Decrement ();
 	
 	void BinaryOR ( const BigInteger & RValue );
+	void BinaryOR ( uint64_t RValue );
 	void BinaryXOR ( const BigInteger & RValue );
+	void BinaryXOR ( uint64_t RValue );
 	void BinaryAND ( const BigInteger & RValue );
+	void BinaryAND ( uint64_t RValue );
 	
 	void LeftShift ( uint64_t Count );
 	void RightShift ( uint64_t Count );
@@ -92,6 +103,7 @@ public:
 	bool LessThan ( int64_t Value ) const;
 	bool LessThan ( const BigInteger & RValue ) const;
 	
+	uint64_t GetTopSetBit () const;
 	uint64_t GetRepSizeBits () const;
 	uint64_t GetOrder2 () const;
 	

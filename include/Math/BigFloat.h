@@ -13,6 +13,15 @@ public:
 	
 	~BigFloat ();
 	
+	void operator = ( const BigFloat & Value );
+	void operator = ( const BigInteger & Value );
+	void operator = ( int64_t Value );
+	
+	void Set ( const BigInteger & Significand, int64_t Power10, int64_t Power2 );
+	void Set ( const BigInteger & Significand, int64_t Power2 );
+	void Set ( const BigInteger & Significand );
+	void Set ( const BigFloat & CopyFrom );
+	
 	bool IsFractional () const;
 	bool HasPower10Component () const;
 	
@@ -25,7 +34,11 @@ public:
 	void Multiply ( const BigFloat & RValue );
 	void Divide ( const BigFloat & RValue );
 	
+	bool Equal ( const BigFloat & RValue );
+	
 private:
+	
+	void MatchScale ( BigFloat & Other );
 	
 	BigInteger Significand;
 	

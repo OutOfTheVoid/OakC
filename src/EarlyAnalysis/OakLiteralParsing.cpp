@@ -1,4 +1,8 @@
 #include <EarlyAnalysis/OakLiteralParsing.h>
+#include <Math/BigInteger.h>
+#include <Math/BigFloat.h>
+
+#include <Logging/Logging.h>
 
 uint32_t HexCodeToValue ( char32_t Code )
 {
@@ -686,7 +690,7 @@ bool OakParseCharLiteral ( const std :: u32string & Source, char32_t & Out, std 
 									Error = "Expected hexadecimal number after curly brace after escape code in charachter literal";
 								else
 									Error = "Expected closing curly bracket at end of hexadecimal escape code in charachter literal";
-									
+								
 								return false;
 								
 							}
@@ -753,7 +757,7 @@ bool OakParseCharLiteral ( const std :: u32string & Source, char32_t & Out, std 
 					Index ++;
 					
 				}
-			
+				
 			}
 			break;
 			
@@ -1044,15 +1048,15 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 	
 }
 
-bool OakParseFloatLiteral ( const std :: u32string Source, double & Value, bool & OverflowDouble )
+bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 {
 	
-	(void) OverflowDouble;
+	LOG_VERBOSE ( "A" );
 	
 	if ( Source.size () < 2 )
 	{
 		
-		Value = 0.0;
+		Value = 0LL;
 		
 		return false;
 		
@@ -1061,10 +1065,666 @@ bool OakParseFloatLiteral ( const std :: u32string Source, double & Value, bool 
 	uint32_t Index = 0;
 	char32_t Char = Source.at ( Index );
 	
-	if ( Char != 0 )
+	LOG_VERBOSE ( "B" );
+	
+	if ( Char != U'0' )
 	{
 		
+		LOG_VERBOSE ( "C_0" );
 		
+		
+	}
+	else
+	{
+		
+		LOG_VERBOSE ( "C_1" );
+		
+		Index ++;
+		
+		if ( Index >= Source.size () )
+		{
+			
+			Value = 0LL;
+			
+			return true;
+			
+		}
+		
+		Char = Source.at ( Index );
+		
+		LOG_VERBOSE ( "D" );
+		
+		switch ( Char )
+		{
+			
+			case U'x':
+			case U'X':
+			{
+				
+				LOG_VERBOSE ( "E_0" );
+				
+				BigInteger Significand ( 0LL );
+				
+				Index ++;
+				
+				if ( Index >= Source.size () )
+					return false;
+				
+				uint32_t HexDigitCount = 0;
+				
+				do
+				{
+					
+					LOG_VERBOSE ( "F" );
+					
+					Char = Source.at ( Index );
+					
+					uint32_t HexVal = HexCodeToValue ( Char );
+					
+					if ( HexVal >= 16 )
+					{
+						
+						LOG_VERBOSE ( "G" );
+						
+						if ( HexDigitCount == 0 )
+							return false;
+						
+						if ( Char != U'p' )
+							return false;
+						
+						Index ++;
+						
+						if ( Index >= Source.size () )
+							return false;
+						
+						LOG_VERBOSE ( "H" );
+						
+						bool NegativeExponent = false;
+						
+						Char = Source.at ( Index );
+						
+						if ( Char == U'+' )
+						{
+							
+							LOG_VERBOSE ( "I_0" );
+							
+							Index ++;
+							
+							if ( Index >= Source.size () )
+								return false;
+							
+						}
+						else if ( Char == U'-' )
+						{
+							
+							LOG_VERBOSE ( "I_1" );
+							
+							Index ++;
+							
+							if ( Index >= Source.size () )
+								return false;
+							
+							NegativeExponent = true;
+							
+						}
+						
+						uint32_t ExponentDigits = 0;
+						int32_t ExponentValue = 0;
+						
+						do
+						{
+							
+							LOG_VERBOSE ( "J" );
+							
+							Char = Source.at ( Index );
+							
+							uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+							
+							if ( Diff >= 10 )
+							{
+								
+								LOG_VERBOSE ( "K" );
+								
+								if ( ExponentDigits == 0 )
+									return false;
+								
+								LOG_VERBOSE ( "L" );
+								
+								Value.Set ( Significand, NegativeExponent ? - ExponentValue : ExponentValue );
+								
+								return true;
+								
+							}
+							
+							ExponentValue *= 10;
+							ExponentValue += Diff;
+							
+							ExponentDigits ++;
+							
+							Index ++;
+							
+						}
+						while ( Index < Source.size () );
+						
+						if ( ExponentDigits != 0 )
+						{
+							
+							LOG_VERBOSE ( "M_0" );
+							
+							Value.Set ( Significand, NegativeExponent ? - ExponentValue : ExponentValue );
+							
+							return true;
+							
+						}
+						
+						LOG_VERBOSE ( "M_1" );
+						
+						return false;
+						
+					}
+					else
+					{
+						
+						Significand <<= 4;
+						Significand |= static_cast <int64_t> ( HexVal );
+						
+						HexDigitCount ++;
+						
+					}
+					
+					Index ++;
+					
+				}
+				while ( Index < Source.size () );
+				
+				return false;
+				
+			}
+			
+			case U'.':
+			{
+				
+				LOG_VERBOSE ( "E_1" );
+				
+				Index ++;
+				
+				if ( Index >= Source.size () )
+					return false;
+				
+				BigInteger Significand ( 0LL );
+				int32_t FractionalDigits = 0;
+				
+				do
+				{
+					
+					LOG_VERBOSE ( "F" );
+					
+					Char = Source.at ( Index );
+					
+					uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( U'0' );
+					
+					if ( Diff >= 10 )
+					{
+						
+						LOG_VERBOSE ( "G" );
+						
+						if ( FractionalDigits == 0 )
+							return false;
+						
+						switch ( Char )
+						{
+							
+							case 'e':
+							{
+								
+								LOG_VERBOSE ( "H_0" );
+								
+								Index ++;
+								
+								if ( Index >= Source.size () )
+									return false;
+								
+								Char = Source.at ( Index );
+								
+								bool NegativeExponent = false;
+								
+								switch ( Char )
+								{
+									
+									case U'+':
+									{
+										
+										Index ++;
+										
+										if ( Index >= Source.size () )
+											return false;
+										
+										Char = Source.at ( Index );
+										
+									}
+									break;
+									
+									case U'-':
+									{
+										
+										Index ++;
+										
+										if ( Index >= Source.size () )
+											return false;
+										
+										NegativeExponent = true;
+										
+										Char = Source.at ( Index );
+										
+									}
+									break;
+									
+									default:
+									break;
+									
+								}
+								
+								int32_t ExponentValue = 0;
+								uint32_t ExponentDigits = 0;
+								
+								// NOTE: ERROR IF EPONENT OVERFLOWS 32 BITS
+								
+								do
+								{
+									
+									Char = Source.at ( Index );
+									
+									uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+									
+									if ( Diff >= 10 )
+									{
+										
+										if ( Char != U'f' )
+											return false;
+										
+										if ( ExponentDigits == 0 )
+											return false;
+										
+										Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+										
+										return true;
+										
+									}
+									
+									ExponentValue *= 10;
+									ExponentValue += Diff;
+									
+									ExponentDigits ++;
+									
+								}
+								while ( Index < Source.size () );
+								
+								if ( ExponentDigits == 0 )
+									return false;
+								
+								Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+								
+								return true;
+								
+							}
+							
+							case 'f':
+							{
+								
+								LOG_VERBOSE ( "H_1" );
+								
+								Value.Set ( Significand, 0, - FractionalDigits );
+								
+								return true;
+								
+							}
+							
+						}
+						
+						return false;
+						
+					}
+					
+					LOG_VERBOSE ( std :: string ( "___0, Significand: " ) + Significand.ToHexString () + ", Diff: " + std :: to_string ( Diff ) );
+					
+					Significand *= 10LL;
+					
+					LOG_VERBOSE ( std :: string ( "___1, Significand: " ) + Significand.ToHexString () + ", Diff: " + std :: to_string ( Diff ) );
+					
+					Significand += Diff;
+					
+					LOG_VERBOSE ( std :: string ( "___2, Significand: " ) + Significand.ToHexString () );
+					
+					FractionalDigits ++;
+					
+					Index ++;
+					
+				}
+				while ( Index < Source.size () );
+				
+				LOG_VERBOSE ( "G_1" );
+				
+				if ( FractionalDigits == 0 )
+					return false;
+				
+				LOG_VERBOSE ( "H" );
+				
+				Value.Set ( Significand, 0, - FractionalDigits );
+				
+				LOG_VERBOSE ( "I" );
+				
+				return true;
+				
+			}
+			
+			case U'0':
+			case U'1':
+			case U'2':
+			case U'3':
+			case U'4':
+			case U'5':
+			case U'6':
+			case U'7':
+			case U'8':
+			case U'9':
+			case U'_':
+			{
+				
+				LOG_VERBOSE ( "E_2" );
+				
+				BigInteger Significand ( 0LL );
+				int32_t FractionalDigits = 0;
+				
+				do
+				{
+					
+					LOG_VERBOSE ( "F" );
+					
+					Char = Source.at ( Index );
+					
+					if ( Char == '_' )
+						Index ++;
+					else
+					{
+						
+						uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+						
+						if ( Diff >= 10 )
+						{
+							
+							LOG_VERBOSE ( "G" );
+							
+							switch ( Char )
+							{
+								
+								case U'e':
+								{
+									
+									LOG_VERBOSE ( "H_0" );
+									
+									Index ++;
+									
+									if ( Index >= Source.size () )
+										return false;
+									
+									Char = Source.at ( Index );
+									
+									bool NegativeExponent = false;
+									
+									switch ( Char )
+									{
+										
+										case U'+':
+										{
+											
+											Index ++;
+											
+											if ( Index >= Source.size () )
+												return false;
+											
+											Char = Source.at ( Index );
+											
+										}
+										break;
+										
+										case U'-':
+										{
+											
+											Index ++;
+											
+											if ( Index >= Source.size () )
+												return false;
+											
+											NegativeExponent = true;
+											
+											Char = Source.at ( Index );
+											
+										}
+										break;
+										
+										default:
+										break;
+										
+									}
+									
+									int32_t ExponentValue = 0;
+									uint32_t ExponentDigits = 0;
+									
+									// NOTE: ERROR IF EPONENT OVERFLOWS 32 BITS
+									
+									do
+									{
+										
+										Char = Source.at ( Index );
+										
+										uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+										
+										if ( Diff >= 10 )
+										{
+											
+											if ( Char != U'f' )
+												return false;
+											
+											if ( ExponentDigits == 0 )
+												return false;
+											
+											Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+											
+											return true;
+											
+										}
+										
+										ExponentValue *= 10;
+										ExponentValue += Diff;
+										
+										ExponentDigits ++;
+										
+									}
+									while ( Index < Source.size () );
+									
+									if ( ExponentDigits == 0 )
+										return false;
+									
+									Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+									
+									return true;
+									
+								}
+								
+								case U'f':
+								{
+									
+									LOG_VERBOSE ( "H_1" );
+									
+									Value.Set ( Significand );
+									
+									return true;
+									
+								}
+								
+								case U'.':
+								{
+									
+									LOG_VERBOSE ( "H_2" );
+									
+									Index ++;
+									
+									if ( Index >= Source.size () )
+										return false;
+									
+									do
+									{
+										
+										Char = Source.at ( Index );
+										
+										uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+										
+										if ( Diff >= 10 )
+										{
+											
+											if ( FractionalDigits == 0 )
+												return false;
+											
+											switch ( Char )
+											{
+												
+												case U'f':
+												{
+													
+													Value.Set ( Significand, 0, - FractionalDigits );
+													
+													return true;
+													
+												}
+												
+												case U'e':
+												{
+													
+													Index ++;
+													
+													if ( Index >= Source.size () )
+														return false;
+													
+													Char = Source.at ( Index );
+													
+													bool NegativeExponent = false;
+													
+													switch ( Char )
+													{
+														
+														case U'+':
+														{
+															
+															Index ++;
+															
+															if ( Index >= Source.size () )
+																return false;
+															
+															Char = Source.at ( Index );
+															
+														}
+														break;
+														
+														case U'-':
+														{
+															
+															Index ++;
+															
+															if ( Index >= Source.size () )
+																return false;
+															
+															NegativeExponent = true;
+															
+															Char = Source.at ( Index );
+															
+														}
+														break;
+														
+														default:
+														break;
+														
+													}
+													
+													int32_t ExponentValue = 0;
+													uint32_t ExponentDigits = 0;
+													
+													// NOTE: ERROR IF EPONENT OVERFLOWS 32 BITS
+													
+													do
+													{
+														
+														Char = Source.at ( Index );
+														
+														uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( U'0' );
+														
+														if ( Diff >= 10 )
+														{
+															
+															if ( Char != U'f' )
+																return false;
+															
+															if ( ExponentDigits == 0 )
+																return false;
+															
+															Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+															
+															return true;
+															
+														}
+														
+														ExponentValue *= 10;
+														ExponentValue += Diff;
+														
+														ExponentDigits ++;
+														
+													}
+													while ( Index < Source.size () );
+													
+													if ( ExponentDigits == 0 )
+														return false;
+													
+													Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+													
+													return true;
+													
+												}
+												
+												default:
+												return false;
+												
+											}
+											
+										}
+										
+									}
+									while ( Index < Source.size () );
+									
+								}
+								break;
+								
+							}
+							
+						}
+						
+						Significand *= 10LL;
+						Significand += Diff;
+						
+					}
+					
+				}
+				while ( Index < Source.size () );
+				
+				Value.Set ( Significand );
+				
+				return true;
+				
+			}
+			break;
+			
+			default:
+			return false;
+			
+		}
 		
 	}
 	

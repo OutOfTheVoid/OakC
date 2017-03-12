@@ -1,5 +1,7 @@
 #include <Math/BigFloat.h>
 
+#include <Logging/Logging.h>
+
 BigFloat :: BigFloat ( const BigInteger & Significand, int64_t Power10, int64_t Power2 ):
 	Significand ( Significand ),
 	Power10 ( Power10 ),
@@ -24,6 +26,63 @@ BigFloat :: BigFloat ( const BigFloat & CopyFrom ):
 
 BigFloat :: ~BigFloat ()
 {
+}
+
+void BigFloat :: Set ( const BigInteger & Significand, int64_t Power10, int64_t Power2 )
+{
+	
+	this -> Significand = Significand;
+	this -> Power10 = Power10;
+	this -> Power2 = Power2;
+	
+}
+
+void BigFloat :: Set ( const BigInteger & Significand, int64_t Power2 )
+{
+	
+	this -> Significand = Significand;
+	this -> Power10 = 0LL;
+	this -> Power2 = Power2;
+	
+}
+
+void BigFloat :: Set ( const BigInteger & Significand )
+{
+	
+	this -> Significand = Significand;
+	this -> Power10 = 0LL;
+	this -> Power2 = 0LL;
+	
+}
+
+void BigFloat :: Set ( const BigFloat & CopyFrom )
+{
+	
+	this -> Significand = CopyFrom.Significand;
+	this -> Power10 = CopyFrom.Power2;
+	this -> Power2 = CopyFrom.Power2;
+	
+}
+
+void BigFloat :: operator = ( const BigFloat & Value )
+{
+	
+	Set ( Value );
+	
+}
+
+void BigFloat :: operator = ( const BigInteger & Value )
+{
+	
+	Set ( Value );
+	
+}
+
+void BigFloat :: operator = ( int64_t Value )
+{
+	
+	Set ( BigInteger ( Value ) );
+	
 }
 
 bool BigFloat :: IsFractional () const
@@ -61,16 +120,15 @@ int64_t BigFloat :: GetPower2 () const
 	
 }
 
-void BigFloat :: Add ( const BigFloat & RValue )
+void BigFloat :: MatchScale ( BigFloat & Other )
 {
 	
-	BigFloat Temporary ( RValue );
-	
-	// Take significands to same power 10 and 2
-	if ( Temporary.Power10 < Power10 )
+	if ( Other.Power10 < Power10 )
 	{
 		
-		while ( Temporary.Power10 < Power10 )
+		LOG_VERBOSE ( "MS: 0" );
+		
+		while ( Other.Power10 < Power10 )
 		{
 			
 			Significand *= 10LL;
@@ -79,43 +137,59 @@ void BigFloat :: Add ( const BigFloat & RValue )
 		}
 		
 	}
-	else if ( Temporary.Power10 > Power10 )
+	else if ( Other.Power10 > Power10 )
 	{
 		
-		while ( Temporary.Power10 > Power10 )
+		LOG_VERBOSE ( "MS: 1" );
+		
+		while ( Other.Power10 > Power10 )
 		{
 			
-			Temporary.Significand *= 10LL;
-			Temporary.Power10 --;
+			Other.Significand *= 10LL;
+			Other.Power10 --;
 			
 		}
 		
 	}
 	
-	if ( Temporary.Power2 < Power2 )
+	if ( Other.Power2 < Power2 )
 	{
 		
-		while ( Temporary.Power2 < Power2 )
+		LOG_VERBOSE ( std :: string ( "MS: 2, P2: " ) + std :: to_string ( Power2 ) + " O_P2: " + std :: to_string ( Other.Power2 ) );
+		
+		while ( Other.Power2 < Power2 )
 		{
 			
-			Significand <<= 2;
+			Significand <<= 1;
 			Power2 --;
 			
 		}
 		
 	}
-	else if ( Temporary.Power2 > Power2 )
+	else if ( Other.Power2 > Power2 )
 	{
 		
-		while ( Temporary.Power2 > Power2 )
+		LOG_VERBOSE ( "MS: 3" );
+		
+		while ( Other.Power2 > Power2 )
 		{
 			
-			Temporary.Significand <<= 2;
-			Temporary.Power2 --;
+			Other.Significand <<= 1;
+			Other.Power2 --;
 			
 		}
 		
 	}
+	
+	LOG_VERBOSE ( "MS: R" );
+	
+}
+
+void BigFloat :: Add ( const BigFloat & RValue )
+{
+	
+	BigFloat Temporary ( RValue );
+	MatchScale ( Temporary );
 	
 	Significand += Temporary.Significand;
 	
@@ -125,57 +199,7 @@ void BigFloat :: Subtract ( const BigFloat & RValue )
 {
 	
 	BigFloat Temporary ( RValue );
-	
-	// Take significands to same powers
-	if ( Temporary.Power10 < Power10 )
-	{
-		
-		while ( Temporary.Power10 < Power10 )
-		{
-			
-			Significand *= 10LL;
-			Power10 --;
-			
-		}
-		
-	}
-	else if ( Temporary.Power10 > Power10 )
-	{
-		
-		while ( Temporary.Power10 > Power10 )
-		{
-			
-			Temporary.Significand *= 10LL;
-			Temporary.Power10 --;
-			
-		}
-		
-	}
-	
-	if ( Temporary.Power2 < Power2 )
-	{
-		
-		while ( Temporary.Power2 < Power2 )
-		{
-			
-			Significand <<= 2;
-			Power2 --;
-			
-		}
-		
-	}
-	else if ( Temporary.Power2 > Power2 )
-	{
-		
-		while ( Temporary.Power2 > Power2 )
-		{
-			
-			Temporary.Significand <<= 2;
-			Temporary.Power2 --;
-			
-		}
-		
-	}
+	MatchScale ( Temporary );
 	
 	Significand -= Temporary.Significand;
 	
@@ -196,63 +220,32 @@ void BigFloat :: Divide ( const BigFloat & RValue )
 {
 	
 	BigFloat Temporary ( RValue );
+	MatchScale ( Temporary );
 	
-	// Take significands to same powers
-	if ( Temporary.Power10 < Power10 )
-	{
-		
-		while ( Temporary.Power10 < Power10 )
-		{
-			
-			Significand *= 10LL;
-			Power10 --;
-			
-		}
-		
-	}
-	else if ( Temporary.Power10 > Power10 )
-	{
-		
-		while ( Temporary.Power10 > Power10 )
-		{
-			
-			Temporary.Significand *= 10LL;
-			Temporary.Power10 --;
-			
-		}
-		
-	}
+	int64_t TopBit = static_cast <int64_t> ( Temporary.Significand.GetTopSetBit () ) + BIGFLOAT_DIVIDE_POWER2_PRECISIONEXPANSION;
 	
-	if ( Temporary.Power2 < Power2 )
-	{
-		
-		while ( Temporary.Power2 < Power2 )
-		{
-			
-			Significand <<= 2;
-			Power2 --;
-			
-		}
-		
-	}
-	else if ( Temporary.Power2 > Power2 )
-	{
-		
-		while ( Temporary.Power2 > Power2 )
-		{
-			
-			Temporary.Significand <<= 2;
-			Temporary.Power2 --;
-			
-		}
-		
-	}
-	
-	Significand <<= BIGFLOAT_DIVIDE_POWER2_PRECISIONEXPANSION;
-	Power2 -= BIGFLOAT_DIVIDE_POWER2_PRECISIONEXPANSION;
+	Significand <<= TopBit;
+	Power2 -= TopBit;
 	
 	Power2 -= Temporary.Power2;
 	Power10 -= Temporary.Power10;
 	Significand /= Temporary.Significand;
+	
+}
+
+bool BigFloat :: Equal ( const BigFloat & RValue )
+{
+	
+	LOG_VERBOSE ( "EQ: A" );
+	
+	BigFloat Temporary ( RValue );
+	
+	LOG_VERBOSE ( "EQ: B" );
+	
+	MatchScale ( Temporary );
+	
+	LOG_VERBOSE ( "EQ: C" );
+	
+	return Temporary.Significand == Significand;
 	
 }
