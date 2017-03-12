@@ -1,6 +1,9 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OakLiteralParsing.h>
 
+#include <Math/BigFloat.h>
+#include <Math/BigInteger.h>
+
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilTemplateDefinition.h>
@@ -22,6 +25,7 @@
 #include <OIL/OilStringLiteral.h>
 #include <OIL/OilIntegerLiteral.h>
 #include <OIL/OilCharLiteral.h>
+#include <OIL/OilFloatLiteral.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -450,10 +454,6 @@ OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTEle
 		TypeList.push_back ( Type );
 		
 	}
-	
-	//const OakTemplateSpecificationConstructor :: ElementData * SpecificationData = reinterpret_cast <const OakTemplateSpecificationConstructor :: ElementData *> ( TemplateSpecificationElement -> GetData () );
-	
-	
 	
 	return new OilTemplateSpecification ( & TypeList [ 0 ], TypeList.size () );
 	
@@ -931,6 +931,8 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				
 			}
 			
+			// TODO: Implement
+			
 			/*case OakASTTags :: kASTTag_BindingStatement:
 			{
 				
@@ -1020,6 +1022,7 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 		
 		//IOilPrimary * Primary = OakTranslatePrimaryExpressionToOil ( SubExpressionElement );
 		
+		// TODO: Finish
 		
 		
 	}
@@ -1027,6 +1030,8 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 	{
 		
 		//IOilOperator * Operator = OakTranslateOperatorToOil ( SubExpressionElement );
+		
+		// TODO: Finish
 		
 	}
 	
@@ -1406,9 +1411,18 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_FloatLiteralDefaultSize:
 		{
 			
-			// TODO: Finish
+			BigFloat FloatValue ( 0LL );
 			
-			return NULL;
+			if ( ! OakParseFloatLiteral ( LiteralToken -> GetSource (), FloatValue ) )
+			{
+				
+				WriteError ( LiteralElement, "Invalid float literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilFloatLiteral ( FloatValue, OilFloatLiteral :: kFloatType_Indeterminate );
 			
 		}
 		break;
@@ -1416,9 +1430,18 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_FloatLiteral32:
 		{
 			
-			// TODO: Finish
+			BigFloat FloatValue ( 0LL );
 			
-			return NULL;
+			if ( ! OakParseFloatLiteral ( LiteralToken -> GetSource (), FloatValue ) )
+			{
+				
+				WriteError ( LiteralElement, "Invalid float literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilFloatLiteral ( FloatValue, OilFloatLiteral :: kFloatType_32 );
 			
 		}
 		break;
@@ -1426,9 +1449,18 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		case OakTokenTags :: kTokenTag_FloatLiteral64:
 		{
 			
-			// TODO: Finish
+			BigFloat FloatValue ( 0LL );
 			
-			return NULL;
+			if ( ! OakParseFloatLiteral ( LiteralToken -> GetSource (), FloatValue ) )
+			{
+				
+				WriteError ( LiteralElement, "Invalid float literal" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilFloatLiteral ( FloatValue, OilFloatLiteral :: kFloatType_64 );
 			
 		}
 		break;

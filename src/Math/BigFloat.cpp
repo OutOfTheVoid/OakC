@@ -16,6 +16,12 @@ BigFloat :: BigFloat ( const BigInteger & Significand, int64_t Power2 ):
 {
 }
 
+BigFloat :: BigFloat ( const BigInteger & Significand ):
+	Significand ( Significand ),
+	Power10 ( 0 ),
+	Power2 ( 0 )
+{
+}
 
 BigFloat :: BigFloat ( const BigFloat & CopyFrom ):
 	Significand ( CopyFrom.Significand ),

@@ -9,6 +9,7 @@ public:
 	
 	explicit BigFloat ( const BigInteger & Significand, int64_t Power2, int64_t Power10 );
 	explicit BigFloat ( const BigInteger & Significand, int64_t Power2 );
+	explicit BigFloat ( const BigInteger & Significand );
 	explicit BigFloat ( const BigFloat & CopyFrom );
 	
 	~BigFloat ();
