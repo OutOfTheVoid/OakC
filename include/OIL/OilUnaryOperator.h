@@ -13,7 +13,6 @@ public:
 	typedef enum
 	{
 		
-		kOperator_RangeConstruction,
 		kOperator_PostfixIncrement,
 		kOperator_PostfixDecrement,
 		kOperator_PrefixIncrement,
@@ -29,21 +28,23 @@ public:
 		
 	} Operator;
 	
-	OilUnaryOperator ( Operator Op, OilExpression * Term );
+	OilUnaryOperator ( Operator Op, IOilOperator * Term );
 	OilUnaryOperator ( Operator Op, IOilPrimary * Term );
 	
 	~OilUnaryOperator ();
 	
-	OilExpression * GetTermAsExpression () const;
+	IOilOperator * GetTermAsOperator () const;
 	IOilPrimary * GetTermAsPrimary () const;
 	
-	void SetTerm ( OilExpression * Term );
+	void SetTerm ( IOilOperator * Term );
 	void SetTerm ( IOilPrimary * Term );
 	
 	Operator GetOp () const;
 	
 	bool ConstantTerms () const;
 	OperatorType GetOperatorType () const;
+	
+	bool IsTermPrimary () const;
 	
 	void DisownTerm ();
 	
@@ -57,7 +58,7 @@ private:
 	{
 		
 		IOilPrimary * PrimaryTerm;
-		OilExpression * ExpressionTerm;
+		IOilOperator * OperatorTerm;
 		
 	};
 	

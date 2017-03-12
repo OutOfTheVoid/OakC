@@ -26,6 +26,7 @@
 #include <OIL/OilIntegerLiteral.h>
 #include <OIL/OilCharLiteral.h>
 #include <OIL/OilFloatLiteral.h>
+#include <OIL/OilUnaryOperator.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -1826,7 +1827,452 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 {
 	
-	// TODO: Implement
+	uint64_t Tag = OperatorElement -> GetTag ();
+	
+	if ( ( Tag < OakASTTags :: kASTTag_Operator_Meta_EnumBoundsMin ) || ( Tag > OakASTTags :: kASTTag_Operator_Meta_EnumBoundsMax ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	switch ( Tag )
+	{
+		
+		case OakASTTags :: kASTTag_Operator_PostfixIncrement:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PostfixIncrement, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PostfixIncrement, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_PostfixDecrement:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PostfixDecrement, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PostfixDecrement, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_PrefixIncrement:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PrefixIncrement, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PrefixIncrement, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_PrefixDecrement:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PrefixDecrement, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_PrefixDecrement, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_BitwiseNot:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_BitwiseNot, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_BitwiseNot, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_LogicalNot:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_LogicalNot, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_LogicalNot, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_UnaryPositive:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_UnaryPositive, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_UnaryPositive, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_UnaryNegate:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_UnaryNegative, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_UnaryNegative, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_ReferenceAddressOf:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_AddressOfRef, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_AddressOfRef, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_PointerDeref:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_Dereference, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_Dereference, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_ArrayAccess:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_ArrayAccess, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_ArrayAccess, OperatorTerm );
+			
+		}
+		
+		case OakASTTags :: kASTTag_Operator_FunctionCall:
+		{
+			
+			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
+			
+			if ( TermElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+				
+				if ( PrimaryTerm == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( OilUnaryOperator :: kOperator_FunctionCall, PrimaryTerm );
+				
+			}
+			
+			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+			
+			if ( OperatorTerm == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( OilUnaryOperator :: kOperator_FunctionCall, OperatorTerm );
+			
+		}
+		
+		// TODO: Implement binary ops
+		
+		default:
+		{
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+			
+			return NULL;
+			
+		}
+		
+	}
 	
 	(void) OperatorElement;
 	

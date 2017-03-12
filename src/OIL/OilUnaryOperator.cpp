@@ -6,10 +6,10 @@
 	#define NULL nullptr
 #endif
 
-OilUnaryOperator :: OilUnaryOperator ( Operator Op, OilExpression * Term ):
+OilUnaryOperator :: OilUnaryOperator ( Operator Op, IOilOperator * Term ):
 	Op ( Op ),
 	TermIsPrimary ( false ),
-	ExpressionTerm ( Term )
+	OperatorTerm ( Term )
 {
 }
 	
@@ -20,7 +20,7 @@ OilUnaryOperator :: OilUnaryOperator ( Operator Op, IOilPrimary * Term ):
 {
 }
 
-void OilUnaryOperator :: SetTerm ( OilExpression * Term )
+void OilUnaryOperator :: SetTerm ( IOilOperator * Term )
 {
 	
 	if ( TermIsPrimary )
@@ -33,12 +33,12 @@ void OilUnaryOperator :: SetTerm ( OilExpression * Term )
 	else
 	{
 		
-		if ( ExpressionTerm != NULL )
-			delete PrimaryTerm;
+		if ( OperatorTerm != NULL )
+			delete OperatorTerm;
 		
 	}
 	
-	ExpressionTerm = Term;
+	OperatorTerm = Term;
 	TermIsPrimary = false;
 	
 }
@@ -56,8 +56,8 @@ void OilUnaryOperator :: SetTerm ( IOilPrimary * Term )
 	else
 	{
 		
-		if ( ExpressionTerm != NULL )
-			delete PrimaryTerm;
+		if ( OperatorTerm != NULL )
+			delete OperatorTerm;
 		
 	}
 	
@@ -79,17 +79,17 @@ OilUnaryOperator :: ~OilUnaryOperator ()
 	else
 	{
 		
-		if ( ExpressionTerm != NULL )
+		if ( OperatorTerm != NULL )
 			delete PrimaryTerm;
 		
 	}
 	
 }
 
-OilExpression * OilUnaryOperator :: GetTermAsExpression () const
+IOilOperator * OilUnaryOperator :: GetTermAsOperator () const
 {
 	
-	return TermIsPrimary ? NULL : ExpressionTerm;
+	return TermIsPrimary ? NULL : OperatorTerm;
 	
 }
 
@@ -122,7 +122,7 @@ void OilUnaryOperator :: DisownTerm ()
 	if ( TermIsPrimary )
 		PrimaryTerm = NULL;
 	else
-		ExpressionTerm = NULL;
+		OperatorTerm = NULL;
 	
 }
 
@@ -130,5 +130,12 @@ IOilOperator :: OperatorType OilUnaryOperator :: GetOperatorType () const
 {
 	
 	return kOperatorType_Unary;
+	
+}
+
+bool OilUnaryOperator :: IsTermPrimary () const
+{
+	
+	return TermIsPrimary;
 	
 }
