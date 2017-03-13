@@ -13,6 +13,7 @@ public:
 	char32_t GetValue () const;
 	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

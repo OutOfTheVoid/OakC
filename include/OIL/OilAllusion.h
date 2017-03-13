@@ -60,6 +60,7 @@ public:
 	OilTemplateSpecification * GetDirectTemplateSpecification ();
 	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

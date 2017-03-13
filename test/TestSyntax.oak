@@ -27,7 +27,7 @@ namespace my_namespace::sub_namespace
 function my_global_func ( some_param : i32 ) : void
 {
 	
-	some_namespace :: SomeTemplatedType: <u32>.static_method ();
+	//some_namespace :: SomeTemplatedType: <u32>.static_method ();
 	
 }
 
@@ -51,15 +51,15 @@ implement MyType
 	function test ( & self, string_value: & string ): u32
 	{
 		
-		self -> test_string = string_value;
-		self -> test_int = 1u;
+		//self -> test_string = string_value;
+		//self -> test_int = 1u;
 		
 	}
 	
 	function SayHello ( & self )
 	{
 		
-		Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
+		//Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
 		
 	}
 	
@@ -68,7 +68,7 @@ implement MyType
 function Main ( ProgramArguments: Array:<string> ) : i32
 {
 	
-	ignore ProgramArguments;
+	/*ignore ProgramArguments;
 	
 	bind MyString: string = "Hello, world!";
 	bind MyStruct: MyType = ::MyType::new ( MyString.copy () );
@@ -77,6 +77,6 @@ function Main ( ProgramArguments: Array:<string> ) : i32
 	
 	MyType.SayHello ();
 	
-	return 0;
+	return 0;*/
 	
 }

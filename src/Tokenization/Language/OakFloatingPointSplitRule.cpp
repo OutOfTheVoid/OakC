@@ -33,7 +33,7 @@ void OakFloatingPointSplitRule :: TrySplit ( const std :: u32string & Source, ui
 	
 	Length ++;
 	
-	//[NON_ZERO_DIGIT] | [[0] ([!x])]??
+	//[NON_ZERO_DIGIT] | [0.]??
 	if ( CharTestSet :: NonZeroDigits.Contains ( Char ) || ( ( Char == U'0' ) && ( Char2 == U'.' ) ) )
 	{
 		
@@ -280,11 +280,11 @@ bool OakFloatingPointSplitRule :: TestExponent ( const std :: u32string & Source
 			{
 				
 				// [e] [+|-]? [NON_ZERO_DIGIT] [DIGIT]* [f [32|64]?]??
-				if ( TestFloatTypeSpecifier ( Source, Offset, Length, Result ) )
+				if ( TestFloatTypeSpecifier ( Source, Offset, Length - 1, Result ) )
 					return true;
 				
 				Result.Accepted = true;
-				Result.SplitLength = Length;
+				Result.SplitLength = Length - 1;
 				Result.Tag = OakTokenTags :: kTokenTag_FloatLiteralDefaultSize;
 				
 				return true;
@@ -294,7 +294,7 @@ bool OakFloatingPointSplitRule :: TestExponent ( const std :: u32string & Source
 		}
 		
 		Result.Accepted = true;
-		Result.SplitLength = Length;
+		Result.SplitLength = Length - 1;
 		Result.Tag = OakTokenTags :: kTokenTag_FloatLiteralDefaultSize;
 		
 		return true;

@@ -124,3 +124,17 @@ bool OilExpression :: IsConstant () const
 	return OperatorTerm -> ConstantTerms ();
 	
 }
+
+IOilStatement :: StatementType OilExpression :: GetStatementType () const
+{
+	
+	return kStatementType_Expression;
+	
+}
+
+IOilPrimary :: PrimaryType OilExpression :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_Expression;
+	
+}

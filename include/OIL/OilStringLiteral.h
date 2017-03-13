@@ -28,6 +28,7 @@ public:
 	const std :: u32string GetValue () const;
 	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

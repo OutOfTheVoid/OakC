@@ -28,6 +28,7 @@
 #include <OIL/OilFloatLiteral.h>
 #include <OIL/OilUnaryOperator.h>
 #include <OIL/OilBinaryOperator.h>
+#include <OIL/OilArrayLiteral.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -51,6 +52,7 @@
 #include <Parsing/Language/OakIgnoreStatementConstructor.h>
 #include <Parsing/Language/OakBindingStatementConstructor.h>
 #include <Parsing/Language/OakBindingAllusionConstructor.h>
+#include <Parsing/Language/OakArrayLiteralConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -76,6 +78,7 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement );
 OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement * StatementElement );
+OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement );
 
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
@@ -611,7 +614,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 		
 	}
 	
-	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
 	
 	return NULL;
 	
@@ -922,6 +925,8 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				if ( SubBody == NULL )
 				{
 					
+					LOG_FATALERROR ( "Structurally invalid AST passed to parser" );
+					
 					delete Body;
 					
 					return NULL;
@@ -932,6 +937,39 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				Body -> AddStatement ( SubBody ); 
 				
 			}
+			break;
+			
+			case OakASTTags :: kASTTag_ExpressionStatement:
+			{
+				
+				const ASTElement * ExpressionElement = StatementElement -> GetSubElement ( 0 );
+				
+				if ( ExpressionElement == NULL )
+				{
+					
+					LOG_FATALERROR ( "Structurally invalid AST passed to parser" );
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				OilExpression * Expression = OakTranslateExpressionToOil ( ExpressionElement );
+				
+				if ( Expression == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Body -> AddStatement ( Expression );
+				
+			}
+			break;
 			
 			// TODO: Implement
 			
@@ -1060,6 +1098,155 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 	
 }
 
+OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
+{
+	
+	if ( ( ArrayElement == NULL ) || ( ArrayElement -> GetTag () != OakASTTags :: kASTTag_ArrayLiteral ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const OakArrayLiteralConstructor :: ElementData * LiteralData = reinterpret_cast <const OakArrayLiteralConstructor :: ElementData *> ( ArrayElement -> GetData () );
+	
+	uint64_t ElementOffset = 0;
+	uint64_t ExplicitCountValue = 0;
+	
+	if ( LiteralData -> ExplicitCount )
+	{
+		
+		const ASTElement * SizeElement = ArrayElement -> GetSubElement ( ElementOffset );
+		ElementOffset ++;
+		
+		IOilPrimary * SizeLiteral = OakTranslateLiteralToOil ( SizeElement );
+		
+		if ( SizeLiteral == NULL )
+			return NULL;
+		
+		if ( SizeLiteral -> GetPrimaryType () != IOilPrimary :: kPrimaryType_IntegerLiteral )
+		{
+			
+			WriteError ( SizeElement, "Expected positive integer for explicit array size" );
+			
+			return NULL;
+			
+		}
+		
+		OilIntegerLiteral * IntSizeLiteral = dynamic_cast <OilIntegerLiteral *> ( SizeLiteral );
+		
+		if ( IntSizeLiteral == NULL )
+		{
+			
+			delete SizeLiteral;
+			
+			LOG_FATALERROR ( "Invalid PrimaryType returned from literal element" );
+			
+			return NULL;
+			
+		}
+		
+		if ( ( IntSizeLiteral -> GetType () & OilIntegerLiteral :: kIntType_Flag_ValidIfNegative ) && ( IntSizeLiteral -> GetSValue () < 0 ) )
+		{
+			
+			WriteError ( SizeElement, "expected positive value for explicit array size" );
+			
+			delete SizeLiteral;
+			
+			return NULL;
+			
+		}
+		
+		ExplicitCountValue = IntSizeLiteral -> GetUValue ();
+		delete IntSizeLiteral;
+		
+	}
+	
+	OilTypeRef * TypeSpecifier = NULL;
+	
+	if ( LiteralData -> ExplicitType )
+	{
+		
+		TypeSpecifier = OakTranslateTypeRefToOil ( ArrayElement -> GetSubElement ( ElementOffset ) );
+		ElementOffset ++;
+		
+		if ( TypeSpecifier == NULL )
+			return NULL;
+		
+	}
+	
+	std :: vector <IOilPrimary *> InitializerValues;
+	
+	uint64_t SubElementCount = ArrayElement -> GetSubElementCount ();
+	
+	for ( uint64_t I = ElementOffset; I < SubElementCount; I ++ )
+	{
+		
+		const ASTElement * InitializerElement = ArrayElement -> GetSubElement ( I );
+		
+		IOilPrimary * Initializer = NULL;
+		
+		
+		if ( InitializerElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			Initializer = OakTranslatePrimaryExpressionToOil ( InitializerElement );
+		else if ( InitializerElement -> GetTag () == OakASTTags :: kASTTag_Expression )
+			Initializer = OakTranslateExpressionToOil ( InitializerElement );
+		else
+		{
+			
+			if ( I != ElementOffset )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+				
+				return NULL;
+				
+			}
+			
+			IOilPrimary * Literal = OakTranslateLiteralToOil ( InitializerElement );
+			
+			if ( Literal == NULL )
+				return NULL;
+			
+			Initializer = new OilExpression ( Literal );
+			
+		}
+		
+		if ( Initializer == NULL )
+		{
+			
+			for ( uint64_t I = 0; I < InitializerValues.size (); I ++ )
+				delete InitializerValues [ I ];
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		InitializerValues.push_back ( Initializer );
+		
+	}
+	
+	if ( LiteralData -> ExplicitCount )
+	{
+		
+		if ( InitializerValues.size () > 0 )
+			return new OilArrayLiteral ( ExplicitCountValue, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+		else
+			return new OilArrayLiteral ( ExplicitCountValue, TypeSpecifier );
+		
+	}
+	
+	if ( InitializerValues.size () > 0 )
+		return new OilArrayLiteral ( TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+	
+	return new OilArrayLiteral ( TypeSpecifier );
+	
+}
+
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement )
 {
 	
@@ -1078,18 +1265,13 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 	{
 		
 		case OakASTTags :: kASTTag_ParenthesizedExpression:
-			return OakTranslateExpressionToOil ( PrimaryElement -> GetSubElement ( 0 ) );
+			return OakTranslateExpressionToOil ( SubElement );
 		
 		case OakASTTags :: kASTTag_LiteralExpression:
-			return OakTranslateLiteralToOil ( PrimaryElement );
+			return OakTranslateLiteralToOil ( SubElement );
 		
 		case OakASTTags :: kASTTag_ArrayLiteral:
-		{
-			
-			// TODO: Implement
-			
-		}
-		break;
+			return OakTranslateArrayLiteral ( SubElement );
 		
 		case OakASTTags :: kASTTag_SelfAllusion:
 			return new OilAllusion ( OilAllusion :: SELF_ALLUSION );
@@ -1097,7 +1279,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 		case OakASTTags :: kASTTag_BindingAllusion:
 		{
 			
-			const OakBindingAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakBindingAllusionConstructor :: ElementData *> ( PrimaryElement -> GetData () );
+			const OakBindingAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakBindingAllusionConstructor :: ElementData *> ( SubElement -> GetData () );
 			
 			if ( AllusionData -> IdentListLength > 1 )
 			{
@@ -1116,7 +1298,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 							if ( AllusionData -> IdentList [ I ].Templated )
 							{
 								
-								WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+								WriteError ( SubElement, "Namespaces cannot have template specifications" );
 								
 								return NULL;
 								
@@ -1158,7 +1340,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 							if ( AllusionData -> IdentList [ I ].Templated )
 							{
 								
-								WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+								WriteError ( SubElement, "Namespaces cannot have template specifications" );
 								
 								return NULL;
 								
@@ -1189,7 +1371,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 						if ( AllusionData -> IdentList [ I ].Templated )
 						{
 								
-							WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+							WriteError ( SubElement, "Namespaces cannot have template specifications" );
 							
 							return NULL;
 							
@@ -1220,7 +1402,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 						if ( AllusionData -> IdentList [ I ].Templated )
 						{
 								
-							WriteError ( PrimaryElement, "Namespaces cannot have template specifications" );
+							WriteError ( SubElement, "Namespaces cannot have template specifications" );
 							
 							return NULL;
 							
@@ -1271,7 +1453,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 	if ( ( LiteralElement == NULL ) || ( LiteralElement -> GetTag () != OakASTTags :: kASTTag_LiteralExpression ) )
 	{
 		
-		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser: " );
 		
 		return NULL;
 		

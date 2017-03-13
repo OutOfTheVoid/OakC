@@ -11,6 +11,7 @@ public:
 	~OilNullPointerLiteral ();
 	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 };
 

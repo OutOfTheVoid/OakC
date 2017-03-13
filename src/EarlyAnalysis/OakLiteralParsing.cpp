@@ -697,7 +697,7 @@ bool OakParseCharLiteral ( const std :: u32string & Source, char32_t & Out, std 
 							
 						}
 						
-						if ( Sum > 0x7FFFFFFF )
+						if ( ( Sum & 0xF0000000 ) != 0 )
 						{
 							
 							Error = "Escape code in charachter literal overflows 32-bit char";
@@ -711,6 +711,17 @@ bool OakParseCharLiteral ( const std :: u32string & Source, char32_t & Out, std 
 						
 						Count ++;
 						
+						Index ++;
+						
+					}
+					
+					if ( Count == 0 )
+					{
+						
+						Error = "Expected hexadecimal value after hex escape code in charachter literal";
+						
+						return false;
+						
 					}
 					
 					if ( ! Resolved )
@@ -721,6 +732,8 @@ bool OakParseCharLiteral ( const std :: u32string & Source, char32_t & Out, std 
 						return false;
 						
 					}
+					
+					Index ++;
 					
 				}
 				else
@@ -1051,8 +1064,6 @@ void OakParseIntegerLiteral ( const std :: u32string & Source, uint64_t & Value,
 bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 {
 	
-	LOG_VERBOSE ( "A" );
-	
 	if ( Source.size () < 2 )
 	{
 		
@@ -1065,19 +1076,311 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 	uint32_t Index = 0;
 	char32_t Char = Source.at ( Index );
 	
-	LOG_VERBOSE ( "B" );
-	
 	if ( Char != U'0' )
 	{
 		
-		LOG_VERBOSE ( "C_0" );
+		uint32_t SigDigitCount = 0;
 		
+		BigInteger Significand ( 0LL );
+		
+		do
+		{
+			
+			Char = Source.at ( Index );
+			
+			uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+			
+			if ( Diff >= 10 )
+			{
+				
+				if ( Char == U'_' )
+				{
+					
+					if ( SigDigitCount != 0 )
+					{
+						
+						Index ++;
+						
+						continue;
+						
+					}
+					
+					return false;
+					
+				}
+				
+				if ( Char == 'f' )
+				{
+					
+					if ( SigDigitCount == 0 )
+						return false;
+					
+					Value.Set ( Significand );
+					
+					return true;
+					
+				}
+				
+				if ( Char == U'.' )
+				{
+					
+					Index ++;
+					
+					if ( Index >= Source.size () )
+						return false;
+					
+					int32_t FractionalDigits = 0;
+					
+					do
+					{
+						
+						Char = Source.at ( Index );
+						Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+						
+						if ( Diff >= 10 )
+						{
+							
+							if ( Char == U'_' )
+							{
+								
+								if ( FractionalDigits != 0 )
+								{
+									
+									Index ++;
+									
+									continue;
+									
+								}
+								
+								return false;
+								
+							}
+							
+							if ( Char == U'f' )
+								break;
+							
+							if ( Char == 'e' )
+							{
+								
+								Index ++;
+								
+								if ( Index >= Source.size () )
+									return false;
+								
+								Char = Source.at ( Index );
+								
+								bool NegativeExponent = false;
+								
+								switch ( Char )
+								{
+									
+									case U'+':
+									{
+										
+										Index ++;
+										
+										if ( Index >= Source.size () )
+											return false;
+										
+										Char = Source.at ( Index );
+										
+									}
+									break;
+									
+									case U'-':
+									{
+										
+										Index ++;
+										
+										if ( Index >= Source.size () )
+											return false;
+										
+										NegativeExponent = true;
+										
+										Char = Source.at ( Index );
+										
+									}
+									break;
+									
+									default:
+									break;
+									
+								}
+								
+								int32_t ExponentValue = 0;
+								uint32_t ExponentDigits = 0;
+								
+								do
+								{
+									
+									Char = Source.at ( Index );
+									
+									uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+									
+									if ( Diff >= 10 )
+									{
+										
+										if ( Char != U'f' )
+											return false;
+										
+										if ( ExponentDigits == 0 )
+											return false;
+										
+										Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+										
+										return true;
+										
+									}
+									
+									ExponentValue *= 10;
+									ExponentValue += Diff;
+									
+									ExponentDigits ++;
+									
+									Index ++;
+									
+								}
+								while ( Index < Source.size () );
+								
+								if ( ExponentDigits == 0 )
+									return false;
+								
+								Value.Set ( Significand, 0, - FractionalDigits - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+								
+								return true;
+								
+							}
+							
+						}
+						
+						Significand *= 10LL;
+						Significand += Diff;
+						
+						FractionalDigits ++;
+						
+						Index ++;
+						
+					}
+					while ( Index < Source.size () );
+					
+					if ( FractionalDigits == 0 )
+						return false;
+					
+					Value.Set ( Significand, 0, - FractionalDigits );
+					
+					return true;
+					
+				}
+				
+				if ( Char == 'e' )
+				{
+					
+					Index ++;
+					
+					if ( Index >= Source.size () )
+						return false;
+					
+					Char = Source.at ( Index );
+					
+					bool NegativeExponent = false;
+					
+					switch ( Char )
+					{
+						
+						case U'+':
+						{
+							
+							Index ++;
+							
+							if ( Index >= Source.size () )
+								return false;
+							
+							Char = Source.at ( Index );
+							
+						}
+						break;
+						
+						case U'-':
+						{
+							
+							Index ++;
+							
+							if ( Index >= Source.size () )
+								return false;
+							
+							NegativeExponent = true;
+							
+							Char = Source.at ( Index );
+							
+						}
+						break;
+						
+						default:
+						break;
+						
+					}
+					
+					int32_t ExponentValue = 0;
+					uint32_t ExponentDigits = 0;
+					
+					do
+					{
+						
+						Char = Source.at ( Index );
+						
+						uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
+						
+						if ( Diff >= 10 )
+						{
+							
+							if ( Char != U'f' )
+								return false;
+							
+							if ( ExponentDigits == 0 )
+								return false;
+							
+							Value.Set ( Significand, 0, - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+							
+							return true;
+							
+						}
+						
+						ExponentValue *= 10;
+						ExponentValue += Diff;
+						
+						ExponentDigits ++;
+						
+						Index ++;
+						
+					}
+					while ( Index < Source.size () );
+					
+					if ( ExponentDigits == 0 )
+						return false;
+					
+					Value.Set ( Significand, 0, - ( NegativeExponent ? - ExponentValue : ExponentValue ) );
+					
+					return true;
+					
+				}
+				
+			}
+			
+			Significand *= 10LL;
+			Significand += Diff;
+			
+			SigDigitCount ++;
+			
+			Index ++;
+			
+		}
+		while ( Index < Source.size () );
+		
+		return false;
 		
 	}
 	else
 	{
-		
-		LOG_VERBOSE ( "C_1" );
 		
 		Index ++;
 		
@@ -1092,16 +1395,12 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 		
 		Char = Source.at ( Index );
 		
-		LOG_VERBOSE ( "D" );
-		
 		switch ( Char )
 		{
 			
 			case U'x':
 			case U'X':
 			{
-				
-				LOG_VERBOSE ( "E_0" );
 				
 				BigInteger Significand ( 0LL );
 				
@@ -1115,8 +1414,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 				do
 				{
 					
-					LOG_VERBOSE ( "F" );
-					
 					Char = Source.at ( Index );
 					
 					uint32_t HexVal = HexCodeToValue ( Char );
@@ -1124,10 +1421,17 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 					if ( HexVal >= 16 )
 					{
 						
-						LOG_VERBOSE ( "G" );
-						
 						if ( HexDigitCount == 0 )
 							return false;
+						
+						if ( Char == U'_' )
+						{
+							
+							Index ++;
+							
+							continue;
+							
+						}
 						
 						if ( Char != U'p' )
 							return false;
@@ -1137,16 +1441,12 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 						if ( Index >= Source.size () )
 							return false;
 						
-						LOG_VERBOSE ( "H" );
-						
 						bool NegativeExponent = false;
 						
 						Char = Source.at ( Index );
 						
 						if ( Char == U'+' )
 						{
-							
-							LOG_VERBOSE ( "I_0" );
 							
 							Index ++;
 							
@@ -1156,8 +1456,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 						}
 						else if ( Char == U'-' )
 						{
-							
-							LOG_VERBOSE ( "I_1" );
 							
 							Index ++;
 							
@@ -1174,8 +1472,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 						do
 						{
 							
-							LOG_VERBOSE ( "J" );
-							
 							Char = Source.at ( Index );
 							
 							uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( '0' );
@@ -1183,12 +1479,8 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 							if ( Diff >= 10 )
 							{
 								
-								LOG_VERBOSE ( "K" );
-								
 								if ( ExponentDigits == 0 )
 									return false;
-								
-								LOG_VERBOSE ( "L" );
 								
 								Value.Set ( Significand, NegativeExponent ? - ExponentValue : ExponentValue );
 								
@@ -1209,28 +1501,20 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 						if ( ExponentDigits != 0 )
 						{
 							
-							LOG_VERBOSE ( "M_0" );
-							
 							Value.Set ( Significand, NegativeExponent ? - ExponentValue : ExponentValue );
 							
 							return true;
 							
 						}
 						
-						LOG_VERBOSE ( "M_1" );
-						
 						return false;
 						
 					}
-					else
-					{
-						
-						Significand <<= 4;
-						Significand |= static_cast <int64_t> ( HexVal );
-						
-						HexDigitCount ++;
-						
-					}
+					
+					Significand <<= 4;
+					Significand |= static_cast <int64_t> ( HexVal );
+					
+					HexDigitCount ++;
 					
 					Index ++;
 					
@@ -1244,8 +1528,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 			case U'.':
 			{
 				
-				LOG_VERBOSE ( "E_1" );
-				
 				Index ++;
 				
 				if ( Index >= Source.size () )
@@ -1257,16 +1539,12 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 				do
 				{
 					
-					LOG_VERBOSE ( "F" );
-					
 					Char = Source.at ( Index );
 					
 					uint32_t Diff = static_cast <uint32_t> ( Char ) - static_cast <uint32_t> ( U'0' );
 					
 					if ( Diff >= 10 )
 					{
-						
-						LOG_VERBOSE ( "G" );
 						
 						if ( FractionalDigits == 0 )
 							return false;
@@ -1276,8 +1554,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 							
 							case 'e':
 							{
-								
-								LOG_VERBOSE ( "H_0" );
 								
 								Index ++;
 								
@@ -1371,8 +1647,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 							case 'f':
 							{
 								
-								LOG_VERBOSE ( "H_1" );
-								
 								Value.Set ( Significand, 0, - FractionalDigits );
 								
 								return true;
@@ -1385,15 +1659,8 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 						
 					}
 					
-					LOG_VERBOSE ( std :: string ( "___0, Significand: " ) + Significand.ToHexString () + ", Diff: " + std :: to_string ( Diff ) );
-					
 					Significand *= 10LL;
-					
-					LOG_VERBOSE ( std :: string ( "___1, Significand: " ) + Significand.ToHexString () + ", Diff: " + std :: to_string ( Diff ) );
-					
 					Significand += Diff;
-					
-					LOG_VERBOSE ( std :: string ( "___2, Significand: " ) + Significand.ToHexString () );
 					
 					FractionalDigits ++;
 					
@@ -1402,16 +1669,10 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 				}
 				while ( Index < Source.size () );
 				
-				LOG_VERBOSE ( "G_1" );
-				
 				if ( FractionalDigits == 0 )
 					return false;
 				
-				LOG_VERBOSE ( "H" );
-				
 				Value.Set ( Significand, 0, - FractionalDigits );
-				
-				LOG_VERBOSE ( "I" );
 				
 				return true;
 				
@@ -1430,15 +1691,11 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 			case U'_':
 			{
 				
-				LOG_VERBOSE ( "E_2" );
-				
 				BigInteger Significand ( 0LL );
 				int32_t FractionalDigits = 0;
 				
 				do
 				{
-					
-					LOG_VERBOSE ( "F" );
 					
 					Char = Source.at ( Index );
 					
@@ -1452,15 +1709,11 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 						if ( Diff >= 10 )
 						{
 							
-							LOG_VERBOSE ( "G" );
-							
 							switch ( Char )
 							{
 								
 								case U'e':
 								{
-									
-									LOG_VERBOSE ( "H_0" );
 									
 									Index ++;
 									
@@ -1554,8 +1807,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 								case U'f':
 								{
 									
-									LOG_VERBOSE ( "H_1" );
-									
 									Value.Set ( Significand );
 									
 									return true;
@@ -1564,8 +1815,6 @@ bool OakParseFloatLiteral ( const std :: u32string Source, BigFloat & Value )
 								
 								case U'.':
 								{
-									
-									LOG_VERBOSE ( "H_2" );
 									
 									Index ++;
 									

@@ -181,3 +181,10 @@ bool OilAllusion :: IsConstant () const
 	return false;
 	
 }
+
+IOilPrimary :: PrimaryType OilAllusion :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_Allusion;
+	
+}

@@ -68,6 +68,7 @@ public:
 	IntType GetType () const;
 	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

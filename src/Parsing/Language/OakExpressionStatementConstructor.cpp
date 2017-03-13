@@ -4,8 +4,6 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-#include <Logging/Logging.h>
-
 OakExpressionStatementConstructor OakExpressionStatementConstructor :: Instance;
 
 ASTConstructionGroup :: StaticInitEntry _OakExpressionStatementConstructor_RValueGroupGroup [] = { { & OakExpressionConstructor :: Instance, 0 } };
@@ -94,7 +92,6 @@ void OakExpressionStatementConstructor :: TryConstruct ( ASTConstructionInput & 
 	{
 		
 		delete StatementElement;
-		
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = "Expected semicolon at end of statement";

@@ -13,6 +13,8 @@
 
 #include <Parsing/Language/OakExpressionConstructor.h>
 
+#include <Parsing/Language/OakLiteralExpressionConstructor.h>
+
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
@@ -39,7 +41,15 @@ ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_ExpressionGr
 	
 };
 
+ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_UnsignedIntegerGroupEntries [] =
+{
+	
+	{ & OakLiteralExpressionConstructor :: Instance, 0 }
+	
+};
+
 OakArrayLiteralConstructor :: OakArrayLiteralConstructor ():
+	LiteralGroup ( _OakArrayLiteralConstructor_UnsignedIntegerGroupEntries, 1 ),
 	TypeGroup ( _OakArrayLiteralConstructor_TypeGroupEntries, 6 ),
 	ExpressionGroup ( _OakArrayLiteralConstructor_ExpressionGroupEntries, 1 )
 {
@@ -78,7 +88,6 @@ void OakArrayLiteralConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	
 	LiteralData -> ExplicitType = false;
 	LiteralData -> ExplicitCount = false;
-	LiteralData -> ElementCount = 0;
 	
 	ASTElement * LiteralElement = new ASTElement ();
 	
@@ -91,7 +100,7 @@ void OakArrayLiteralConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	if ( ExpressionGroup.TryConstruction ( LiteralElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
+	if ( LiteralGroup.TryConstruction ( LiteralElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
 		if ( Error )
@@ -238,8 +247,6 @@ void OakArrayLiteralConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	else
 	{
 		
-		LiteralData -> ElementCount ++;
-		
 		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_SquareBracket_Close )
@@ -320,8 +327,6 @@ void OakArrayLiteralConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 			return;
 			
 		}
-		
-		LiteralData -> ElementCount ++;
 		
 		if ( TokenCount == 0 )
 		{

@@ -28,6 +28,7 @@ public:
 	FloatType GetType ();
 	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

@@ -2,10 +2,11 @@
 #define OIL_OILEXPRESSION_H
 
 #include <OIL/IOilPrimary.h>
+#include <OIL/IOilStatement.h>
 
 class IOilOperator;
 
-class OilExpression : public virtual IOilPrimary
+class OilExpression : public virtual IOilPrimary, public virtual IOilStatement
 {
 public:
 	
@@ -24,6 +25,9 @@ public:
 	void DisownTerm ();
 	
 	bool IsConstant () const;
+	
+	StatementType GetStatementType () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

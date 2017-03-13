@@ -55,3 +55,10 @@ bool OilIntegerLiteral :: IsConstant () const
 	return true;
 	
 }
+
+IOilPrimary :: PrimaryType OilIntegerLiteral :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_IntegerLiteral;
+	
+}

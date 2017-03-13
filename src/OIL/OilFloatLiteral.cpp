@@ -38,3 +38,10 @@ bool OilFloatLiteral :: IsConstant () const
 	return true;
 	
 }
+
+IOilPrimary :: PrimaryType OilFloatLiteral :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_FloatLiteral;
+	
+}

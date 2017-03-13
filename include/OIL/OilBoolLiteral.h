@@ -11,7 +11,9 @@ public:
 	~OilBoolLiteral ();
 	
 	bool GetValue () const;
+	
 	bool IsConstant () const;
+	PrimaryType GetPrimaryType () const;
 	
 private:
 	

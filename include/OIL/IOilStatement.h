@@ -9,7 +9,8 @@ public:
 	{
 		
 		kStatementType_Body,
-		kStatementType_Binding
+		kStatementType_Binding,
+		kStatementType_Expression
 		
 	} StatementType;
 	

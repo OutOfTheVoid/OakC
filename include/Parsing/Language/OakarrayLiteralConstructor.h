@@ -14,6 +14,7 @@ public:
 	{
 		
 		bool ExplicitType;
+		
 		bool ExplicitCount;
 		uint32_t ElementCount;
 		
@@ -30,6 +31,7 @@ private:
 	
 	static void ElementDataDestructor ( void * Data );
 	
+	ASTConstructionGroup LiteralGroup;
 	ASTConstructionGroup TypeGroup;
 	ASTConstructionGroup ExpressionGroup;
 	

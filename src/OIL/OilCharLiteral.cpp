@@ -22,3 +22,10 @@ bool OilCharLiteral :: IsConstant () const
 	return true;
 	
 }
+
+IOilPrimary :: PrimaryType OilCharLiteral :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_CharLiteral;
+	
+}

@@ -14,3 +14,10 @@ bool OilNullPointerLiteral :: IsConstant () const
 	return true;
 	
 }
+
+IOilPrimary :: PrimaryType OilNullPointerLiteral :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_NullPointerLiteral;
+	
+}

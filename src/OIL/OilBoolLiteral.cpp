@@ -22,3 +22,10 @@ bool OilBoolLiteral :: IsConstant () const
 	return true;
 	
 }
+
+IOilPrimary :: PrimaryType OilBoolLiteral :: GetPrimaryType () const
+{
+	
+	return kPrimaryType_BoolLiteral;
+	
+}
