@@ -49,7 +49,6 @@ ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_UnsignedInte
 };
 
 OakArrayLiteralConstructor :: OakArrayLiteralConstructor ():
-	LiteralGroup ( _OakArrayLiteralConstructor_UnsignedIntegerGroupEntries, 1 ),
 	TypeGroup ( _OakArrayLiteralConstructor_TypeGroupEntries, 6 ),
 	ExpressionGroup ( _OakArrayLiteralConstructor_ExpressionGroupEntries, 1 )
 {
@@ -100,7 +99,7 @@ void OakArrayLiteralConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	if ( LiteralGroup.TryConstruction ( LiteralElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
+	if ( ExpressionGroup.TryConstruction ( LiteralElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
 		if ( Error )

@@ -13,12 +13,12 @@ class OilArrayLiteral : public virtual IOilPrimary
 public:
 	
 	OilArrayLiteral ();
-	OilArrayLiteral ( uint64_t SpecificCount );
-	OilArrayLiteral ( uint64_t SpecificCount, OilTypeRef * TypeSpecifier );
+	OilArrayLiteral ( IOilPrimary * CountExpression );
+	OilArrayLiteral ( IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier );
 	OilArrayLiteral ( OilTypeRef * TypeSpecifier );
 	OilArrayLiteral ( IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
-	OilArrayLiteral ( uint64_t SpecificCount, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
-	OilArrayLiteral ( uint64_t SpecificCount, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
+	OilArrayLiteral ( IOilPrimary * CountExpression, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
+	OilArrayLiteral ( IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
 	OilArrayLiteral ( OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
 	
 	~OilArrayLiteral ();
@@ -30,7 +30,8 @@ public:
 	const OilTypeRef * GetTypeSpecifier () const;
 	OilTypeRef * GetTypeSpecifier ();
 	
-	uint64_t GetSpecificCount () const;
+	const IOilPrimary * GetCountExpression () const;
+	IOilPrimary * GetCountExpression ();
 	
 	uint64_t GetMemberInitializerCount () const;
 	
@@ -42,8 +43,7 @@ public:
 	
 private:
 	
-	bool CountSpecified;
-	uint64_t SpecificCount;
+	IOilPrimary * CountExpression;
 	
 	OilTypeRef * TypeSpecifier;
 	

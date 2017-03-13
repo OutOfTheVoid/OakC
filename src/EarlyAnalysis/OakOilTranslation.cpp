@@ -1113,7 +1113,8 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 	const OakArrayLiteralConstructor :: ElementData * LiteralData = reinterpret_cast <const OakArrayLiteralConstructor :: ElementData *> ( ArrayElement -> GetData () );
 	
 	uint64_t ElementOffset = 0;
-	uint64_t ExplicitCountValue = 0;
+	
+	IOilPrimary * SizePrimary = NULL;
 	
 	if ( LiteralData -> ExplicitCount )
 	{
@@ -1121,46 +1122,19 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 		const ASTElement * SizeElement = ArrayElement -> GetSubElement ( ElementOffset );
 		ElementOffset ++;
 		
-		IOilPrimary * SizeLiteral = OakTranslateLiteralToOil ( SizeElement );
-		
-		if ( SizeLiteral == NULL )
-			return NULL;
-		
-		if ( SizeLiteral -> GetPrimaryType () != IOilPrimary :: kPrimaryType_IntegerLiteral )
+		if ( SizeElement == NULL )
 		{
 			
-			WriteError ( SizeElement, "Expected positive integer for explicit array size" );
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
 			
 			return NULL;
 			
 		}
 		
-		OilIntegerLiteral * IntSizeLiteral = dynamic_cast <OilIntegerLiteral *> ( SizeLiteral );
+		SizePrimary = OakTranslateExpressionToOil ( SizeElement );
 		
-		if ( IntSizeLiteral == NULL )
-		{
-			
-			delete SizeLiteral;
-			
-			LOG_FATALERROR ( "Invalid PrimaryType returned from literal element" );
-			
+		if ( SizePrimary == NULL )
 			return NULL;
-			
-		}
-		
-		if ( ( IntSizeLiteral -> GetType () & OilIntegerLiteral :: kIntType_Flag_ValidIfNegative ) && ( IntSizeLiteral -> GetSValue () < 0 ) )
-		{
-			
-			WriteError ( SizeElement, "expected positive value for explicit array size" );
-			
-			delete SizeLiteral;
-			
-			return NULL;
-			
-		}
-		
-		ExplicitCountValue = IntSizeLiteral -> GetUValue ();
-		delete IntSizeLiteral;
 		
 	}
 	
@@ -1169,8 +1143,19 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 	if ( LiteralData -> ExplicitType )
 	{
 		
-		TypeSpecifier = OakTranslateTypeRefToOil ( ArrayElement -> GetSubElement ( ElementOffset ) );
+		const ASTElement * TypeElement = ArrayElement -> GetSubElement ( ElementOffset );
 		ElementOffset ++;
+		
+		if ( TypeElement == NULL )
+		{
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		TypeSpecifier = OakTranslateTypeRefToOil ( TypeElement );
 		
 		if ( TypeSpecifier == NULL )
 			return NULL;
@@ -1196,21 +1181,9 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 		else
 		{
 			
-			if ( I != ElementOffset )
-			{
-				
-				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
-				
-				return NULL;
-				
-			}
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
 			
-			IOilPrimary * Literal = OakTranslateLiteralToOil ( InitializerElement );
-			
-			if ( Literal == NULL )
-				return NULL;
-			
-			Initializer = new OilExpression ( Literal );
+			return NULL;
 			
 		}
 		
@@ -1234,9 +1207,9 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 	{
 		
 		if ( InitializerValues.size () > 0 )
-			return new OilArrayLiteral ( ExplicitCountValue, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+			return new OilArrayLiteral ( SizePrimary, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
 		else
-			return new OilArrayLiteral ( ExplicitCountValue, TypeSpecifier );
+			return new OilArrayLiteral ( SizePrimary, TypeSpecifier );
 		
 	}
 	
