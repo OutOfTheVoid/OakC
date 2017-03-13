@@ -1,35 +1,35 @@
 #include <OIL/OilBinaryOperator.h>
-#include <OIL/OilExpression.h>
+#include <OIL/IOilOperator.h>
 #include <OIL/IOilPrimary.h>
 
 #ifndef NULL
 	#define NULL nullptr
 #endif
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, OilExpression * LeftTerm, OilExpression * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( false ),
 	RightIsPrimary ( false ),
-	LeftExpressionTerm ( LeftTerm ),
-	RightExpressionTerm ( RightTerm )
+	LeftOperatorTerm ( LeftTerm ),
+	RightOperatorTerm ( RightTerm )
 {
 }
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, OilExpression * LeftTerm, IOilPrimary * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilPrimary * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( false ),
 	RightIsPrimary ( true ),
-	LeftExpressionTerm ( LeftTerm ),
+	LeftOperatorTerm ( LeftTerm ),
 	RightPrimaryTerm ( RightTerm )
 {
 }
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, OilExpression * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( false ),
 	RightIsPrimary ( true ),
 	LeftPrimaryTerm ( LeftTerm ),
-	RightExpressionTerm ( RightTerm )
+	RightOperatorTerm ( RightTerm )
 {
 }
 
@@ -55,8 +55,8 @@ OilBinaryOperator :: ~OilBinaryOperator ()
 	else
 	{
 		
-		if ( LeftExpressionTerm != NULL )
-			delete LeftExpressionTerm;
+		if ( LeftOperatorTerm != NULL )
+			delete LeftOperatorTerm;
 		
 	}
 	
@@ -70,14 +70,14 @@ OilBinaryOperator :: ~OilBinaryOperator ()
 	else
 	{
 		
-		if ( RightExpressionTerm != NULL )
-			delete RightExpressionTerm;
+		if ( RightOperatorTerm != NULL )
+			delete RightOperatorTerm;
 		
 	}
 	
 }
 
-void OilBinaryOperator :: SetLeftTerm ( OilExpression * LeftTerm )
+void OilBinaryOperator :: SetLeftTerm ( IOilOperator * LeftTerm )
 {
 	
 	if ( LeftIsPrimary )
@@ -90,12 +90,12 @@ void OilBinaryOperator :: SetLeftTerm ( OilExpression * LeftTerm )
 	else
 	{
 		
-		if ( LeftExpressionTerm != NULL )
-			delete LeftExpressionTerm;
+		if ( LeftOperatorTerm != NULL )
+			delete LeftOperatorTerm;
 		
 	}
 	
-	LeftExpressionTerm = LeftTerm;
+	LeftOperatorTerm = LeftTerm;
 	LeftIsPrimary = false;
 	
 }
@@ -113,8 +113,8 @@ void OilBinaryOperator :: SetLeftTerm ( IOilPrimary * LeftTerm )
 	else
 	{
 		
-		if ( LeftExpressionTerm != NULL )
-			delete LeftExpressionTerm;
+		if ( LeftOperatorTerm != NULL )
+			delete LeftOperatorTerm;
 		
 	}
 	
@@ -123,7 +123,7 @@ void OilBinaryOperator :: SetLeftTerm ( IOilPrimary * LeftTerm )
 	
 }
 
-void OilBinaryOperator :: SetRightTerm ( OilExpression * RightTerm )
+void OilBinaryOperator :: SetRightTerm ( IOilOperator * RightTerm )
 {
 	
 	if ( RightIsPrimary )
@@ -136,12 +136,12 @@ void OilBinaryOperator :: SetRightTerm ( OilExpression * RightTerm )
 	else
 	{
 		
-		if ( RightExpressionTerm != NULL )
-			delete RightExpressionTerm;
+		if ( RightOperatorTerm != NULL )
+			delete RightOperatorTerm;
 		
 	}
 	
-	RightExpressionTerm = RightTerm;
+	RightOperatorTerm = RightTerm;
 	RightIsPrimary = false;
 	
 }
@@ -159,8 +159,8 @@ void OilBinaryOperator :: SetRightTerm ( IOilPrimary * RightTerm )
 	else
 	{
 		
-		if ( RightExpressionTerm != NULL )
-			delete RightExpressionTerm;
+		if ( RightOperatorTerm != NULL )
+			delete RightOperatorTerm;
 		
 	}
 	
@@ -169,10 +169,10 @@ void OilBinaryOperator :: SetRightTerm ( IOilPrimary * RightTerm )
 	
 }
 
-OilExpression * OilBinaryOperator :: GetLeftTermAsExpression () const
+IOilOperator * OilBinaryOperator :: GetLeftTermAsExpression () const
 {
 	
-	return LeftIsPrimary ? NULL : LeftExpressionTerm;
+	return LeftIsPrimary ? NULL : LeftOperatorTerm;
 	
 }
 
@@ -183,10 +183,10 @@ IOilPrimary * OilBinaryOperator :: GetLeftTermAsPrimary () const
 	
 }
 
-OilExpression * OilBinaryOperator :: GetRightTermAsExpression () const
+IOilOperator * OilBinaryOperator :: GetRightTermAsExpression () const
 {
 	
-	return RightIsPrimary ? NULL : RightExpressionTerm;
+	return RightIsPrimary ? NULL : RightOperatorTerm;
 	
 }
 
@@ -218,12 +218,12 @@ void OilBinaryOperator :: DisownTerms ()
 	if ( LeftIsPrimary )
 		LeftPrimaryTerm = NULL;
 	else
-		LeftExpressionTerm = NULL;
+		LeftOperatorTerm = NULL;
 	
 	if ( RightIsPrimary )
 		RightPrimaryTerm = NULL;
 	else
-		RightExpressionTerm = NULL;
+		RightOperatorTerm = NULL;
 	
 }
 
@@ -231,5 +231,19 @@ IOilOperator :: OperatorType OilBinaryOperator :: GetOperatorType () const
 {
 	
 	return kOperatorType_Binary;
+	
+}
+
+bool OilBinaryOperator :: IsLeftPrimary () const
+{
+	
+	return LeftIsPrimary;
+	
+}
+
+bool OilBinaryOperator :: IsRightPrimary () const
+{
+	
+	return RightIsPrimary;
 	
 }

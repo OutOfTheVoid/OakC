@@ -27,6 +27,7 @@
 #include <OIL/OilCharLiteral.h>
 #include <OIL/OilFloatLiteral.h>
 #include <OIL/OilUnaryOperator.h>
+#include <OIL/OilBinaryOperator.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -1859,6 +1860,45 @@ const std :: map <uint64_t, OilUnaryOperator :: Operator> _OakOilTranslation_Ope
 	
 };
 
+const std :: map <uint64_t, OilBinaryOperator :: Operator> _OakOilTranslation_OperatorTypeMap_Binary =
+{
+	
+	{ OakASTTags :: kASTTag_Operator_DirectMemberAccess, OilBinaryOperator :: kOperator_DirectMemberAccess },
+	{ OakASTTags :: kASTTag_Operator_IndirectMemberAccess, OilBinaryOperator :: kOperator_IndirectMemberAccess },
+	{ OakASTTags :: kASTTag_Operator_Multiply, OilBinaryOperator :: kOperator_Multiply },
+	{ OakASTTags :: kASTTag_Operator_Divide, OilBinaryOperator :: kOperator_Divide },
+	{ OakASTTags :: kASTTag_Operator_Modulo, OilBinaryOperator :: kOperator_Modulus },
+	{ OakASTTags :: kASTTag_Operator_Add, OilBinaryOperator :: kOperator_Addition },
+	{ OakASTTags :: kASTTag_Operator_Subtract, OilBinaryOperator :: kOperator_Subtraction },
+	{ OakASTTags :: kASTTag_Operator_LeftShift, OilBinaryOperator :: kOperator_ShiftLeft },
+	{ OakASTTags :: kASTTag_Operator_LogicalRightShift, OilBinaryOperator :: kOperator_LogicalShiftRight },
+	{ OakASTTags :: kASTTag_Operator_RightShift, OilBinaryOperator :: kOperator_ArithmeticShiftRight },
+	{ OakASTTags :: kASTTag_Operator_GreaterThan, OilBinaryOperator :: kOperator_GreaterThan },
+	{ OakASTTags :: kASTTag_Operator_LessThan, OilBinaryOperator :: kOperator_LessThan },
+	{ OakASTTags :: kASTTag_Operator_GreaterThanOrEqual, OilBinaryOperator :: kOperator_GreaterThanOrEqual },
+	{ OakASTTags :: kASTTag_Operator_LessThanOrEqual, OilBinaryOperator :: kOperator_LessThanOrEqual },
+	{ OakASTTags :: kASTTag_Operator_NotEqual, OilBinaryOperator :: kOperator_NotEqual },
+	{ OakASTTags :: kASTTag_Operator_Equal, OilBinaryOperator :: kOperator_Equal },
+	{ OakASTTags :: kASTTag_Operator_BitwiseAnd, OilBinaryOperator :: kOperator_BitwiseAnd },
+	{ OakASTTags :: kASTTag_Operator_BitwiseXor, OilBinaryOperator :: kOperator_BitwiseXor },
+	{ OakASTTags :: kASTTag_Operator_BitwiseOr, OilBinaryOperator :: kOperator_BitwiseOr },
+	{ OakASTTags :: kASTTag_Operator_LogicalAnd, OilBinaryOperator :: kOperator_LogicalAnd },
+	{ OakASTTags :: kASTTag_Operator_LogicalOr, OilBinaryOperator :: kOperator_LogicalOr },
+	{ OakASTTags :: kASTTag_Operator_Assignment, OilBinaryOperator :: kOperator_Assignment },
+	{ OakASTTags :: kASTTag_Operator_CompoundMultiply, OilBinaryOperator :: kOperator_CompoundMultiply },
+	{ OakASTTags :: kASTTag_Operator_CompoundDivide, OilBinaryOperator :: kOperator_CompoundDivide },
+	{ OakASTTags :: kASTTag_Operator_CompoundModulo, OilBinaryOperator :: kOperator_CompoundModulus },
+	{ OakASTTags :: kASTTag_Operator_CompoundAdd, OilBinaryOperator :: kOperator_CompoundAddition },
+	{ OakASTTags :: kASTTag_Operator_CompoundSubtract, OilBinaryOperator :: kOperator_CompoundSubtraction },
+	{ OakASTTags :: kASTTag_Operator_CompoundLeftShift, OilBinaryOperator :: kOperator_CompoundShiftLeft },
+	{ OakASTTags :: kASTTag_Operator_CompoundLogicalRightShift, OilBinaryOperator :: kOperator_CompoundLogicalShiftRight },
+	{ OakASTTags :: kASTTag_Operator_CompoundRightShift, OilBinaryOperator :: kOperator_CompoundArithmeticShiftRight },
+	{ OakASTTags :: kASTTag_Operator_CompoundBitwiseAnd, OilBinaryOperator :: kOperator_CompoundBitwiseAnd },
+	{ OakASTTags :: kASTTag_Operator_CompoundBitwiseOr, OilBinaryOperator :: kOperator_CompoundBitwiseOr },
+	{ OakASTTags :: kASTTag_Operator_CompoundBitwiseXor, OilBinaryOperator :: kOperator_CompoundBitwiseXor },
+	
+};
+
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 {
 	
@@ -1873,69 +1913,15 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 		
 	}
 	
-	switch ( Tag )
+	std :: map <uint64_t, OilUnaryOperator :: Operator> :: const_iterator UnaryIter = _OakOilTranslation_OperatorTypeMap_Unary.find ( Tag );
+	std :: map <uint64_t, OilBinaryOperator :: Operator> :: const_iterator BinaryIter = ( UnaryIter == _OakOilTranslation_OperatorTypeMap_Unary.end () ) ? _OakOilTranslation_OperatorTypeMap_Binary.find ( Tag ) : _OakOilTranslation_OperatorTypeMap_Binary.end ();
+	
+	if ( UnaryIter != _OakOilTranslation_OperatorTypeMap_Unary.end () )
 	{
 		
-		case OakASTTags :: kASTTag_Operator_PostfixIncrement:
-		case OakASTTags :: kASTTag_Operator_PostfixDecrement:
-		case OakASTTags :: kASTTag_Operator_PrefixIncrement:
-		case OakASTTags :: kASTTag_Operator_PrefixDecrement:
-		case OakASTTags :: kASTTag_Operator_BitwiseNot:
-		case OakASTTags :: kASTTag_Operator_LogicalNot:
-		case OakASTTags :: kASTTag_Operator_UnaryPositive:
-		case OakASTTags :: kASTTag_Operator_UnaryNegate:
-		case OakASTTags :: kASTTag_Operator_ReferenceAddressOf:
-		case OakASTTags :: kASTTag_Operator_PointerDeref:
-		case OakASTTags :: kASTTag_Operator_ArrayAccess:
-		case OakASTTags :: kASTTag_Operator_FunctionCall:
-		{
-			
-			const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
-			
-			if ( TermElement == NULL )
-			{
-				
-				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
-				
-				return NULL;
-				
-			}
-			
-			std :: map <uint64_t, OilUnaryOperator :: Operator> :: const_iterator Iter = _OakOilTranslation_OperatorTypeMap_Unary.find ( Tag );
-			
-			if ( Iter == _OakOilTranslation_OperatorTypeMap_Unary.end () )
-			{
-				
-				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
-				
-				return NULL;
-				
-			}
-			
-			if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
-			{
-				
-				IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
-				
-				if ( PrimaryTerm == NULL )
-					return NULL;
-				
-				return new OilUnaryOperator ( Iter -> second, PrimaryTerm );
-				
-			}
-			
-			IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
-			
-			if ( OperatorTerm == NULL )
-				return NULL;
-			
-			return new OilUnaryOperator ( Iter -> second, OperatorTerm );
-			
-		}
+		const ASTElement * TermElement = OperatorElement -> GetSubElement ( 0 );
 		
-		// TODO: Implement binary ops
-		
-		default:
+		if ( TermElement == NULL )
 		{
 			
 			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
@@ -1944,9 +1930,99 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			
 		}
 		
+		if ( TermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+		{
+			
+			IOilPrimary * PrimaryTerm = OakTranslatePrimaryExpressionToOil ( TermElement );
+			
+			if ( PrimaryTerm == NULL )
+				return NULL;
+			
+			
+			
+			return new OilUnaryOperator ( UnaryIter -> second, PrimaryTerm );
+			
+		}
+		
+		IOilOperator * OperatorTerm = OakTranslateOperatorToOil ( TermElement );
+		
+		if ( OperatorTerm == NULL )
+			return NULL;
+		
+		return new OilUnaryOperator ( UnaryIter -> second, OperatorTerm );
+		
+	}
+	else if ( BinaryIter != _OakOilTranslation_OperatorTypeMap_Binary.end () )
+	{
+		
+		const ASTElement * LeftTermElement = OperatorElement -> GetSubElement ( 0 );
+		const ASTElement * RightTermElement = OperatorElement -> GetSubElement ( 1 );
+		
+		if ( ( LeftTermElement == NULL ) || ( RightTermElement == NULL ) )
+		{
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+			
+			return NULL;
+			
+		}
+		
+		if ( LeftTermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+		{
+			
+			IOilPrimary * LeftPrimary = OakTranslatePrimaryExpressionToOil ( LeftTermElement );
+			
+			if ( LeftPrimary == NULL )
+				return NULL;
+			
+			if ( RightTermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+			{
+				
+				IOilPrimary * RightPrimary = OakTranslatePrimaryExpressionToOil ( RightTermElement );
+				
+				if ( RightPrimary == NULL )
+					return NULL;
+				
+				return new OilBinaryOperator ( BinaryIter -> second, LeftPrimary, RightPrimary );
+				
+			}
+			
+			IOilOperator * RightOperator = OakTranslateOperatorToOil ( RightTermElement );
+			
+			if ( RightOperator == NULL )
+				return NULL;
+			
+			return new OilBinaryOperator ( BinaryIter -> second, LeftPrimary, RightOperator );
+			
+		}
+		
+		IOilOperator * LeftOperator = OakTranslateOperatorToOil ( LeftTermElement );
+		
+		if ( LeftOperator == NULL )
+			return NULL;
+		
+		if ( RightTermElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
+		{
+			
+			IOilPrimary * RightPrimary = OakTranslatePrimaryExpressionToOil ( RightTermElement );
+			
+			if ( RightPrimary == NULL )
+				return NULL;
+			
+			return new OilBinaryOperator ( BinaryIter -> second, LeftOperator, RightPrimary );
+			
+		}
+		
+		IOilOperator * RightOperator = OakTranslateOperatorToOil ( RightTermElement );
+		
+		if ( RightOperator == NULL )
+			return NULL;
+		
+		return new OilBinaryOperator ( BinaryIter -> second, LeftOperator, RightOperator );
+		
 	}
 	
-	(void) OperatorElement;
+	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
 	
 	return NULL;
 	

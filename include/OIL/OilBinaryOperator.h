@@ -3,7 +3,6 @@
 
 #include <OIL/IOilOperator.h>
 
-class OilExpression;
 class IOilPrimary;
 
 class OilBinaryOperator : public virtual IOilOperator
@@ -49,21 +48,24 @@ public:
 		
 	} Operator;
 	
-	OilBinaryOperator ( Operator Op, OilExpression * LeftTerm, OilExpression * RightTerm );
-	OilBinaryOperator ( Operator Op, OilExpression * LeftTerm, IOilPrimary * RightTerm );
-	OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, OilExpression * RightTerm );
+	OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm );
+	OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilPrimary * RightTerm );
+	OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm );
 	OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm );
 	
 	~OilBinaryOperator ();
 	
-	OilExpression * GetLeftTermAsExpression () const;
+	IOilOperator * GetLeftTermAsExpression () const;
 	IOilPrimary * GetLeftTermAsPrimary () const;
-	OilExpression * GetRightTermAsExpression () const;
+	IOilOperator * GetRightTermAsExpression () const;
 	IOilPrimary * GetRightTermAsPrimary () const;
 	
-	void SetLeftTerm ( OilExpression * LeftTerm );
+	bool IsLeftPrimary () const;
+	bool IsRightPrimary () const;
+	
+	void SetLeftTerm ( IOilOperator * LeftTerm );
 	void SetLeftTerm ( IOilPrimary * LeftTerm );
-	void SetRightTerm ( OilExpression * RightTerm );
+	void SetRightTerm ( IOilOperator * RightTerm );
 	void SetRightTerm ( IOilPrimary * RightTerm );
 	
 	Operator GetOp () const;
@@ -83,7 +85,7 @@ private:
 	union
 	{
 		
-		OilExpression * LeftExpressionTerm;
+		IOilOperator * LeftOperatorTerm;
 		IOilPrimary * LeftPrimaryTerm;
 		
 	};
@@ -91,7 +93,7 @@ private:
 	union
 	{
 		
-		OilExpression * RightExpressionTerm;
+		IOilOperator * RightOperatorTerm;
 		IOilPrimary * RightPrimaryTerm;
 		
 	};
