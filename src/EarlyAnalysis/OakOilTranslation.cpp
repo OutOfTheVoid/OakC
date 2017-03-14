@@ -77,7 +77,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTElement * ParameterListElement );
 OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement );
-OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement * StatementElement );
+OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * StatementElement );
 OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement );
 
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
@@ -243,6 +243,20 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				DefinedNamespaceDefinition -> AddFunctionDefinition ( FunctionDefinition );
 				
 			}
+			break;
+			
+			case OakASTTags :: kASTTag_BindingStatement:
+			{
+				
+				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement );
+				
+				if ( BindingStatement == NULL )
+					return false;
+				
+				DefinedNamespaceDefinition -> AddBindingStatement ( BindingStatement );
+				
+			}
+			break;
 			
 		}
 		
@@ -971,12 +985,10 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 			}
 			break;
 			
-			// TODO: Implement
-			
-			/*case OakASTTags :: kASTTag_BindingStatement:
+			case OakASTTags :: kASTTag_BindingStatement:
 			{
 				
-				OilBindingStatement * Binding = OakTranslateLocalBindingStatementToOil ( StatementElement );
+				OilBindingStatement * Binding = OakTranslateBindingStatementToOil ( StatementElement );
 				
 				if ( Binding == NULL )
 				{
@@ -987,9 +999,22 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 					
 				}
 				
-				// Add local
+				if ( Binding -> IsPublic () )
+				{
+					
+					WriteError ( StatementElement, "Local bindings cannot have access modifiers" );
+					
+					delete Binding;
+					delete Body;
+					
+					return NULL;
+					
+				}
 				
-			}*/
+				Body -> AddLocalBinding ( Binding );
+				
+			}
+			break;
 			
 			default:
 				break;
@@ -1002,7 +1027,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 	
 }
 
-OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement * StatementElement )
+OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * StatementElement )
 {
 	
 	if ( ( StatementElement == NULL ) || ( StatementElement -> GetTag () != OakASTTags :: kASTTag_BindingStatement ) )
@@ -1016,15 +1041,6 @@ OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement 
 	
 	const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
 	
-	if ( BindingData -> Public )
-	{
-		
-		WriteError ( StatementElement, std :: string ( "Local binding \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( BindingData -> Name ) + "\" cannot be made public since it is a scoped local binding" );
-		
-		return NULL;
-		
-	}
-	
 	OilTypeRef * Type = OakTranslateTypeRefToOil ( StatementElement -> GetSubElement ( 0 ) );
 	
 	if ( Type == NULL )
@@ -1033,13 +1049,24 @@ OilBindingStatement * OakTranslateLocalBindingStatementToOil ( const ASTElement 
 	if ( BindingData -> Initialized )
 	{
 		
-		// TODO: Handle initilizer values in locals...
-		// ATTN: THIS JUST DROPS THEM
-		return new OilBindingStatement ( BindingData -> Name, BindingData -> Mutable, Type );
+		const ASTElement * IntiailizerElement = StatementElement -> GetSubElement ( 1 );
+		
+		OilExpression * InitializerExpression = OakTranslateExpressionToOil ( IntiailizerElement );
+		
+		if ( InitializerExpression == NULL )
+		{
+			
+			delete Type;
+			
+			return NULL;
+			
+		}
+		
+		return new OilBindingStatement ( BindingData -> Name, BindingData -> Public, BindingData -> Mutable, Type, InitializerExpression );
 		
 	}
 	else
-		return new OilBindingStatement ( BindingData -> Name, BindingData -> Mutable, Type );
+		return new OilBindingStatement ( BindingData -> Name, BindingData -> Public, BindingData -> Mutable, Type );
 	
 }
 

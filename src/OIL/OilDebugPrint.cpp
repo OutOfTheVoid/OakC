@@ -11,6 +11,7 @@
 #include <OIL/OilTemplateSpecification.h>
 #include <OIL/OilStatementBody.h>
 #include <OIL/IOilStatement.h>
+#include <OIL/OilBindingStatement.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -349,11 +350,34 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
 		
 		PrintString = "";
 		
-		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+		for ( uint32_t I = 0; I < Indent; I ++ )
 			PrintString += OIL_PRINT_INDENTSTRING;
 		
-		PrintString += "Ignored: ";
+		PrintString += "* Ignored: ";
 		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Body.GetIgnoredParamName ( I ) );
+		
+		LOG_VERBOSE ( PrintString );
+		
+	}
+	
+	for ( uint32_t I = 0; I < Body.GetLocalBindingCount (); I ++ )
+	{
+		
+		PrintString = "";
+		
+		for ( uint32_t I = 0; I < Indent; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		const OilBindingStatement * Binding = Body.GetLocalBinding ( I );
+		
+		PrintString += "* Local ";
+		
+		if ( Binding -> IsMutable () )
+			PrintString += "mut ";
+		
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
+		PrintString += ": ";
+		PrintString += OilStringTypeRef ( * Binding -> GetType () );
 		
 		LOG_VERBOSE ( PrintString );
 		

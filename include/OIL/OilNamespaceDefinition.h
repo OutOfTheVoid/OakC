@@ -1,11 +1,16 @@
 #ifndef OIL_OILNAMESPACEDEFINITION_H
 #define OIL_OILNAMESPACEDEFINITION_H
 
+#include <OIL/OilStatementBody.h>
+
+#include <stdint.h>
+
 #include <string>
 #include <map>
 
 class OilStructDefinition;
 class OilFunctionDefinition;
+class OilBindingStatement;
 
 class OilNamespaceDefinition
 {
@@ -42,6 +47,19 @@ public:
 	OilFunctionDefinition * FindFunctionDefinition ( const std :: u32string & ID );
 	const OilFunctionDefinition * FindFunctionDefinition ( const std :: u32string & ID ) const;
 	
+	void AddBindingStatement ( OilBindingStatement * BindingStatement );
+	
+	uint32_t GetBindingStatementCount () const;
+	
+	OilBindingStatement * GetBindingStatement ( uint32_t Index );
+	const OilBindingStatement * GetBindingStatement ( uint32_t Index ) const;
+	
+	OilBindingStatement * FindBindingStatement ( const std :: u32string & ID );
+	const OilBindingStatement * FindBindingStatement ( const std :: u32string & ID ) const;
+	
+	OilStatementBody & GetImplicitInitializationBody ();
+	const OilStatementBody & GetImplicitInitializationBody () const;
+	
 	const std :: u32string GetID () const;
 	
 private:
@@ -51,6 +69,9 @@ private:
 	std :: map <std :: u32string, OilNamespaceDefinition *> SubNamespaces;
 	std :: map <std :: u32string, OilStructDefinition *> StructDefs;
 	std :: map <std :: u32string, OilFunctionDefinition *> FuncDefs;
+	
+	std :: map <std :: u32string, OilBindingStatement *> Bindings;
+	OilStatementBody ImplicitIntiailizationBody;
 	
 };
 

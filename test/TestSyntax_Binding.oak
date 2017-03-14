@@ -8,7 +8,7 @@ namespace NS
 {
 	
 	bind A: u32 = 0;
-	bind public B: f64 = 0.0;
+	bind public B: f64 = 0.0 + 1.0f64;
 	bind mut C: bool = false;
 	bind public mut D: char = 'A';
 	
@@ -17,6 +17,13 @@ namespace NS
 		
 		bind A: u32 = 0;
 		bind mut B: bool = false;
+		
+		{
+			
+			bind C: i8 = 0i8;
+			bind D: some_ns::X;
+			
+		}
 		
 	}
 	

@@ -1,4 +1,6 @@
 #include <OIL/OilStatementBody.h>
+#include <OIL/OilBindingStatement.h>
+#include <OIL/OilImplicitLocalInitializationStatement.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -6,7 +8,12 @@
 
 OilStatementBody :: OilStatementBody ():
 	IgnoredParameters (),
-	Statements ()
+	Statements (),
+	Locals ()
+{
+}
+
+OilStatementBody :: ~OilStatementBody ()
 {
 	
 	for ( uint64_t I = 0; I < Statements.size (); I ++ )
@@ -17,10 +24,14 @@ OilStatementBody :: OilStatementBody ():
 		
 	}
 	
-}
-
-OilStatementBody :: ~OilStatementBody ()
-{
+	for ( uint64_t I = 0; I < Locals.size (); I ++ )
+	{
+		
+		if ( Locals [ I ].Binding != NULL )
+			delete Locals [ I ].Binding;
+		
+	}
+	
 }
 
 void OilStatementBody :: AddIgnoredParameter ( const std :: u32string & ParameterName )
@@ -90,6 +101,95 @@ uint64_t OilStatementBody :: GetStatementCount () const
 {
 	
 	return Statements.size ();
+	
+}
+
+uint64_t OilStatementBody :: GetLocalBindingCount () const
+{
+	
+	return Locals.size ();
+	
+}
+
+void OilStatementBody :: AddLocalBinding ( OilBindingStatement * LocalBinding )
+{
+	
+	LocalData Data;
+	
+	Data.Binding = LocalBinding;
+	
+	if ( LocalBinding -> HasInitializer () )
+	{
+		
+		Data.InitializationStatementIndex = Statements.size ();
+		Statements.push_back ( new OilImplicitLocalInitializationStatement ( Locals.size () ) );
+		
+		
+	}
+	else
+		Data.InitializationStatementIndex = 0;
+	
+	Locals.push_back ( Data );
+	
+}
+
+const OilBindingStatement * OilStatementBody :: GetLocalBinding ( uint64_t Index ) const
+{
+	
+	if ( Index >= Locals.size () )
+		return NULL;
+	
+	return Locals [ Index ].Binding;
+	
+}
+
+OilBindingStatement * OilStatementBody :: GetLocalBinding ( uint64_t Index )
+{
+	
+	if ( Index >= Locals.size () )
+		return NULL;
+	
+	return Locals [ Index ].Binding;
+	
+}
+
+const OilBindingStatement * OilStatementBody :: FindLocalBinding ( const std :: u32string & ID ) const
+{
+	
+	for ( uint64_t I = 0; I < Locals.size (); I ++ )
+	{
+		
+		if ( Locals [ I ].Binding -> GetName () == ID )
+			return Locals [ I ].Binding;
+		
+	}
+	
+	return NULL;
+	
+}
+
+OilBindingStatement * OilStatementBody :: FindLocalBinding ( const std :: u32string & ID )
+{
+	
+	for ( uint64_t I = 0; I < Locals.size (); I ++ )
+	{
+		
+		if ( Locals [ I ].Binding -> GetName () == ID )
+			return Locals [ I ].Binding;
+		
+	}
+	
+	return NULL;
+	
+}
+
+uint64_t OilStatementBody :: GetLocalInitializationStatementIndex ( uint64_t Index ) const
+{
+	
+	if ( Index >= Locals.size () )
+		return 0;
+	
+	return Locals [ Index ].InitializationStatementIndex;
 	
 }
 

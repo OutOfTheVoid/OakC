@@ -6,17 +6,19 @@
 	#define NULL nullptr
 #endif
 
-OilBindingStatement :: OilBindingStatement ( const std :: u32string & Name, bool Mutable, OilTypeRef * Type, OilExpression * InitializerValue ):
+OilBindingStatement :: OilBindingStatement ( const std :: u32string & Name, bool Public, bool Mutable, OilTypeRef * Type, OilExpression * InitializerValue ):
 	Name ( Name ),
 	Mutable ( Mutable ),
+	Public ( Public ),
 	Type ( Type ),
 	InitializerValue ( InitializerValue )
 {
 }
 
-OilBindingStatement :: OilBindingStatement ( const std :: u32string & Name, bool Mutable, OilTypeRef * Type ):
+OilBindingStatement :: OilBindingStatement ( const std :: u32string & Name, bool Public, bool Mutable, OilTypeRef * Type ):
 	Name ( Name ),
 	Mutable ( Mutable ),
+	Public ( Public ),
 	Type ( Type ),
 	InitializerValue ( NULL )
 {
@@ -82,5 +84,19 @@ bool OilBindingStatement :: IsMutable () const
 {
 	
 	return Mutable;
+	
+}
+
+bool OilBindingStatement :: IsPublic () const
+{
+	
+	return Public;
+	
+}
+
+IOilStatement :: StatementType OilBindingStatement :: GetStatementType () const
+{
+	
+	return kStatementType_Binding;
 	
 }

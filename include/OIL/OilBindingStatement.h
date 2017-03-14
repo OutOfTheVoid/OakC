@@ -8,12 +8,12 @@
 class OilTypeRef;
 class OilExpression;
 
-class OilBindingStatement
+class OilBindingStatement : public virtual IOilStatement
 {
 public:
 	
-	OilBindingStatement ( const std :: u32string & Name, bool Mutable, OilTypeRef * Type );
-	OilBindingStatement ( const std :: u32string & Name, bool Mutable, OilTypeRef * Type, OilExpression * InitializerValue );
+	OilBindingStatement ( const std :: u32string & Name, bool Public, bool Mutable, OilTypeRef * Type );
+	OilBindingStatement ( const std :: u32string & Name, bool Public, bool Mutable, OilTypeRef * Type, OilExpression * InitializerValue );
 	~OilBindingStatement ();
 	
 	const std :: u32string & GetName () const;
@@ -29,12 +29,16 @@ public:
 	void DropInitializer ();
 	
 	bool IsMutable () const;
+	bool IsPublic () const;
+	
+	StatementType GetStatementType () const;
 	
 private:
 	
 	const std :: u32string Name;
 	
 	bool Mutable;
+	bool Public;
 	
 	OilTypeRef * Type;
 	OilExpression * InitializerValue;

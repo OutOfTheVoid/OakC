@@ -28,7 +28,17 @@ public:
 	const IOilStatement * GetStatement ( uint64_t Index ) const;
 	IOilStatement * GetStatement ( uint64_t Index );
 	
-	uint64_t AddLocalBinding ( OilBindingStatement * LocalBinding );
+	void AddLocalBinding ( OilBindingStatement * LocalBinding );
+	
+	uint64_t GetLocalBindingCount () const;
+	
+	const OilBindingStatement * GetLocalBinding ( uint64_t Index ) const;
+	OilBindingStatement * GetLocalBinding ( uint64_t Index );
+	
+	const OilBindingStatement * FindLocalBinding ( const std :: u32string & ID ) const;
+	OilBindingStatement * FindLocalBinding ( const std :: u32string & ID );
+	
+	uint64_t GetLocalInitializationStatementIndex ( uint64_t Index ) const;
 	
 	StatementType GetStatementType () const;
 	
@@ -38,7 +48,7 @@ private:
 	{
 		
 		uint64_t InitializationStatementIndex;
-		OilBindingStatement * LocalBinding;
+		OilBindingStatement * Binding;
 		
 	} LocalData;
 	

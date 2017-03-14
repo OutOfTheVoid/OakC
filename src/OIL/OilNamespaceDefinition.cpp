@@ -1,6 +1,8 @@
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilFunctionDefinition.h>
+#include <OIL/OilBindingStatement.h>
+#include <OIL/OilImplicitBindingInitializationStatement.h>
 
 #include <map>
 #include <iterator>
@@ -9,7 +11,9 @@ OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID )
 	ID ( ID ),
 	SubNamespaces (),
 	StructDefs (),
-	FuncDefs ()
+	FuncDefs (),
+	Bindings (),
+	ImplicitIntiailizationBody ()
 {
 }
 
@@ -232,6 +236,89 @@ const OilFunctionDefinition * OilNamespaceDefinition :: FindFunctionDefinition (
 		return FindIterator -> second;
 	
 	return NULL;
+	
+}
+
+void OilNamespaceDefinition :: AddBindingStatement ( OilBindingStatement * BindingStatement )
+{
+	
+	Bindings [ BindingStatement -> GetName () ] = BindingStatement;
+	
+	if ( BindingStatement -> HasInitializer () )
+		ImplicitIntiailizationBody.AddStatement ( new OilImplicitBindingInitializationStatement ( BindingStatement -> GetName () ) );
+	
+}
+
+uint32_t OilNamespaceDefinition :: GetBindingStatementCount () const
+{
+	
+	return Bindings.size ();
+	
+}
+
+OilBindingStatement * OilNamespaceDefinition :: GetBindingStatement ( uint32_t Index )
+{
+	
+	std :: map <std :: u32string, OilBindingStatement *> :: iterator IndexIter = Bindings.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == Bindings.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+const OilBindingStatement * OilNamespaceDefinition :: GetBindingStatement ( uint32_t Index ) const
+{
+	
+	std :: map <std :: u32string, OilBindingStatement *> :: const_iterator IndexIter = Bindings.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == Bindings.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+OilBindingStatement * OilNamespaceDefinition :: FindBindingStatement ( const std :: u32string & ID )
+{
+	
+	std :: map <std :: u32string, OilBindingStatement *> :: iterator FindIterator = Bindings.find ( ID );
+	
+	if ( FindIterator != Bindings.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+const OilBindingStatement * OilNamespaceDefinition :: FindBindingStatement ( const std :: u32string & ID ) const
+{
+	
+	std :: map <std :: u32string, OilBindingStatement *> :: const_iterator FindIterator = Bindings.find ( ID );
+	
+	if ( FindIterator != Bindings.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+OilStatementBody & OilNamespaceDefinition :: GetImplicitInitializationBody ()
+{
+	
+	return ImplicitIntiailizationBody;
+	
+}
+
+const OilStatementBody & OilNamespaceDefinition :: GetImplicitInitializationBody () const
+{
+	
+	return ImplicitIntiailizationBody;
 	
 }
 
