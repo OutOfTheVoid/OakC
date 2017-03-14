@@ -154,6 +154,8 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames )
 		
 	}
 	
+	LOG_VERBOSE ( "\n[ ALL ]: compilation step: Early analysis." );
+	
 	OilNamespaceDefinition OilRoot ( U"[global]" );
 	
 	for ( uint32_t I = 0; I < Files.GetCount (); I ++ )
@@ -165,8 +167,6 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames )
 			return 1;
 		
 	}
-	
-	LOG_VERBOSE ( "\n" );
 	
 	OilPrint ( OilRoot );
 	

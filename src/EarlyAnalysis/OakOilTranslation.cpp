@@ -29,6 +29,8 @@
 #include <OIL/OilUnaryOperator.h>
 #include <OIL/OilBinaryOperator.h>
 #include <OIL/OilArrayLiteral.h>
+#include <OIL/OilTraitDefinition.h>
+#include <OIL/OilTraitFunction.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -53,6 +55,8 @@
 #include <Parsing/Language/OakBindingStatementConstructor.h>
 #include <Parsing/Language/OakBindingAllusionConstructor.h>
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
+#include <Parsing/Language/OakTraitDefinitionConstructor.h>
+#include <Parsing/Language/OakTraitFunctionConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -79,12 +83,13 @@ OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement );
 OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * StatementElement );
 OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement );
+IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement );
+OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement );
+OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionElement );
 
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
-
-IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement );
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS )
 {
@@ -151,6 +156,33 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				GlobalNS.AddFunctionDefinition ( FunctionDefinition );
 				
 			}
+			break;
+			
+			case OakASTTags :: kASTTag_BindingStatement:
+			{
+				
+				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement );
+				
+				if ( BindingStatement == NULL )
+					return false;
+				
+				GlobalNS.AddBindingStatement ( BindingStatement );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_TraitDefinition:
+			{
+				
+				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement );
+				
+				if ( TraitDefinition == NULL )
+					return false;
+				
+				GlobalNS.AddTraitDefinition ( TraitDefinition );
+				
+			}
+			break;
 			
 			default:
 			break;
@@ -254,6 +286,19 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 					return false;
 				
 				DefinedNamespaceDefinition -> AddBindingStatement ( BindingStatement );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_TraitDefinition:
+			{
+				
+				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement );
+				
+				if ( TraitDefinition == NULL )
+					return false;
+				
+				DefinedNamespaceDefinition -> AddTraitDefinition ( TraitDefinition );
 				
 			}
 			break;
@@ -2207,6 +2252,149 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
 	
 	return NULL;
+	
+}
+
+OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
+{
+	
+	if ( ( TraitElement == NULL ) || ( TraitElement -> GetTag () != OakASTTags :: kASTTag_TraitDefinition ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	const OakTraitDefinitionConstructor :: ElementData * TraitData = reinterpret_cast <const OakTraitDefinitionConstructor :: ElementData *> ( TraitElement -> GetData () );
+	
+	OilTemplateDefinition * TemplateDefinition = NULL;
+	
+	uint32_t ElementOffset = 0;
+	
+	if ( TraitData -> Templated )
+	{
+		
+		const ASTElement * TemplateDefinitionElement = TraitElement -> GetSubElement ( 0 );
+		
+		TemplateDefinition = OakTranslateTemplateDefinitionToOil ( TemplateDefinitionElement );
+		
+		if ( TemplateDefinition == NULL )
+			return NULL;
+		
+		ElementOffset = 1;
+		
+	}
+	
+	std :: vector <OilTraitFunction *> TraitFunctions;
+	
+	if ( ! TraitData -> Empty )
+	{
+		
+		const ASTElement * TraitFunctionElement = TraitElement -> GetSubElement ( ElementOffset );
+		
+		while ( TraitFunctionElement != NULL )
+		{
+			
+			ElementOffset ++;
+			
+			OilTraitFunction * Function = OakTranslateTraitFunctionToOil ( TraitFunctionElement );
+			
+			if ( Function == NULL )
+			{
+				
+				if ( TemplateDefinition != NULL )
+					delete TemplateDefinition;
+				
+				for ( uint32_t I = 0; I < TraitFunctions.size (); I ++ )
+					delete TraitFunctions [ I ];
+				
+				return NULL;
+				
+			}
+			
+			TraitFunctions.push_back ( Function );
+			
+			TraitFunctionElement = TraitElement -> GetSubElement ( ElementOffset );
+			
+		}
+		
+	}
+	
+	return new OilTraitDefinition ( TraitData -> Name, & TraitFunctions [ 0 ], TraitFunctions.size (), TemplateDefinition );
+	
+}
+
+OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionElement )
+{
+	
+	if ( ( FunctionElement == NULL ) || ( FunctionElement -> GetTag () != OakASTTags :: kASTTag_TraitFunction ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	const OakTraitFunctionConstructor :: ElementData * TraitFunctionData = reinterpret_cast <const OakTraitFunctionConstructor :: ElementData *> ( FunctionElement -> GetData () );
+	
+	OilTemplateDefinition * TemplateDefinition = NULL;
+	
+	uint32_t ElementOffset = 0;
+	
+	if ( TraitFunctionData -> Templated )
+	{
+		
+		const ASTElement * TemplateDefinitionElement = FunctionElement -> GetSubElement ( ElementOffset );
+		
+		TemplateDefinition = OakTranslateTemplateDefinitionToOil ( TemplateDefinitionElement );
+		
+		if ( TemplateDefinition == NULL )
+			return NULL;
+		
+		ElementOffset ++;
+		
+	}
+	
+	const ASTElement * ParameterListElement = FunctionElement -> GetSubElement ( ElementOffset );
+	
+	OilFunctionParameterList * ParameterList = OakTranslateFunctionParameterListToOil ( ParameterListElement );
+	
+	if ( ParameterList == NULL )
+	{
+		
+		delete TemplateDefinition;
+		
+		return NULL;
+		
+	}
+	
+	ElementOffset ++;
+	
+	OilTypeRef * ReturnType = NULL;
+	
+	if ( TraitFunctionData -> ReturnTyped )
+	{
+		
+		const ASTElement * ReturnTypeElement = FunctionElement -> GetSubElement ( ElementOffset );
+		
+		ReturnType = OakTranslateReturnTypeToOil ( ReturnTypeElement );
+		
+		if ( ReturnType == NULL )
+		{
+			
+			delete TemplateDefinition;
+			delete ParameterList;
+			
+			return NULL;
+			
+		}
+		
+	}
+	
+	return new OilTraitFunction ( TraitFunctionData -> Name, ParameterList, ReturnType, TemplateDefinition );
 	
 }
 

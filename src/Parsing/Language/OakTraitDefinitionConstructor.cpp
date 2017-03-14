@@ -10,6 +10,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+#include <Logging/Logging.h>
+
 OakTraitDefinitionConstructor OakTraitDefinitionConstructor :: Instance;
 
 ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
@@ -213,6 +215,8 @@ void OakTraitDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Close )
 	{
+		
+		LOG_VERBOSE ( std :: string ( "NOT CURLY: " ) + OakTokenTags :: TagNames [ CurrentToken -> GetTag () ] );
 		
 		delete TraitElement;
 		

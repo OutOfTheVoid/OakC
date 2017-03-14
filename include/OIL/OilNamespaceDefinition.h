@@ -11,6 +11,7 @@
 class OilStructDefinition;
 class OilFunctionDefinition;
 class OilBindingStatement;
+class OilTraitDefinition;
 
 class OilNamespaceDefinition
 {
@@ -60,6 +61,16 @@ public:
 	OilStatementBody & GetImplicitInitializationBody ();
 	const OilStatementBody & GetImplicitInitializationBody () const;
 	
+	uint32_t GetTraitDefinitionCount () const;
+	
+	void AddTraitDefinition ( OilTraitDefinition * TraitDef );
+	
+	OilTraitDefinition * GetTraitDefinition ( uint32_t Index );
+	const OilTraitDefinition * GetTraitDefinition ( uint32_t Index ) const;
+	
+	OilTraitDefinition * FindTraitDefinition ( const std :: u32string & ID );
+	const OilTraitDefinition * FindTraitDefinition ( const std :: u32string & ID ) const;
+	
 	const std :: u32string GetID () const;
 	
 private:
@@ -69,6 +80,7 @@ private:
 	std :: map <std :: u32string, OilNamespaceDefinition *> SubNamespaces;
 	std :: map <std :: u32string, OilStructDefinition *> StructDefs;
 	std :: map <std :: u32string, OilFunctionDefinition *> FuncDefs;
+	std :: map <std :: u32string, OilTraitDefinition *> TraitDefs;
 	
 	std :: map <std :: u32string, OilBindingStatement *> Bindings;
 	OilStatementBody ImplicitIntiailizationBody;

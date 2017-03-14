@@ -1,25 +1,32 @@
-trait SomeEmptyTrait;
-
-trait SomeTrait
-{
-}
+trait SomeTrait;
 
 trait SomeTemplatedTrait <A>
 {
 	
 	function RequiredFunction <B> ( P: i32 ) : void,
-	function OtherRequiredFunction <C> ( P: f32 ) : SomeOtherTrait<A>,
-	function FinalRequiredFunction (),
+	function OtherRequiredFunction <C> ( P: f32 ) : SomeOtherTrait:<A>,
+	function FinalRequiredFunction ()
 	
 }
 
 namespace SomeNS
 {
 	
-	trait MyTrait (  )
+	trait MyTrait
 	{
 		
 		
+		
+	}
+	
+	trait SomeTrait;
+	
+	trait SomeTemplatedTrait <A>
+	{
+		
+		function RequiredFunction <B> ( P: i32 ) : void,
+		function OtherRequiredFunction <C> ( P: f32 ) : SomeOtherTrait:<A>,
+		function FinalRequiredFunction ()
 		
 	}
 	

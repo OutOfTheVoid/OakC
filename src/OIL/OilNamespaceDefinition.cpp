@@ -3,6 +3,7 @@
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilImplicitBindingInitializationStatement.h>
+#include <OIL/OilTraitDefinition.h>
 
 #include <map>
 #include <iterator>
@@ -12,6 +13,7 @@ OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID )
 	SubNamespaces (),
 	StructDefs (),
 	FuncDefs (),
+	TraitDefs (),
 	Bindings (),
 	ImplicitIntiailizationBody ()
 {
@@ -302,6 +304,72 @@ const OilBindingStatement * OilNamespaceDefinition :: FindBindingStatement ( con
 	std :: map <std :: u32string, OilBindingStatement *> :: const_iterator FindIterator = Bindings.find ( ID );
 	
 	if ( FindIterator != Bindings.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+uint32_t OilNamespaceDefinition :: GetTraitDefinitionCount () const
+{
+	
+	return TraitDefs.size ();
+	
+}
+
+void OilNamespaceDefinition :: AddTraitDefinition ( OilTraitDefinition * TraitDef )
+{
+	
+	TraitDefs [ TraitDef -> GetName () ] = TraitDef;
+	
+}
+
+OilTraitDefinition * OilNamespaceDefinition :: GetTraitDefinition ( uint32_t Index )
+{
+	
+	std :: map <std :: u32string, OilTraitDefinition *> :: iterator IndexIter = TraitDefs.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == TraitDefs.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+const OilTraitDefinition * OilNamespaceDefinition :: GetTraitDefinition ( uint32_t Index ) const
+{
+	
+	std :: map <std :: u32string, OilTraitDefinition *> :: const_iterator IndexIter = TraitDefs.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == TraitDefs.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+OilTraitDefinition * OilNamespaceDefinition :: FindTraitDefinition ( const std :: u32string & ID )
+{
+	
+	std :: map <std :: u32string, OilTraitDefinition *> :: iterator FindIterator = TraitDefs.find ( ID );
+	
+	if ( FindIterator != TraitDefs.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+const OilTraitDefinition * OilNamespaceDefinition :: FindTraitDefinition ( const std :: u32string & ID ) const
+{
+	
+	std :: map <std :: u32string, OilTraitDefinition *> :: const_iterator FindIterator = TraitDefs.find ( ID );
+	
+	if ( FindIterator != TraitDefs.end () )
 		return FindIterator -> second;
 	
 	return NULL;

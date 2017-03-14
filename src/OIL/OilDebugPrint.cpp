@@ -12,6 +12,7 @@
 #include <OIL/OilStatementBody.h>
 #include <OIL/IOilStatement.h>
 #include <OIL/OilBindingStatement.h>
+#include <OIL/OilTraitDefinition.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -27,6 +28,8 @@ std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & 
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
 std :: string OilStringTypeRef ( const OilTypeRef & Ref );
 void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent );
+void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
+void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -40,14 +43,25 @@ void OilPrint ( const OilNamespaceDefinition & RootNS )
 void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent )
 {
 	
-	uint64_t TempCount = Namespace.GetSubNamespaceDefinitionCount ();
+	uint64_t TempCount = Namespace.GetBindingStatementCount ();
 	
 	for ( uint64_t I = 0; I < TempCount; I ++ )
 	{
 		
-		const OilNamespaceDefinition * Definition = Namespace.GetNamespaceDefinition ( I );
+		const OilBindingStatement * Binding = Namespace.GetBindingStatement ( I );
 		
-		OilPrintNamespace ( * Definition, Indent );
+		OilPrintBindingStatement ( * Binding, Indent );
+		
+	}
+	
+	TempCount = Namespace.GetTraitDefinitionCount ();
+	
+	for ( uint64_t I = 0; I < TempCount; I ++ )
+	{
+		
+		const OilTraitDefinition * Definition = Namespace.GetTraitDefinition ( I );
+		
+		OilPrintTrait ( * Definition, Indent );
 		
 	}
 	
@@ -73,6 +87,17 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 	}
 	
+	TempCount = Namespace.GetSubNamespaceDefinitionCount ();
+	
+	for ( uint64_t I = 0; I < TempCount; I ++ )
+	{
+		
+		const OilNamespaceDefinition * Definition = Namespace.GetNamespaceDefinition ( I );
+		
+		OilPrintNamespace ( * Definition, Indent );
+		
+	}
+	
 }
 
 void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent )
@@ -95,6 +120,48 @@ void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Inde
 	LOG_VERBOSE ( PrintString );
 	
 	OilPrintNamespaceMembers ( Namespace, Indent + 1 );
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
+	
+}
+
+void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[TRAIT \"";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Trait.GetName () );
+	PrintString += "\"";
+	
+	if ( Trait.IsTemplated () )
+	{
+		
+		PrintString += " template: ";
+		PrintString += OilStringTemplateDefinition ( * Trait.GetTemplateDefinition () );
+		
+	}
+	
+	PrintString += "]\n";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	//OilPrintNamespaceMembers ( Namespace, Indent + 1 );
 	
 	PrintString = "";
 	
@@ -146,9 +213,11 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 		for ( uint32_t I = 0; I < Indent + 1; I ++ )
 			PrintString += OIL_PRINT_INDENTSTRING;
 		
-		PrintString += "[BINDING \"";
+		PrintString += "[BINDING ";
 		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
-		PrintString += "\"]";
+		PrintString += ": ";
+		PrintString += OilStringTypeRef ( * Binding -> GetTypeRef () );
+		PrintString += "]";
 		
 		LOG_VERBOSE ( PrintString );
 		
@@ -337,6 +406,32 @@ std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & 
 	OutString += ">";
 	
 	return OutString;
+	
+}
+
+void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[BINDING ";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding.GetName () );
+	
+	PrintString += ": ";
+	PrintString += OilStringTypeRef ( * Binding.GetType () );
+	
+	if ( Binding.IsMutable () )
+		PrintString += " ( mut )";
+	
+	if ( Binding.IsPublic () )
+		PrintString += Binding.IsMutable () ? "( public )" : " ( public )";
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
 	
 }
 
