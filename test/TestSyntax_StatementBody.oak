@@ -59,4 +59,7 @@ function TestSyntax ()
 	[ :u32; 0, 1, 2, 3 ];
 	[ 200 :i32; 0 ];
 	
+	return 2;
+	return;
+	
 }

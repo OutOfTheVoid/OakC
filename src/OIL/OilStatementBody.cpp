@@ -1,6 +1,6 @@
 #include <OIL/OilStatementBody.h>
 #include <OIL/OilBindingStatement.h>
-#include <OIL/OilImplicitLocalInitializationStatement.h>
+#include <OIL/OilImplicitLocalInitialization.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -122,7 +122,7 @@ void OilStatementBody :: AddLocalBinding ( OilBindingStatement * LocalBinding )
 	{
 		
 		Data.InitializationStatementIndex = Statements.size ();
-		Statements.push_back ( new OilImplicitLocalInitializationStatement ( Locals.size () ) );
+		Statements.push_back ( new OilImplicitLocalInitialization ( Locals.size () ) );
 		
 		
 	}

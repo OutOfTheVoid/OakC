@@ -57,13 +57,12 @@ void OakReturnStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	if ( ExpressionGroup.TryConstruction ( ReturnElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		delete ReturnElement;
-		
-		Output.Accepted = false;
-		
 		if ( ConstructionError )
 		{
 			
+			delete ReturnElement;
+			
+			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = ErrorString;
 			Output.ErrorProvokingToken = ErrorToken;
@@ -71,8 +70,6 @@ void OakReturnStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 			return;
 			
 		}
-		
-		return;
 		
 	}
 	

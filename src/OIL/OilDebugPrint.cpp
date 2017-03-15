@@ -24,6 +24,9 @@
 #include <OIL/OilStringLiteral.h>
 #include <OIL/OilCharLiteral.h>
 #include <OIL/OilArrayLiteral.h>
+#include <OIL/OilReturn.h>
+#include <OIL/OilImplicitLocalInitialization.h>
+#include <OIL/OilImplicitBindingInitialization.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -38,7 +41,7 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template );
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
 std :: string OilStringTypeRef ( const OilTypeRef & Ref );
-void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent );
+void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilNamespaceDefinition * InitializedBindingContainer = NULL );
 void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
 void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent );
 std :: string OilStringExpression ( const OilExpression & Expression );
@@ -77,7 +80,7 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 	
 	LOG_VERBOSE ( PrintString );
 	
-	OilPrintStatementBody ( Namespace.GetImplicitInitializationBody (), Indent );
+	OilPrintStatementBody ( Namespace.GetImplicitInitializationBody (), Indent, & Namespace );
 	
 	TempCount = Namespace.GetTraitDefinitionCount ();
 	
@@ -460,7 +463,7 @@ void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t In
 	
 }
 
-void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
+void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilNamespaceDefinition * InitializedBindingContainer )
 {
 	
 	std :: string PrintString;
@@ -541,18 +544,58 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
 			}
 			break;
 			
-			/*case IOilStatement :: kStatementType_Return
+			case IOilStatement :: kStatementType_Return:
 			{
 				
+				const OilReturn * Return = dynamic_cast <const OilReturn *> ( Statement );
 				
+				const OilExpression * ReturnedExpression = Return -> GetReturnedExpression ();
+				
+				for ( uint32_t I = 0; I < Indent + 1; I ++ )
+					PrintString += OIL_PRINT_INDENTSTRING;
+				
+				if ( ReturnedExpression == NULL )
+				{
+					
+					PrintString += "[RETURN]";
+					LOG_VERBOSE ( PrintString );
+					
+					PrintString = "";
+					
+					break;
+					
+				}
+				
+				PrintString += "[RETURN ";
+				PrintString += OilStringExpression ( * ReturnedExpression );
+				PrintString += "]";
+				
+				LOG_VERBOSE ( PrintString );
+				
+				PrintString = "";
 				
 			}
-			break;*/
+			break;
 				
 			case IOilStatement :: kStatementType_ImplicitLocalInitialization:
 			{
 				
+				const OilImplicitLocalInitialization * Initialization = dynamic_cast <const OilImplicitLocalInitialization *> ( Statement );
 				
+				const OilBindingStatement * Local = Body.GetLocalBinding ( Initialization -> GetLocalIndex () );
+				
+				for ( uint32_t I = 0; I < Indent + 1; I ++ )
+					PrintString += OIL_PRINT_INDENTSTRING;
+				
+				PrintString += "[LOCAL_INIT ";
+				PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Local -> GetName () );
+				PrintString += " = ";
+				PrintString += OilStringExpression ( * Local -> GetInitializerValue () );
+				PrintString += "]";
+				
+				LOG_VERBOSE ( PrintString );
+				
+				PrintString = "";
 				
 			}
 			break;
@@ -560,7 +603,30 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
 			case IOilStatement :: kStatementType_ImplicitBindingInitialization:
 			{
 				
+				const OilImplicitBindingInitialization * Initialization = dynamic_cast <const OilImplicitBindingInitialization *> ( Statement );
 				
+				const OilBindingStatement * Binding = ( InitializedBindingContainer != NULL ) ? ( InitializedBindingContainer -> FindBindingStatement ( Initialization -> GetBindingID () ) ) : NULL;
+				
+				for ( uint32_t I = 0; I < Indent + 1; I ++ )
+					PrintString += OIL_PRINT_INDENTSTRING;
+				
+				PrintString += "[BINDING_INIT ";
+				
+				if ( Binding != NULL )
+				{
+					
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
+					PrintString += " = ";
+					PrintString += OilStringExpression ( * Binding -> GetInitializerValue () );
+					PrintString += "]";
+					
+				}
+				else
+					PrintString += "(unresolvable)]";
+				
+				LOG_VERBOSE ( PrintString );
+				
+				PrintString = "";
 				
 			}
 			break;

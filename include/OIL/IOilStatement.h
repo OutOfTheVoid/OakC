@@ -11,6 +11,7 @@ public:
 		kStatementType_Body,
 		kStatementType_Binding,
 		kStatementType_Expression,
+		kStatementType_Return,
 		kStatementType_ImplicitLocalInitialization,
 		kStatementType_ImplicitBindingInitialization
 		

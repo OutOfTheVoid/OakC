@@ -31,6 +31,7 @@
 #include <OIL/OilArrayLiteral.h>
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilTraitFunction.h>
+#include <OIL/OilReturn.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -1026,6 +1027,34 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				}
 				
 				Body -> AddStatement ( Expression );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_ReturnStatement:
+			{
+				
+				const ASTElement * ReturnedExpressionElement = StatementElement -> GetSubElement ( 0 );
+				
+				if ( ReturnedExpressionElement != NULL )
+				{
+					
+					OilExpression * ReturnedExpression = OakTranslateExpressionToOil ( ReturnedExpressionElement );
+					
+					if ( ReturnedExpression == NULL )
+					{
+						
+						delete Body;
+						
+						return NULL;
+						
+					}
+					
+					Body -> AddStatement ( new OilReturn ( ReturnedExpression ) );
+					
+				}
+				else
+					Body -> AddStatement ( new OilReturn () );
 				
 			}
 			break;

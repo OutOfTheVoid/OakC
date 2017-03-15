@@ -2,7 +2,7 @@
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilBindingStatement.h>
-#include <OIL/OilImplicitBindingInitializationStatement.h>
+#include <OIL/OilImplicitBindingInitialization.h>
 #include <OIL/OilTraitDefinition.h>
 
 #include <map>
@@ -247,7 +247,7 @@ void OilNamespaceDefinition :: AddBindingStatement ( OilBindingStatement * Bindi
 	Bindings [ BindingStatement -> GetName () ] = BindingStatement;
 	
 	if ( BindingStatement -> HasInitializer () )
-		ImplicitIntiailizationBody.AddStatement ( new OilImplicitBindingInitializationStatement ( BindingStatement -> GetName () ) );
+		ImplicitIntiailizationBody.AddStatement ( new OilImplicitBindingInitialization ( BindingStatement -> GetName () ) );
 	
 }
 
