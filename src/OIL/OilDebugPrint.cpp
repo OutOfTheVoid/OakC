@@ -13,6 +13,7 @@
 #include <OIL/IOilStatement.h>
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilTraitDefinition.h>
+#include <OIL/OilTraitFunction.h>
 #include <OIL/OilExpression.h>
 #include <OIL/IOilOperator.h>
 #include <OIL/OilBinaryOperator.h>
@@ -44,6 +45,7 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref );
 void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilNamespaceDefinition * InitializedBindingContainer = NULL );
 void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
 void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent );
+std :: string OilStringTraitFunction ( const OilTraitFunction & Function );
 std :: string OilStringExpression ( const OilExpression & Expression );
 std :: string OilStringPrimary ( const IOilPrimary & Primary );
 std :: string OilStringOperator ( const IOilOperator & Operator );
@@ -189,9 +191,20 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 	
 	LOG_VERBOSE ( PrintString );
 	
-	//OilPrintNamespaceMembers ( Namespace, Indent + 1 );
-	
 	PrintString = "";
+	
+	for ( uint32_t J = 0; J < Trait.GetFunctionCount (); J ++ )
+	{
+		
+		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += OilStringTraitFunction ( * Trait.GetTraitFunction ( J ) );
+		LOG_VERBOSE ( PrintString );
+		
+		PrintString = "";
+		
+	}
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
@@ -199,6 +212,56 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 	PrintString += "}";
 	
 	LOG_VERBOSE ( PrintString );
+	
+}
+
+std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
+{
+	
+	std :: string PrintString = "[FUNCTION ";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Function.GetName () );
+	
+	if ( Function.IsTemplated () )
+		PrintString += std :: string ( " Template: " ) + OilStringTemplateDefinition ( * Function.GetTemplateDefinition () );
+	
+	const OilFunctionParameterList * ParamList = Function.GetParameterList ();
+	
+	if ( ParamList -> GetParameterCount () != 0 )
+	{
+		
+		PrintString += " Parameters: (";
+		
+		for ( uint32_t I = 0; I < ParamList -> GetParameterCount (); I ++ )
+		{
+			
+			const OilFunctionParameter * Parameter = ParamList -> GetFunctionParameter ( I );
+			
+			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Parameter -> GetName () );
+			
+			PrintString += ": ";
+			
+			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			
+			if ( I != ParamList -> GetParameterCount () - 1 )
+				PrintString += ", ";
+			
+		}
+		
+		PrintString += ")";
+		
+	}
+	
+	if ( Function.HasReturnType () )
+	{
+		
+		PrintString += " Return: ";
+		PrintString += OilStringTypeRef ( * Function.GetReturnType () );
+		
+	}
+	
+	PrintString += "]";
+	
+	return PrintString;
 	
 }
 
