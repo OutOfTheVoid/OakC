@@ -23,6 +23,7 @@
 #include <OIL/OilFloatLiteral.h>
 #include <OIL/OilStringLiteral.h>
 #include <OIL/OilCharLiteral.h>
+#include <OIL/OilArrayLiteral.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -767,6 +768,58 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 		
 		case IOilPrimary :: kPrimaryType_NullPointerLiteral:
 			return "[NULL_POINTER]";
+			
+		case IOilPrimary :: kPrimaryType_ArrayLiteral:
+		{
+			
+			const OilArrayLiteral & Literal = dynamic_cast <const OilArrayLiteral &> ( Primary );
+			
+			std :: string PrintString = "[ARRAY";
+			
+			if ( Literal.HasTypeSpecifier () )
+			{
+				
+				PrintString += "<";
+				PrintString += OilStringTypeRef ( * Literal.GetTypeSpecifier () );
+				PrintString += ">";
+				
+			}
+			
+			if ( Literal.HasSpecificCount () )
+			{
+				
+				PrintString += " (count = ";
+				PrintString += OilStringPrimary ( * Literal.GetCountExpression () );
+				PrintString += ")";
+				
+			}
+			
+			if ( Literal.HasMemberInitiailizers () )
+			{
+				
+				uint32_t MemberInitializerCount = Literal.GetMemberInitializerCount ();
+				
+				PrintString += " Initializers: {";
+				
+				for ( uint32_t I = 0; I < MemberInitializerCount - 1; I ++ )
+				{
+					
+					PrintString += OilStringPrimary ( * Literal.GetMemberInitializer ( I ) );
+					PrintString += ", ";
+					
+				}
+				
+				PrintString += OilStringPrimary ( * Literal.GetMemberInitializer ( MemberInitializerCount - 1 ) );
+				
+				PrintString += "}";
+				
+			}
+			
+			PrintString += "]";
+			
+			return PrintString;
+			
+		}
 		
 		case IOilPrimary :: kPrimaryType_IntegerLiteral:
 		{

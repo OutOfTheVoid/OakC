@@ -51,4 +51,12 @@ function TestSyntax ()
 	
 	null;
 	
+	[]; // Empty array literal
+	[ 0 ];
+	[ 2; ];
+	[ 2:i64; ];
+	[ :f32; ];
+	[ :u32; 0, 1, 2, 3 ];
+	[ 200 :i32; 0 ];
+	
 }
