@@ -77,7 +77,7 @@ OilAllusion :: OilAllusion ( const std :: u32string & Name, OilTemplateSpecifica
 	Name ( Name ),
 	DirectTemplateSpecification ( TemplateSpecification ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( kAllusionTarget_Contextual_Templated )
+	Target ( kAllusionTarget_Indeterminate_Templated )
 {
 }
 

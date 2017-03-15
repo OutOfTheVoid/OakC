@@ -19,6 +19,10 @@
 #include <OIL/OilUnaryOperator.h>
 #include <OIL/OilBoolLiteral.h>
 #include <OIL/OilAllusion.h>
+#include <OIL/OilIntegerLiteral.h>
+#include <OIL/OilFloatLiteral.h>
+#include <OIL/OilStringLiteral.h>
+#include <OIL/OilCharLiteral.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -409,7 +413,7 @@ std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & 
 	
 	std :: string OutString;
 	
-	OutString += ":<";
+	OutString += "<";
 	
 	uint32_t ParamCount = Template.GetTypeRefCount ();
 	
@@ -609,10 +613,75 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 			{
 				
 				case OilAllusion :: kAllusionTarget_Indeterminate:
-					return std :: string ( "[ALLUSION Name: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "]";
 					
+				case OilAllusion :: kAllusionTarget_Indeterminate_Templated:
+					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification () ) + "]";
+					
+				case OilAllusion :: kAllusionTarget_Parameter:
+					return std :: string ( "[ALLUSION Parameter: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				case OilAllusion :: kAllusionTarget_Self:
+					return "[ALLUSION self]";
+					
+				case OilAllusion :: kAllusionTarget_Namespaced:
+				{
+					
+					std :: string PrintString = "[ALLUSION ?::";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					PrintString += std :: string ( " " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "]";
+					
+					return PrintString;
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_Namespaced_Absolue:
+				{
+					
+					std :: string PrintString = "[ALLUSION ";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					PrintString += std :: string ( " " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "]";
+					
+					return PrintString;
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_Namespaced_Templated:
+				{
+					
+					std :: string PrintString = "[ALLUSION ?::";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification () ) + "::" ) : "::" );
+					
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( ( Allusion.GetDirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification () ) + "]" ) : "]" );
+					
+					return PrintString;
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_Namespaced_Absolue_Templated:
+				{
+					
+					std :: string PrintString = "[ALLUSION ";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification () ) + "::" ) : "::" );
+					
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( ( Allusion.GetDirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification () ) + "]" ) : "]" );
+					
+					return PrintString;
+					
+				}
+				
 				default:
-				break;
+					break;
 				
 			}
 			
@@ -626,6 +695,219 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 			const OilBoolLiteral & Literal = dynamic_cast <const OilBoolLiteral &> ( Primary );
 			
 			return Literal.GetValue () ? "[BOOL: true]" : "[BOOL: false]";
+			
+		}
+		
+		case IOilPrimary :: kPrimaryType_FloatLiteral:
+		{
+			
+			const OilFloatLiteral & Literal = dynamic_cast <const OilFloatLiteral &> ( Primary );
+			
+			switch ( Literal.GetType () )
+			{
+				
+				case OilFloatLiteral :: kFloatType_32:
+					return std :: string ( "[FLOAT: Significand: " ) + Literal.GetValue ().GetSignificand ().ToHexString () + ", Power10: " + std :: to_string ( Literal.GetValue ().GetPower10 () ) + ", Power2: " + std :: to_string ( Literal.GetValue ().GetPower2 () ) + " (f32)]";
+				
+				case OilFloatLiteral :: kFloatType_64:
+					return std :: string ( "[FLOAT: Significand: " ) + Literal.GetValue ().GetSignificand ().ToHexString () + ", Power10: " + std :: to_string ( Literal.GetValue ().GetPower10 () ) + ", Power2: " + std :: to_string ( Literal.GetValue ().GetPower2 () ) + " (f64)]";
+				
+				default:
+					break;
+				
+			}
+			
+			return std :: string ( "[FLOAT: Significand: " ) + Literal.GetValue ().GetSignificand ().ToHexString () + ", Power10: " + std :: to_string ( Literal.GetValue ().GetPower10 () ) + ", Power2: " + std :: to_string ( Literal.GetValue ().GetPower2 () ) + " (indet)]";
+			
+		}
+		
+		case IOilPrimary :: kPrimaryType_StringLiteral:
+		{
+			
+			const OilStringLiteral & Literal = dynamic_cast <const OilStringLiteral &> ( Primary );
+			
+			std :: string PrintString = "[STRING \"";
+			
+			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Literal.GetValue () ) + "\" ";
+			
+			switch ( Literal.GetType () )
+			{
+				
+				case OilStringLiteral :: kEncodingType_UTF8:
+					PrintString += "(UTF8)]";
+					break;
+					
+				case OilStringLiteral :: kEncodingType_UTF16:
+					PrintString += "(UTF16)]";
+					break;
+					
+				case OilStringLiteral :: kEncodingType_UTF32:
+					PrintString += "(UTF32)]";
+					break;
+					
+				case OilStringLiteral :: kEncodingType_Indeterminate:
+				default:
+					PrintString += "(indet)]";
+					break;
+				
+			}
+			
+			return PrintString;
+			
+		}
+		
+		case IOilPrimary :: kPrimaryType_CharLiteral:
+		{
+			
+			const OilCharLiteral & Literal = dynamic_cast <const OilCharLiteral &> ( Primary );
+			
+			return std :: string ( "[CHAR \'" ) + CodeConversion :: ConvertUTF32ToUTF8 ( std :: u32string ( 1, Literal.GetValue () ) ) + "\']";
+			
+		}
+		
+		case IOilPrimary :: kPrimaryType_NullPointerLiteral:
+			return "[NULL_POINTER]";
+		
+		case IOilPrimary :: kPrimaryType_IntegerLiteral:
+		{
+			
+			const OilIntegerLiteral & Literal = dynamic_cast <const OilIntegerLiteral &> ( Primary );
+			
+			std :: string PrintString = "[INTEGER: ";
+			
+			switch ( Literal.GetType () )
+			{
+				
+				case OilIntegerLiteral :: kIntType_Explicit_I8:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetSValue () ) ) + " (i8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I16:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetSValue () ) ) + " (i16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I32:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetSValue () ) ) + " (i32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I64:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (i64)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_U8:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetUValue () ) ) + " (u8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_U16:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetUValue () ) ) + " (u16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_U32:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetUValue () ) ) + " (u32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_U64:
+					PrintString += std :: to_string ( Literal.GetUValue () ) + " (u64)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI8:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetSValue () ) ) + " (implied min i8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI16:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetSValue () ) ) + " (implied min i16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI32:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetSValue () ) ) + " (implied min i32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI64:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (implied min i64)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinU8:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetUValue () ) ) + " (implied min u8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinU16:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetUValue () ) ) + " (implied min u16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinU32:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetUValue () ) ) + " (implied min u32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I8_IfNegative:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetSValue () ) ) + " (req if_negative i8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I16_IfNegative:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetSValue () ) ) + " (req if_negative i16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I32_IfNegative:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetSValue () ) ) + " (req if_negative i32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_I64_IfNegative:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (req if_negative i64)]";
+					break;
+				
+				case OilIntegerLiteral :: kIntType_Implied_MinI8_IfNegative:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetSValue () ) ) + " (implied min if_negative i8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI16_IfNegative:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetSValue () ) ) + " (implied min if_negative i16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI32_IfNegative:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetSValue () ) ) + " (implied min if_negative i32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Implied_MinI64_IfNegative:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (implied min if_negative i64)]";
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI8:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetSValue () ) ) + " (indet min i8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI16:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetSValue () ) ) + " (indet min i16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI32:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetSValue () ) ) + " (indet min i32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI64:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (indet min i64)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI8_IfNegative:
+					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetSValue () ) ) + " (indet min if_negative i8)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI16_IfNegative:
+					PrintString += std :: to_string ( static_cast <int16_t> ( Literal.GetSValue () ) ) + " (indet min if_negative i16)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI32_IfNegative:
+					PrintString += std :: to_string ( static_cast <int32_t> ( Literal.GetSValue () ) ) + " (indet min if_negative i32)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Indeterminate_MinI64_IfNegative:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (indet min if_negative i64)]";
+					break;
+					
+				default:
+					PrintString += std :: to_string ( Literal.GetUValue () ) + " (UNKNOWN)]";
+					break;
+				
+			}
+			
+			return PrintString;
 			
 		}
 		

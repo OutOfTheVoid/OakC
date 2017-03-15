@@ -27,7 +27,8 @@ namespace my_namespace::sub_namespace
 function my_global_func ( some_param : i32 ) : void
 {
 	
-	some_namespace :: SomeTemplatedType: <u32>.static_method ();
+	some_namespace :: SomeTemplatedType.static_method ();
+	::some_globally_parented_namespace::some_namespace :: SomeType.static_method ();
 	
 }
 

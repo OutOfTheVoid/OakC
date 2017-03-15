@@ -15,9 +15,7 @@ public:
 	{
 		
 		kAllusionTarget_Indeterminate,
-		kAllusionTarget_Contextual,
-		kAllusionTarget_Contextual_Templated,
-		kAllusionTarget_Scoped,
+		kAllusionTarget_Indeterminate_Templated,
 		kAllusionTarget_Parameter,
 		kAllusionTarget_Namespaced,
 		kAllusionTarget_Namespaced_Absolue,

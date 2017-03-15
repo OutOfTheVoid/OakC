@@ -2,6 +2,53 @@
 function TestSyntax ()
 {
 	
-	SomeNS::TypeName : <u32>::StaticMethod ( SomeThing.Method:<u64>( 4 ) );
+	:: SomeNS :: SomeFunction:<u32> ( SomeThing.Method:<u64>( 4 ) );
+	:: SomeNS :: OtherTypeName:<u32> :: SomeStaticMethod ( SomeThing.Method:<u64>( 4 ) );
+	:: SomeNS :: AnotherTypeName:<u32> :: SomeStaticMethod:<u64> ( SomeThing.Method:<u64>( 4 ) );
+	:: SomeNS :: AFurtherTypeName :: SomeStaticMethod:<u64> ( SomeThing.Method:<u64>( 4 ) );
+	
+	true;
+	false;
+	
+	1i8;
+	1i16;
+	1i32;
+	1i64;
+	1u8;
+	1u16;
+	1u32;
+	1u64;
+	
+	0x1;
+	0x100;
+	0x10000;
+	0x100000000;
+	0x80;
+	0x81;
+	0x8000;
+	0x8001;
+	0x80000000;
+	0x80000001;
+	0x8000000000000000;
+	0x8000000000000001;
+	
+	- 0x80;
+	- 0x8000;
+	- 0x80000000;
+	- 0x8000000000000000;
+	
+	0.1;
+	0.1f32;
+	0.1f64;
+	
+	"Hello world!";
+	"Hello utf-8 world!"u8;
+	"Hello utf-16 world!"u16;
+	"Hello utf-32 world!"u32;
+	
+	'a';
+	'\x65'; // e
+	
+	null;
 	
 }

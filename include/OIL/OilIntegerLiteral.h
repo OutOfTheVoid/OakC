@@ -30,7 +30,7 @@ public:
 		kIntType_Implied_MinU8 = 0x14,
 		kIntType_Implied_MinU16 = 0x15,
 		kIntType_Implied_MinU32 = 0x16,
-		kIntType_Implied_MinU64 = 0x17,
+		//kIntType_Implied_MinU64 = 0x17,
 		
 		kIntType_Flag_ValidIfNegative = 0x20,
 		

@@ -1905,7 +1905,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			if ( Value < 0x100000000ULL )
 				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU32, Value );
 			
-			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU64, Value );
+			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
 			
 		}
 		break;

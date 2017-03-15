@@ -121,32 +121,32 @@ namespace OakASTTags
 	const uint64_t kASTTag_Operator_CompoundLogicalAnd = 82;
 	const uint64_t kASTTag_Operator_CompoundLogicalOr = 83;//
 	
-	const uint64_t kASTTag_Operator_DirectMemberAccess = 82;
-	const uint64_t kASTTag_Operator_IndirectMemberAccess = 83;
-	const uint64_t kASTTag_Operator_ArrayAccess = 84;
-	const uint64_t kASTTag_Operator_FunctionCall = 85;
+	const uint64_t kASTTag_Operator_DirectMemberAccess = 84;
+	const uint64_t kASTTag_Operator_IndirectMemberAccess = 85;
+	const uint64_t kASTTag_Operator_ArrayAccess = 86;
+	const uint64_t kASTTag_Operator_FunctionCall = 87;
 	
-	const uint64_t kASTTag_Operator_Meta_EnumBoundsMax = 85;
+	const uint64_t kASTTag_Operator_Meta_EnumBoundsMax = 88;
 	
-	const uint64_t kASTTag_OperatorExpressionContainer = 86;
+	const uint64_t kASTTag_OperatorExpressionContainer = 89;
 	
-	const uint64_t kASTTag_FunctionCall_ParameterList = 87;
+	const uint64_t kASTTag_FunctionCall_ParameterList = 90;
 	
-	const uint64_t kASTTag_SelfAllusion = 88;
+	const uint64_t kASTTag_SelfAllusion = 91;
 	
-	const uint64_t kASTTag_IfElseStatement = 89;
-	const uint64_t kASTTag_WhileStatement = 90;
-	const uint64_t kASTTag_DoWhileStatement = 91;
-	const uint64_t kASTTag_LoopStatement = 92;
+	const uint64_t kASTTag_IfElseStatement = 92;
+	const uint64_t kASTTag_WhileStatement = 93;
+	const uint64_t kASTTag_DoWhileStatement = 94;
+	const uint64_t kASTTag_LoopStatement = 95;
 	
-	const uint64_t kASTTag_LoopLabel = 93;
+	const uint64_t kASTTag_LoopLabel = 96;
 	
-	const uint64_t kASTTag_BreakStatement = 94;
+	const uint64_t kASTTag_BreakStatement = 97;
 	
-	const uint64_t kASTTag_ArrayLiteral = 95;
+	const uint64_t kASTTag_ArrayLiteral = 98;
 	
-	const uint64_t kASTTag_BindingStatement = 96;
-	const uint64_t kASTTag_ConstStatement = 97;
+	const uint64_t kASTTag_BindingStatement = 99;
+	const uint64_t kASTTag_ConstStatement = 100;
 	
 	const char * const TagNames [] =
 	{

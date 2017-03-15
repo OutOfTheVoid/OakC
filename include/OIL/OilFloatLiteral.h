@@ -25,7 +25,7 @@ public:
 	
 	const BigFloat & GetValue () const;
 	
-	FloatType GetType ();
+	FloatType GetType () const;
 	
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;

@@ -25,7 +25,7 @@ const BigFloat & OilFloatLiteral :: GetValue () const
 	
 }
 
-OilFloatLiteral :: FloatType OilFloatLiteral :: GetType ()
+OilFloatLiteral :: FloatType OilFloatLiteral :: GetType () const
 {
 	
 	return Type;
