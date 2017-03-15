@@ -1,6 +1,7 @@
 public inline function TemplatedAdd <A: Add> ( a:A, b:A ) : A
 {
 	
-	return a + b ++;
+	a + b ++;
+	c = d;
 	
 }

@@ -129,6 +129,8 @@ _OperatorEntry_t _OakOperatorExpressionConstructor_OperatorList [] =
 	// 45
 	{ OakTokenTags :: kTokenTag_VerticalBar_Equals, 0, 14, OakASTTags :: kASTTag_Operator_CompoundBitwiseOr, kOperatorAssociativity_Right_Binary, NULL, NULL, true },
 	{ OakTokenTags :: kTokenTag_Carrot_Equals, 0, 14, OakASTTags :: kASTTag_Operator_CompoundBitwiseXor, kOperatorAssociativity_Right_Binary, NULL, NULL, true },
+	{ OakTokenTags :: kTokenTag_DoubleAmpersand_Equals, 0, 14, OakASTTags :: kASTTag_Operator_CompoundLogicalAnd, kOperatorAssociativity_Right_Binary, NULL, NULL, true },
+	{ OakTokenTags :: kTokenTag_DoubleVerticalBar_Equals, 0, 14, OakASTTags :: kASTTag_Operator_CompoundLogicalOr, kOperatorAssociativity_Right_Binary, NULL, NULL, true },
 	
 };
 

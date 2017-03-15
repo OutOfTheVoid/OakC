@@ -6,6 +6,51 @@
 	#define NULL nullptr
 #endif
 
+const std :: string OilBinaryOperator :: OperatorStrings [] =
+{
+	
+	"member_access_direct",
+	"member_access_indirect",
+	"multiply",
+	"divide",
+	"modulo",
+	"add",
+	"subtract",
+	"left_shift",
+	"right_shift_arithmetic",
+	"right_shift_logical",
+	"greater_than",
+	"less_than",
+	"greater_than_or_equal",
+	"less_than_or_equal",
+	"not_equal",
+	"equal",
+	"bitwise_and",
+	"bitwise_xor",
+	"bitwise_or",
+	"logical_and",
+	"logical_or",
+	"assign",
+	"compound_multiply",
+	"compound_divide",
+	"compound_modulo",
+	"compound_add",
+	"compound_subtract",
+	"compound_left_shift",
+	"compound_right_shift_arithmetic",
+	"compound_right_shift_logical",
+	"compound_bitwise_and",
+	"compound_bitwise_or",
+	"compound_bitwise_xor",
+	"compound_logical_and",
+	"compound_logical_or",
+	
+};
+
+const uint32_t OilBinaryOperator :: MaxOpString = 34;
+
+const std :: string OilBinaryOperator :: UnknownOpString = "UNKOWN_OP";
+
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( false ),
@@ -26,8 +71,8 @@ OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, I
 
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm ):
 	Op ( Op ),
-	LeftIsPrimary ( false ),
-	RightIsPrimary ( true ),
+	LeftIsPrimary ( true ),
+	RightIsPrimary ( false ),
 	LeftPrimaryTerm ( LeftTerm ),
 	RightOperatorTerm ( RightTerm )
 {
@@ -35,7 +80,7 @@ OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IO
 
 OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm ):
 	Op ( Op ),
-	LeftIsPrimary ( false ),
+	LeftIsPrimary ( true ),
 	RightIsPrimary ( true ),
 	LeftPrimaryTerm ( LeftTerm ),
 	RightPrimaryTerm ( RightTerm )
@@ -169,7 +214,7 @@ void OilBinaryOperator :: SetRightTerm ( IOilPrimary * RightTerm )
 	
 }
 
-IOilOperator * OilBinaryOperator :: GetLeftTermAsExpression () const
+IOilOperator * OilBinaryOperator :: GetLeftTermAsOperator () const
 {
 	
 	return LeftIsPrimary ? NULL : LeftOperatorTerm;
@@ -183,7 +228,7 @@ IOilPrimary * OilBinaryOperator :: GetLeftTermAsPrimary () const
 	
 }
 
-IOilOperator * OilBinaryOperator :: GetRightTermAsExpression () const
+IOilOperator * OilBinaryOperator :: GetRightTermAsOperator () const
 {
 	
 	return RightIsPrimary ? NULL : RightOperatorTerm;
@@ -245,5 +290,15 @@ bool OilBinaryOperator :: IsRightPrimary () const
 {
 	
 	return RightIsPrimary;
+	
+}
+
+const std :: string & OilBinaryOperator :: GetOpName () const
+{
+	
+	if ( Op > MaxOpString )
+		return UnknownOpString;
+	
+	return OperatorStrings [ Op ];
 	
 }

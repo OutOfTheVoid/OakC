@@ -51,8 +51,8 @@ implement MyType
 	function test ( & self, string_value: & string ): u32
 	{
 		
-		//self -> test_string = string_value;
-		//self -> test_int = 1u;
+		self -> test_string = string_value;
+		self -> test_int = 1u;
 		
 	}
 	

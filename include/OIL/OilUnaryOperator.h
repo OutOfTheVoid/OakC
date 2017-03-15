@@ -3,6 +3,8 @@
 
 #include <OIL/IOilOperator.h>
 
+#include <string>
+
 class OilExpression;
 class IOilPrimary;
 
@@ -41,6 +43,8 @@ public:
 	
 	Operator GetOp () const;
 	
+	const std :: string & GetOpName () const;
+	
 	bool ConstantTerms () const;
 	OperatorType GetOperatorType () const;
 	
@@ -49,6 +53,10 @@ public:
 	void DisownTerm ();
 	
 private:
+	
+	static const std :: string OperatorStrings [];
+	static const uint32_t MaxOpString;
+	static const std :: string UnknownOpString;
 	
 	Operator Op;
 	

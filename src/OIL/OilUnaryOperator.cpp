@@ -6,6 +6,28 @@
 	#define NULL nullptr
 #endif
 
+const std :: string OilUnaryOperator :: OperatorStrings [] =
+{
+	
+	"increment_postfix",
+	"decrement_postfix",
+	"increment_prefix",
+	"decrement_prefix",
+	"bitwise_not",
+	"logical_not",
+	"unary_negative",
+	"unary_positive",
+	"address_of_or_reference",
+	"dereference",
+	"array_access",
+	"function_call",
+	
+};
+
+const uint32_t OilUnaryOperator :: MaxOpString = 11;
+
+const std :: string OilUnaryOperator :: UnknownOpString = "UNKOWN_OP";
+
 OilUnaryOperator :: OilUnaryOperator ( Operator Op, IOilOperator * Term ):
 	Op ( Op ),
 	TermIsPrimary ( false ),
@@ -137,5 +159,15 @@ bool OilUnaryOperator :: IsTermPrimary () const
 {
 	
 	return TermIsPrimary;
+	
+}
+
+const std :: string & OilUnaryOperator :: GetOpName () const
+{
+	
+	if ( Op > MaxOpString )
+		return UnknownOpString;
+	
+	return OperatorStrings [ Op ];
 	
 }

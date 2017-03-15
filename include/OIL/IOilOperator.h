@@ -8,8 +8,8 @@ public:
 	typedef enum
 	{
 		
-		kOperatorType_Unary,
-		kOperatorType_Binary,
+		kOperatorType_Unary = 0,
+		kOperatorType_Binary = 1,
 		
 	} OperatorType;
 	

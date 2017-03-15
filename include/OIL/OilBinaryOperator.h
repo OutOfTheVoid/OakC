@@ -3,6 +3,8 @@
 
 #include <OIL/IOilOperator.h>
 
+#include <string>
+
 class IOilPrimary;
 
 class OilBinaryOperator : public virtual IOilOperator
@@ -12,39 +14,41 @@ public:
 	typedef enum
 	{
 		
-		kOperator_DirectMemberAccess,
-		kOperator_IndirectMemberAccess,
-		kOperator_Multiply,
-		kOperator_Divide,
-		kOperator_Modulus,
-		kOperator_Addition,
-		kOperator_Subtraction,
-		kOperator_ShiftLeft,
-		kOperator_LogicalShiftRight,
-		kOperator_ArithmeticShiftRight,
-		kOperator_GreaterThan,
-		kOperator_LessThan,
-		kOperator_GreaterThanOrEqual,
-		kOperator_LessThanOrEqual,
-		kOperator_NotEqual,
-		kOperator_Equal,
-		kOperator_BitwiseAnd,
-		kOperator_BitwiseXor,
-		kOperator_BitwiseOr,
-		kOperator_LogicalAnd,
-		kOperator_LogicalOr,
-		kOperator_Assignment,
-		kOperator_CompoundMultiply,
-		kOperator_CompoundDivide,
-		kOperator_CompoundModulus,
-		kOperator_CompoundAddition,
-		kOperator_CompoundSubtraction,
-		kOperator_CompoundShiftLeft,
-		kOperator_CompoundLogicalShiftRight,
-		kOperator_CompoundArithmeticShiftRight,
-		kOperator_CompoundBitwiseAnd,
-		kOperator_CompoundBitwiseOr,
-		kOperator_CompoundBitwiseXor,
+		kOperator_DirectMemberAccess = 0,
+		kOperator_IndirectMemberAccess = 1,
+		kOperator_Multiply = 2,
+		kOperator_Divide = 3,
+		kOperator_Modulus = 4,
+		kOperator_Addition = 5,
+		kOperator_Subtraction = 6,
+		kOperator_ShiftLeft = 7,
+		kOperator_LogicalShiftRight = 8,
+		kOperator_ArithmeticShiftRight = 9,
+		kOperator_GreaterThan = 10,
+		kOperator_LessThan = 11,
+		kOperator_GreaterThanOrEqual = 12,
+		kOperator_LessThanOrEqual = 13,
+		kOperator_NotEqual = 14,
+		kOperator_Equal = 15,
+		kOperator_BitwiseAnd = 16,
+		kOperator_BitwiseXor = 17,
+		kOperator_BitwiseOr = 18,
+		kOperator_LogicalAnd = 19,
+		kOperator_LogicalOr = 20,
+		kOperator_Assignment = 21,
+		kOperator_CompoundMultiply = 22,
+		kOperator_CompoundDivide = 23,
+		kOperator_CompoundModulus = 24,
+		kOperator_CompoundAddition = 25,
+		kOperator_CompoundSubtraction = 26,
+		kOperator_CompoundShiftLeft = 27,
+		kOperator_CompoundLogicalShiftRight = 28,
+		kOperator_CompoundArithmeticShiftRight = 29,
+		kOperator_CompoundBitwiseAnd = 30,
+		kOperator_CompoundBitwiseOr = 31,
+		kOperator_CompoundBitwiseXor = 32,
+		kOperator_CompoundLogicalAnd = 33,
+		kOperator_CompoundLogicalOr = 34,
 		
 	} Operator;
 	
@@ -55,9 +59,9 @@ public:
 	
 	~OilBinaryOperator ();
 	
-	IOilOperator * GetLeftTermAsExpression () const;
+	IOilOperator * GetLeftTermAsOperator () const;
 	IOilPrimary * GetLeftTermAsPrimary () const;
-	IOilOperator * GetRightTermAsExpression () const;
+	IOilOperator * GetRightTermAsOperator () const;
 	IOilPrimary * GetRightTermAsPrimary () const;
 	
 	bool IsLeftPrimary () const;
@@ -70,12 +74,18 @@ public:
 	
 	Operator GetOp () const;
 	
+	const std :: string & GetOpName () const;
+	
 	bool ConstantTerms () const;
 	OperatorType GetOperatorType () const;
 	
 	void DisownTerms ();
 	
 private:
+	
+	static const std :: string OperatorStrings [];
+	static const uint32_t MaxOpString;
+	static const std :: string UnknownOpString;
 	
 	Operator Op;
 	

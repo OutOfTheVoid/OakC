@@ -118,6 +118,8 @@ namespace OakASTTags
 	const uint64_t kASTTag_Operator_CompoundBitwiseOr = 79;
 	const uint64_t kASTTag_Operator_CompoundBitwiseXor = 80;
 	const uint64_t kASTTag_Operator_CompoundLogicalRightShift = 81;
+	const uint64_t kASTTag_Operator_CompoundLogicalAnd = 82;
+	const uint64_t kASTTag_Operator_CompoundLogicalOr = 83;//
 	
 	const uint64_t kASTTag_Operator_DirectMemberAccess = 82;
 	const uint64_t kASTTag_Operator_IndirectMemberAccess = 83;
@@ -231,6 +233,8 @@ namespace OakASTTags
 		"OPERATOR_COMPOUND_BITWISE_OR",
 		"OPERATOR_COMPOUND_BITWISE_XOR",
 		"OPERATOR_COMPOUND_LOGICAL_SHIFT_RIGHT",
+		"OPERATOR_COMPOUND_LOGICAL_AND",
+		"OPERATOR_COMPOUND_LOGICAL_OR",
 		"DIRECT_MEMBER_ACCESS",
 		"INDIRECT_MEMBER_ACCESS",
 		"ARRAY_ACCESS",

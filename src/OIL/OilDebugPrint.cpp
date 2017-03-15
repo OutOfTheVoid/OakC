@@ -13,6 +13,12 @@
 #include <OIL/IOilStatement.h>
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilTraitDefinition.h>
+#include <OIL/OilExpression.h>
+#include <OIL/IOilOperator.h>
+#include <OIL/OilBinaryOperator.h>
+#include <OIL/OilUnaryOperator.h>
+#include <OIL/OilBoolLiteral.h>
+#include <OIL/OilAllusion.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -30,6 +36,9 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref );
 void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent );
 void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
 void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent );
+std :: string OilStringExpression ( const OilExpression & Expression );
+std :: string OilStringPrimary ( const IOilPrimary & Primary );
+std :: string OilStringOperator ( const IOilOperator & Operator );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -53,6 +62,17 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		OilPrintBindingStatement ( * Binding, Indent );
 		
 	}
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "STATIC INITIALIZER BODY:";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	OilPrintStatementBody ( Namespace.GetImplicitInitializationBody (), Indent );
 	
 	TempCount = Namespace.GetTraitDefinitionCount ();
 	
@@ -486,6 +506,8 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
 	PrintString += "{";
 	
 	LOG_VERBOSE ( PrintString );
+				
+	PrintString = "";
 	
 	for ( uint64_t I = 0; I < Body.GetStatementCount (); I ++ )
 	{
@@ -498,6 +520,45 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
 			case IOilStatement :: kStatementType_Body:
 				OilPrintStatementBody ( * dynamic_cast <const OilStatementBody *> ( Statement ), Indent + 1 );
 				break;
+			
+			case IOilStatement :: kStatementType_Expression:
+			{
+				
+				for ( uint32_t I = 0; I < Indent + 1; I ++ )
+					PrintString += OIL_PRINT_INDENTSTRING;
+				
+				PrintString += OilStringExpression ( * dynamic_cast <const OilExpression *> ( Statement ) );
+				
+				LOG_VERBOSE ( PrintString );
+				
+				PrintString = "";
+				
+			}
+			break;
+			
+			/*case IOilStatement :: kStatementType_Return
+			{
+				
+				
+				
+			}
+			break;*/
+				
+			case IOilStatement :: kStatementType_ImplicitLocalInitialization:
+			{
+				
+				
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitBindingInitialization:
+			{
+				
+				
+				
+			}
+			break;
 			
 			default:
 				break;
@@ -514,5 +575,120 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent )
 	PrintString += "}";
 	
 	LOG_VERBOSE ( PrintString );
+	
+}
+
+std :: string OilStringExpression ( const OilExpression & Expression )
+{
+	
+	std :: string OutString = "[EXPRESSION: ";
+	
+	if ( Expression.IsPrimary () )
+		OutString += OilStringPrimary ( * Expression.GetTermAsPrimary () );
+	else
+		OutString += OilStringOperator ( * Expression.GetTermAsOperator () );
+	
+	OutString += "]";
+	
+	return OutString;
+	
+}
+
+std :: string OilStringPrimary ( const IOilPrimary & Primary )
+{
+	
+	switch ( Primary.GetPrimaryType () )
+	{
+		
+		case IOilPrimary :: kPrimaryType_Allusion:
+		{
+			
+			const OilAllusion & Allusion = dynamic_cast <const OilAllusion &> ( Primary );
+			
+			switch ( Allusion.GetTarget () )
+			{
+				
+				case OilAllusion :: kAllusionTarget_Indeterminate:
+					return std :: string ( "[ALLUSION Name: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				default:
+				break;
+				
+			}
+			
+			return "[ALLUSION UNKOWN_TYPE]";
+			
+		}
+		
+		case IOilPrimary :: kPrimaryType_BoolLiteral:
+		{
+			
+			const OilBoolLiteral & Literal = dynamic_cast <const OilBoolLiteral &> ( Primary );
+			
+			return Literal.GetValue () ? "[BOOL: true]" : "[BOOL: false]";
+			
+		}
+		
+		case IOilPrimary :: kPrimaryType_Expression:
+			return OilStringExpression ( dynamic_cast <const OilExpression &> ( Primary ) );
+			
+		
+		
+		default:
+		break;
+		
+	}
+	
+	return "UNKNOWN_PRIMARY";
+	
+}
+
+std :: string OilStringOperator ( const IOilOperator & Operator )
+{
+	
+	std :: string PrintString = "( ";
+	
+	if ( Operator.GetOperatorType () == IOilOperator :: kOperatorType_Unary )
+	{
+		
+		const OilUnaryOperator & UnOp = dynamic_cast <const OilUnaryOperator &> ( Operator );
+		
+		PrintString += UnOp.GetOpName ();
+		PrintString += ": ";
+		
+		if ( UnOp.IsTermPrimary () )
+			PrintString += OilStringPrimary ( * UnOp.GetTermAsPrimary () );
+		else
+			PrintString += OilStringOperator ( * UnOp.GetTermAsOperator () );
+		
+		
+	}
+	else if ( Operator.GetOperatorType () == IOilOperator :: kOperatorType_Binary )
+	{
+		
+		const OilBinaryOperator & BinOp = dynamic_cast <const OilBinaryOperator &> ( Operator );
+		
+		PrintString += BinOp.GetOpName ();
+		PrintString += ": ";
+		
+		if ( BinOp.IsLeftPrimary () )
+			PrintString += OilStringPrimary ( * BinOp.GetLeftTermAsPrimary () );
+		else
+			PrintString += OilStringOperator ( * BinOp.GetLeftTermAsOperator () );
+		
+		PrintString += ", ";
+		
+		if ( BinOp.IsRightPrimary () )
+			PrintString += OilStringPrimary ( * BinOp.GetRightTermAsPrimary () );
+		else
+			PrintString += OilStringOperator ( * BinOp.GetRightTermAsOperator () );
+		
+	}
+	else
+		PrintString += std :: string ( "unkown op type: " ) + std :: to_string ( (int) Operator.GetOperatorType () );
+	
+	PrintString += " )";
+	
+	return PrintString;
 	
 }

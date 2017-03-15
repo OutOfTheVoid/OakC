@@ -1310,7 +1310,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 	{
 		
 		case OakASTTags :: kASTTag_ParenthesizedExpression:
-			return OakTranslateExpressionToOil ( SubElement );
+			return OakTranslateExpressionToOil ( SubElement -> GetSubElement ( 0 ) );
 		
 		case OakASTTags :: kASTTag_LiteralExpression:
 			return OakTranslateLiteralToOil ( SubElement );
@@ -2123,6 +2123,8 @@ const std :: map <uint64_t, OilBinaryOperator :: Operator> _OakOilTranslation_Op
 	{ OakASTTags :: kASTTag_Operator_CompoundBitwiseAnd, OilBinaryOperator :: kOperator_CompoundBitwiseAnd },
 	{ OakASTTags :: kASTTag_Operator_CompoundBitwiseOr, OilBinaryOperator :: kOperator_CompoundBitwiseOr },
 	{ OakASTTags :: kASTTag_Operator_CompoundBitwiseXor, OilBinaryOperator :: kOperator_CompoundBitwiseXor },
+	{ OakASTTags :: kASTTag_Operator_CompoundLogicalAnd, OilBinaryOperator :: kOperator_CompoundLogicalAnd },
+	{ OakASTTags :: kASTTag_Operator_CompoundLogicalOr, OilBinaryOperator :: kOperator_CompoundLogicalOr },
 	
 };
 
@@ -2165,8 +2167,6 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			if ( PrimaryTerm == NULL )
 				return NULL;
 			
-			
-			
 			return new OilUnaryOperator ( UnaryIter -> second, PrimaryTerm );
 			
 		}
@@ -2208,7 +2208,13 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				IOilPrimary * RightPrimary = OakTranslatePrimaryExpressionToOil ( RightTermElement );
 				
 				if ( RightPrimary == NULL )
+				{
+					
+					delete LeftPrimary;
+					
 					return NULL;
+					
+				}
 				
 				return new OilBinaryOperator ( BinaryIter -> second, LeftPrimary, RightPrimary );
 				
@@ -2217,7 +2223,13 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			IOilOperator * RightOperator = OakTranslateOperatorToOil ( RightTermElement );
 			
 			if ( RightOperator == NULL )
+			{
+				
+				delete LeftPrimary;
+				
 				return NULL;
+				
+			}
 			
 			return new OilBinaryOperator ( BinaryIter -> second, LeftPrimary, RightOperator );
 			
@@ -2234,7 +2246,13 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			IOilPrimary * RightPrimary = OakTranslatePrimaryExpressionToOil ( RightTermElement );
 			
 			if ( RightPrimary == NULL )
+			{
+				
+				delete LeftOperator;
+				
 				return NULL;
+				
+			}
 			
 			return new OilBinaryOperator ( BinaryIter -> second, LeftOperator, RightPrimary );
 			
@@ -2243,7 +2261,13 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 		IOilOperator * RightOperator = OakTranslateOperatorToOil ( RightTermElement );
 		
 		if ( RightOperator == NULL )
+		{
+			
+			LeftOperator = NULL;
+			
 			return NULL;
+			
+		}
 		
 		return new OilBinaryOperator ( BinaryIter -> second, LeftOperator, RightOperator );
 		
