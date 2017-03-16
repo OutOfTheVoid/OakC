@@ -13,6 +13,8 @@ public:
 		kStatementType_Expression,
 		kStatementType_Return,
 		kStatementType_IfElse,
+		kStatementType_WhileLoop,
+		kStatementType_DoWhileLoop,
 		kStatementType_ImplicitLocalInitialization,
 		kStatementType_ImplicitBindingInitialization
 		

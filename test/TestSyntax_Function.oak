@@ -1,7 +1,19 @@
 public inline function TemplatedAdd <A: Add> ( a:A, b:A ) : A
 {
 	
-	a + b ++;
-	c = d;
+	bind x:bool = true;
+	bind i:i32 = 10;
+	
+	do
+	`loop0:
+	{
+		
+		i --;
+		
+		if ( x && i == 5 )
+			break `loop0;
+		
+	}
+	while ( i != 0 );
 	
 }

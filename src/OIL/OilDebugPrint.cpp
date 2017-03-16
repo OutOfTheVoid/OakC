@@ -29,6 +29,8 @@
 #include <OIL/OilImplicitLocalInitialization.h>
 #include <OIL/OilImplicitBindingInitialization.h>
 #include <OIL/OilIfElse.h>
+#include <OIL/OilWhileLoop.h>
+#include <OIL/OilDoWhileLoop.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -51,6 +53,8 @@ std :: string OilStringExpression ( const OilExpression & Expression );
 std :: string OilStringPrimary ( const IOilPrimary & Primary );
 std :: string OilStringOperator ( const IOilOperator & Operator );
 void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent );
+void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
+void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -315,6 +319,70 @@ void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent )
 		OilPrintStatementBody ( * IfElse.GetElseClauseStatementBody (), Indent );
 		
 	}
+	
+}
+
+void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[WHILE Condition: ";
+	PrintString += OilStringExpression ( * Loop.GetConditionExpression () );
+	
+	if ( Loop.HasLoopLabel () )
+	{
+		
+		PrintString += ", Label: ";
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Loop.GetLoopLabel () );
+		
+	}
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	PrintString = "";
+	
+	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent );
+	
+}
+
+void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[DO";
+	
+	if ( Loop.HasLoopLabel () )
+	{
+		
+		PrintString += " Label: ";
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Loop.GetLoopLabel () );
+		
+	}
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	PrintString = "";
+	
+	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent );
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[WHILE Condition: ";
+	PrintString += OilStringExpression ( * Loop.GetConditionExpression () );
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
 	
 }
 
@@ -662,6 +730,14 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 			
 			case IOilStatement :: kStatementType_IfElse:
 				OilPrintIfElse ( * dynamic_cast <const OilIfElse *> ( Statement ), Indent + 1 );
+				break;
+				
+			case IOilStatement :: kStatementType_WhileLoop:
+				OilPrintWhileLoop ( * dynamic_cast <const OilWhileLoop *> ( Statement ), Indent + 1 );
+				break;
+				
+			case IOilStatement :: kStatementType_DoWhileLoop:
+				OilPrintDoWhileLoop ( * dynamic_cast <const OilDoWhileLoop *> ( Statement ), Indent + 1 );
 				break;
 			
 			case IOilStatement :: kStatementType_Return:

@@ -19,7 +19,7 @@ contexts:
     - match: \/\/[^\n]*
       scope: comment.line.double-slash.oak
       
-    - match: \b(function|bind|if|else|while|public|mut|struct|trait|implement|import|namespace|self|ignore|return)\b
+    - match: \b(function|bind|if|else|while|public|mut|struct|trait|implement|import|namespace|self|ignore|return|break|do)\b
       scope: keyword.control.oak
       
     - match: \b{{builtin_types}}\b
@@ -34,6 +34,9 @@ contexts:
     - match: \b(?:(?:(?:[0-9][0-9_]*)(?:\.[0-9][0-9_]*)?)(?:(?:e[\+\-]?[0-9][0-9_]*(?:f32|f64|f))|(?:f32|f64|f)))|(?:0x[0-9a-fA-F][0-9A-Fa-f_]*p[\+\-]?[0-9][0-9_]*(?:f32|f64|f)?)|(?:(?:(?:0[oO][0-7][0-7_]*)|(?:0[bB][01][01_]*)|(?:0[xXhH][a-fA-F0-9][a-fA-F0-9_]*)|(?:[0-9][0-9_]*))(?:(?:(?:u|i)(?:8|16|32|64)?))?)|(?:\.(?:[0-9][0-9_]*)(?:e[\+\-]?[0-9][0-9_]*)?(?:f32|f64)?)\b
       scope: constant.language.oak
       
+    - match: \b`{{identifier}}
+      scope: label.oak
+      
     - match: '"'
       push: string
       
@@ -41,7 +44,7 @@ contexts:
       push: char
       
   string:
-    - meta_scope: string.double.quoted
+    - meta_scope: string.double.quoted.oak
     - match: '"(?:u8|u16|u32)?'
       pop: true
       
@@ -54,4 +57,3 @@ contexts:
     - meta_scope: comment.block.oak
     - match: \*\/
       pop: true
-      

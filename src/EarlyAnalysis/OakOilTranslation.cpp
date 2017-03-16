@@ -33,6 +33,8 @@
 #include <OIL/OilTraitFunction.h>
 #include <OIL/OilReturn.h>
 #include <OIL/OilIfElse.h>
+#include <OIL/OilWhileLoop.h>
+#include <OIL/OilDoWhileLoop.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -60,6 +62,8 @@
 #include <Parsing/Language/OakTraitDefinitionConstructor.h>
 #include <Parsing/Language/OakTraitFunctionConstructor.h>
 #include <Parsing/Language/OakIfElseStatementConstructor.h>
+#include <Parsing/Language/OakWhileStatementConstructor.h>
+#include <Parsing/Language/OakLoopLabelConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -1092,6 +1096,123 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 			}
 			break;
 			
+			case OakASTTags :: kASTTag_WhileStatement:
+			{
+				
+				OilExpression * ConditionExpression = OakTranslateExpressionToOil ( StatementElement -> GetSubElement ( 0 ) );
+				
+				if ( ConditionExpression == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				const ASTElement * Next = StatementElement -> GetSubElement ( 1 );
+				
+				std :: u32string LoopLabel ( U"" );
+				
+				if ( Next == NULL )
+				{
+					
+					delete ConditionExpression;
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				if ( Next -> GetTag () == OakASTTags :: kASTTag_LoopLabel )
+				{
+					
+					const OakLoopLabelConstructor :: ElementData * LabelData = reinterpret_cast <const OakLoopLabelConstructor :: ElementData *> ( Next -> GetData () );
+					
+					LoopLabel = LabelData -> Label;
+					
+					Next = StatementElement -> GetSubElement ( 2 );
+					
+				}
+				
+				OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( Next );
+				
+				if ( StatementBody == NULL )
+				{
+					
+					delete ConditionExpression;
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Body -> AddStatement ( new OilWhileLoop ( ConditionExpression, StatementBody, LoopLabel ) );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_DoWhileStatement:
+			{
+				
+				const ASTElement * Next = StatementElement -> GetSubElement ( 0 );
+				
+				std :: u32string LoopLabel ( U"" );
+				
+				if ( Next == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				bool HasLabel = false;
+				
+				if ( Next -> GetTag () == OakASTTags :: kASTTag_LoopLabel )
+				{
+					
+					const OakLoopLabelConstructor :: ElementData * LabelData = reinterpret_cast <const OakLoopLabelConstructor :: ElementData *> ( Next -> GetData () );
+					
+					LoopLabel = LabelData -> Label;
+					
+					Next = StatementElement -> GetSubElement ( 1 );
+					
+					HasLabel = true;
+					
+				}
+				
+				OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( Next );
+				
+				if ( StatementBody == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Next = StatementElement -> GetSubElement ( HasLabel ? 2 : 1 );
+				
+				OilExpression * ConditionExpression = OakTranslateExpressionToOil ( Next );
+				
+				if ( ConditionExpression == NULL )
+				{
+					
+					delete StatementBody;
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Body -> AddStatement ( new OilDoWhileLoop ( StatementBody, ConditionExpression, LoopLabel ) );
+				
+			}
+			break;
+			
 			case OakASTTags :: kASTTag_IfElseStatement:
 			{
 				
@@ -1102,7 +1223,13 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				OilExpression * IfCondition = OakTranslateExpressionToOil ( StatementElement -> GetSubElement ( ElementOffset ) );
 				
 				if ( IfCondition == NULL )
+				{
+					
+					delete Body;
+					
 					return NULL;
+					
+				}
 				
 				ElementOffset ++;
 				
@@ -1112,6 +1239,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				{
 					
 					delete IfCondition;
+					delete Body;
 					
 					return NULL;
 					
@@ -1132,6 +1260,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 						
 						delete IfCondition;
 						delete IfStatementBody;
+						delete Body;
 						
 						for ( uint32_t K = 0; K < ElseIfConditions.size (); K ++ )
 							delete ElseIfConditions [ K ];
@@ -1154,6 +1283,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 						
 						delete IfCondition;
 						delete IfStatementBody;
+						delete Body;
 						
 						for ( uint32_t K = 0; K < ElseIfConditions.size (); K ++ )
 							delete ElseIfConditions [ K ];
@@ -1183,6 +1313,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 						
 						delete IfCondition;
 						delete IfStatementBody;
+						delete Body;
 						
 						for ( uint32_t K = 0; K < ElseIfConditions.size (); K ++ )
 							delete ElseIfConditions [ K ];
