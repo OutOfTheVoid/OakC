@@ -32,6 +32,7 @@
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilTraitFunction.h>
 #include <OIL/OilReturn.h>
+#include <OIL/OilIfElse.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -58,6 +59,7 @@
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
 #include <Parsing/Language/OakTraitDefinitionConstructor.h>
 #include <Parsing/Language/OakTraitFunctionConstructor.h>
+#include <Parsing/Language/OakIfElseStatementConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -1086,6 +1088,115 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				}
 				
 				Body -> AddLocalBinding ( Binding );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_IfElseStatement:
+			{
+				
+				const OakIfElseStatementConstructor :: ElementData * IfElseData = reinterpret_cast <const OakIfElseStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
+				
+				uint32_t ElementOffset = 0;
+				
+				OilExpression * IfCondition = OakTranslateExpressionToOil ( StatementElement -> GetSubElement ( ElementOffset ) );
+				
+				if ( IfCondition == NULL )
+					return NULL;
+				
+				ElementOffset ++;
+				
+				OilStatementBody * IfStatementBody = OakTranslateStatementBodyToOil ( StatementElement -> GetSubElement ( ElementOffset ) );
+				
+				if ( IfStatementBody == NULL )
+				{
+					
+					delete IfCondition;
+					
+					return NULL;
+					
+				}
+				
+				ElementOffset ++;
+				
+				std :: vector <OilExpression *> ElseIfConditions;
+				std :: vector <OilStatementBody *> ElseIfStatementBodies;
+				
+				for ( uint32_t J = 0; J < IfElseData -> ElseIfCount; J ++ )
+				{
+					
+					OilExpression * ElseIfCondition = OakTranslateExpressionToOil ( StatementElement -> GetSubElement ( ElementOffset ) );
+					
+					if ( ElseIfCondition == NULL )
+					{
+						
+						delete IfCondition;
+						delete IfStatementBody;
+						
+						for ( uint32_t K = 0; K < ElseIfConditions.size (); K ++ )
+							delete ElseIfConditions [ K ];
+						
+						for ( uint32_t K = 0; K < ElseIfStatementBodies.size (); K ++ )
+							delete ElseIfStatementBodies [ K ];
+						
+						return NULL;
+						
+					}
+					
+					ElseIfConditions.push_back ( ElseIfCondition );
+					
+					ElementOffset ++;
+					
+					OilStatementBody * ElseIfStatementBody = OakTranslateStatementBodyToOil ( StatementElement -> GetSubElement ( ElementOffset ) );
+					
+					if ( ElseIfStatementBody == NULL )
+					{
+						
+						delete IfCondition;
+						delete IfStatementBody;
+						
+						for ( uint32_t K = 0; K < ElseIfConditions.size (); K ++ )
+							delete ElseIfConditions [ K ];
+						
+						for ( uint32_t K = 0; K < ElseIfStatementBodies.size (); K ++ )
+							delete ElseIfStatementBodies [ K ];
+						
+						return NULL;
+						
+					}
+					
+					ElseIfStatementBodies.push_back ( ElseIfStatementBody );
+					
+					ElementOffset ++;
+					
+				}
+				
+				OilStatementBody * ElseStatementBody = NULL;
+				
+				if ( IfElseData -> Else )
+				{
+					
+					ElseStatementBody = OakTranslateStatementBodyToOil ( StatementElement -> GetSubElement ( ElementOffset ) );
+					
+					if ( ElseStatementBody == NULL )
+					{
+						
+						delete IfCondition;
+						delete IfStatementBody;
+						
+						for ( uint32_t K = 0; K < ElseIfConditions.size (); K ++ )
+							delete ElseIfConditions [ K ];
+						
+						for ( uint32_t K = 0; K < ElseIfStatementBodies.size (); K ++ )
+							delete ElseIfStatementBodies [ K ];
+						
+						return NULL;
+						
+					}
+					
+				}
+				
+				Body -> AddStatement ( new OilIfElse ( IfCondition, IfStatementBody, & ElseIfConditions [ 0 ], & ElseIfStatementBodies [ 0 ], IfElseData -> ElseIfCount, ElseStatementBody ) );
 				
 			}
 			break;

@@ -78,6 +78,27 @@ function Main ( ProgramArguments: Array:<string> ) : i32
 	
 	MyType.SayHello ();
 	
+	bind comp:u32 = 0;
+	
+	if ( comp <= 2 )
+	{
+		
+		print ( "a" );
+		
+	}
+	else if ( comp <= 4 )
+	{
+		
+		print ( "b" );
+		
+	}
+	else
+	{
+		
+		print ( "c" );
+		
+	}
+	
 	return 0;
 	
 }

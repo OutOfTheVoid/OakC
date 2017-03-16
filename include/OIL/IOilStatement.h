@@ -12,6 +12,7 @@ public:
 		kStatementType_Binding,
 		kStatementType_Expression,
 		kStatementType_Return,
+		kStatementType_IfElse,
 		kStatementType_ImplicitLocalInitialization,
 		kStatementType_ImplicitBindingInitialization
 		

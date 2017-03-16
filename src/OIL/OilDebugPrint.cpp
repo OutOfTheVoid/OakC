@@ -28,6 +28,7 @@
 #include <OIL/OilReturn.h>
 #include <OIL/OilImplicitLocalInitialization.h>
 #include <OIL/OilImplicitBindingInitialization.h>
+#include <OIL/OilIfElse.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -49,6 +50,7 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function );
 std :: string OilStringExpression ( const OilExpression & Expression );
 std :: string OilStringPrimary ( const IOilPrimary & Primary );
 std :: string OilStringOperator ( const IOilOperator & Operator );
+void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -262,6 +264,57 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
 	PrintString += "]";
 	
 	return PrintString;
+	
+}
+
+void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[IF Condition: ";
+	PrintString += OilStringExpression ( * IfElse.GetIfClauseConditionExpression () );
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	PrintString = "";
+	
+	OilPrintStatementBody ( * IfElse.GetIfClauseStatementBody (), Indent );
+	
+	for ( uint32_t I = 0; I < IfElse.GetElseIfClauseCount (); I ++ )
+	{
+		
+		for ( uint32_t I = 0; I < Indent; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "[ELSE IF Condition: ";
+		PrintString += OilStringExpression ( * IfElse.GetElseIfClauseConditionExpression ( I ) );
+		PrintString += "]";
+		
+		LOG_VERBOSE ( PrintString );
+		PrintString = "";
+		
+		OilPrintStatementBody ( * IfElse.GetElseIfClauseStatementBody ( I ), Indent );
+		
+	}
+	
+	if ( IfElse.HasElseClause () )
+	{
+		
+		for ( uint32_t I = 0; I < Indent; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "[ELSE]";
+		
+		LOG_VERBOSE ( PrintString );
+		PrintString = "";
+		
+		OilPrintStatementBody ( * IfElse.GetElseClauseStatementBody (), Indent );
+		
+	}
 	
 }
 
@@ -606,6 +659,10 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 				
 			}
 			break;
+			
+			case IOilStatement :: kStatementType_IfElse:
+				OilPrintIfElse ( * dynamic_cast <const OilIfElse *> ( Statement ), Indent + 1 );
+				break;
 			
 			case IOilStatement :: kStatementType_Return:
 			{
