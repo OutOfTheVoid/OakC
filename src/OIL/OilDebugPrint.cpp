@@ -31,6 +31,8 @@
 #include <OIL/OilIfElse.h>
 #include <OIL/OilWhileLoop.h>
 #include <OIL/OilDoWhileLoop.h>
+#include <OIL/OilBreak.h>
+#include <OIL/OilLoop.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -55,6 +57,8 @@ std :: string OilStringOperator ( const IOilOperator & Operator );
 void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent );
 void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
 void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
+void OilPrintBreak ( const OilBreak & Break, uint32_t Indent );
+void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -350,6 +354,33 @@ void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent )
 	
 }
 
+void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[LOOP";
+	
+	if ( Loop.HasLoopLabel () )
+	{
+		
+		PrintString += ", Label: ";
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Loop.GetLoopLabel () );
+		
+	}
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	PrintString = "";
+	
+	OilPrintStatementBody ( * Loop.GetStatementBody (), Indent );
+	
+}
+
 void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent )
 {
 	
@@ -380,6 +411,30 @@ void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent )
 	
 	PrintString += "[WHILE Condition: ";
 	PrintString += OilStringExpression ( * Loop.GetConditionExpression () );
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	
+}
+
+void OilPrintBreak ( const OilBreak & Break, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[BREAK";
+	
+	if ( Break.HasLoopLabel () )
+	{
+		
+		PrintString += " Label: ";
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Break.GetLoopLabel () );
+		
+	}
+	
 	PrintString += "]";
 	
 	LOG_VERBOSE ( PrintString );
@@ -728,6 +783,10 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 			}
 			break;
 			
+			case IOilStatement :: kStatementType_Break:
+				OilPrintBreak ( * dynamic_cast <const OilBreak *> ( Statement ), Indent + 1 );
+				break;
+			
 			case IOilStatement :: kStatementType_IfElse:
 				OilPrintIfElse ( * dynamic_cast <const OilIfElse *> ( Statement ), Indent + 1 );
 				break;
@@ -738,6 +797,10 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 				
 			case IOilStatement :: kStatementType_DoWhileLoop:
 				OilPrintDoWhileLoop ( * dynamic_cast <const OilDoWhileLoop *> ( Statement ), Indent + 1 );
+				break;
+				
+			case IOilStatement :: kStatementType_Loop:
+				OilPrintLoop ( * dynamic_cast <const OilLoop *> ( Statement ), Indent + 1 );
 				break;
 			
 			case IOilStatement :: kStatementType_Return:

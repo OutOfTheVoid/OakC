@@ -35,6 +35,8 @@
 #include <OIL/OilIfElse.h>
 #include <OIL/OilWhileLoop.h>
 #include <OIL/OilDoWhileLoop.h>
+#include <OIL/OilBreak.h>
+#include <OIL/OilLoop.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -64,6 +66,8 @@
 #include <Parsing/Language/OakIfElseStatementConstructor.h>
 #include <Parsing/Language/OakWhileStatementConstructor.h>
 #include <Parsing/Language/OakLoopLabelConstructor.h>
+#include <Parsing/Language/OakBreakStatementConstructor.h>
+#include <Parsing/Language/OakLoopStatementConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -1209,6 +1213,82 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 				}
 				
 				Body -> AddStatement ( new OilDoWhileLoop ( StatementBody, ConditionExpression, LoopLabel ) );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_LoopStatement:
+			{
+				
+				const OakLoopStatementConstructor :: ElementData * LoopData = reinterpret_cast <const OakLoopStatementConstructor :: ElementData *> ( StatementElement -> GetData () ); 
+				
+				std :: u32string LoopLabel;
+				OilStatementBody * StatementBody = NULL;
+				
+				if ( LoopData -> Labeled )
+				{
+					
+					const ASTElement * LoopLabelElement = StatementElement -> GetSubElement ( 0 );
+					
+					if ( ( LoopLabelElement == NULL ) || ( LoopLabelElement -> GetTag () != OakASTTags :: kASTTag_LoopLabel ) )
+					{
+						
+						LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+						
+						delete Body;
+						
+						return NULL;
+						
+					}
+					
+					LoopLabel = reinterpret_cast <const OakLoopLabelConstructor :: ElementData *> ( LoopLabelElement -> GetData () ) -> Label;
+					
+					StatementBody = OakTranslateStatementBodyToOil ( StatementElement -> GetSubElement ( 1 ) );
+					
+				}
+				else
+					StatementBody = OakTranslateStatementBodyToOil ( StatementElement -> GetSubElement ( 0 ) );
+				
+				if ( StatementBody == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Body -> AddStatement ( new OilLoop ( StatementBody, LoopLabel ) );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_BreakStatement:
+			{
+				
+				const OakBreakStatementConstructor :: ElementData * BreakData = reinterpret_cast <const OakBreakStatementConstructor :: ElementData *> ( StatementElement -> GetData () ); 
+				
+				if ( BreakData -> Labeled )
+				{
+					
+					const ASTElement * LoopLabelElement = StatementElement -> GetSubElement ( 0 );
+					
+					if ( ( LoopLabelElement == NULL ) || ( LoopLabelElement -> GetTag () != OakASTTags :: kASTTag_LoopLabel ) )
+					{
+						
+						LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+						
+						delete Body;
+						
+						return NULL;
+						
+					}
+					
+					Body -> AddStatement ( new OilBreak ( reinterpret_cast <const OakLoopLabelConstructor :: ElementData *> ( LoopLabelElement -> GetData () ) -> Label ) );
+					
+				}
+				else
+					Body -> AddStatement ( new OilBreak () );
 				
 			}
 			break;

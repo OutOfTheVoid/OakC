@@ -1,19 +1,17 @@
-public inline function TemplatedAdd <A: Add> ( a:A, b:A ) : A
+public function Test ()
 {
 	
-	bind x:bool = true;
 	bind i:i32 = 10;
 	
-	do
-	`loop0:
+	loop
+	`my_loop:
 	{
 		
+		if ( i == 0 )
+			break `my_loop;
+			
 		i --;
 		
-		if ( x && i == 5 )
-			break `loop0;
-		
 	}
-	while ( i != 0 );
 	
 }

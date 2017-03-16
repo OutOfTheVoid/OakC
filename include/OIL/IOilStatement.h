@@ -15,6 +15,8 @@ public:
 		kStatementType_IfElse,
 		kStatementType_WhileLoop,
 		kStatementType_DoWhileLoop,
+		kStatementType_Loop,
+		kStatementType_Break,
 		kStatementType_ImplicitLocalInitialization,
 		kStatementType_ImplicitBindingInitialization
 		
