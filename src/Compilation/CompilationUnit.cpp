@@ -56,6 +56,7 @@ void _PrintAST ( const ASTElement * Root, uint32_t Indent )
 		
 	if ( Root != NULL )
 	{
+		
 		std :: cout << "[ " << OakASTTags :: TagNames [ Root -> GetTag () ] << " ]" << std :: endl;
 		
 		for ( uint32_t I = 0; I < Root -> GetSubElementCount (); I ++ )

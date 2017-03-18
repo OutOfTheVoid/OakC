@@ -31,12 +31,14 @@
 #include <OIL/OilArrayLiteral.h>
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilTraitFunction.h>
+#include <OIL/OilTraitMethod.h>
 #include <OIL/OilReturn.h>
 #include <OIL/OilIfElse.h>
 #include <OIL/OilWhileLoop.h>
 #include <OIL/OilDoWhileLoop.h>
 #include <OIL/OilBreak.h>
 #include <OIL/OilLoop.h>
+#include <OIL/OilMethodParameterList.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -63,6 +65,7 @@
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
 #include <Parsing/Language/OakTraitDefinitionConstructor.h>
 #include <Parsing/Language/OakTraitFunctionConstructor.h>
+#include <Parsing/Language/OakTraitMethodConstructor.h>
 #include <Parsing/Language/OakIfElseStatementConstructor.h>
 #include <Parsing/Language/OakWhileStatementConstructor.h>
 #include <Parsing/Language/OakLoopLabelConstructor.h>
@@ -97,6 +100,8 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement );
 IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement );
 OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement );
 OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionElement );
+OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement );
+OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement * ParameterListElement );
 
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
@@ -855,6 +860,96 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		}
 		
 	}
+	
+}
+
+OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement * ParameterListElement )
+{
+	
+	if ( ( ParameterListElement == NULL ) || ( ParameterListElement -> GetTag () != OakASTTags :: kASTTag_MethodParameterList ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const ASTElement * ParameterElement = ParameterListElement -> GetSubElement ( 0 );
+	
+	if ( ParameterElement == NULL )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	bool SelfIsReference = false;
+	
+	if ( ParameterElement -> GetTag () == OakASTTags :: kASTTag_SelfParameterReference )
+		SelfIsReference = true;
+	else if ( ParameterElement -> GetTag () != OakASTTags :: kASTTag_SelfParameter )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	uint64_t ParamCount = ParameterListElement -> GetSubElementCount ();
+	
+	OilMethodParameterList * ParamList = new OilMethodParameterList ( SelfIsReference );
+	
+	for ( uint64_t I = 1; I < ParamCount; I ++ )
+	{
+		
+		ParameterElement = ParameterListElement -> GetSubElement ( I );
+		
+		if ( ( ParameterElement == NULL ) || ( ParameterElement -> GetTag () != OakASTTags :: kASTTag_FunctionParameter ) )
+		{
+			
+			delete ParamList;
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		const OakFunctionParameterConstructor :: ElementData * ParameterData = reinterpret_cast <const OakFunctionParameterConstructor :: ElementData *> ( ParameterElement -> GetData () );
+		
+		OilTypeRef * Type = OakTranslateTypeRefToOil ( ParameterElement -> GetSubElement ( 0 ) );
+		
+		if ( Type == NULL )
+		{
+			
+			delete ParamList;
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return NULL;
+			
+		}
+		
+		if ( ParamList -> FindFunctionParameter ( ParameterData -> Name ) != NULL )
+		{
+			
+			WriteError ( ParameterElement, std :: string ( "Duplicate function parameter name \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( ParameterData -> Name ) + "\"" );
+			
+			delete ParamList;
+			
+			return NULL;
+			
+		}
+		
+		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type ) );
+		
+	}
+	
+	return ParamList;
 	
 }
 
@@ -2230,6 +2325,29 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 		}
 		break;
 		
+		// TODO: Make this detect machine pointer overflows dependent on target architecture...
+		case OakTokenTags :: kTokenTag_SignedIntegerLiteralPointer:
+		{
+			
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_IPtr, static_cast <int64_t> ( Value ) );
+			
+		}
+		break;
+		
 		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteralDefault:
 		{
 			
@@ -2360,6 +2478,28 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
+			
+		}
+		break;
+		
+		case OakTokenTags :: kTokenTag_UnsignedIntegerLiteralPointer:
+		{
+			
+			bool Overflow64 = false;
+			uint64_t Value = 0;
+			
+			OakParseIntegerLiteral ( LiteralToken -> GetSource (), Value, Overflow64 );
+			
+			if ( Overflow64 )
+			{
+				
+				WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
+				
+				return NULL;
+				
+			}
+			
+			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_UPtr, static_cast <int64_t> ( Value ) );
 			
 		}
 		break;
@@ -2663,41 +2803,164 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 	}
 	
 	std :: vector <OilTraitFunction *> TraitFunctions;
+	std :: vector <OilTraitMethod *> TraitMethods;
 	
 	if ( ! TraitData -> Empty )
 	{
 		
-		const ASTElement * TraitFunctionElement = TraitElement -> GetSubElement ( ElementOffset );
+		const ASTElement * TraitMemberElement = TraitElement -> GetSubElement ( ElementOffset );
 		
-		while ( TraitFunctionElement != NULL )
+		while ( TraitMemberElement != NULL )
 		{
 			
 			ElementOffset ++;
 			
-			OilTraitFunction * Function = OakTranslateTraitFunctionToOil ( TraitFunctionElement );
-			
-			if ( Function == NULL )
+			if ( TraitMemberElement -> GetTag () == OakASTTags :: kASTTag_TraitFunction )
 			{
 				
-				if ( TemplateDefinition != NULL )
-					delete TemplateDefinition;
+				OilTraitFunction * Function = OakTranslateTraitFunctionToOil ( TraitMemberElement );
 				
-				for ( uint32_t I = 0; I < TraitFunctions.size (); I ++ )
-					delete TraitFunctions [ I ];
+				if ( Function == NULL )
+				{
+					
+					if ( TemplateDefinition != NULL )
+						delete TemplateDefinition;
+					
+					for ( uint32_t I = 0; I < TraitFunctions.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					return NULL;
+					
+				}
 				
-				return NULL;
+				TraitFunctions.push_back ( Function );
 				
 			}
+			else
+			{
+				
+				if ( TraitMemberElement -> GetTag () != OakASTTags :: kASTTag_TraitMethod )
+				{
+					
+					WriteError ( TraitMemberElement, "Expected function or method in implement block" );
+					
+					if ( TemplateDefinition != NULL )
+						delete TemplateDefinition;
+					
+					for ( uint32_t I = 0; I < TraitFunctions.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					return NULL;
+					
+				}
+				
+				OilTraitMethod * Method = OakTranslateTraitMethodToOil ( TraitMemberElement );
+				
+				if ( Method == NULL )
+				{
+					
+					if ( TemplateDefinition != NULL )
+						delete TemplateDefinition;
+					
+					for ( uint32_t I = 0; I < TraitFunctions.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					return NULL;
+					
+				}
+				
+				TraitMethods.push_back ( Method );
+				
+			}	
 			
-			TraitFunctions.push_back ( Function );
-			
-			TraitFunctionElement = TraitElement -> GetSubElement ( ElementOffset );
+			TraitMemberElement = TraitElement -> GetSubElement ( ElementOffset );
 			
 		}
 		
 	}
 	
-	return new OilTraitDefinition ( TraitData -> Name, & TraitFunctions [ 0 ], TraitFunctions.size (), TemplateDefinition );
+	return new OilTraitDefinition ( TraitData -> Name, & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition );
+	
+}
+
+OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement )
+{
+	
+	if ( ( MethodElement == NULL ) || ( MethodElement -> GetTag () != OakASTTags :: kASTTag_TraitMethod ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	const OakTraitMethodConstructor :: ElementData * TraitMethodData = reinterpret_cast <const OakTraitMethodConstructor :: ElementData *> ( MethodElement -> GetData () );
+	
+	OilTemplateDefinition * TemplateDefinition = NULL;
+	
+	uint32_t ElementOffset = 0;
+	
+	if ( TraitMethodData -> Templated )
+	{
+		
+		const ASTElement * TemplateDefinitionElement = MethodElement -> GetSubElement ( ElementOffset );
+		
+		TemplateDefinition = OakTranslateTemplateDefinitionToOil ( TemplateDefinitionElement );
+		
+		if ( TemplateDefinition == NULL )
+			return NULL;
+		
+		ElementOffset ++;
+		
+	}
+	
+	const ASTElement * ParameterListElement = MethodElement -> GetSubElement ( ElementOffset );
+	
+	OilMethodParameterList * ParameterList = OakTranslateMethodParameterListToOil ( ParameterListElement );
+	
+	if ( ParameterList == NULL )
+	{
+		
+		delete TemplateDefinition;
+		
+		return NULL;
+		
+	}
+	
+	ElementOffset ++;
+	
+	OilTypeRef * ReturnType = NULL;
+	
+	if ( TraitMethodData -> ReturnTyped )
+	{
+		
+		const ASTElement * ReturnTypeElement = MethodElement -> GetSubElement ( ElementOffset );
+		
+		ReturnType = OakTranslateReturnTypeToOil ( ReturnTypeElement );
+		
+		if ( ReturnType == NULL )
+		{
+			
+			delete TemplateDefinition;
+			delete ParameterList;
+			
+			return NULL;
+			
+		}
+		
+	}
+	
+	return new OilTraitMethod ( TraitMethodData -> Name, ParameterList, ReturnType, TemplateDefinition );
 	
 }
 

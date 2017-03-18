@@ -5,6 +5,7 @@
 
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakTraitFunctionConstructor.h>
+#include <Parsing/Language/OakTraitMethodConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -15,11 +16,18 @@
 OakTraitDefinitionConstructor OakTraitDefinitionConstructor :: Instance;
 
 ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries [] = { { & OakTraitFunctionConstructor :: Instance, 0 } };
+
+ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries [] =
+{
+	
+	{ & OakTraitMethodConstructor :: Instance, 0 },
+	{ & OakTraitFunctionConstructor :: Instance, 1 },
+	
+};
 
 OakTraitDefinitionConstructor :: OakTraitDefinitionConstructor ():
 	TemplateConstructionGroup ( _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
-	TraitBodyConstructionGroup ( _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries, 1 )
+	TraitBodyConstructionGroup ( _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries, 2 )
 {
 }
 

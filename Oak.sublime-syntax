@@ -19,7 +19,7 @@ contexts:
     - match: \/\/[^\n]*
       scope: comment.line.double-slash.oak
       
-    - match: \b(function|bind|if|else|while|public|mut|struct|trait|implement|import|namespace|self|ignore|return|break|do)\b
+    - match: \b(function|bind|if|else|while|public|mut|struct|trait|implement|import|namespace|self|ignore|return|break|do|for|loop)\b
       scope: keyword.control.oak
       
     - match: \b{{builtin_types}}\b

@@ -1,0 +1,41 @@
+trait Add
+{
+	
+	function add ( & self, RHS: & Self ): Self
+	
+}
+
+struct Test
+{
+	
+	bind A:i32
+	
+}
+
+implement Test
+{
+	
+	public function set ( A:i32 )
+	{
+		
+		self.A = A;
+		
+	}
+	
+}
+
+implement Test for Add
+{
+	
+	function add ( & self, RHS: & Self ): Self
+	{
+		
+		bind mut New:Self;
+		
+		New.set ( self.A + RHS.A );
+		
+		return New;
+		
+	}
+	
+}

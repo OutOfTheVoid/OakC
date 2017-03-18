@@ -301,6 +301,22 @@ bool OakIntegerSplitRule :: TestTypeSpecifier ( const std :: u32string & Source,
 				
 			}
 			
+			if ( ( Offset + Length + 3 ) < Source.size () )
+			{
+				
+				if ( Source.substr ( Offset + Length + 1, 3 ) == U"ptr" )
+				{
+					
+					Result.Accepted = true;
+					Result.Tag = OakTokenTags :: kTokenTag_UnsignedIntegerLiteralPointer;
+					Result.SplitLength = Length + 4;
+					
+					return true;
+					
+				}
+				
+			}
+			
 		}
 		
 		Result.Accepted = true;
@@ -361,6 +377,22 @@ bool OakIntegerSplitRule :: TestTypeSpecifier ( const std :: u32string & Source,
 					Result.Accepted = true;
 					Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteral64;
 					Result.SplitLength = Length + 3;
+					
+					return true;
+					
+				}
+				
+			}
+			
+			if ( ( Offset + Length + 3 ) < Source.size () )
+			{
+				
+				if ( Source.substr ( Offset + Length + 1, 3 ) == U"ptr" )
+				{
+					
+					Result.Accepted = true;
+					Result.Tag = OakTokenTags :: kTokenTag_SignedIntegerLiteralPointer;
+					Result.SplitLength = Length + 4;
 					
 					return true;
 					

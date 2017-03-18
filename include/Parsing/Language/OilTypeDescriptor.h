@@ -1,0 +1,6 @@
+#ifndef OIL_OILTYPEDESCRIPTOR_H
+#define OIL_OILTYPEDESCRIPTOR_H
+
+
+
+#endif

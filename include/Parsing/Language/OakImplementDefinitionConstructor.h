@@ -11,12 +11,7 @@ public:
 	typedef struct
 	{
 		
-		bool DirectGlobalReference;
-		
-		std :: u32string * IdentList;
-		uint32_t IdentListLength;
-		
-		std :: u32string Name;
+		bool ImplementsTrait;
 		
 	} ElementData;
 	
@@ -32,6 +27,8 @@ private:
 	static void ElementDataDestructor ( void * Data );
 	
 	ASTConstructionGroup ImplementChildrenConstructionGroup;
+	ASTConstructionGroup TypeNameGroup;
+	ASTConstructionGroup TraitNameGroup;
 	
 };
 

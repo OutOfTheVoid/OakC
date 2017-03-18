@@ -1,7 +1,7 @@
 function Test ()
 {
 	
-	/*'a';
+	'a';
 	'\t';
 	'\x{AB78F000}';
 	'\U00000000';
@@ -22,10 +22,14 @@ function Test ()
 	.6f32;
 	0x4p1f32;
 	
+	0uptr;
+	
+	1iptr;
+	
 	"Hello world";
-	"UTF-8\n";
+	"UTF-8\x{45FA}"u8;
 	"UTF-16\u45FA"u16;
-	"UTF-32\U20000000"u32;
+	"UTF-32\U000045FA"u32;
 	
 	true;
 	false;
@@ -40,6 +44,6 @@ function Test ()
 	[ 0 ];
 	[ 200; 0 ];
 	[ :u64; 0, 1, 2 ];
-	[ 2 * 2 * 2 :u32; 1 + 2 ];*/
+	[ 2 * 2 * 2 :u32; 1 + 2 ];
 	
 }

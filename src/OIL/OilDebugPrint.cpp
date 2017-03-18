@@ -7,6 +7,7 @@
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilFunctionParameterList.h>
+#include <OIL/OilMethodParameterList.h>
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilTemplateSpecification.h>
 #include <OIL/OilStatementBody.h>
@@ -14,6 +15,7 @@
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilTraitFunction.h>
+#include <OIL/OilTraitMethod.h>
 #include <OIL/OilExpression.h>
 #include <OIL/IOilOperator.h>
 #include <OIL/OilBinaryOperator.h>
@@ -51,6 +53,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
 void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent );
 std :: string OilStringTraitFunction ( const OilTraitFunction & Function );
+std :: string OilStringTraitMethod ( const OilTraitMethod & Method );
 std :: string OilStringExpression ( const OilExpression & Expression );
 std :: string OilStringPrimary ( const IOilPrimary & Primary );
 std :: string OilStringOperator ( const IOilOperator & Operator );
@@ -216,12 +219,75 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 		
 	}
 	
+	for ( uint32_t J = 0; J < Trait.GetMethodCount (); J ++ )
+	{
+		
+		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += OilStringTraitMethod ( * Trait.GetTraitMethod ( J ) );
+		LOG_VERBOSE ( PrintString );
+		
+		PrintString = "";
+		
+	}
+	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
 	PrintString += "}";
 	
 	LOG_VERBOSE ( PrintString );
+	
+}
+
+std :: string OilStringTraitMethod ( const OilTraitMethod & Method )
+{
+	
+	std :: string PrintString = "[METHOD ";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Method.GetName () );
+	
+	if ( Method.IsTemplated () )
+		PrintString += std :: string ( " Template: " ) + OilStringTemplateDefinition ( * Method.GetTemplateDefinition () );
+	
+	const OilMethodParameterList * ParamList = Method.GetParameterList ();
+	
+	if ( ParamList -> GetParameterCount () != 0 )
+	{
+		
+		PrintString += ParamList -> IsSelfReference () ? " Parameters: ( &self, " : " Parameters: ( self, ";
+		
+		for ( uint32_t I = 0; I < ParamList -> GetParameterCount (); I ++ )
+		{
+			
+			const OilFunctionParameter * Parameter = ParamList -> GetFunctionParameter ( I );
+			
+			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Parameter -> GetName () );
+			
+			PrintString += ": ";
+			
+			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			
+			if ( I != ParamList -> GetParameterCount () - 1 )
+				PrintString += ", ";
+			
+		}
+		
+		PrintString += " )";
+		
+	}
+	
+	if ( Method.HasReturnType () )
+	{
+		
+		PrintString += " Return: ";
+		PrintString += OilStringTypeRef ( * Method.GetReturnType () );
+		
+	}
+	
+	PrintString += "]";
+	
+	return PrintString;
 	
 }
 
@@ -257,7 +323,7 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
 			
 		}
 		
-		PrintString += ")";
+		PrintString += " )";
 		
 	}
 	
@@ -1172,6 +1238,10 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 					PrintString += std :: to_string ( Literal.GetSValue () ) + " (i64)]";
 					break;
 					
+				case OilIntegerLiteral :: kIntType_Explicit_IPtr:
+					PrintString += std :: to_string ( Literal.GetSValue () ) + " (iptr)]";
+					break;
+					
 				case OilIntegerLiteral :: kIntType_Explicit_U8:
 					PrintString += std :: to_string ( static_cast <int8_t> ( Literal.GetUValue () ) ) + " (u8)]";
 					break;
@@ -1186,6 +1256,10 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 					
 				case OilIntegerLiteral :: kIntType_Explicit_U64:
 					PrintString += std :: to_string ( Literal.GetUValue () ) + " (u64)]";
+					break;
+					
+				case OilIntegerLiteral :: kIntType_Explicit_UPtr:
+					PrintString += std :: to_string ( Literal.GetUValue () ) + " (uptr)]";
 					break;
 					
 				case OilIntegerLiteral :: kIntType_Implied_MinI8:
@@ -1291,8 +1365,6 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 		
 		case IOilPrimary :: kPrimaryType_Expression:
 			return OilStringExpression ( dynamic_cast <const OilExpression &> ( Primary ) );
-			
-		
 		
 		default:
 		break;

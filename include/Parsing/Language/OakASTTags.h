@@ -4,6 +4,8 @@
 namespace OakASTTags
 {
 	
+	const uint64_t kASTTag_Default = 0;
+	
 	const uint64_t kASTTag_File = 1;
 	
 	const uint64_t kASTTag_ImportStatement = 2;
@@ -32,7 +34,7 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_NamespaceDefinition = 19;
 	
-	const uint64_t kASTTag_ImplementDefinition = 20; // TODO
+	const uint64_t kASTTag_ImplementDefinition = 20; // TODO - In progress
 	
 	const uint64_t kASTTag_FunctionDefinition = 21;
 	const uint64_t kASTTag_FunctionParameterList = 22;
@@ -47,7 +49,7 @@ namespace OakASTTags
 	const uint64_t kASTTag_SelfParameterReference = 28;
 	
 	const uint64_t kASTTag_MethodDefinition = 29; // TODO
-	const uint64_t kASTTag_MethodParameterList = 30; // TODO
+	const uint64_t kASTTag_MethodParameterList = 30;
 	
 	const uint64_t kASTTag_ReturnType = 31;
 	
@@ -126,27 +128,28 @@ namespace OakASTTags
 	const uint64_t kASTTag_Operator_ArrayAccess = 86;
 	const uint64_t kASTTag_Operator_FunctionCall = 87;
 	
-	const uint64_t kASTTag_Operator_Meta_EnumBoundsMax = 88;
+	const uint64_t kASTTag_Operator_Meta_EnumBoundsMax = 87;
 	
-	const uint64_t kASTTag_OperatorExpressionContainer = 89;
+	const uint64_t kASTTag_OperatorExpressionContainer = 88;
 	
-	const uint64_t kASTTag_FunctionCall_ParameterList = 90;
+	const uint64_t kASTTag_FunctionCall_ParameterList = 89;
 	
-	const uint64_t kASTTag_SelfAllusion = 91;
+	const uint64_t kASTTag_SelfAllusion = 90;
 	
-	const uint64_t kASTTag_IfElseStatement = 92;
-	const uint64_t kASTTag_WhileStatement = 93;
-	const uint64_t kASTTag_DoWhileStatement = 94;
-	const uint64_t kASTTag_LoopStatement = 95;
+	const uint64_t kASTTag_IfElseStatement = 91;
+	const uint64_t kASTTag_WhileStatement = 92;
+	const uint64_t kASTTag_DoWhileStatement = 93;
+	const uint64_t kASTTag_LoopStatement = 94;
 	
-	const uint64_t kASTTag_LoopLabel = 96;
+	const uint64_t kASTTag_LoopLabel = 95;
 	
-	const uint64_t kASTTag_BreakStatement = 97;
+	const uint64_t kASTTag_BreakStatement = 96;
 	
-	const uint64_t kASTTag_ArrayLiteral = 98;
+	const uint64_t kASTTag_ArrayLiteral = 97;
 	
-	const uint64_t kASTTag_BindingStatement = 99;
-	const uint64_t kASTTag_ConstStatement = 100; // TODO
+	const uint64_t kASTTag_BindingStatement = 98;
+	const uint64_t kASTTag_ConstStatement = 99; // TODO
+	const uint64_t kASTTag_TraitMethod = 100;
 	
 	const char * const TagNames [] =
 	{
@@ -251,6 +254,7 @@ namespace OakASTTags
 		"ARRAY_LITERAL",
 		"BINDING_STATEMENT",
 		"CONST_STATEMENT",
+		"TRAIT_METHOD",
 		
 	};
 	

@@ -21,6 +21,9 @@ public:
 		kIntType_Explicit_U32 = 0x06,
 		kIntType_Explicit_U64 = 0x07,
 		
+		kIntType_Explicit_IPtr = 0x08,
+		kIntType_Explicit_UPtr = 0x09,
+		
 		kIntType_Flag_Implied = 0x10,
 		
 		kIntType_Implied_MinI8 = 0x10,
