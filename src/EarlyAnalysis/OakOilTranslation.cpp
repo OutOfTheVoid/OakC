@@ -38,7 +38,9 @@
 #include <OIL/OilDoWhileLoop.h>
 #include <OIL/OilBreak.h>
 #include <OIL/OilLoop.h>
+#include <OIL/OilMethodDefinition.h>
 #include <OIL/OilMethodParameterList.h>
+#include <OIL/OilImplementBlock.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -71,6 +73,8 @@
 #include <Parsing/Language/OakLoopLabelConstructor.h>
 #include <Parsing/Language/OakBreakStatementConstructor.h>
 #include <Parsing/Language/OakLoopStatementConstructor.h>
+#include <Parsing/Language/OakImplementDefinitionConstructor.h>
+#include <Parsing/Language/OakMethodDefinitionConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -102,6 +106,8 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement );
 OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionElement );
 OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement );
 OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement * ParameterListElement );
+OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement );
+OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement );
 
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
@@ -720,6 +726,125 @@ OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingEl
 	
 }
 
+OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement )
+{
+	
+	if ( ( ImplementElement == NULL ) || ( ImplementElement -> GetTag () != OakASTTags :: kASTTag_ImplementDefinition ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const OakImplementDefinitionConstructor :: ElementData * ImplementData = reinterpret_cast <const OakImplementDefinitionConstructor :: ElementData *> ( ImplementElement -> GetData () );
+	
+	OilTypeRef * ImplementedType = OakTranslateTypeRefToOil ( ImplementElement -> GetSubElement ( 0 ) );
+	
+	OilImplementBlock * Block = NULL;
+		
+	if ( ImplementedType == NULL )
+		return NULL;
+	
+	uint32_t ElementOffset = 1;
+	
+	if ( ImplementData -> ImplementsTrait )
+	{
+		
+		OilTypeRef * ForTrait = OakTranslateTraitRefToOil ( ImplementElement -> GetSubElement ( ElementOffset ) );
+		
+		if ( ForTrait == NULL )
+		{
+			
+			delete ImplementedType;
+			
+			return NULL;
+			
+		}
+		
+		Block = new OilImplementBlock ( ImplementedType, ForTrait );
+		
+		ElementOffset ++;
+		
+	}
+	else
+		Block = new OilImplementBlock ( ImplementedType );
+	
+	const ASTElement * ChildElement = ImplementElement -> GetSubElement ( ElementOffset );
+	ElementOffset ++;
+	
+	while ( ChildElement != NULL )
+	{
+		
+		if ( ChildElement -> GetTag () == OakASTTags :: kASTTag_FunctionDefinition )
+		{
+			
+			OilFunctionDefinition * Function = OakTranslateFunctionDefinitionToOil ( ChildElement );
+			
+			if ( Function == NULL )
+			{
+				
+				delete Block;
+				
+				return NULL;
+				
+			}
+			
+			if ( Block -> FindFunction ( Function -> GetName () ) != NULL )
+			{
+				
+				WriteError ( ChildElement, "Duplicate function, function definition of same name already exists in implement block" );
+				
+				delete Function;
+				delete Block;
+				
+				return NULL;
+				
+			}
+			
+			Block -> AddFunction ( Function );
+			
+		}
+		else
+		{
+			
+			OilMethodDefinition * Method = OakTranslateMethodDefinitionToOil ( ChildElement );
+			
+			if ( Method == NULL )
+			{
+				
+				delete Block;
+				
+				return NULL;
+				
+			}
+			
+			if ( Block -> FindMethod ( Method -> GetName () ) != NULL )
+			{
+				
+				WriteError ( ChildElement, "Duplicate method, method definition of same name already exists in implement block" );
+				
+				delete Method;
+				delete Block;
+				
+				return NULL;
+				
+			}
+			
+			Block -> AddMethod ( Method );
+			
+		}
+		
+		ChildElement = ImplementElement -> GetSubElement ( ElementOffset );
+		ElementOffset ++;
+		
+	}
+	
+	return Block;
+	
+}
+
 OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement * FunctionDefElement )
 {
 	
@@ -856,6 +981,150 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 			}
 			
 			return new OilFunctionDefinition ( FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL );
+			
+		}
+		
+	}
+	
+}
+
+
+OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement )
+{
+	
+	if ( ( MethodDefElement == NULL ) || ( MethodDefElement -> GetTag () != OakASTTags :: kASTTag_MethodDefinition ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	const OakMethodDefinitionConstructor :: ElementData * MethodDefData = reinterpret_cast <const OakMethodDefinitionConstructor :: ElementData *> ( MethodDefElement -> GetData () );
+	
+	if ( MethodDefData -> Templated )
+	{
+		
+		OilTemplateDefinition * TemplateDefinition = OakTranslateTemplateDefinitionToOil ( MethodDefElement -> GetSubElement ( 0 ) );
+		
+		if ( TemplateDefinition == NULL )
+			return NULL;
+		
+		OilMethodParameterList * MethodParamList = OakTranslateMethodParameterListToOil ( MethodDefElement -> GetSubElement ( 1 ) );
+		
+		if ( MethodParamList == NULL )
+		{
+			
+			delete TemplateDefinition;
+			
+			return NULL;
+			
+		}
+		
+		if ( MethodDefData -> ReturnTyped )
+		{
+			
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( MethodDefElement -> GetSubElement ( 2 ) );
+			
+			if ( ReturnType == NULL )
+			{
+				
+				delete TemplateDefinition;
+				delete MethodParamList;
+				
+				return NULL;
+				
+			}
+			
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( MethodDefElement -> GetSubElement ( 3 ) );
+			
+			if ( StatementBody == NULL )
+			{
+				
+				delete TemplateDefinition;
+				delete MethodParamList;
+				delete ReturnType;
+				
+				return NULL;
+				
+			}
+			
+			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType, TemplateDefinition );
+			
+		}
+		else
+		{
+			
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( MethodDefElement -> GetSubElement ( 2 ) );
+			
+			if ( StatementBody == NULL )
+			{
+				
+				delete TemplateDefinition;
+				delete MethodParamList;
+				
+				return NULL;
+				
+			}
+			
+			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL, TemplateDefinition );
+			
+		}
+		
+	}
+	else
+	{
+		
+		OilMethodParameterList * MethodParamList = OakTranslateMethodParameterListToOil ( MethodDefElement -> GetSubElement ( 0 ) );
+		
+		if ( MethodParamList == NULL )
+			return NULL;
+		
+		if ( MethodDefData -> ReturnTyped )
+		{
+			
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( MethodDefElement -> GetSubElement ( 1 ) );
+			
+			if ( ReturnType == NULL )
+			{
+				
+				delete MethodParamList;
+				
+				return NULL;
+				
+			}
+			
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( MethodDefElement -> GetSubElement ( 2 ) );
+			
+			if ( StatementBody == NULL )
+			{
+				
+				delete MethodParamList;
+				delete ReturnType;
+				
+				return NULL;
+				
+			}
+			
+			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType );
+			
+		}
+		else
+		{
+			
+			OilStatementBody * StatementBody = OakTranslateStatementBodyToOil ( MethodDefElement -> GetSubElement ( 1 ) );
+			
+			if ( StatementBody == NULL )
+			{
+				
+				delete MethodParamList;
+				
+				return NULL;
+				
+			}
+			
+			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL );
 			
 		}
 		

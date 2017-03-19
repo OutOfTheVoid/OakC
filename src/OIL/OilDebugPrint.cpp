@@ -35,6 +35,7 @@
 #include <OIL/OilDoWhileLoop.h>
 #include <OIL/OilBreak.h>
 #include <OIL/OilLoop.h>
+#include <OIL/OilImplementBlock.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -62,6 +63,7 @@ void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
 void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
 void OilPrintBreak ( const OilBreak & Break, uint32_t Indent );
 void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent );
+void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -564,6 +566,32 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 	PrintString += "}";
 	
 	LOG_VERBOSE ( PrintString );
+	
+}
+
+void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[IMPLEMENT ";
+	PrintString += OilStringTypeRef ( * Block.GetImplementedType () );
+	
+	if ( Block.IsForTrait () )
+	{
+		
+		PrintString += " for ";
+		PrintString += OilStringTypeRef ( * Block.GetForTrait () );
+		
+	}
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	PrintString = "";
 	
 }
 

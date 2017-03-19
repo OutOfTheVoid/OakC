@@ -34,7 +34,7 @@ OakFunctionDefinitionConstructor :: ~OakFunctionDefinitionConstructor ()
 void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
-	if ( Input.AvailableTokenCount < 6 )
+	if ( Input.AvailableTokenCount < 5 )
 	{
 		
 		Output.Accepted = false;
@@ -153,7 +153,7 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 		}
 		
-		if ( TokenCount < 2 )
+		if ( TokenCount < 3 )
 		{
 			
 			delete FunctionElement;

@@ -15,7 +15,7 @@ struct Test
 implement Test
 {
 	
-	public function set ( A:i32 )
+	public function set ( &self, A:i32 )
 	{
 		
 		self.A = A;

@@ -12,6 +12,9 @@ public:
 	{
 		
 		std :: u32string Name;
+		bool Inline;
+		bool Public;
+		bool Templated;
 		bool ReturnTyped;
 		
 	} ElementData;
@@ -27,6 +30,7 @@ private:
 	
 	static void ElementDataDestructor ( void * Data );
 	
+	ASTConstructionGroup TemplateConstructionGroup;
 	ASTConstructionGroup ParameterListConstructionGroup;
 	ASTConstructionGroup ReturnTypeConstructionGroup;
 	ASTConstructionGroup BodyConstructionGroup;
