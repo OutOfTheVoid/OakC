@@ -9,6 +9,7 @@
 #include <map>
 
 class OilStructDefinition;
+class OilTypeDefinition;
 class OilFunctionDefinition;
 class OilBindingStatement;
 class OilTraitDefinition;
@@ -28,15 +29,15 @@ public:
 	OilNamespaceDefinition * FindOrCreateNamespaceDefinition ( const std :: u32string & ID );
 	const OilNamespaceDefinition * FindNamespaceDefinition ( const std :: u32string & ID ) const;
 	
-	uint32_t GetStructDefinitionCount () const;
+	uint32_t GetTypeDefinitionCount () const;
 	
-	void AddStructDefinition ( OilStructDefinition * StructDef );
+	void AddTypeDefinition ( OilTypeDefinition * TypeDef );
 	
-	OilStructDefinition * GetStructDefinition ( uint32_t Index );
-	const OilStructDefinition * GetStructDefinition ( uint32_t Index ) const;
+	OilTypeDefinition * GetTypeDefinition ( uint32_t Index );
+	const OilTypeDefinition * GetTypeDefinition ( uint32_t Index ) const;
 	
-	OilStructDefinition * FindStructDefinition ( const std :: u32string & ID );
-	const OilStructDefinition * FindStructDefinition ( const std :: u32string & ID ) const;
+	OilTypeDefinition * FindTypeDefinition ( const std :: u32string & ID );
+	const OilTypeDefinition * FindTypeDefinition ( const std :: u32string & ID ) const;
 	
 	uint32_t GetFunctionDefinitionCount () const;
 	
@@ -78,7 +79,7 @@ private:
 	const std :: u32string ID;
 	
 	std :: map <std :: u32string, OilNamespaceDefinition *> SubNamespaces;
-	std :: map <std :: u32string, OilStructDefinition *> StructDefs;
+	std :: map <std :: u32string, OilTypeDefinition *> TypeDefs;
 	std :: map <std :: u32string, OilFunctionDefinition *> FuncDefs;
 	std :: map <std :: u32string, OilTraitDefinition *> TraitDefs;
 	

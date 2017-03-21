@@ -36,6 +36,7 @@
 #include <OIL/OilBreak.h>
 #include <OIL/OilLoop.h>
 #include <OIL/OilImplementBlock.h>
+#include <OIL/OilTypeDefinition.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -64,6 +65,7 @@ void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
 void OilPrintBreak ( const OilBreak & Break, uint32_t Indent );
 void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent );
 void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent );
+void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS )
 {
@@ -110,14 +112,14 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 	}
 	
-	TempCount = Namespace.GetStructDefinitionCount ();
+	TempCount = Namespace.GetTypeDefinitionCount ();
 	
 	for ( uint64_t I = 0; I < TempCount; I ++ )
 	{
 		
-		const OilStructDefinition * Definition = Namespace.GetStructDefinition ( I );
+		const OilTypeDefinition * Definition = Namespace.GetTypeDefinition ( I );
 		
-		OilPrintStruct ( * Definition, Indent );
+		OilPrintTypeDefinition ( * Definition, Indent );
 		
 	}
 	
@@ -509,6 +511,42 @@ void OilPrintBreak ( const OilBreak & Break, uint32_t Indent )
 	
 }
 
+void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[TYPE \"";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( TypeDefinition.GetName () );
+	PrintString += "\"]\n";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	if ( TypeDefinition.GetStructDefinition () != NULL )
+		OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1 );
+	
+	if ( TypeDefinition.GetPrincipalImplementBlock () != NULL )
+		OilPrintImplementBlock ( * TypeDefinition.GetPrincipalImplementBlock (), Indent + 1 );
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
+	
+}
+
 void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 {
 	
@@ -517,19 +555,18 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
-	PrintString += "[STRUCT \"";
-	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Struct.GetID () );
+	PrintString += "[STRUCT";
 	
 	if ( Struct.IsTemplated () )
 	{
 		
-		PrintString += "\" Template: ";
+		PrintString += "Template: ";
 		PrintString += OilStringTemplateDefinition ( * Struct.GetTemplateDefinition () );
 		PrintString += "]\n";
 		
 	}
 	else
-		PrintString += "\"]\n";
+		PrintString += "]\n";
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;

@@ -41,6 +41,7 @@
 #include <OIL/OilMethodDefinition.h>
 #include <OIL/OilMethodParameterList.h>
 #include <OIL/OilImplementBlock.h>
+#include <OIL/OilTypeDefinition.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -347,7 +348,7 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 	
 	const OakStructDefinitionConstructor :: ElementData * StructData = reinterpret_cast <const OakStructDefinitionConstructor :: ElementData *> ( StructElement -> GetData () );
 	
-	if ( Container.FindStructDefinition ( StructData -> Name ) != NULL )
+	if ( Container.FindTypeDefinition ( StructData -> Name ) != NULL )
 	{
 		
 		WriteError ( StructElement, "Duplicate struct definition: " + CodeConversion :: ConvertUTF32ToUTF8 ( StructData -> Name ) );
@@ -388,7 +389,7 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 			
 		}
 		
-		Container.AddStructDefinition ( StructDef );
+		Container.AddTypeDefinition ( new OilTypeDefinition ( StructDef ) );
 		
 	}
 	else
@@ -416,7 +417,7 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 			
 		}
 		
-		Container.AddStructDefinition ( StructDef );
+		Container.AddTypeDefinition ( new OilTypeDefinition ( StructDef ) );
 		
 	}
 	

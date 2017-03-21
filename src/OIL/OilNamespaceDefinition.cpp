@@ -1,5 +1,5 @@
 #include <OIL/OilNamespaceDefinition.h>
-#include <OIL/OilStructDefinition.h>
+#include <OIL/OilTypeDefinition.h>
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilImplicitBindingInitialization.h>
@@ -11,7 +11,7 @@
 OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID ):
 	ID ( ID ),
 	SubNamespaces (),
-	StructDefs (),
+	TypeDefs (),
 	FuncDefs (),
 	TraitDefs (),
 	Bindings (),
@@ -33,14 +33,47 @@ OilNamespaceDefinition :: ~OilNamespaceDefinition ()
 		
 	}
 	
-	std :: map <std :: u32string, OilStructDefinition *> :: iterator FindIterator_SD = StructDefs.begin ();
+	std :: map <std :: u32string, OilTypeDefinition *> :: iterator FindIterator_SD = TypeDefs.begin ();
 	
-	while ( FindIterator_SD != StructDefs.end () )
+	while ( FindIterator_SD != TypeDefs.end () )
 	{
 		
 		delete FindIterator_SD -> second;
 		
 		FindIterator_SD ++;
+		
+	}
+	
+	std :: map <std :: u32string, OilFunctionDefinition *> :: iterator FindIterator_FD = FuncDefs.begin ();
+	
+	while ( FindIterator_FD != FuncDefs.end () )
+	{
+		
+		delete FindIterator_FD -> second;
+		
+		FindIterator_FD ++;
+		
+	}
+	
+	std :: map <std :: u32string, OilTraitDefinition *> :: iterator FindIterator_TD = TraitDefs.begin ();
+	
+	while ( FindIterator_TD != TraitDefs.end () )
+	{
+		
+		delete FindIterator_TD -> second;
+		
+		FindIterator_TD ++;
+		
+	}
+	
+	std :: map <std :: u32string, OilBindingStatement *> :: iterator FindIterator_B = Bindings.begin ();
+	
+	while ( FindIterator_B != Bindings.end () )
+	{
+		
+		delete FindIterator_B -> second;
+		
+		FindIterator_B ++;
 		
 	}
 	
@@ -108,66 +141,66 @@ const OilNamespaceDefinition * OilNamespaceDefinition :: FindNamespaceDefinition
 	
 }
 
-void OilNamespaceDefinition :: AddStructDefinition ( OilStructDefinition * StructDef )
+void OilNamespaceDefinition :: AddTypeDefinition ( OilTypeDefinition * TypeDef )
 {
 	
-	StructDefs [ StructDef -> GetID () ] = StructDef;
+	TypeDefs [ TypeDef -> GetName () ] = TypeDef;
 	
 }
 
-uint32_t OilNamespaceDefinition :: GetStructDefinitionCount () const
+uint32_t OilNamespaceDefinition :: GetTypeDefinitionCount () const
 {
 	
-	return StructDefs.size ();
+	return TypeDefs.size ();
 	
 }
 
-OilStructDefinition * OilNamespaceDefinition :: GetStructDefinition ( uint32_t Index )
+OilTypeDefinition * OilNamespaceDefinition :: GetTypeDefinition ( uint32_t Index )
 {
 	
-	std :: map <std :: u32string, OilStructDefinition *> :: iterator IndexIter = StructDefs.begin ();
+	std :: map <std :: u32string, OilTypeDefinition *> :: iterator IndexIter = TypeDefs.begin ();
 	
 	std :: advance ( IndexIter, Index );
 	
-	if ( IndexIter == StructDefs.end () )
+	if ( IndexIter == TypeDefs.end () )
 		return NULL;
 	
 	return IndexIter -> second;
 	
 }
 
-const OilStructDefinition * OilNamespaceDefinition :: GetStructDefinition ( uint32_t Index ) const
+const OilTypeDefinition * OilNamespaceDefinition :: GetTypeDefinition ( uint32_t Index ) const
 {
 	
-	std :: map <std :: u32string, OilStructDefinition *> :: const_iterator IndexIter = StructDefs.begin ();
+	std :: map <std :: u32string, OilTypeDefinition *> :: const_iterator IndexIter = TypeDefs.begin ();
 	
 	std :: advance ( IndexIter, Index );
 	
-	if ( IndexIter == StructDefs.end () )
+	if ( IndexIter == TypeDefs.end () )
 		return NULL;
 	
 	return IndexIter -> second;
 	
 }
 
-OilStructDefinition * OilNamespaceDefinition :: FindStructDefinition ( const std :: u32string & ID )
+OilTypeDefinition * OilNamespaceDefinition :: FindTypeDefinition ( const std :: u32string & ID )
 {
 	
-	std :: map <std :: u32string, OilStructDefinition *> :: iterator FindIterator = StructDefs.find ( ID );
+	std :: map <std :: u32string, OilTypeDefinition *> :: iterator FindIterator = TypeDefs.find ( ID );
 	
-	if ( FindIterator != StructDefs.end () )
+	if ( FindIterator != TypeDefs.end () )
 		return FindIterator -> second;
 	
 	return NULL;
 	
 }
 
-const OilStructDefinition * OilNamespaceDefinition :: FindStructDefinition ( const std :: u32string & ID ) const
+const OilTypeDefinition * OilNamespaceDefinition :: FindTypeDefinition ( const std :: u32string & ID ) const
 {
 	
-	std :: map <std :: u32string, OilStructDefinition *> :: const_iterator FindIterator = StructDefs.find ( ID );
+	std :: map <std :: u32string, OilTypeDefinition *> :: const_iterator FindIterator = TypeDefs.find ( ID );
 	
-	if ( FindIterator != StructDefs.end () )
+	if ( FindIterator != TypeDefs.end () )
 		return FindIterator -> second;
 	
 	return NULL;
