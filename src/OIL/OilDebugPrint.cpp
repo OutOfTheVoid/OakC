@@ -37,6 +37,7 @@
 #include <OIL/OilLoop.h>
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTypeDefinition.h>
+#include <OIL/OilMethodDefinition.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -50,6 +51,7 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent );
 std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template );
 std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template );
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
+void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent );
 std :: string OilStringTypeRef ( const OilTypeRef & Ref );
 void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilNamespaceDefinition * InitializedBindingContainer = NULL );
 void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
@@ -297,6 +299,8 @@ std :: string OilStringTraitMethod ( const OilTraitMethod & Method )
 		PrintString += " )";
 		
 	}
+	else
+		PrintString += ParamList -> IsSelfReference () ? " Parameters: ( &self )" : " Parameters: ( self )";
 	
 	if ( Method.HasReturnType () )
 	{
@@ -642,10 +646,28 @@ void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent )
 		
 	}
 	
-	PrintString += "]";
+	PrintString += "]\n";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
 	
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Block.GetFunctionCount (); I ++ )
+		OilPrintFunction ( * Block.GetFunction ( I ), Indent + 1 );
+	
+	for ( uint32_t I = 0; I < Block.GetMethodCount (); I ++ )
+		OilPrintMethod ( * Block.GetMethod ( I ), Indent + 1 );
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
 	
 }
 
@@ -695,6 +717,7 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent )
 {
+	
 	std :: string PrintString;
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
@@ -759,6 +782,79 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	LOG_VERBOSE ( PrintString );
 	
 	OilPrintStatementBody ( * Function.GetStatementBody (), Indent );
+	
+}
+
+
+void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[METHOD \"";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Method.GetName () );
+	PrintString += "\"";
+	
+	if ( Method.IsInline () || Method.IsPublic () )
+	{
+		
+		PrintString += " {";
+		
+		if ( Method.IsPublic () )
+			PrintString += " public";
+		
+		if ( Method.IsInline () )
+			PrintString += " inline";
+		
+		PrintString += " }";
+		
+	}
+	
+	if ( Method.IsTemplated () )
+	{
+		
+		PrintString += " Template: ";
+		PrintString += OilStringTemplateDefinition ( * Method.GetTemplateDefinition () );
+		
+	}
+	
+	const OilMethodParameterList * ParamList = Method.GetParameterList ();
+	
+	if ( ParamList -> GetParameterCount () != 0 )
+	{
+		
+		PrintString += ParamList -> IsSelfReference () ? " Parameters: ( &self, " : " Parameters: ( self, ";
+		
+		for ( uint32_t I = 0; I < ParamList -> GetParameterCount (); I ++ )
+		{
+			
+			const OilFunctionParameter * Parameter = ParamList -> GetFunctionParameter ( I );
+			
+			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Parameter -> GetName () );
+			
+			PrintString += ": ";
+			
+			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			
+			if ( I != ParamList -> GetParameterCount () - 1 )
+				PrintString += ", ";
+			
+		}
+		
+		PrintString += " )";
+		
+	}
+	else
+		PrintString += ParamList -> IsSelfReference () ? " Parameters: ( &self )" : " Parameters: ( self )";
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	OilPrintStatementBody ( * Method.GetStatementBody (), Indent );
 	
 }
 

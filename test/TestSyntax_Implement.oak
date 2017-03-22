@@ -5,6 +5,13 @@ trait Add
 	
 }
 
+trait Inc
+{
+	
+	function inc ( & self ): Self
+	
+}
+
 struct Test
 {
 	
