@@ -12,14 +12,11 @@ class OilTypeDefinition
 {
 public:
 	
-	OilTypeDefinition ( const std :: u32string & Name );
 	OilTypeDefinition ( OilStructDefinition * Structure );
 	
 	~OilTypeDefinition ();
 	
 	const std :: u32string & GetName () const;
-	
-	void SetStructDefinition ( OilStructDefinition * StructDefinition );
 	
 	const OilStructDefinition * GetStructDefinition () const;
 	OilStructDefinition * GetStructDefinition ();

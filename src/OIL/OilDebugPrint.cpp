@@ -145,6 +145,23 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 	}
 	
+	if ( Namespace.GetUnresolvedImplementBlockCount () != 0 )
+	{
+		
+		PrintString = "";
+		
+		for ( uint32_t I = 0; I < Indent; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "UNRESOLVED IMPLEMENT BLOCKS:";
+		
+		LOG_VERBOSE ( PrintString );
+		
+		for ( uint32_t I = 0; I < Namespace.GetUnresolvedImplementBlockCount (); I ++ )
+			OilPrintImplementBlock ( * Namespace.GetUnresolvedImplementBlock ( I ), Indent );
+		
+	}
+	
 }
 
 void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent )

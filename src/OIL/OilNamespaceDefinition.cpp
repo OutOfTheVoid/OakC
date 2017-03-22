@@ -4,18 +4,21 @@
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilImplicitBindingInitialization.h>
 #include <OIL/OilTraitDefinition.h>
+#include <OIL/OilImplementBlock.h>
 
 #include <map>
 #include <iterator>
 
 OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID ):
+	Parent (),
 	ID ( ID ),
 	SubNamespaces (),
 	TypeDefs (),
 	FuncDefs (),
 	TraitDefs (),
 	Bindings (),
-	ImplicitIntiailizationBody ()
+	ImplicitIntiailizationBody (),
+	UnresImplBlocks ()
 {
 }
 
@@ -77,6 +80,17 @@ OilNamespaceDefinition :: ~OilNamespaceDefinition ()
 		
 	}
 	
+	std :: vector <OilImplementBlock *> :: iterator Iter_UIB = UnresImplBlocks.begin ();
+	
+	while ( Iter_UIB != UnresImplBlocks.end () )
+	{
+		
+		delete * Iter_UIB;
+		
+		Iter_UIB ++;
+		
+	} 
+	
 }
 
 uint32_t OilNamespaceDefinition :: GetSubNamespaceDefinitionCount () const
@@ -123,9 +137,22 @@ OilNamespaceDefinition * OilNamespaceDefinition :: FindOrCreateNamespaceDefiniti
 		return FindIterator -> second;
 	
 	OilNamespaceDefinition * NewNamespace = new OilNamespaceDefinition ( ID );
+	NewNamespace -> Parent = this;
 	SubNamespaces [ ID ] = NewNamespace;
 	
 	return NewNamespace;
+	
+}
+
+OilNamespaceDefinition * OilNamespaceDefinition :: FindNamespaceDefinition ( const std :: u32string & ID )
+{
+	
+	std :: map <std :: u32string, OilNamespaceDefinition *> :: iterator FindIterator = SubNamespaces.find ( ID );
+	
+	if ( FindIterator != SubNamespaces.end () )
+		return FindIterator -> second;
+	
+	return NULL;
 	
 }
 
@@ -145,6 +172,7 @@ void OilNamespaceDefinition :: AddTypeDefinition ( OilTypeDefinition * TypeDef )
 {
 	
 	TypeDefs [ TypeDef -> GetName () ] = TypeDef;
+	
 	
 }
 
@@ -427,5 +455,63 @@ const std :: u32string OilNamespaceDefinition :: GetID () const
 {
 	
 	return ID;
+	
+}
+
+OilNamespaceDefinition * OilNamespaceDefinition :: GetParent ()
+{
+	
+	return Parent;
+	
+}
+
+const OilNamespaceDefinition * OilNamespaceDefinition :: GetParent () const
+{
+	
+	return Parent;
+	
+}
+
+uint32_t OilNamespaceDefinition :: GetUnresolvedImplementBlockCount () const
+{
+	
+	return UnresImplBlocks.size ();
+	
+}
+
+void OilNamespaceDefinition :: AddUnresolvedImplementBlock ( OilImplementBlock * Block )
+{
+	
+	UnresImplBlocks.push_back ( Block );
+	
+}
+
+OilImplementBlock * OilNamespaceDefinition :: GetUnresolvedImplementBlock ( uint32_t Index )
+{
+	
+	if ( Index >= UnresImplBlocks.size () )
+		return NULL;
+	
+	return UnresImplBlocks [ Index ];
+	
+}
+
+const OilImplementBlock * OilNamespaceDefinition :: GetUnresolvedImplementBlock ( uint32_t Index ) const
+{
+	
+	if ( Index >= UnresImplBlocks.size () )
+		return NULL;
+	
+	return UnresImplBlocks [ Index ];
+	
+}
+
+void OilNamespaceDefinition :: RemoveUnresolvedImplementBlock ( uint32_t Index )
+{
+	
+	if ( Index >= UnresImplBlocks.size () )
+		return;
+	
+	UnresImplBlocks.erase ( UnresImplBlocks.begin () + Index );
 	
 }

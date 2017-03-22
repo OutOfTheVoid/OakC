@@ -13,6 +13,7 @@ class OilTypeDefinition;
 class OilFunctionDefinition;
 class OilBindingStatement;
 class OilTraitDefinition;
+class OilImplementBlock;
 
 class OilNamespaceDefinition
 {
@@ -27,6 +28,8 @@ public:
 	const OilNamespaceDefinition * GetNamespaceDefinition ( uint32_t Index ) const;
 	
 	OilNamespaceDefinition * FindOrCreateNamespaceDefinition ( const std :: u32string & ID );
+	
+	OilNamespaceDefinition * FindNamespaceDefinition ( const std :: u32string & ID );
 	const OilNamespaceDefinition * FindNamespaceDefinition ( const std :: u32string & ID ) const;
 	
 	uint32_t GetTypeDefinitionCount () const;
@@ -74,7 +77,21 @@ public:
 	
 	const std :: u32string GetID () const;
 	
+	OilNamespaceDefinition * GetParent ();
+	const OilNamespaceDefinition * GetParent () const;
+	
+	uint32_t GetUnresolvedImplementBlockCount () const;
+	
+	void AddUnresolvedImplementBlock ( OilImplementBlock * Block );
+	
+	OilImplementBlock * GetUnresolvedImplementBlock ( uint32_t Index );
+	const OilImplementBlock * GetUnresolvedImplementBlock ( uint32_t Index ) const;
+	
+	void RemoveUnresolvedImplementBlock ( uint32_t Index );
+	
 private:
+	
+	OilNamespaceDefinition * Parent;
 	
 	const std :: u32string ID;
 	
@@ -85,6 +102,8 @@ private:
 	
 	std :: map <std :: u32string, OilBindingStatement *> Bindings;
 	OilStatementBody ImplicitIntiailizationBody;
+	
+	std :: vector <OilImplementBlock *> UnresImplBlocks;
 	
 };
 

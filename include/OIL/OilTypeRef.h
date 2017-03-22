@@ -27,6 +27,7 @@ public:
 	
 	static const RefFlag kRefFlag_None = 0;
 	static const RefFlag kRefFlag_Trait = 1;
+	static const RefFlag kRefFlag_Absolute = 2;
 	
 	OilTypeRef ( const std :: u32string & Name, RefFlag Flags = kRefFlag_None );
 	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags = kRefFlag_None );

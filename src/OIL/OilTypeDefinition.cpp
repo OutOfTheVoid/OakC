@@ -3,14 +3,6 @@
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTraitDefinition.h>
 
-OilTypeDefinition :: OilTypeDefinition ( const std :: u32string & Name ):
-	Name ( Name ),
-	StructDefinition ( NULL ),
-	PrincipalImplementBlock ( NULL ),
-	TraitMap ( NULL )
-{
-}
-
 OilTypeDefinition :: OilTypeDefinition ( OilStructDefinition * Structure ):
 	Name ( Structure -> GetID () ),
 	StructDefinition ( Structure ),
@@ -71,13 +63,6 @@ void OilTypeDefinition :: DeleteTraitMap ( TraitMapElement * Element )
 	}
 	
 	delete Element;
-	
-}
-
-void OilTypeDefinition :: SetStructDefinition ( OilStructDefinition * StructDefinition )
-{
-	
-	this -> StructDefinition = StructDefinition;
 	
 }
 

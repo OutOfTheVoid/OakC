@@ -109,7 +109,6 @@ OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement
 OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement * ParameterListElement );
 OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement );
 OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement );
-
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
@@ -203,6 +202,19 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					return false;
 				
 				GlobalNS.AddTraitDefinition ( TraitDefinition );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_ImplementDefinition:
+			{
+				
+				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement );
+				
+				if ( Block == NULL )
+					return false;
+				
+				GlobalNS.AddUnresolvedImplementBlock ( Block );
 				
 			}
 			break;
@@ -322,6 +334,19 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 					return false;
 				
 				DefinedNamespaceDefinition -> AddTraitDefinition ( TraitDefinition );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_ImplementDefinition:
+			{
+				
+				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement );
+				
+				if ( Block == NULL )
+					return false;
+				
+				Container.AddUnresolvedImplementBlock ( Block );
 				
 			}
 			break;
@@ -586,7 +611,7 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 			
 			const OakNamespacedTraitNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakNamespacedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
-			return new OilTypeRef ( RestrictionData -> Name, RestrictionData -> IdentList, RestrictionData -> IdentListLength, OilTypeRef :: kRefFlag_Trait );
+			return new OilTypeRef ( RestrictionData -> Name, RestrictionData -> IdentList, RestrictionData -> IdentListLength, OilTypeRef :: kRefFlag_Trait | ( RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
@@ -597,7 +622,7 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TraitElement -> GetSubElement ( 0 ) );
 			
-			return new OilTypeRef ( RestrictionData -> Name, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification, OilTypeRef :: kRefFlag_Trait );
+			return new OilTypeRef ( RestrictionData -> Name, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification, OilTypeRef :: kRefFlag_Trait | ( RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
@@ -652,7 +677,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			
 			const OakNamespacedTypeNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakNamespacedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
-			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength );
+			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength, RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
@@ -666,7 +691,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			if ( TemplateSpecification == NULL )
 				return NULL;
 			
-			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification );
+			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification, RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
