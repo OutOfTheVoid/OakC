@@ -723,9 +723,8 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
-	PrintString += "[FUNCTION \"";
+	PrintString += "[FUNCTION ";
 	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Function.GetName () );
-	PrintString += "\"";
 	
 	if ( Function.IsInline () || Function.IsPublic () )
 	{
@@ -774,6 +773,14 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 		}
 		
 		PrintString += ")";
+		
+	}
+	
+	if ( Function.HasReturnType () )
+	{
+		
+		PrintString += " Return Type: ";
+		PrintString += OilStringTypeRef ( * Function.GetReturnType () );
 		
 	}
 	
@@ -866,6 +873,8 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref )
 		
 		if ( Ref.IsReference () )
 			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType () );
+		else if ( Ref.IsVoid () )
+			return std :: string ( "void" );
 		else
 			return std :: string ( "*" ) + OilStringTypeRef ( * Ref.GetSubType () );
 			

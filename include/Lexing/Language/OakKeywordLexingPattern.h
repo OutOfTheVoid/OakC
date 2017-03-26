@@ -2,6 +2,7 @@
 #define LEXING_LANGUAGE_OAKKEYWORDLEXINGPATTERN_H
 
 #include <Lexing/ILexingPattern.h>
+#include <Lexing/Language/OakKeywords.h>
 
 #include <string>
 
@@ -18,6 +19,8 @@ public:
 	void TryPattern ( ILexingInput & Input, ILexingResult & Result );
 	
 private:
+	
+	void AddLocalization ( const OakKeywords :: KeywordLocalization & Localization, uint64_t LocalizationIndex, bool Overwrite );
 	
 	UTF8Trie <uint64_t> KeywordAuxTags;
 	

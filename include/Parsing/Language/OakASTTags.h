@@ -151,6 +151,8 @@ namespace OakASTTags
 	const uint64_t kASTTag_ConstStatement = 99; // TODO
 	const uint64_t kASTTag_TraitMethod = 100;
 	
+	const uint64_t kASTTag_VoidType = 101;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -255,6 +257,7 @@ namespace OakASTTags
 		"BINDING_STATEMENT",
 		"CONST_STATEMENT",
 		"TRAIT_METHOD",
+		"VOID_TYPE",
 		
 	};
 	

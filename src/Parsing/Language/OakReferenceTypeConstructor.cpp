@@ -8,6 +8,8 @@
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
 
+#include <Parsing/Language/OakVoidTypeConstructor.h>
+
 #include <Parsing/Language/OakPointerTypeConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
@@ -25,10 +27,12 @@ ASTConstructionGroup :: StaticInitEntry _OakReferenceTypeConstructor_TypeGroupEn
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
+	{ & OakVoidTypeConstructor :: Instance, 2 },
+	
 };
 
 OakReferenceTypeConstructor :: OakReferenceTypeConstructor ():
-	TypeGroup ( _OakReferenceTypeConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( _OakReferenceTypeConstructor_TypeGroupEntries, 7 )
 {
 }
 

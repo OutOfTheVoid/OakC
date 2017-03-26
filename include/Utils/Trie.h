@@ -43,13 +43,13 @@ public:
 		
 	}
 	
-	void Set ( const char * Identifier, uint32_t IdentifierLength, ElementType Value )
+	void Set ( const char * Identifier, uint32_t IdentifierLength, ElementType Value, bool Overwrite )
 	{
 		
 		if ( IdentifierLength == 0 )
 			return;
 		
-		_Set ( Root, Identifier, IdentifierLength, Value );
+		_Set ( Root, Identifier, IdentifierLength, Value, Overwrite );
 		
 	}
 	
@@ -74,19 +74,20 @@ private:
 		
 	} TrieElement;
 	
-	void _Set ( TrieElement & Root, const char * Identifier, uint32_t Length, ElementType Value )
+	void _Set ( TrieElement & Root, const char * Identifier, uint32_t Length, ElementType Value, bool Overwrite )
 	{
 		
 		if ( Length == 0 )
 		{
 			
-			Root.Element = Value;
+			if ( Overwrite || ( Root.Element == DefaultValue ) )
+				Root.Element = Value;
 			
 			return;
 			
 		}
 		
-		TrieElement ** ChildElement = & Root.Children [ static_cast <uint32_t> ( * Identifier ) ];
+		TrieElement ** ChildElement = & Root.Children [ static_cast <uint8_t> ( * Identifier ) ];
 		
 		if ( * ChildElement == NULL )
 		{
@@ -100,7 +101,7 @@ private:
 			
 		}
 		
-		_Set ( ** ChildElement, & Identifier [ 1 ], Length - 1, Value );
+		_Set ( ** ChildElement, & Identifier [ 1 ], Length - 1, Value, Overwrite );
 		
 	}
 	

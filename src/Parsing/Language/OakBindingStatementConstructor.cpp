@@ -11,6 +11,8 @@
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
 
+#include <Parsing/Language/OakVoidTypeConstructor.h>
+
 #include <Parsing/Language/OakExpressionConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
@@ -30,6 +32,8 @@ ASTConstructionGroup :: StaticInitEntry _OakBindingStatementConstructor_TypeGrou
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
+	{ & OakVoidTypeConstructor :: Instance, 2 },
+	
 };
 
 ASTConstructionGroup :: StaticInitEntry _OakBindingStatementConstructor_InitializerValueGroupEntries [] =
@@ -40,7 +44,7 @@ ASTConstructionGroup :: StaticInitEntry _OakBindingStatementConstructor_Initiali
 };
 
 OakBindingStatementConstructor :: OakBindingStatementConstructor ():
-	TypeGroup ( _OakBindingStatementConstructor_TypeGroupEntries, 6 ),
+	TypeGroup ( _OakBindingStatementConstructor_TypeGroupEntries, 7 ),
 	InitializerValueGroup ( _OakBindingStatementConstructor_InitializerValueGroupEntries, 1 )
 {
 }

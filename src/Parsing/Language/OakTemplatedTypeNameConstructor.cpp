@@ -73,7 +73,7 @@ void OakTemplatedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & In
 		
 	}
 	
-	if ( ! AllowedKeywordTags.Contains ( CurrentToken -> GetAuxTag () ) )
+	if ( ! AllowedKeywordTags.Contains ( CurrentToken -> GetAuxTag () & OakKeywordTokenTags :: kKeywordAuxTags_Mask_Meaning ) )
 	{
 		
 		Output.Accepted = false;

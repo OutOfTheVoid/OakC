@@ -4,61 +4,182 @@
 namespace OakKeywords
 {
 	
-	/// A list of all UTF8-encoded keywords in the Oak language
+	typedef struct
+	{
+		
+		std :: string True;
+		std :: string False;
+		
+		std :: string Null;
+		
+		std :: string Bool;
+		std :: string I8;
+		std :: string I16;
+		std :: string I32;
+		std :: string I64;
+		std :: string IPtr;
+		std :: string U8;
+		std :: string U16;
+		std :: string U32;
+		std :: string U64;
+		std :: string UPtr;
+		std :: string Void;
+		std :: string Char;
+		std :: string F32;
+		std :: string F64;
+		std :: string Str8;
+		std :: string Str16;
+		std :: string Str32;
+		
+		std :: string Namespace;
+		std :: string Import;
+		std :: string Struct;
+		std :: string Trait;
+		std :: string Function;
+		std :: string Return;
+		std :: string Enum;
+		std :: string Ignore;
+		std :: string Implement;
+		std :: string Self;
+		
+		std :: string Mut;
+		std :: string Public;
+		std :: string Inline;
+		
+		std :: string Init;
+		std :: string Drop;
+		
+		std :: string If;
+		std :: string Else;
+		std :: string While;
+		std :: string Do;
+		std :: string For;
+		std :: string Match;
+		std :: string Break;
+		std :: string Loop;
+		
+		std :: string Bind;
+		std :: string Const;
+		
+	} KeywordLocalization;
 	
-	const std :: string kKeyword_True ( u8"true" );
-	const std :: string kKeyword_False ( u8"false" );
+	const KeywordLocalization kKeywordLocalization_EN
+	{
+		
+		u8"true",
+		u8"false",
 	
-	const std :: string kKeyword_Null ( u8"null" );
+		u8"null",
+		
+		u8"bool",
+		u8"i8",
+		u8"i16",
+		u8"i32",
+		u8"i64",
+		u8"iptr",
+		u8"u8",
+		u8"u16",
+		u8"u32",
+		u8"u64",
+		u8"uptr",
+		u8"void",
+		u8"char",
+		u8"f32",
+		u8"f64",
+		u8"str",
+		u8"str16",
+		u8"str32",
+		
+		u8"namespace",
+		u8"import",
+		u8"struct",
+		u8"trait",
+		u8"function",
+		u8"return",
+		u8"enum",
+		u8"ignore",
+		u8"implement",
+		u8"self",
+		
+		u8"mut",
+		u8"public",
+		u8"inline",
+		
+		u8"init",
+		u8"drop",
+		
+		u8"if",
+		u8"else",
+		u8"while",
+		u8"do",
+		u8"for",
+		u8"match",
+		u8"break",
+		u8"loop",
+		
+		u8"bind",
+		u8"const"
+		
+	};
 	
-	const std :: string kKeyword_Bool ( u8"bool" );
-	const std :: string kKeyword_Int8 ( u8"i8" );
-	const std :: string kKeyword_Int16 ( u8"i16" );
-	const std :: string kKeyword_Int32 ( u8"i32" );
-	const std :: string kKeyword_Int64 ( u8"i64" );
-	const std :: string kKeyword_IntPtr ( u8"iptr" );
-	const std :: string kKeyword_UInt8 ( u8"u8" );
-	const std :: string kKeyword_UInt16 ( u8"u16" );
-	const std :: string kKeyword_UInt32 ( u8"u32" );
-	const std :: string kKeyword_UInt64 ( u8"u64" );
-	const std :: string kKeyword_UIntPtr ( u8"uptr" );
-	const std :: string kKeyword_Void ( u8"void" );
-	const std :: string kKeyword_Char ( u8"char" );
-	const std :: string kKeyword_Float32 ( u8"f32" );
-	const std :: string kKeyword_Float64 ( u8"f64" );
-	const std :: string kKeyword_String8 ( u8"str" );
-	const std :: string kKeyword_String16 ( u8"str16" );
-	const std :: string kKeyword_String32 ( u8"str32" );
+	const KeywordLocalization kKeywordLocalization_FR
+	{
+		
+		u8"vrai", // true
+		u8"faux", // false
 	
-	const std :: string kKeyword_Namespace ( u8"namespace" );
-	const std :: string kKeyword_Import ( u8"import" );
-	const std :: string kKeyword_Struct ( u8"struct" );
-	const std :: string kKeyword_Trait ( u8"trait" );
-	const std :: string kKeyword_Function ( u8"function" );
-	const std :: string kKeyword_Return ( u8"return" );
-	const std :: string kKeyword_Enum ( u8"enum" );
-	const std :: string kKeyword_Ignore ( u8"ignore" );
-	const std :: string kKeyword_Implement ( u8"implement" );
-	const std :: string kKeyword_Self ( u8"self" );
+		u8"nul",
 	
-	const std :: string kKeyword_Mut ( u8"mut" );
-	const std :: string kKeyword_Public ( u8"public" );
-	const std :: string kKeyword_Inline ( u8"inline" );
+		u8"bool",
+		u8"i8",
+		u8"i16",
+		u8"i32",
+		u8"i64",
+		u8"iptr",
+		u8"u8",
+		u8"u16",
+		u8"u32",
+		u8"u64",
+		u8"uptr",
+		u8"vide", // void
+		u8"char",
+		u8"f32",
+		u8"f64",
+		u8"str",
+		u8"str16",
+		u8"str32",
 	
-	const std :: string kKeyword_Init ( u8"init" );
-	const std :: string kKeyword_Drop ( u8"drop" );
+		u8"espacenom", // namespace
+		u8"importer",
+		u8"struct",
+		u8"trait",
+		u8"fonction",
+		u8"rendre", // return
+		u8"énum",
+		u8"ignorer",
+		u8"réaliser", // implement
+		u8"soi", // self
 	
-	const std :: string kKeyword_If ( u8"if" );
-	const std :: string kKeyword_Else ( u8"else" );
-	const std :: string kKeyword_While ( u8"while" );
-	const std :: string kKeyword_Do ( u8"do" );
-	const std :: string kKeyword_For ( u8"for" );
-	const std :: string kKeyword_Match ( u8"match" );
-	const std :: string kKeyword_Break ( u8"break" );
-	const std :: string kKeyword_Loop ( u8"loop" );
+		u8"mut",
+		u8"public",
+		u8"enligne", // inline
 	
-	const std :: string kKeyword_Bind ( u8"bind" );
-	const std :: string kKeyword_Const ( u8"const" );
+		u8"init",
+		u8"baisser", // drop
+	
+		u8"si", // if
+		u8"autre", // else
+		u8"alors", // while
+		u8"faire", // do
+		u8"pour", // for
+		u8"identifier", // match
+		u8"quitter", // break
+		u8"boucle", // loop
+	
+		u8"lier", // bind
+		u8"const",
+		
+	};
 	
 }
 

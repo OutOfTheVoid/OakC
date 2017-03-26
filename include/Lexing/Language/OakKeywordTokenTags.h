@@ -59,6 +59,14 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Loop = 47;
 	const uint64_t kKeywordAuxTags_Const = 48;
 	
+	const uint64_t kKeywordAuxTags_Mask_Meaning = 0xFFF;
+	
+	const uint64_t kKeywordAuxTags_Mask_Localization = 0xFFFFF000;
+	const uint64_t kKeywordAuxTags_Shift_Localization = 12;
+	
+	const uint64_t kKeywordAuxTags_Localization_EN = 0x00000;
+	const uint64_t kKeywordAuxTags_Localization_FR = 0x00001;
+	
 	/// A list of the human-readable forms of kewords.
 	const char * const KeywordAuxTagNames [] =
 	{

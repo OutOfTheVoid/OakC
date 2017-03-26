@@ -23,6 +23,13 @@ public:
 		
 	} PointerMarkerType;
 	
+	typedef enum
+	{
+		
+		kVoid
+		
+	} VoidMarkerType;
+	
 	typedef uint32_t RefFlag;
 	
 	static const RefFlag kRefFlag_None = 0;
@@ -35,9 +42,11 @@ public:
 	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
 	OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, RefFlag Flags = kRefFlag_None );
 	OilTypeRef ( PointerMarkerType PTType, OilTypeRef * SubType, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( VoidMarkerType VType );
 	~OilTypeRef ();
 	
 	bool IsDirectType () const;
+	bool IsVoid () const;
 	bool IsReference () const;
 	
 	bool IsNamespaced () const;
@@ -63,6 +72,7 @@ private:
 		
 		kTypeMode_Pointer,
 		kTypeMode_Reference,
+		kTypeMode_Void,
 		kTypeMode_Direct
 		
 	} TypeMode;

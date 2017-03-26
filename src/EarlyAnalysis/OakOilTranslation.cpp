@@ -719,6 +719,9 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			
 		}
 		
+		case OakASTTags :: kASTTag_VoidType:
+			return new OilTypeRef ( OilTypeRef :: kVoid );
+		
 	}
 	
 	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );

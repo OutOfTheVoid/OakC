@@ -12,6 +12,8 @@
 #include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
 
+#include <Parsing/Language/OakVoidTypeConstructor.h>
+
 #include <Parsing/Language/OakNamespacedTemplatedTraitNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTraitNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTraitNameConstructor.h>
@@ -38,6 +40,8 @@ ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_Imple
 	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
+	
+	{ & OakVoidTypeConstructor :: Instance, 2 },
 	
 };
 

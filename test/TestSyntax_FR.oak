@@ -1,0 +1,31 @@
+fonction a ( b: bool ) : vide
+{
+	
+	lier mut c: bool = b;
+	
+	c = 10;
+	
+	alors ( c > 2 )
+	`bouc1:
+	{
+		
+		c --;
+		
+		si ( c == 2 )
+			quitter `bouc1;
+		autre
+			;
+		
+	};
+	
+	boucle
+	`end:
+	{
+		
+		quitter `end;
+		
+	}
+	
+	rendre 1;
+	
+}

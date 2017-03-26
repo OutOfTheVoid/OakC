@@ -13,63 +13,71 @@ OakKeywordLexingPattern :: OakKeywordLexingPattern ():
 	KeywordAuxTags ( OakKeywordTokenTags :: kKeywordAuxTags_Ident )
 {
 	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_True.c_str (), OakKeywords :: kKeyword_True.size (), OakKeywordTokenTags :: kKeywordAuxTags_True );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_False.c_str (), OakKeywords :: kKeyword_False.size (), OakKeywordTokenTags :: kKeywordAuxTags_False );
-	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Null.c_str (), OakKeywords :: kKeyword_Null.size (), OakKeywordTokenTags :: kKeywordAuxTags_Null );
-	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Bool.c_str (), OakKeywords :: kKeyword_Bool.size (), OakKeywordTokenTags :: kKeywordAuxTags_Bool );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Int8.c_str (), OakKeywords :: kKeyword_Int8.size (), OakKeywordTokenTags :: kKeywordAuxTags_Int8 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Int16.c_str (), OakKeywords :: kKeyword_Int16.size (), OakKeywordTokenTags :: kKeywordAuxTags_Int16 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Int32.c_str (), OakKeywords :: kKeyword_Int32.size (), OakKeywordTokenTags :: kKeywordAuxTags_Int32 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Int64.c_str (), OakKeywords :: kKeyword_Int64.size (), OakKeywordTokenTags :: kKeywordAuxTags_Int64 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_IntPtr.c_str (), OakKeywords :: kKeyword_IntPtr.size (), OakKeywordTokenTags :: kKeywordAuxTags_IntPtr );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_UInt8.c_str (), OakKeywords :: kKeyword_UInt8.size (), OakKeywordTokenTags :: kKeywordAuxTags_UInt8 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_UInt16.c_str (), OakKeywords :: kKeyword_UInt16.size (), OakKeywordTokenTags :: kKeywordAuxTags_UInt16 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_UInt32.c_str (), OakKeywords :: kKeyword_UInt32.size (), OakKeywordTokenTags :: kKeywordAuxTags_UInt32 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_UInt64.c_str (), OakKeywords :: kKeyword_UInt64.size (), OakKeywordTokenTags :: kKeywordAuxTags_UInt64 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_UIntPtr.c_str (), OakKeywords :: kKeyword_UIntPtr.size (), OakKeywordTokenTags :: kKeywordAuxTags_UIntPtr );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Void.c_str (), OakKeywords :: kKeyword_Void.size (), OakKeywordTokenTags :: kKeywordAuxTags_Void );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Char.c_str (), OakKeywords :: kKeyword_Char.size (), OakKeywordTokenTags :: kKeywordAuxTags_Char );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Float32.c_str (), OakKeywords :: kKeyword_Float32.size (), OakKeywordTokenTags :: kKeywordAuxTags_Float32 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Float64.c_str (), OakKeywords :: kKeyword_Float64.size (), OakKeywordTokenTags :: kKeywordAuxTags_Float64 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_String8.c_str (), OakKeywords :: kKeyword_String8.size (), OakKeywordTokenTags :: kKeywordAuxTags_String8 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_String16.c_str (), OakKeywords :: kKeyword_String16.size (), OakKeywordTokenTags :: kKeywordAuxTags_String16 );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_String32.c_str (), OakKeywords :: kKeyword_String32.size (), OakKeywordTokenTags :: kKeywordAuxTags_String32 );
-	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Namespace.c_str (), OakKeywords :: kKeyword_Namespace.size (), OakKeywordTokenTags :: kKeywordAuxTags_Namespace );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Import.c_str (), OakKeywords :: kKeyword_Import.size (), OakKeywordTokenTags :: kKeywordAuxTags_Import );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Struct.c_str (), OakKeywords :: kKeyword_Struct.size (), OakKeywordTokenTags :: kKeywordAuxTags_Struct );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Trait.c_str (), OakKeywords :: kKeyword_Trait.size (), OakKeywordTokenTags :: kKeywordAuxTags_Trait );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Function.c_str (), OakKeywords :: kKeyword_Function.size (), OakKeywordTokenTags :: kKeywordAuxTags_Function );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Return.c_str (), OakKeywords :: kKeyword_Return.size (), OakKeywordTokenTags :: kKeywordAuxTags_Return );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Enum.c_str (), OakKeywords :: kKeyword_Enum.size (), OakKeywordTokenTags :: kKeywordAuxTags_Enum );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Ignore.c_str (), OakKeywords :: kKeyword_Ignore.size (), OakKeywordTokenTags :: kKeywordAuxTags_Ignore );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Implement.c_str (), OakKeywords :: kKeyword_Implement.size (), OakKeywordTokenTags :: kKeywordAuxTags_Implement );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Self.c_str (), OakKeywords :: kKeyword_Self.size (), OakKeywordTokenTags :: kKeywordAuxTags_Self );
-	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Mut.c_str (), OakKeywords :: kKeyword_Mut.size (), OakKeywordTokenTags :: kKeywordAuxTags_Mut );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Public.c_str (), OakKeywords :: kKeyword_Public.size (), OakKeywordTokenTags :: kKeywordAuxTags_Public );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Inline.c_str (), OakKeywords :: kKeyword_Inline.size (), OakKeywordTokenTags :: kKeywordAuxTags_Inline );
-	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Init.c_str (), OakKeywords :: kKeyword_Init.size (), OakKeywordTokenTags :: kKeywordAuxTags_Init );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Drop.c_str (), OakKeywords :: kKeyword_Drop.size (), OakKeywordTokenTags :: kKeywordAuxTags_Drop );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_If.c_str (), OakKeywords :: kKeyword_If.size (), OakKeywordTokenTags :: kKeywordAuxTags_If );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Else.c_str (), OakKeywords :: kKeyword_Else.size (), OakKeywordTokenTags :: kKeywordAuxTags_Else );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_While.c_str (), OakKeywords :: kKeyword_While.size (), OakKeywordTokenTags :: kKeywordAuxTags_While );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Do.c_str (), OakKeywords :: kKeyword_Do.size (), OakKeywordTokenTags :: kKeywordAuxTags_Do );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_For.c_str (), OakKeywords :: kKeyword_For.size (), OakKeywordTokenTags :: kKeywordAuxTags_For );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Match.c_str (), OakKeywords :: kKeyword_Match.size (), OakKeywordTokenTags :: kKeywordAuxTags_Match );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Break.c_str (), OakKeywords :: kKeyword_Break.size (), OakKeywordTokenTags :: kKeywordAuxTags_Break );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Loop.c_str (), OakKeywords :: kKeyword_Loop.size (), OakKeywordTokenTags :: kKeywordAuxTags_Loop );
-	
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Bind.c_str (), OakKeywords :: kKeyword_Bind.size (), OakKeywordTokenTags :: kKeywordAuxTags_Bind );
-	KeywordAuxTags.Set ( OakKeywords :: kKeyword_Const.c_str (), OakKeywords :: kKeyword_Const.size (), OakKeywordTokenTags :: kKeywordAuxTags_Const );
+	AddLocalization ( OakKeywords :: kKeywordLocalization_EN, OakKeywordTokenTags :: kKeywordAuxTags_Localization_EN, true );
+	AddLocalization ( OakKeywords :: kKeywordLocalization_FR, OakKeywordTokenTags :: kKeywordAuxTags_Localization_FR, false );
 	
 }
 
 OakKeywordLexingPattern :: ~OakKeywordLexingPattern ()
 {
+}
+
+void OakKeywordLexingPattern :: AddLocalization ( const OakKeywords :: KeywordLocalization & Localization, uint64_t LocalizationIndex, bool Overwrite )
+{
+	
+	KeywordAuxTags.Set ( Localization.True.c_str (), Localization.True.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_True, Overwrite );
+	KeywordAuxTags.Set ( Localization.False.c_str (), Localization.False.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_False, Overwrite );
+	
+	KeywordAuxTags.Set ( Localization.Null.c_str (), Localization.Null.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Null, Overwrite );
+	
+	KeywordAuxTags.Set ( Localization.Bool.c_str (), Localization.Bool.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Bool, Overwrite );
+	KeywordAuxTags.Set ( Localization.I8.c_str (), Localization.I8.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Int8, Overwrite );
+	KeywordAuxTags.Set ( Localization.I16.c_str (), Localization.I16.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Int16, Overwrite );
+	KeywordAuxTags.Set ( Localization.I32.c_str (), Localization.I32.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Int32, Overwrite );
+	KeywordAuxTags.Set ( Localization.I64.c_str (), Localization.I64.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Int64, Overwrite );
+	KeywordAuxTags.Set ( Localization.IPtr.c_str (), Localization.IPtr.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_IntPtr, Overwrite );
+	KeywordAuxTags.Set ( Localization.U8.c_str (), Localization.U8.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_UInt8, Overwrite );
+	KeywordAuxTags.Set ( Localization.U16.c_str (), Localization.U16.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_UInt16, Overwrite );
+	KeywordAuxTags.Set ( Localization.U32.c_str (), Localization.U32.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_UInt32, Overwrite );
+	KeywordAuxTags.Set ( Localization.U64.c_str (), Localization.U64.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_UInt64, Overwrite );
+	KeywordAuxTags.Set ( Localization.UPtr.c_str (), Localization.UPtr.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_UIntPtr, Overwrite );
+	KeywordAuxTags.Set ( Localization.Void.c_str (), Localization.Void.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Void, Overwrite );
+	KeywordAuxTags.Set ( Localization.Char.c_str (), Localization.Char.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Char, Overwrite );
+	KeywordAuxTags.Set ( Localization.F32.c_str (), Localization.F32.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Float32, Overwrite );
+	KeywordAuxTags.Set ( Localization.F64.c_str (), Localization.F64.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Float64, Overwrite );
+	KeywordAuxTags.Set ( Localization.Str8.c_str (), Localization.Str8.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_String8, Overwrite );
+	KeywordAuxTags.Set ( Localization.Str16.c_str (), Localization.Str16.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_String16, Overwrite );
+	KeywordAuxTags.Set ( Localization.Str32.c_str (), Localization.Str32.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_String32, Overwrite );
+	
+	KeywordAuxTags.Set ( Localization.Namespace.c_str (), Localization.Namespace.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Namespace, Overwrite );
+	KeywordAuxTags.Set ( Localization.Import.c_str (), Localization.Import.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Import, Overwrite );
+	KeywordAuxTags.Set ( Localization.Struct.c_str (), Localization.Struct.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Struct, Overwrite );
+	KeywordAuxTags.Set ( Localization.Trait.c_str (), Localization.Trait.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Trait, Overwrite );
+	KeywordAuxTags.Set ( Localization.Function.c_str (), Localization.Function.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Function, Overwrite );
+	KeywordAuxTags.Set ( Localization.Return.c_str (), Localization.Return.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Return, Overwrite );
+	KeywordAuxTags.Set ( Localization.Enum.c_str (), Localization.Enum.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Enum, Overwrite );
+	KeywordAuxTags.Set ( Localization.Ignore.c_str (), Localization.Ignore.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Ignore, Overwrite );
+	KeywordAuxTags.Set ( Localization.Implement.c_str (), Localization.Implement.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Implement, Overwrite );
+	KeywordAuxTags.Set ( Localization.Self.c_str (), Localization.Self.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Self, Overwrite );
+	
+	KeywordAuxTags.Set ( Localization.Mut.c_str (), Localization.Mut.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Mut, Overwrite );
+	KeywordAuxTags.Set ( Localization.Public.c_str (), Localization.Public.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Public, Overwrite );
+	KeywordAuxTags.Set ( Localization.Inline.c_str (), Localization.Inline.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Inline, Overwrite );
+	
+	KeywordAuxTags.Set ( Localization.Init.c_str (), Localization.Init.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Init, Overwrite );
+	KeywordAuxTags.Set ( Localization.Drop.c_str (), Localization.Drop.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Drop, Overwrite );
+	KeywordAuxTags.Set ( Localization.If.c_str (), Localization.If.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_If, Overwrite );
+	KeywordAuxTags.Set ( Localization.Else.c_str (), Localization.Else.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Else, Overwrite );
+	KeywordAuxTags.Set ( Localization.While.c_str (), Localization.While.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_While, Overwrite );
+	KeywordAuxTags.Set ( Localization.Do.c_str (), Localization.Do.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Do, Overwrite );
+	KeywordAuxTags.Set ( Localization.For.c_str (), Localization.For.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_For, Overwrite );
+	KeywordAuxTags.Set ( Localization.Match.c_str (), Localization.Match.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Match, Overwrite );
+	KeywordAuxTags.Set ( Localization.Break.c_str (), Localization.Break.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Break, Overwrite );
+	KeywordAuxTags.Set ( Localization.Loop.c_str (), Localization.Loop.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Loop, Overwrite );
+	
+	KeywordAuxTags.Set ( Localization.Bind.c_str (), Localization.Bind.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Bind, Overwrite );
+	KeywordAuxTags.Set ( Localization.Const.c_str (), Localization.Const.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Const, Overwrite );
+	
 }
 
 void OakKeywordLexingPattern :: TryPattern ( ILexingInput & Input, ILexingResult & Result )

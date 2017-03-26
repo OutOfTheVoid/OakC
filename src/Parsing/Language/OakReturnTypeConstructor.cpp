@@ -5,10 +5,13 @@
 
 #include <Parsing/Language/OakPointerTypeConstructor.h>
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
+
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
+
+#include <Parsing/Language/OakVoidTypeConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
@@ -25,10 +28,12 @@ ASTConstructionGroup :: StaticInitEntry _OakReturnTypeConstructor_TypeGroupEntri
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
+	{ & OakVoidTypeConstructor :: Instance, 2 },
+	
 };
 
 OakReturnTypeConstructor :: OakReturnTypeConstructor ():
-	TypeGroup ( _OakReturnTypeConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( _OakReturnTypeConstructor_TypeGroupEntries, 7 )
 {
 }
 
