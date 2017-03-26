@@ -1,4 +1,4 @@
-fonction a ( b: bool ) : vide
+fonction a_fr ( b: bool ) : vide
 {
 	
 	lier mut c: bool = b;
@@ -6,17 +6,17 @@ fonction a ( b: bool ) : vide
 	c = 10;
 	
 	alors ( c > 2 )
-	`bouc1:
+	`d:
 	{
 		
 		c --;
 		
 		si ( c == 2 )
-			quitter `bouc1;
+			quitter `d;
 		autre
 			;
 		
-	};
+	}
 	
 	boucle
 	`end:
@@ -26,6 +26,39 @@ fonction a ( b: bool ) : vide
 		
 	}
 	
-	rendre 1;
+	rendre;
+	
+}
+
+
+function a_en ( b: bool ) : void
+{
+	
+	bind mut c: bool = b;
+	
+	c = 10;
+	
+	while ( c > 2 )
+	`d:
+	{
+		
+		c --;
+		
+		if ( c == 2 )
+			break `d;
+		else
+			;
+		
+	}
+	
+	loop
+	`end:
+	{
+		
+		break `end;
+		
+	}
+	
+	return;
 	
 }
