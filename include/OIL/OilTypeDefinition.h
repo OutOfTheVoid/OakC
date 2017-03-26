@@ -26,10 +26,10 @@ public:
 	const OilImplementBlock * GetPrincipalImplementBlock () const;
 	OilImplementBlock * GetPrincipalImplementBlock ();
 	
-	void AddTraitImplementBlock ( const std :: u32string ** AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict, bool RedefinitionConflict );
+	void AddTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict, bool & RedefinitionConflict );
 	
-	const OilImplementBlock * FindTraitImplementBlock ( const std :: u32string ** AbsoluteNamePath, uint32_t NamePathSize ) const;
-	OilImplementBlock * FindTraitImplementBlock ( const std :: u32string ** AbsoluteNamePath, uint32_t NamePathSize );
+	const OilImplementBlock * FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
+	OilImplementBlock * FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize );
 	
 private:
 	

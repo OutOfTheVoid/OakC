@@ -7,11 +7,9 @@ Parsing - Mostly Complete.
 Analysis
 	* IL Translation
 		- In progress. Working on:
-		- Expression translation
-		- Literal parsing
 		- Constant folding
 		- Symbol tables
-	* Name resolution
+		- Name resolution
 	* Template specification resolution
 	* Structure specification
 	* Type resolution

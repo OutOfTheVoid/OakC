@@ -25,6 +25,7 @@ public:
 		kCompilationStep_Lexer,
 		kCompilationStep_Parser,
 		kCompilationStep_OILTranslation,
+		kCompilationStep_TraitResolution,
 		
 	};
 	

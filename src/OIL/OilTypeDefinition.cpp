@@ -101,7 +101,7 @@ OilImplementBlock * OilTypeDefinition :: GetPrincipalImplementBlock ()
 	
 }
 
-void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string ** AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict, bool RedefinitionConflict )
+void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict, bool & RedefinitionConflict )
 {
 	
 	if ( TraitMap == NULL )
@@ -123,12 +123,12 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string ** Abs
 	while ( PathIndex + 1 != NamePathSize )
 	{
 		
-		Iter = CurrentElement -> NameMap -> find ( * AbsoluteNamePath [ PathIndex ] );
+		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 		
 		if ( Iter == CurrentElement -> NameMap -> end () )
 		{
 			
-			CurrentElement = ( * CurrentElement -> NameMap ) [ * AbsoluteNamePath [ PathIndex ] ] = new TraitMapElement ();
+			CurrentElement = ( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = new TraitMapElement ();
 			CurrentElement -> IsTrait  = false;
 			CurrentElement -> NameMap = new std :: map <std :: u32string, struct TraitMapElement_Struct *> ();
 			
@@ -147,7 +147,7 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string ** Abs
 		
 	}
 	
-	Iter = CurrentElement -> NameMap -> find ( * AbsoluteNamePath [ PathIndex ] );
+	Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 	
 	if ( Iter != CurrentElement -> NameMap -> end () )
 	{
@@ -158,14 +158,14 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string ** Abs
 		
 	}
 	
-	CurrentElement = ( * CurrentElement -> NameMap ) [ * AbsoluteNamePath [ PathIndex ] ] = new TraitMapElement ();
+	CurrentElement = ( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = new TraitMapElement ();
 	
 	CurrentElement -> IsTrait = true;
 	CurrentElement -> TraitElement.Block = Implement;
 	
 }
 
-const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: u32string ** AbsoluteNamePath, uint32_t NamePathSize ) const
+const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const
 {
 	
 	if ( TraitMap == NULL )
@@ -180,7 +180,7 @@ const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const s
 	while ( PathIndex + 1 != NamePathSize )
 	{
 		
-		Iter = CurrentElement -> NameMap -> find ( * AbsoluteNamePath [ PathIndex ] );
+		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 		
 		if ( Iter == CurrentElement -> NameMap -> end () )
 			return NULL;
@@ -192,7 +192,7 @@ const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const s
 		
 	}
 	
-	Iter = CurrentElement -> NameMap -> find ( * AbsoluteNamePath [ PathIndex ] );
+	Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 	
 	if ( Iter == CurrentElement -> NameMap -> end () )
 		return NULL;
@@ -204,7 +204,7 @@ const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const s
 	
 }
 
-OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: u32string ** AbsoluteNamePath, uint32_t NamePathSize )
+OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize )
 {
 	
 	if ( TraitMap == NULL )
@@ -219,7 +219,7 @@ OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: 
 	while ( PathIndex + 1 != NamePathSize )
 	{
 		
-		Iter = CurrentElement -> NameMap -> find ( * AbsoluteNamePath [ PathIndex ] );
+		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 		
 		if ( Iter == CurrentElement -> NameMap -> end () )
 			return NULL;
@@ -231,7 +231,7 @@ OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: 
 		
 	}
 	
-	Iter = CurrentElement -> NameMap -> find ( * AbsoluteNamePath [ PathIndex ] );
+	Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 	
 	if ( Iter == CurrentElement -> NameMap -> end () )
 		return NULL;

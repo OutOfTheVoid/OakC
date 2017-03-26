@@ -5,6 +5,7 @@
 #include <OIL/OilTemplateSpecification.h>
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilStructDefinition.h>
+#include <OIL/OilTraitDefinition.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -277,6 +278,89 @@ const OilNamespaceDefinition * OilFindParentallyContainedNamespace ( const OilNa
 	while ( SearchTarget != NULL );
 	
 	return NULL;
+	
+}
+
+bool OilFindAndBuildAbsoluteTraitNamePath ( std :: vector <std :: u32string> & AbsoluteNamePath, OilTypeRef & Type, OilNamespaceDefinition & CurrentNS, OilTraitDefinition *& TraitOut, bool & TemplateMismatch )
+{
+	
+	TraitOut = NULL;
+	
+	OilNamespaceDefinition * LocalNS = & CurrentNS;
+	
+	if ( Type.IsNamespaced () )
+	{
+		
+		LocalNS = OilFindParentallyContainedNamespace ( * LocalNS, Type.GetNamespaceName ( 0 ) );
+		
+		if ( LocalNS == NULL )
+			return false;
+		
+		AbsoluteNamePath.push_back ( Type.GetNamespaceName ( 0 ) );
+		
+		uint32_t Index = 1;
+		
+		while ( Index < Type.GetNamespaceNameCount () )
+		{
+			
+			LocalNS = LocalNS -> FindNamespaceDefinition ( Type.GetNamespaceName ( Index ) );
+			
+			if ( LocalNS == NULL )
+			{
+				
+				AbsoluteNamePath.clear ();
+				
+				return false;
+				
+			}
+			
+			AbsoluteNamePath.push_back ( Type.GetNamespaceName ( Index ) );
+			
+			Index ++;
+			
+		}
+		
+	}
+	
+	TraitOut = LocalNS -> FindTraitDefinition ( Type.GetName () );
+	
+	if ( TraitOut == NULL )
+	{
+		
+		AbsoluteNamePath.clear ();
+		
+		return false;
+		
+	}
+	
+	if ( Type.IsTemplated () != TraitOut -> IsTemplated () )
+	{
+		
+		AbsoluteNamePath.clear ();
+		TemplateMismatch = true;
+		
+		return false;
+		
+	}
+	
+	if ( TraitOut -> IsTemplated () )
+	{
+		
+		if ( TraitOut -> GetTemplateDefinition () -> GetTemplateParameterCount () != Type.GetTemplateSpecification () -> GetTypeRefCount () )	
+		{
+			
+			AbsoluteNamePath.clear ();
+			TemplateMismatch = true;
+			
+			return false;
+			
+		}
+	
+	}
+	
+	AbsoluteNamePath.push_back ( Type.GetName () );
+	
+	return true;
 	
 }
 

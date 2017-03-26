@@ -22,6 +22,7 @@
 
 #include <EarlyAnalysis/OakImportResolution.h>
 #include <EarlyAnalysis/OakOilTranslation.h>
+#include <EarlyAnalysis/OilTraitResolution.h>
 
 #include <iostream>
 
@@ -212,11 +213,39 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 bool CompilationUnit :: RunAnalysis ( OilNamespaceDefinition & RootNS )
 {
 	
+	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: OIL Translation." );
+	
 	if ( CompilationState != kCompilationStep_OILTranslation )
 		return false;
 	
 	if ( ! OakTranslateFileTreeToOil ( ASTRoot, RootNS ) )
 		return false;
+	
+	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: Trait Resolution." );
+	
+	CompilationState = kCompilationStep_TraitResolution;
+	
+	ResolveTraitsStatus TraitResolutionStatus = OilResolveTraits ( RootNS );
+	
+	switch ( TraitResolutionStatus )
+	{
+		
+		case kResolveTraitsStatus_Success_Complete:
+			break;
+			
+		case kResolveTraitsStatus_Failure_NoResolution:
+		case kResolveTraitsStatus_Failure_TemplateMismatch:
+		case kResolveTraitsStatus_Success_Incomplete:
+		default:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Trait resolution error!" );
+			
+			return false;
+			
+		}
+		
+	}
 	
 	return true;
 	
