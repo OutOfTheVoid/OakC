@@ -31,7 +31,15 @@ public:
 	const OilImplementBlock * FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
 	OilImplementBlock * FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize );
 	
+	uint32_t GetNamespaceCountAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
+	const std :: u32string GetImplementNamespaceAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const;
+	
+	const OilImplementBlock * GetImplementBlockAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const;
+	OilImplementBlock * GetImplementBlockAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index );
+	
 private:
+	
+	static const std :: u32string NullString;
 	
 	const std :: u32string Name;
 	

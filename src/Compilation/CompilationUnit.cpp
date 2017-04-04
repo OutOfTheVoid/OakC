@@ -233,9 +233,6 @@ bool CompilationUnit :: RunAnalysis ( OilNamespaceDefinition & RootNS )
 		case kResolveTraitsStatus_Success_Complete:
 			break;
 			
-		case kResolveTraitsStatus_Failure_NoResolution:
-		case kResolveTraitsStatus_Failure_TemplateMismatch:
-		case kResolveTraitsStatus_Success_Incomplete:
 		default:
 		{
 			

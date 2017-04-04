@@ -6,15 +6,20 @@
 #include <OIL/OilTraversal.h>
 #include <OIL/OilTypeDefinition.h>
 
+#include <Logging/Logging.h>
+#include <Encoding/CodeConversion.h>
+
 ResolveTraitsStatus OilResolveTraits ( OilNamespaceDefinition & CurrentNS )
 {
-	
-	uint32_t UnresolvedOffset = 0;
 	
 	if ( CurrentNS.GetUnresolvedImplementBlockCount () == 0 )
 		return kResolveTraitsStatus_Success_Complete;
 	
-	while ( CurrentNS.GetUnresolvedImplementBlockCount () > UnresolvedOffset )
+	LOG_VERBOSE ( std :: string ( "Unres traits: " ) + std :: to_string ( CurrentNS.GetUnresolvedImplementBlockCount () ) );
+	
+	uint32_t UnresolvedOffset = 0;
+	
+	while ( UnresolvedOffset < CurrentNS.GetUnresolvedImplementBlockCount () )
 	{
 		
 		OilImplementBlock * Block = CurrentNS.GetUnresolvedImplementBlock ( UnresolvedOffset );
@@ -38,6 +43,8 @@ ResolveTraitsStatus OilResolveTraits ( OilNamespaceDefinition & CurrentNS )
 		if ( Block -> IsForTrait () )
 		{
 			
+			LOG_VERBOSE ( "TRAIT IMPL" );
+			
 			OilTypeRef * ForTraitRef = Block -> GetForTrait ();
 			
 			std :: vector <std :: u32string> AbsoluteNamePath;
@@ -60,14 +67,38 @@ ResolveTraitsStatus OilResolveTraits ( OilNamespaceDefinition & CurrentNS )
 			bool NameConflict = false;
 			bool RedefinitionConflict = false;
 			
+			{
+				
+				std :: string PrintString = "";
+				
+				PrintString += "Adding trait to impl list: ";
+				
+				for ( uint32_t I = 0; I < AbsoluteNamePath.size (); I ++ )
+				{
+					
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( AbsoluteNamePath [ I ] );
+					
+					if ( I != AbsoluteNamePath.size () - 1 )
+						PrintString += "::";
+					
+				}
+				
+				LOG_VERBOSE ( PrintString );
+				
+			}
+			
 			ImplementedTypeDef -> AddTraitImplementBlock ( & AbsoluteNamePath [ 0 ], AbsoluteNamePath.size (), Block, NameConflict, RedefinitionConflict );
+			
+			if ( RedefinitionConflict || NameConflict )
+				return kResolveTraitsStatus_Failure_Conflict;
 			
 		}
 		else
 		{
 			
+			LOG_VERBOSE ( "PRINCIPAL IMPL" );
+			
 			ImplementedTypeDef -> SetPrincipalImplementBlock ( Block );
-			CurrentNS.RemoveUnresolvedImplementBlock ( UnresolvedOffset );
 			
 		}
 		

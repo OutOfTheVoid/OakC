@@ -10,6 +10,7 @@ typedef enum
 	kResolveTraitsStatus_Success_Complete = 1,
 	kResolveTraitsStatus_Failure_NoResolution = 2,
 	kResolveTraitsStatus_Failure_TemplateMismatch = 3,
+	kResolveTraitsStatus_Failure_Conflict = 4,
 	
 } ResolveTraitsStatus;
 
