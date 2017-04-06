@@ -7,16 +7,23 @@
 class OilImplementBlock;
 class OilTraitDefinition;
 class OilStructDefinition;
+class OilBuiltinStructDefinition;
 
 class OilTypeDefinition
 {
 public:
 	
 	OilTypeDefinition ( OilStructDefinition * Structure );
+	OilTypeDefinition ( OilBuiltinStructDefinition * BuiltinStructure );
 	
 	~OilTypeDefinition ();
 	
 	const std :: u32string & GetName () const;
+	
+	bool IsBuiltinStructure () const;
+	
+	const OilBuiltinStructDefinition * GetBuiltinStructDefinition () const;
+	OilBuiltinStructDefinition * GetBuiltinStructDefinition ();
 	
 	const OilStructDefinition * GetStructDefinition () const;
 	OilStructDefinition * GetStructDefinition ();
@@ -43,7 +50,16 @@ private:
 	
 	const std :: u32string Name;
 	
-	OilStructDefinition * StructDefinition;
+	bool IsBuiltin;
+	
+	union
+	{
+		
+		OilStructDefinition * StructDefinition;
+		OilBuiltinStructDefinition * BuiltinStructDefinition;
+		
+	};
+		
 	OilImplementBlock * PrincipalImplementBlock;
 	
 	typedef struct

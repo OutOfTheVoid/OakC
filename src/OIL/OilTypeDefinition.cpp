@@ -2,10 +2,21 @@
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTraitDefinition.h>
+#include <OIL/OilBuiltinStructDefinition.h>
 
 OilTypeDefinition :: OilTypeDefinition ( OilStructDefinition * Structure ):
 	Name ( Structure -> GetID () ),
+	IsBuiltin ( false ),
 	StructDefinition ( Structure ),
+	PrincipalImplementBlock ( NULL ),
+	TraitMap ( NULL )
+{
+}
+
+OilTypeDefinition :: OilTypeDefinition ( OilBuiltinStructDefinition * Structure ):
+	Name ( Structure -> GetName () ),
+	IsBuiltin ( false ),
+	BuiltinStructDefinition ( Structure ),
 	PrincipalImplementBlock ( NULL ),
 	TraitMap ( NULL )
 {
@@ -14,7 +25,9 @@ OilTypeDefinition :: OilTypeDefinition ( OilStructDefinition * Structure ):
 OilTypeDefinition :: ~OilTypeDefinition ()
 {
 	
-	if ( StructDefinition != NULL )
+	if ( IsBuiltin )
+		delete BuiltinStructDefinition;
+	else
 		delete StructDefinition;
 	
 	if ( PrincipalImplementBlock != NULL )
@@ -63,6 +76,27 @@ void OilTypeDefinition :: DeleteTraitMap ( TraitMapElement * Element )
 	}
 	
 	delete Element;
+	
+}
+
+bool OilTypeDefinition :: IsBuiltinStructure () const
+{
+	
+	return IsBuiltin;
+	
+}
+
+const OilBuiltinStructDefinition * OilTypeDefinition :: GetBuiltinStructDefinition () const
+{
+	
+	return BuiltinStructDefinition;
+	
+}
+
+OilBuiltinStructDefinition * OilTypeDefinition :: GetBuiltinStructDefinition ()
+{
+	
+	return BuiltinStructDefinition;
 	
 }
 
