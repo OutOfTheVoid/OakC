@@ -148,10 +148,12 @@ namespace OakASTTags
 	const uint64_t kASTTag_ArrayLiteral = 97;
 	
 	const uint64_t kASTTag_BindingStatement = 98;
-	const uint64_t kASTTag_ConstStatement = 99; // TODO
+	const uint64_t kASTTag_ConstStatement = 99;
 	const uint64_t kASTTag_TraitMethod = 100;
 	
 	const uint64_t kASTTag_VoidType = 101;
+	
+	const uint64_t kASTTag_TraitRequirement = 102;
 	
 	const char * const TagNames [] =
 	{
@@ -258,6 +260,7 @@ namespace OakASTTags
 		"CONST_STATEMENT",
 		"TRAIT_METHOD",
 		"VOID_TYPE",
+		"TRAIT_REQUIREMENT",
 		
 	};
 	

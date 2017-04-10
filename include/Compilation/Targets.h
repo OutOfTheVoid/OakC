@@ -1,6 +1,8 @@
 #ifndef COMPILATION_TARGETS_H
 #define COMPILATION_TARGETS_H
 
+#include <stdint.h>
+
 typedef uint32_t TargetArchID;
 typedef uint32_t TargetArchFlags;
 

@@ -47,7 +47,10 @@ public:
 	 * @return Whether or not the compilation succeeded
 	 */
 	bool RunIndependantCompilationSteps ( FileTable & FTable );
-	bool RunAnalysis ( OilNamespaceDefinition & RootObject );
+	bool ApplyToOil ( OilNamespaceDefinition & RootObject );
+	
+	static bool RunSourceAnalysis ( OilNamespaceDefinition & RootNS );
+	static bool RunBuiltinAddition ( OilNamespaceDefinition & RootNS );
 	
 	const std :: string & GetFileName ();
 	

@@ -78,6 +78,8 @@ void OakKeywordLexingPattern :: AddLocalization ( const OakKeywords :: KeywordLo
 	KeywordAuxTags.Set ( Localization.Bind.c_str (), Localization.Bind.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Bind, Overwrite );
 	KeywordAuxTags.Set ( Localization.Const.c_str (), Localization.Const.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Const, Overwrite );
 	
+	KeywordAuxTags.Set ( Localization.Require.c_str (), Localization.Require.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Require, Overwrite );
+	
 }
 
 void OakKeywordLexingPattern :: TryPattern ( ILexingInput & Input, ILexingResult & Result )

@@ -229,6 +229,22 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 	
 	PrintString = "";
 	
+	for ( uint32_t J = 0; J < Trait.GetRequiredTraitCount (); J ++ )
+	{
+		
+		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "[REQUIRE: ";
+		
+		PrintString += OilStringTypeRef ( * Trait.GetRequiredTrait ( J ) );
+		PrintString += "]";
+		LOG_VERBOSE ( PrintString );
+		
+		PrintString = "";
+		
+	}
+	
 	for ( uint32_t J = 0; J < Trait.GetFunctionCount (); J ++ )
 	{
 		

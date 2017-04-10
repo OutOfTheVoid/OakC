@@ -6,14 +6,20 @@
 class OilTraitFunction;
 class OilTraitMethod;
 class OilTemplateDefinition;
+class OilTypeRef;
 
 class OilTraitDefinition
 {
 public:
 	
-	OilTraitDefinition ( const std :: u32string & Name, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount );
-	OilTraitDefinition ( const std :: u32string & Name, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, OilTemplateDefinition * TemplateDefinition );
+	OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, bool Builtin = false );
+	OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, OilTemplateDefinition * TemplateDefinition, bool Builtin = false );
 	~OilTraitDefinition ();
+	
+	uint32_t GetRequiredTraitCount () const;
+	
+	const OilTypeRef * GetRequiredTrait ( uint32_t Index ) const;
+	OilTypeRef * GetRequiredTrait ( uint32_t Index );
 	
 	uint32_t GetFunctionCount () const;
 	
@@ -32,9 +38,14 @@ public:
 	
 	const std :: u32string & GetName () const;
 	
+	bool IsBuiltin () const;
+	
 private:
 	
 	const std :: u32string Name;
+	
+	OilTypeRef ** RequiredTraits;
+	uint32_t RequiredTraitCount;
 	
 	OilTraitFunction ** TraitFunctions;
 	uint32_t FunctionCount;
@@ -43,6 +54,8 @@ private:
 	uint32_t MethodCount;
 	
 	OilTemplateDefinition * TemplateDefinition;
+	
+	bool Builtin;
 	
 };
 

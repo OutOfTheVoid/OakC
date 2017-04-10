@@ -3,6 +3,9 @@ trait SomeTrait;
 trait SomeTemplatedTrait <A>
 {
 	
+	require Add:<A, A>,
+	require Subtract:<A, A>,
+	
 	function RequiredFunction <B> ( P: i32 ) : void,
 	function OtherRequiredFunction <C> ( P: f32 ) : SomeOtherTrait:<A>,
 	function FinalRequiredFunction ()

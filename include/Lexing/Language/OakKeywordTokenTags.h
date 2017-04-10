@@ -58,6 +58,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Break = 46;
 	const uint64_t kKeywordAuxTags_Loop = 47;
 	const uint64_t kKeywordAuxTags_Const = 48;
+	const uint64_t kKeywordAuxTags_Require = 49;
 	
 	const uint64_t kKeywordAuxTags_Mask_Meaning = 0xFFF;
 	
@@ -120,6 +121,7 @@ namespace OakKeywordTokenTags
 		"BREAK",
 		"LOOP",
 		"CONST",
+		"REQUIRE"
 		
 	};
 	

@@ -6,6 +6,7 @@
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakTraitFunctionConstructor.h>
 #include <Parsing/Language/OakTraitMethodConstructor.h>
+#include <Parsing/Language/OakTraitRequirementConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -21,13 +22,14 @@ ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TraitBody
 {
 	
 	{ & OakTraitMethodConstructor :: Instance, 0 },
-	{ & OakTraitFunctionConstructor :: Instance, 1 },
+	{ & OakTraitFunctionConstructor :: Instance, 0 },
+	{ & OakTraitRequirementConstructor :: Instance, 0 },
 	
 };
 
 OakTraitDefinitionConstructor :: OakTraitDefinitionConstructor ():
 	TemplateConstructionGroup ( _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
-	TraitBodyConstructionGroup ( _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries, 2 )
+	TraitBodyConstructionGroup ( _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries, 3 )
 {
 }
 
@@ -164,7 +166,7 @@ void OakTraitDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected body for trait definition or parenthesis to close empty trait";
+		Output.ErrorSuggestion = "Expected body for trait definition or closing curly bracket to close empty trait";
 		Output.ErrorProvokingToken = NULL;
 		
 		return;

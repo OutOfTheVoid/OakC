@@ -6,8 +6,8 @@ file_extensions: [ oak ]
 scope: source.oak
 
 variables:
-  keywords: '(true|false|null|bool|namespace|import|struct|trait|function|return|enum|ignore|implement|self|mut|public|inline|init|drop|if|else|while|do|for|match|break|loop|bind|const)'
-  keywords_fr: '(vrai|faux|nul|bool|espacenom|importer|struct|trait|fonction|rendre|énum|ignorer|réaliser|soi|mut|public|enligne|init|baisser|si|autre|alors|faire|pour|identifier|quitter|boucle|lier|const)'
+  keywords: '(true|false|null|bool|namespace|import|struct|trait|function|return|enum|ignore|implement|self|mut|public|inline|init|drop|if|else|while|do|for|match|break|loop|bind|const|require)'
+  keywords_fr: '(vrai|faux|nul|bool|espacenom|importer|struct|trait|fonction|rendre|énum|ignorer|réaliser|soi|mut|public|enligne|init|baisser|si|autre|alors|faire|pour|identifier|quitter|boucle|lier|const|faut)'
   identifier: '(?:[[:alpha:]][_[:alnum:]]*|_[_[:alnum:]]+)'
   int_suffixes: '(?:i8|i16|i32|i64|iptr|u8|u16|u32|u64|uptr|i|u)'
   builtin_types: '(?:i8|i16|i32|i64|iptr|u8|u16|u32|u64|uptr|f32|f64|bool|char|str|str16|str32|void|array)'

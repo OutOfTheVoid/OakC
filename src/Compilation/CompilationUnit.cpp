@@ -24,6 +24,8 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OilTraitResolution.h>
 
+#include <Builtins/OakBuiltinTypes.h>
+
 #include <iostream>
 
 CompilationUnit :: CompilationUnit ( const std :: string & FilePath ):
@@ -210,7 +212,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 	
 }
 
-bool CompilationUnit :: RunAnalysis ( OilNamespaceDefinition & RootNS )
+bool CompilationUnit :: ApplyToOil ( OilNamespaceDefinition & RootNS )
 {
 	
 	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: OIL Translation." );
@@ -221,9 +223,14 @@ bool CompilationUnit :: RunAnalysis ( OilNamespaceDefinition & RootNS )
 	if ( ! OakTranslateFileTreeToOil ( ASTRoot, RootNS ) )
 		return false;
 	
-	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: Trait Resolution." );
+	return true;
 	
-	CompilationState = kCompilationStep_TraitResolution;
+}
+
+bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
+{
+	
+	LOG_VERBOSE ( "[ ALL ]: compilation step: Trait Resolution." );
 	
 	ResolveTraitsStatus TraitResolutionStatus = OilResolveTraits ( RootNS );
 	
@@ -243,6 +250,19 @@ bool CompilationUnit :: RunAnalysis ( OilNamespaceDefinition & RootNS )
 		}
 		
 	}
+	
+	return true;
+	
+}
+
+bool CompilationUnit :: RunBuiltinAddition ( OilNamespaceDefinition & RootNS )
+{
+	
+	LOG_VERBOSE ( "[ ALL ]: compilation step: Builtin Addition" );
+	
+	// TODO: Add actual target selection to build
+	if ( ! OakAddBuiltinTypes ( RootNS, kTargetArch_X86_64, 0 ) )
+		return false;
 	
 	return true;
 	

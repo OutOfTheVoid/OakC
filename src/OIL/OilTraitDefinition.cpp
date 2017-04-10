@@ -2,19 +2,26 @@
 #include <OIL/OilTraitFunction.h>
 #include <OIL/OilTraitMethod.h>
 #include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilTypeRef.h>
 
 #ifndef NULL
 	#define NULL nullptr
 #endif
 
-OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount ):
+OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, bool Builtin ):
 	Name ( Name ),
+	RequiredTraits ( new OilTypeRef * [ RequiredTraitCount ] ),
+	RequiredTraitCount ( RequiredTraitCount ),
 	TraitFunctions ( new OilTraitFunction * [ FunctionCount ] ),
 	FunctionCount ( FunctionCount ),
 	TraitMethods ( new OilTraitMethod * [ MethodCount ] ),
 	MethodCount ( MethodCount ),
-	TemplateDefinition ( NULL )
+	TemplateDefinition ( NULL ),
+	Builtin ( Builtin )
 {
+	
+	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
+		this -> RequiredTraits [ I ] = RequiredTraits [ I ];
 	
 	for ( uint32_t I = 0; I < FunctionCount; I ++ )
 		this -> TraitFunctions [ I ] = TraitFunctions [ I ];
@@ -24,14 +31,20 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTra
 	
 }
 
-OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, OilTemplateDefinition * TemplateDefinition ):
+OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, OilTemplateDefinition * TemplateDefinition, bool Builtin ):
 	Name ( Name ),
+	RequiredTraits ( new OilTypeRef * [ RequiredTraitCount ] ),
+	RequiredTraitCount ( RequiredTraitCount ),
 	TraitFunctions ( new OilTraitFunction * [ FunctionCount ] ),
 	FunctionCount ( FunctionCount ),
 	TraitMethods ( new OilTraitMethod * [ MethodCount ] ),
 	MethodCount ( MethodCount ),
-	TemplateDefinition ( TemplateDefinition )
+	TemplateDefinition ( TemplateDefinition ),
+	Builtin ( Builtin )
 {
+	
+	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
+		this -> RequiredTraits [ I ] = RequiredTraits [ I ];
 	
 	for ( uint32_t I = 0; I < FunctionCount; I ++ )
 		this -> TraitFunctions [ I ] = TraitFunctions [ I ];
@@ -44,17 +57,55 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTra
 OilTraitDefinition :: ~OilTraitDefinition ()
 {
 	
+	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
+		delete RequiredTraits [ I ];
+	
 	for ( uint32_t I = 0; I < FunctionCount; I ++ )
 		delete TraitFunctions [ I ];
 	
 	for ( uint32_t I = 0; I < MethodCount; I ++ )
 		delete TraitMethods [ I ];
 	
+	delete [] RequiredTraits;
 	delete [] TraitFunctions;
 	delete [] TraitMethods;
 	
 	if ( TemplateDefinition != NULL )
 		delete TemplateDefinition;
+	
+}
+
+bool OilTraitDefinition :: IsBuiltin () const
+{
+	
+	return Builtin;
+	
+}
+
+uint32_t OilTraitDefinition :: GetRequiredTraitCount () const
+{
+	
+	return RequiredTraitCount;
+	
+}
+
+const OilTypeRef * OilTraitDefinition :: GetRequiredTrait ( uint32_t Index ) const
+{
+	
+	if ( Index >= RequiredTraitCount )
+		return NULL;
+	
+	return RequiredTraits [ Index ];
+	
+}
+
+OilTypeRef * OilTraitDefinition :: GetRequiredTrait ( uint32_t Index )
+{
+	
+	if ( Index >= RequiredTraitCount )
+		return NULL;
+	
+	return RequiredTraits [ Index ];
 	
 }
 

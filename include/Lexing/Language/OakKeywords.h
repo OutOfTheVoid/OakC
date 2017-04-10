@@ -61,6 +61,8 @@ namespace OakKeywords
 		std :: string Bind;
 		std :: string Const;
 		
+		std :: string Require;
+		
 	} KeywordLocalization;
 	
 	const KeywordLocalization kKeywordLocalization_EN
@@ -118,7 +120,8 @@ namespace OakKeywords
 		u8"loop",
 		
 		u8"bind",
-		u8"const"
+		u8"const",
+		u8"require",
 		
 	};
 	
@@ -178,6 +181,7 @@ namespace OakKeywords
 	
 		u8"lier", // bind
 		u8"const",
+		u8"faut", // require
 		
 	};
 	

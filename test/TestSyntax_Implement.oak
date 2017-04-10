@@ -1,16 +1,3 @@
-trait Add
-{
-	
-	function add ( & self, RHS: & Self ): Self
-	
-}
-
-trait Inc
-{
-	
-	function inc ( & self ): Self
-	
-}
 
 struct Test
 {
@@ -22,7 +9,7 @@ struct Test
 implement Test
 {
 	
-	public function set ( &self, A:i32 )
+	public function set ( & self, A:i32 )
 	{
 		
 		self.A = A;
@@ -31,15 +18,15 @@ implement Test
 	
 }
 
-implement Test for Add
+implement Test for Add:<Test, Test>
 {
 	
-	function add ( & self, RHS: & Self ): Self
+	function op_add ( LHS: & Self, RHS: & Self ): Self
 	{
 		
 		bind mut New:Self;
 		
-		New.set ( self.A + RHS.A );
+		New.set ( LHS.A + RHS.A );
 		
 		return New;
 		

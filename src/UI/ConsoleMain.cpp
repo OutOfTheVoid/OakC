@@ -158,15 +158,21 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames )
 	
 	OilNamespaceDefinition OilRoot ( U"[global]" );
 	
+	if ( ! CompilationUnit :: RunBuiltinAddition ( OilRoot ) )
+		return 1;
+	
 	for ( uint32_t I = 0; I < Files.GetCount (); I ++ )
 	{
 		
 		CompilationUnit * Unit = Files.GetUnit ( I );
 		
-		if ( ! Unit -> RunAnalysis ( OilRoot ) )
+		if ( ! Unit -> ApplyToOil ( OilRoot ) )
 			return 1;
 		
 	}
+	
+	if ( ! CompilationUnit :: RunSourceAnalysis ( OilRoot ) )
+		return 1;
 	
 	OilPrint ( OilRoot );
 	

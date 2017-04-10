@@ -164,7 +164,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				if ( GlobalNS.FindFunctionDefinition ( FuncData -> Name ) != NULL )
 				{
 					
-					WriteError ( SubElement, "Function with the same name already exists in namespace" );
+					WriteError ( SubElement, "Function with the same name already exists in global namespace" );
 					
 					return false;
 					
@@ -183,6 +183,17 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 			case OakASTTags :: kASTTag_BindingStatement:
 			{
 				
+				const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( SubElement -> GetData () );
+				
+				if ( GlobalNS.FindBindingStatement ( BindingData -> Name ) != NULL )
+				{
+					
+					WriteError ( SubElement, "Binding with the same name already exists in global namespace" );
+					
+					return false;
+					
+				}
+				
 				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement );
 				
 				if ( BindingStatement == NULL )
@@ -195,6 +206,17 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 			
 			case OakASTTags :: kASTTag_TraitDefinition:
 			{
+				
+				const OakTraitDefinitionConstructor :: ElementData * TraitData = reinterpret_cast <const OakTraitDefinitionConstructor :: ElementData *> ( SubElement -> GetData () );
+				
+				if ( GlobalNS.FindTraitDefinition ( TraitData -> Name ) != NULL )
+				{
+					
+					WriteError ( SubElement, "Trait with the same name already exists in global namespace" );
+					
+					return false;
+					
+				}	
 				
 				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement );
 				
@@ -315,6 +337,17 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			case OakASTTags :: kASTTag_BindingStatement:
 			{
 				
+				const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( SubElement -> GetData () );
+				
+				if ( DefinedNamespaceDefinition -> FindBindingStatement ( BindingData -> Name ) != NULL )
+				{
+					
+					WriteError ( SubElement, "Binding with the same name already exists in namespace" );
+					
+					return false;
+					
+				}
+				
 				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement );
 				
 				if ( BindingStatement == NULL )
@@ -327,6 +360,17 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			
 			case OakASTTags :: kASTTag_TraitDefinition:
 			{
+				
+				const OakTraitDefinitionConstructor :: ElementData * TraitData = reinterpret_cast <const OakTraitDefinitionConstructor :: ElementData *> ( SubElement -> GetData () );
+				
+				if ( DefinedNamespaceDefinition -> FindTraitDefinition ( TraitData -> Name ) != NULL )
+				{
+					
+					WriteError ( SubElement, "Trait with the same name already exists in namespace" );
+					
+					return false;
+					
+				}
 				
 				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement );
 				
@@ -3102,6 +3146,7 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 	
 	std :: vector <OilTraitFunction *> TraitFunctions;
 	std :: vector <OilTraitMethod *> TraitMethods;
+	std :: vector <OilTypeRef *> RequiredTraitRefs;
 	
 	if ( ! TraitData -> Empty )
 	{
@@ -3113,7 +3158,36 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 			
 			ElementOffset ++;
 			
-			if ( TraitMemberElement -> GetTag () == OakASTTags :: kASTTag_TraitFunction )
+			if ( TraitMemberElement -> GetTag () == OakASTTags :: kASTTag_TraitRequirement )
+			{
+				
+				const ASTElement * RequiredTraitElement = TraitMemberElement -> GetSubElement ( 0 );
+				
+				OilTypeRef * RequiredTraitRef = OakTranslateTraitRefToOil ( RequiredTraitElement );
+				
+				if ( RequiredTraitRef == NULL )
+				{
+					
+					if ( TemplateDefinition != NULL )
+						delete TemplateDefinition;
+					
+					for ( uint32_t I = 0; I < TraitFunctions.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
+						delete TraitFunctions [ I ];
+					
+					for ( uint32_t I = 0; I < RequiredTraitRefs.size (); I ++ )
+						delete RequiredTraitRefs [ I ];
+					
+					return NULL;
+					
+				}
+				
+				RequiredTraitRefs.push_back ( RequiredTraitRef );
+				
+			}
+			else if ( TraitMemberElement -> GetTag () == OakASTTags :: kASTTag_TraitFunction )
 			{
 				
 				OilTraitFunction * Function = OakTranslateTraitFunctionToOil ( TraitMemberElement );
@@ -3130,6 +3204,9 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
 						delete TraitFunctions [ I ];
 					
+					for ( uint32_t I = 0; I < RequiredTraitRefs.size (); I ++ )
+						delete RequiredTraitRefs [ I ];
+					
 					return NULL;
 					
 				}
@@ -3143,7 +3220,7 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 				if ( TraitMemberElement -> GetTag () != OakASTTags :: kASTTag_TraitMethod )
 				{
 					
-					WriteError ( TraitMemberElement, "Expected function or method in implement block" );
+					WriteError ( TraitMemberElement, "Expected requirement, function, or method in trait definition" );
 					
 					if ( TemplateDefinition != NULL )
 						delete TemplateDefinition;
@@ -3153,6 +3230,9 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 					
 					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
 						delete TraitFunctions [ I ];
+					
+					for ( uint32_t I = 0; I < RequiredTraitRefs.size (); I ++ )
+						delete RequiredTraitRefs [ I ];
 					
 					return NULL;
 					
@@ -3172,6 +3252,9 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 					for ( uint32_t I = 0; I < TraitMethods.size (); I ++ )
 						delete TraitFunctions [ I ];
 					
+					for ( uint32_t I = 0; I < RequiredTraitRefs.size (); I ++ )
+						delete RequiredTraitRefs [ I ];
+					
 					return NULL;
 					
 				}
@@ -3186,7 +3269,7 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement )
 		
 	}
 	
-	return new OilTraitDefinition ( TraitData -> Name, & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition );
+	return new OilTraitDefinition ( TraitData -> Name, & RequiredTraitRefs [ 0 ], RequiredTraitRefs.size (), & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition );
 	
 }
 

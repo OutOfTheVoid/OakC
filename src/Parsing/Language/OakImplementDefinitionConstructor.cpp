@@ -28,8 +28,8 @@ OakImplementDefinitionConstructor OakImplementDefinitionConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries [] =
 {
 	
-	{ & OakMethodDefinitionConstructor :: Instance, 0 },
 	{ & OakFunctionDefinitionConstructor :: Instance, 1 },
+	{ & OakMethodDefinitionConstructor :: Instance, 0 },
 	
 };
 

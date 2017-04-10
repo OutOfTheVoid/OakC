@@ -107,14 +107,12 @@ ASTElement * ASTConstructionGroup :: TryConstructSingleNoParent ( uint64_t Dummy
 			return Output.ConstructedElement;
 			
 		}
-		else if ( Output.Error )
+		else if ( Output.Error && ! Error )
 		{
 			
 			Error = true;
 			ErrorSuggestion = Output.ErrorSuggestion;
 			ErrorProvokingToken = Output.ErrorProvokingToken;
-			
-			return NULL;
 			
 		}
 		
@@ -137,14 +135,10 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 		
 	}
 	
+	Error = false;
+	
 	if ( Constructors.size () == 0 )
-	{
-		
-		Error = false;
-		
 		return 0;
-		
-	}
 	
 	uint64_t SubElementCount = 0;
 	uint64_t TokenOffset = 0;
@@ -176,6 +170,7 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 			if ( Output.Accepted )
 			{
 				
+				Error = false;
 				Found = true;
 				
 				if ( Output.ConstructedElement != NULL )
@@ -190,7 +185,6 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 					
 					AvailableTokens = 0;
 					
-					Error = false;
 					return SubElementCount;
 					
 				}
@@ -198,14 +192,12 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 				break;
 				
 			}
-			else if ( Output.Error )
+			else if ( Output.Error && ! Error )
 			{
 				
 				Error = true;
 				ErrorSuggestion = Output.ErrorSuggestion;
 				ErrorProvokingToken = Output.ErrorProvokingToken;
-				
-				return SubElementCount;
 				
 			}
 			
@@ -217,7 +209,6 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 	}
 	
 	AvailableTokens -= TokenOffset;
-	Error = false;
 	
 	return SubElementCount;
 	
