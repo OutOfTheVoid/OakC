@@ -55,7 +55,20 @@ void OakFunctionParameterConstructor :: TryConstruct ( ASTConstructionInput & In
 		
 	}
 	
-	const Token * CurrentToken = Input.Tokens [ 0 ];
+	uint32_t Offset = 0;
+	bool Mut = false;
+	
+	const Token * CurrentToken = Input.Tokens [ Offset ];
+	
+	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Mut ) )
+	{
+		
+		Offset ++;
+		Mut = true;
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+	}
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
@@ -66,7 +79,9 @@ void OakFunctionParameterConstructor :: TryConstruct ( ASTConstructionInput & In
 		
 	}
 	
-	CurrentToken = Input.Tokens [ 1 ];
+	Offset ++;
+	
+	CurrentToken = Input.Tokens [ Offset ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
 	{
@@ -77,18 +92,21 @@ void OakFunctionParameterConstructor :: TryConstruct ( ASTConstructionInput & In
 		
 	}
 	
+	Offset ++;
+	
 	ElementData * FunctionParamData = new ElementData ();
 	
-	FunctionParamData -> Name = Input.Tokens [ 0 ] -> GetSource ();
+	FunctionParamData -> Name = Input.Tokens [ Mut ? 1 : 0 ] -> GetSource ();
+	FunctionParamData -> Mut = Mut;
 	
 	ASTElement * FunctionParamElement = new ASTElement ();
 	
 	FunctionParamElement -> SetTag ( OakASTTags :: kASTTag_FunctionParameter );
-	FunctionParamElement -> AddTokenSection ( & Input.Tokens [ 0 ], 2 );
+	FunctionParamElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	FunctionParamElement -> SetData ( FunctionParamData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;
-	uint64_t TokenCount = Input.AvailableTokenCount - 2;
+	uint64_t TokenCount = Input.AvailableTokenCount - Offset;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	

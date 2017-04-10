@@ -1243,7 +1243,7 @@ OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement
 			
 		}
 		
-		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type ) );
+		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type, ParameterData -> Mut ) );
 		
 	}
 	
@@ -1309,7 +1309,7 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 			
 		}
 		
-		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type ) );
+		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type, ParameterData -> Mut ) );
 		
 	}
 	

@@ -12,6 +12,7 @@ public:
 	
 	typedef uint32_t TypeFlag;
 	
+	static const TypeFlag kTypeFlag_None = 0;
 	static const TypeFlag kTypeFlag_RequiredAlignment = 1;
 	
 	OilBuiltinStructDefinition ( const std :: u32string & Name, uint32_t Size, uint32_t Alignment, TypeFlag Flags );

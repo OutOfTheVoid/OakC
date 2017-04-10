@@ -12,7 +12,7 @@ public:
 	{
 		
 		std :: u32string Name;
-		bool Templated;
+		bool Mut;
 		
 	} ElementData;
 	

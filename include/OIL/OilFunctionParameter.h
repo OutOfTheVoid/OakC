@@ -9,7 +9,7 @@ class OilFunctionParameter
 {
 public:
 	
-	OilFunctionParameter ( const std :: u32string Name, OilTypeRef * Type );
+	OilFunctionParameter ( const std :: u32string Name, OilTypeRef * Type, bool Mut );
 	~OilFunctionParameter ();
 	
 	const OilTypeRef * GetType () const;
@@ -17,11 +17,15 @@ public:
 	
 	const std :: u32string & GetName () const;
 	
+	bool GetMut () const;
+	
 private:
 	
 	const std :: u32string Name;
 	
 	OilTypeRef * Type;
+	
+	bool Mut;
 	
 };
 
