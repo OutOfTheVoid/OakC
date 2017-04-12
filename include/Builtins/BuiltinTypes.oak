@@ -1,0 +1,337 @@
+/*
+* Bultin universal types - All those defined by the language itself
+* 
+* - Traits for ops
+*/
+
+trait AddOp <RHS_T, RESULT_T>
+{
+	
+	function op_add ( left: & Self, right: & RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundAddOp <RHS_T>
+{
+	
+	function op_compound_add ( mut left: & Self, right: & RHS_T ): void
+	
+}
+
+trait SubtractOp <RHS_T, RESULT_T>
+{
+	
+	function op_subtract ( left: & Self, right: & RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundSubtractOp <RHS_T>
+{
+	
+	function op_compound_subtract ( mut left: & Self, right: & RHS_T ): void
+	
+}
+
+trait IncrementOp <RESULT_T>
+{
+	
+	function op_increment ( operand: & Self ): RESULT_T
+	
+}
+
+trait DecrementOp <RESULT_T>
+{
+	
+	function op_decrement ( operand: & Self ): RESULT_T
+	
+}
+
+trait SteppingOps <RESULT_T>
+{
+	
+	require IncrementOp: <RESULT_T>,
+	require DecrementOp: <RESULT_T>,
+	
+}
+
+trait CountingOps <RHS_T, RESULT_T>
+{
+	
+	require SteppingOps: <RESULT_T>,
+	require AddOp: <RHS_T, RESULT_T>,
+	require SubtractOp: <RHS_T, RESULT_T>,
+	
+}
+
+trait CompoundCountingOps <RHS_T, RESULT_T>
+{
+	
+	require CountingOps: <RHS_T, RESULT_T>,
+	require CompoundAddOp: <RHS_T>,
+	require CompoundSubtractOp <RHS_T>,
+	
+}
+
+trait MultiplyOp <RHS_T, RESULT_T>
+{
+	
+	function op_multiply ( left: & Self, right: & RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundMultiplyOp <RHS_T>
+{
+	
+	function op_compound_multiply ( mut left: & Self, right: & RHS_T ): void,
+	
+}
+
+trait DivideOp <RHS_T, RESULT_T>
+{
+	
+	function op_divide ( left: & Self, right: & RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundDivideOp <RHS_T>
+{
+	
+	function op_compound_divide ( mut left: & Self, right: & RHS_T ): void,
+	
+}
+
+trait ScaleOps <RHS_T, RESULT_T>
+{
+	
+	require MultiplyOp: <RHS_T, RESULT_T>,
+	require DivideOp: <RHS_T, RESULT_T>,
+	
+}
+
+trait CompoundScaleOps <RHS_T, RESULT_T>
+{
+	
+	require ScaleOps <RHS_T, RESULT_T>,
+	require CompoundMultiplyOp: <RHS_T>,
+	require CompoundDivideOp: <RHS_T>,
+	
+}
+
+trait ModuloOp <RHS_T, RESULT_T>
+{
+	
+	function op_modulo ( left: & Self, right: & RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundModuloOp <RHS_T>
+{
+	
+	function op_compound_modulo ( mut left: & Self, right: & RHS_T ): void,
+	
+}
+
+trait CompareGTOp <RHS_T>
+{
+	
+	function op_compare_gt ( left: & Self, right: RHS_T ): bool,
+	
+}
+
+trait CompareLTOp <RHS_T>
+{
+	
+	function op_compare_lt ( left: & Self, right: RHS_T ): bool,
+	
+}
+
+trait UniqueOrderedOps <RHS_T>
+{
+	
+	require CompareLTOp: <RHS_T>,
+	require CompareGTOp: <RHS_T>,
+	
+}
+
+trait CompareGTorEqOp <RHS_T>
+{
+	
+	function op_compare_gt_eq ( left: & Self, right: RHS_T ): bool,
+	
+}
+
+trait CompareLTorEqOp <RHS_T>
+{
+	
+	function op_compare_lt_eq ( left: & Self, right: RHS_T ): bool,
+	
+}
+
+trait CommonOrderedOps <RHS_T>
+{
+	
+	require UniqueOrderedOps: <RHS_T>,
+	require CompareGTorEqOp: <RHS_T>,
+	require CompareLTorEqOp: <RHS_T>,
+	
+}
+
+trait CompareEqOp <RHS_T>
+{
+	
+	function op_compare_eq ( left: & Self, right: RHS_T ): bool,
+	
+}
+
+trait CompareNEqOp <RHS_T>
+{
+	
+	function op_compare_neq ( left: & Self, right: RHS_T ): bool,
+	
+}
+
+trait CompareEqualityOps <RHS_T>
+{
+	
+	require CompareEqOp: <RHS_T>,
+	require CompareNEqOp: <RHS_T>,
+	
+}
+
+trait CompleteCompareOps <RHS_T>
+{
+	
+	require CompareEqualityOps: <RHS_T>,
+	require CommonOrderedOps: <RHS_T>,
+	
+}
+
+trait BitwiseNotOp <RESULT_T>
+{
+	
+	function op_bitwise_not (): RESULT_T,
+	
+}
+
+trait BitwiseAndOp <RHS_T, RESULT_T>
+{
+	
+	function op_bitwise_and ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundBitwiseAndOp <RHS_T>
+{
+	
+	function op_compound_bitwise_and ( mut left: & Self, right: RHS_T ): void,
+	
+}
+
+trait BitwiseOrOp <RHS_T, RESULT_T>
+{
+	
+	function op_bitwise_or ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundBitwiseOrOp <RHS_T>
+{
+	
+	function op_compound_bitwise_or ( mut left: & Self, right: RHS_T ): void,
+	
+}
+
+trait BitwiseXorOp <RHS_T, RESULT_T>
+{
+	
+	function op_bitwise_xor ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait CompoundBitwiseXorOp <RHS_T>
+{
+	
+	function op_compound_bitwise_xor ( mut left: & Self, right: RHS_T ): void,
+	
+}
+
+trait InPlaceBitwiseOps <RHS_T, RESULT_T>
+{
+	
+	require BitwiseNotOp: <RESULT_T>,
+	require BitwiseOrOp: <RHS_T, RESULT_T>,
+	require BitwiseXorOp: <RHS_T, RESULT_T>,
+	require BitwiseAndOp: <RHS_T, RESULT_T>,
+	
+}
+
+trait CompoundInPlaceBitwiseOps <RHS_T, RESULT_T>
+{
+	
+	require InPlaceBitwiseOps: <RHS_T, RESULT_T>,
+	require CompoundBitwiseAndOp: <RHS_T>,
+	require CompoundBitwiseOrOp: <RHS_T>,
+	require CompoundBitwiseXorOp: <RHS_T>,
+	
+}
+
+trait LeftShiftOp <RHS_T, RESULT_T>
+{
+	
+	function op_leftshift ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait RightArithmeticShiftOp <RHS_T, RESULT_T>
+{
+	
+	function op_right_arithmetic_shift ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait RightLogicalShiftOp <RHS_T, RESULT_T>
+{
+	
+	function op_right_logical_shift ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait ShiftingOps <RHS_T, RESULT_T>
+{
+	
+	require LeftShiftOp: <RHS_T, RESULT_T>,
+	require RightLogicalShiftOp: <RHS_T, RESULT_T>,
+	require RightArithmeticShiftOp: <RHS_T, RESULT_T>,
+	
+}
+
+trait ShiftingBitwiseOps <RHS_T, RESULT_T>
+{
+	
+	require InPlaceBitwiseOps: <RHS_T, RESULT_T>,
+	require ShiftingOps: <RHS_T, RESULT_T>,
+	
+}
+
+trait LogicalOrOp <RHS_T, RESULT_T>
+{
+	
+	function op_logical_or ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+trait LogicalAndOp <RHS_T, RESULT_T>
+{
+	
+	function op_logical_and ( left: & Self, right: RHS_T ): RESULT_T,
+	
+}
+
+//
+
+trait Cast <TO_T>
+{
+	
+	function cast (): TO_T,
+	
+}

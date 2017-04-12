@@ -11,6 +11,7 @@
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
+#include <OIL/OilTemplateSpecification.h>
 
 #include <Compilation/Targets.h>
 
@@ -90,10 +91,61 @@ OilTraitDefinition * BuildWildcardUnOpTrait ( const std :: u32string & Name, con
 	
 }
 
+OilTraitDefinition * CreateCompositeWildcardBinOpCompositeTrait ( const std :: u32string & Name, const std :: u32string RequiredTraitNameList [], uint32_t RequiredTraitCount )
+{
+	
+	OilTemplateDefinition * TraitTemplate = new OilTemplateDefinition ();
+	TraitTemplate -> AddParameter ( new OilTemplateDefinitionParameter ( U"RHS_T" ) );
+	TraitTemplate -> AddParameter ( new OilTemplateDefinitionParameter ( U"RESULT_T" ) );
+	
+	OilTypeRef ** RequiredTraitRefs = new OilTypeRef * [ RequiredTraitCount ];
+	
+	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
+	{
+		
+		OilTypeRef * TemplateTypes [ 2 ] = { new OilTypeRef ( U"RHS_T" ), new OilTypeRef ( U"RESULT_T" ) };
+		
+		RequiredTraitRefs [ I ] = new OilTypeRef ( RequiredTraitNameList [ I ], new OilTemplateSpecification ( TemplateTypes, 2 ) );
+		
+	}
+	
+	OilTraitDefinition * OutTrait = new OilTraitDefinition ( Name, RequiredTraitRefs, RequiredTraitCount, NULL, 0, NULL, 0, TraitTemplate, true );
+	
+	delete [] RequiredTraitRefs;
+	
+	return OutTrait;
+	
+}
+
+OilTraitDefinition * CreateCompositeLogicalBinOpCompositeTrait ( const std :: u32string & Name, const std :: u32string RequiredTraitNameList [], uint32_t RequiredTraitCount )
+{
+	
+	OilTemplateDefinition * TraitTemplate = new OilTemplateDefinition ();
+	TraitTemplate -> AddParameter ( new OilTemplateDefinitionParameter ( U"RHS_T" ) );
+	
+	OilTypeRef * *RequiredTraitRefs = new OilTypeRef * [ RequiredTraitCount ];
+	
+	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
+	{
+		
+		OilTypeRef * TemplateTypes = new OilTypeRef ( U"RESULT_T" );
+		
+		RequiredTraitRefs [ I ] = new OilTypeRef ( RequiredTraitNameList [ I ], new OilTemplateSpecification ( & TemplateTypes, 1 ) );
+		
+	}
+	
+	OilTraitDefinition * OutTrait = new OilTraitDefinition ( Name, RequiredTraitRefs, RequiredTraitCount, NULL, 0, NULL, 0, TraitTemplate, true );
+	
+	delete [] RequiredTraitRefs;
+	
+	return OutTrait;
+	
+}
+
 bool AddUniversalTypes ( OilNamespaceDefinition & RootNS )
 {
 	
-	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"Add", U"op_add" ) );
+	/*RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"Add", U"op_add" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"Subtract", U"op_subtract" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"Multiply", U"op_multiply" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"Divide", U"op_divide" ) );
@@ -113,8 +165,7 @@ bool AddUniversalTypes ( OilNamespaceDefinition & RootNS )
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"BitwiseOr", U"op_bitwise_or" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"BitwiseXor", U"op_bitwise_xor" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"LogicalAnd", U"op_logical_and" ) );
-	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"LogicalOr", U"op_logical_or" ) );
-	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"Assign", U"op_assign" ) );
+	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"LogicalOr", U"op_logical_or" ) );*/
 	
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"CompoundAdd", U"op_compound_add" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardBinOpTrait ( U"CompoundSubtract", U"op_compound_subtract" ) );
@@ -137,6 +188,50 @@ bool AddUniversalTypes ( OilNamespaceDefinition & RootNS )
 	RootNS.AddTraitDefinition ( BuildWildcardUnOpTrait ( U"UnaryPositive", U"op_unary_positive" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardUnOpTrait ( U"UnaryNegative", U"op_unary_negative" ) );
 	RootNS.AddTraitDefinition ( BuildWildcardUnOpTrait ( U"ArrayAccess", U"op_array_access" ) );
+	
+	const std :: u32string UniqueComparableRequirements [] = { U"CompareGT", U"CompareLT" };
+	RootNS.AddTraitDefinition ( CreateCompositeLogicalBinOpCompositeTrait ( U"UniqueComparable", UniqueComparableRequirements, 2 ) );
+	
+	const std :: u32string DuplicateComparableRequirements [] = { U"UniqueComparable", U"CompareGTorEq", U"CompareLTorEq" };
+	RootNS.AddTraitDefinition ( CreateCompositeLogicalBinOpCompositeTrait ( U"DuplicateComparable", DuplicateComparableRequirements, 3 ) );
+	
+	const std :: u32string CompleteComparableRequirements [] = { U"DuplicateComparable", U"CompareEq" };
+	RootNS.AddTraitDefinition ( CreateCompositeLogicalBinOpCompositeTrait ( U"CompleteComparable", CompleteComparableRequirements, 2 ) );
+	
+	const std :: u32string SteppingRequirements [] = { U"Increment", U"Decrement" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"Stepping", SteppingRequirements, 2 ) );
+	
+	const std :: u32string PartialCountingRequirements [] = { U"Add", U"Subtract" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"PartialCounting", SteppingRequirements, 2 ) );
+	
+	const std :: u32string CountingRequirements [] = { U"Stepping", U"PartialCounting" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"Counting", CountingRequirements, 2 ) );
+	
+	const std :: u32string ScalableRequirements [] = { U"Multiply", U"Divide" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"Scalable", ScalableRequirements, 2 ) );
+	
+	const std :: u32string ModularScalableRequirements [] = { U"Scalable", U"Modulus" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"ModularScalable", ModularScalableRequirements, 2 ) );
+	
+	const std :: u32string ArithmeticRequirements [] = { U"Scalable", U"Counting" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"Arithmetic", ArithmeticRequirements, 2 ) );
+	
+	const std :: u32string ModularArithmeticRequirements [] = { U"Arithmetic", U"Modulus" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"ModularArithmetic", ModularArithmeticRequirements, 2 ) );
+	
+	const std :: u32string NumericRequirements [] = { U"ModularArithmetic", U"CompleteComparable" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"Numeric", NumericRequirements, 2 ) );
+	
+	const std :: u32string PartialBitsetRequirements [] = { U"BitwiseNot", U"BitwiseXor", U"BitwiseOr", U"BitwiseAnd" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"PartialBitset", PartialBitsetRequirements, 4 ) );
+	
+	const std :: u32string ShiftRequirements [] = { U"LeftShift", U"RightShiftL", U"RightShiftA" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"Shifting", ShiftRequirements, 3 ) );
+	
+	const std :: u32string CompleteBitsetRequirements [] = { U"PartialBitsetRequirements", U"Shifting" };
+	RootNS.AddTraitDefinition ( CreateCompositeWildcardBinOpCompositeTrait ( U"CompleteBitset", CompleteBitsetRequirements, 2 ) );
+	
+	//const std :: u32string IntegerRequirements [] = {  };
 	
 	return true;
 	

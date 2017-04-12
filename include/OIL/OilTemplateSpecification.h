@@ -16,8 +16,6 @@ public:
 	OilTypeRef * GetTypeRef ( uint32_t Index );
 	const OilTypeRef * GetTypeRef ( uint32_t Index ) const;
 	
-	//bool IsResolved ();
-	
 private:
 	
 	OilTypeRef ** TypeRefList;
