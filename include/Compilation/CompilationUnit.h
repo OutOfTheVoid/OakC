@@ -36,6 +36,8 @@ public:
 	 */
 	CompilationUnit ( const std :: string & FilePath );
 	
+	//CompilationUnit ( const std :: u32string & SourceText );
+	
 	// Destructor
 	~CompilationUnit ();
 	

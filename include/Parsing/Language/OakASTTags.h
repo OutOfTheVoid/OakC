@@ -155,6 +155,8 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_TraitRequirement = 102;
 	
+	const uint64_t kASTTag_DecoratorTag = 103;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -261,6 +263,7 @@ namespace OakASTTags
 		"TRAIT_METHOD",
 		"VOID_TYPE",
 		"TRAIT_REQUIREMENT",
+		"DECORATOR_TAG",
 		
 	};
 	

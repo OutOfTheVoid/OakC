@@ -45,40 +45,40 @@
 
 #define OIL_PRINT_INDENTSTRING "    "
 
-void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent );
-void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent );
-void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent );
-std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template );
-std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template );
-void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent );
-void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent );
-std :: string OilStringTypeRef ( const OilTypeRef & Ref );
-void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilNamespaceDefinition * InitializedBindingContainer = NULL );
-void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent );
-void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent );
-std :: string OilStringTraitFunction ( const OilTraitFunction & Function );
-std :: string OilStringTraitMethod ( const OilTraitMethod & Method );
-std :: string OilStringExpression ( const OilExpression & Expression );
-std :: string OilStringPrimary ( const IOilPrimary & Primary );
-std :: string OilStringOperator ( const IOilOperator & Operator );
-void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent );
-void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
-void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent );
-void OilPrintBreak ( const OilBreak & Break, uint32_t Indent );
-void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent );
-void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent );
-void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent );
+void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent, const OilPrintOptions & PrintOptions );
+std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template, const OilPrintOptions & PrintOptions );
+std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template, const OilPrintOptions & PrintOptions );
+void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent, const OilPrintOptions & PrintOptions );
+std :: string OilStringTypeRef ( const OilTypeRef & Ref, const OilPrintOptions & PrintOptions );
+void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilPrintOptions & PrintOptions, const OilNamespaceDefinition * InitializedBindingContainer = NULL );
+void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent, const OilPrintOptions & PrintOptions );
+std :: string OilStringTraitFunction ( const OilTraitFunction & Function, const OilPrintOptions & PrintOptions );
+std :: string OilStringTraitMethod ( const OilTraitMethod & Method, const OilPrintOptions & PrintOptions );
+std :: string OilStringExpression ( const OilExpression & Expression, const OilPrintOptions & PrintOptions );
+std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOptions & PrintOptions );
+std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintOptions & PrintOptions );
+void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintBreak ( const OilBreak & Break, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
 
-void OilPrint ( const OilNamespaceDefinition & RootNS )
+void OilPrint ( const OilNamespaceDefinition & RootNS, const OilPrintOptions & PrintOptions )
 {
 	
 	LOG_VERBOSE ( "OIL TREE:" );
 	
-	OilPrintNamespace ( RootNS, 0 );
+	OilPrintNamespace ( RootNS, 0, PrintOptions );
 	
 }
 
-void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent )
+void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	uint64_t TempCount = Namespace.GetBindingStatementCount ();
@@ -88,7 +88,7 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		const OilBindingStatement * Binding = Namespace.GetBindingStatement ( I );
 		
-		OilPrintBindingStatement ( * Binding, Indent );
+		OilPrintBindingStatement ( * Binding, Indent, PrintOptions );
 		
 	}
 	
@@ -101,7 +101,7 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 	
 	LOG_VERBOSE ( PrintString );
 	
-	OilPrintStatementBody ( Namespace.GetImplicitInitializationBody (), Indent, & Namespace );
+	OilPrintStatementBody ( Namespace.GetImplicitInitializationBody (), Indent, PrintOptions, & Namespace );
 	
 	TempCount = Namespace.GetTraitDefinitionCount ();
 	
@@ -110,7 +110,8 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		const OilTraitDefinition * Definition = Namespace.GetTraitDefinition ( I );
 		
-		OilPrintTrait ( * Definition, Indent );
+		if ( ( ! Definition -> IsBuiltin () ) || PrintOptions.PrintBuiltins )
+			OilPrintTrait ( * Definition, Indent, PrintOptions );
 		
 	}
 	
@@ -121,7 +122,7 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		const OilTypeDefinition * Definition = Namespace.GetTypeDefinition ( I );
 		
-		OilPrintTypeDefinition ( * Definition, Indent );
+		OilPrintTypeDefinition ( * Definition, Indent, PrintOptions );
 		
 	}
 	
@@ -132,7 +133,7 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		const OilFunctionDefinition * Definition = Namespace.GetFunctionDefinition ( I );
 		
-		OilPrintFunction ( * Definition, Indent );
+		OilPrintFunction ( * Definition, Indent, PrintOptions );
 		
 	}
 	
@@ -143,7 +144,7 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		const OilNamespaceDefinition * Definition = Namespace.GetNamespaceDefinition ( I );
 		
-		OilPrintNamespace ( * Definition, Indent );
+		OilPrintNamespace ( * Definition, Indent, PrintOptions );
 		
 	}
 	
@@ -160,13 +161,13 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		LOG_VERBOSE ( PrintString );
 		
 		for ( uint32_t I = 0; I < Namespace.GetUnresolvedImplementBlockCount (); I ++ )
-			OilPrintImplementBlock ( * Namespace.GetUnresolvedImplementBlock ( I ), Indent );
+			OilPrintImplementBlock ( * Namespace.GetUnresolvedImplementBlock ( I ), Indent, PrintOptions );
 		
 	}
 	
 }
 
-void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent )
+void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -185,7 +186,7 @@ void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Inde
 	
 	LOG_VERBOSE ( PrintString );
 	
-	OilPrintNamespaceMembers ( Namespace, Indent + 1 );
+	OilPrintNamespaceMembers ( Namespace, Indent + 1, PrintOptions );
 	
 	PrintString = "";
 	
@@ -198,7 +199,7 @@ void OilPrintNamespace ( const OilNamespaceDefinition & Namespace, uint32_t Inde
 	
 }
 
-void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
+void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -206,7 +207,8 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
-	PrintString += "[TRAIT \"";
+		PrintString += "[TRAIT \"";
+	
 	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Trait.GetName () );
 	PrintString += "\"";
 	
@@ -214,11 +216,14 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 	{
 		
 		PrintString += " template: ";
-		PrintString += OilStringTemplateDefinition ( * Trait.GetTemplateDefinition () );
+		PrintString += OilStringTemplateDefinition ( * Trait.GetTemplateDefinition (), PrintOptions );
 		
 	}
 	
-	PrintString += "]\n";
+	if ( Trait.IsBuiltin () && PrintOptions.HighlightBuiltins )
+		PrintString += "] BUILTIN\n";
+	else
+		PrintString += "]\n";
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
@@ -237,7 +242,7 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 		
 		PrintString += "[REQUIRE: ";
 		
-		PrintString += OilStringTypeRef ( * Trait.GetRequiredTrait ( J ) );
+		PrintString += OilStringTypeRef ( * Trait.GetRequiredTrait ( J ), PrintOptions );
 		PrintString += "]";
 		LOG_VERBOSE ( PrintString );
 		
@@ -251,7 +256,7 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 		for ( uint32_t I = 0; I < Indent + 1; I ++ )
 			PrintString += OIL_PRINT_INDENTSTRING;
 		
-		PrintString += OilStringTraitFunction ( * Trait.GetTraitFunction ( J ) );
+		PrintString += OilStringTraitFunction ( * Trait.GetTraitFunction ( J ), PrintOptions );
 		LOG_VERBOSE ( PrintString );
 		
 		PrintString = "";
@@ -264,7 +269,7 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 		for ( uint32_t I = 0; I < Indent + 1; I ++ )
 			PrintString += OIL_PRINT_INDENTSTRING;
 		
-		PrintString += OilStringTraitMethod ( * Trait.GetTraitMethod ( J ) );
+		PrintString += OilStringTraitMethod ( * Trait.GetTraitMethod ( J ), PrintOptions );
 		LOG_VERBOSE ( PrintString );
 		
 		PrintString = "";
@@ -280,14 +285,14 @@ void OilPrintTrait ( const OilTraitDefinition & Trait, uint32_t Indent )
 	
 }
 
-std :: string OilStringTraitMethod ( const OilTraitMethod & Method )
+std :: string OilStringTraitMethod ( const OilTraitMethod & Method, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString = "[METHOD ";
 	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Method.GetName () );
 	
 	if ( Method.IsTemplated () )
-		PrintString += std :: string ( " Template: " ) + OilStringTemplateDefinition ( * Method.GetTemplateDefinition () );
+		PrintString += std :: string ( " Template: " ) + OilStringTemplateDefinition ( * Method.GetTemplateDefinition (), PrintOptions );
 	
 	const OilMethodParameterList * ParamList = Method.GetParameterList ();
 	
@@ -305,7 +310,7 @@ std :: string OilStringTraitMethod ( const OilTraitMethod & Method )
 			
 			PrintString += ": ";
 			
-			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			PrintString += OilStringTypeRef ( * Parameter -> GetType (), PrintOptions );
 			
 			if ( I != ParamList -> GetParameterCount () - 1 )
 				PrintString += ", ";
@@ -322,7 +327,7 @@ std :: string OilStringTraitMethod ( const OilTraitMethod & Method )
 	{
 		
 		PrintString += " Return: ";
-		PrintString += OilStringTypeRef ( * Method.GetReturnType () );
+		PrintString += OilStringTypeRef ( * Method.GetReturnType (), PrintOptions );
 		
 	}
 	
@@ -332,14 +337,14 @@ std :: string OilStringTraitMethod ( const OilTraitMethod & Method )
 	
 }
 
-std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
+std :: string OilStringTraitFunction ( const OilTraitFunction & Function, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString = "[FUNCTION ";
 	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Function.GetName () );
 	
 	if ( Function.IsTemplated () )
-		PrintString += std :: string ( " Template: " ) + OilStringTemplateDefinition ( * Function.GetTemplateDefinition () );
+		PrintString += std :: string ( " Template: " ) + OilStringTemplateDefinition ( * Function.GetTemplateDefinition (), PrintOptions );
 	
 	const OilFunctionParameterList * ParamList = Function.GetParameterList ();
 	
@@ -357,7 +362,7 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
 			
 			PrintString += ": ";
 			
-			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			PrintString += OilStringTypeRef ( * Parameter -> GetType (), PrintOptions );
 			
 			if ( I != ParamList -> GetParameterCount () - 1 )
 				PrintString += ", ";
@@ -372,7 +377,7 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
 	{
 		
 		PrintString += " Return: ";
-		PrintString += OilStringTypeRef ( * Function.GetReturnType () );
+		PrintString += OilStringTypeRef ( * Function.GetReturnType (), PrintOptions );
 		
 	}
 	
@@ -382,7 +387,7 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function )
 	
 }
 
-void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent )
+void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -391,13 +396,13 @@ void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
 	PrintString += "[IF Condition: ";
-	PrintString += OilStringExpression ( * IfElse.GetIfClauseConditionExpression () );
+	PrintString += OilStringExpression ( * IfElse.GetIfClauseConditionExpression (), PrintOptions );
 	PrintString += "]";
 	
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
 	
-	OilPrintStatementBody ( * IfElse.GetIfClauseStatementBody (), Indent );
+	OilPrintStatementBody ( * IfElse.GetIfClauseStatementBody (), Indent, PrintOptions );
 	
 	for ( uint32_t I = 0; I < IfElse.GetElseIfClauseCount (); I ++ )
 	{
@@ -406,13 +411,13 @@ void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent )
 			PrintString += OIL_PRINT_INDENTSTRING;
 		
 		PrintString += "[ELSE IF Condition: ";
-		PrintString += OilStringExpression ( * IfElse.GetElseIfClauseConditionExpression ( I ) );
+		PrintString += OilStringExpression ( * IfElse.GetElseIfClauseConditionExpression ( I ), PrintOptions );
 		PrintString += "]";
 		
 		LOG_VERBOSE ( PrintString );
 		PrintString = "";
 		
-		OilPrintStatementBody ( * IfElse.GetElseIfClauseStatementBody ( I ), Indent );
+		OilPrintStatementBody ( * IfElse.GetElseIfClauseStatementBody ( I ), Indent, PrintOptions );
 		
 	}
 	
@@ -427,13 +432,13 @@ void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent )
 		LOG_VERBOSE ( PrintString );
 		PrintString = "";
 		
-		OilPrintStatementBody ( * IfElse.GetElseClauseStatementBody (), Indent );
+		OilPrintStatementBody ( * IfElse.GetElseClauseStatementBody (), Indent, PrintOptions );
 		
 	}
 	
 }
 
-void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent )
+void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -442,7 +447,7 @@ void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
 	PrintString += "[WHILE Condition: ";
-	PrintString += OilStringExpression ( * Loop.GetConditionExpression () );
+	PrintString += OilStringExpression ( * Loop.GetConditionExpression (), PrintOptions );
 	
 	if ( Loop.HasLoopLabel () )
 	{
@@ -457,11 +462,11 @@ void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent )
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
 	
-	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent );
+	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent, PrintOptions );
 	
 }
 
-void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent )
+void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -484,11 +489,11 @@ void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent )
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
 	
-	OilPrintStatementBody ( * Loop.GetStatementBody (), Indent );
+	OilPrintStatementBody ( * Loop.GetStatementBody (), Indent, PrintOptions );
 	
 }
 
-void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent )
+void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -511,21 +516,23 @@ void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent )
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
 	
-	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent );
+	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent, PrintOptions );
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
 	PrintString += "[WHILE Condition: ";
-	PrintString += OilStringExpression ( * Loop.GetConditionExpression () );
+	PrintString += OilStringExpression ( * Loop.GetConditionExpression (), PrintOptions );
 	PrintString += "]";
 	
 	LOG_VERBOSE ( PrintString );
 	
 }
 
-void OilPrintBreak ( const OilBreak & Break, uint32_t Indent )
+void OilPrintBreak ( const OilBreak & Break, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
+	
+	(void) PrintOptions;
 	
 	std :: string PrintString;
 	
@@ -548,7 +555,7 @@ void OilPrintBreak ( const OilBreak & Break, uint32_t Indent )
 	
 }
 
-void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent )
+void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -568,10 +575,10 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 	LOG_VERBOSE ( PrintString );
 	
 	if ( TypeDefinition.GetStructDefinition () != NULL )
-		OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1 );
+		OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1, PrintOptions );
 	
 	if ( TypeDefinition.GetPrincipalImplementBlock () != NULL )
-		OilPrintImplementBlock ( * TypeDefinition.GetPrincipalImplementBlock (), Indent + 1 );
+		OilPrintImplementBlock ( * TypeDefinition.GetPrincipalImplementBlock (), Indent + 1, PrintOptions );
 	
 	std :: vector <uint32_t> IndexStack;
 	std :: vector <std :: u32string> NameStack;
@@ -589,7 +596,7 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 			const OilImplementBlock * Block = TypeDefinition.FindTraitImplementBlock ( & NameStack [ 0 ], NameStack.size () );
 			
 			if ( Block != NULL )
-				OilPrintImplementBlock ( * Block, Indent + 1 );
+				OilPrintImplementBlock ( * Block, Indent + 1, PrintOptions );
 			
 			IndexStack.pop_back ();
 			
@@ -646,7 +653,7 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 	
 }
 
-void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
+void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -660,7 +667,7 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 	{
 		
 		PrintString += "Template: ";
-		PrintString += OilStringTemplateDefinition ( * Struct.GetTemplateDefinition () );
+		PrintString += OilStringTemplateDefinition ( * Struct.GetTemplateDefinition (), PrintOptions );
 		PrintString += "]\n";
 		
 	}
@@ -687,7 +694,7 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 		PrintString += "[BINDING ";
 		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
 		PrintString += ": ";
-		PrintString += OilStringTypeRef ( * Binding -> GetTypeRef () );
+		PrintString += OilStringTypeRef ( * Binding -> GetTypeRef (), PrintOptions );
 		PrintString += "]";
 		
 		LOG_VERBOSE ( PrintString );
@@ -705,7 +712,7 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent )
 	
 }
 
-void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent )
+void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -714,13 +721,13 @@ void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent )
 		PrintString += OIL_PRINT_INDENTSTRING;
 	
 	PrintString += "[IMPLEMENT ";
-	PrintString += OilStringTypeRef ( * Block.GetImplementedType () );
+	PrintString += OilStringTypeRef ( * Block.GetImplementedType (), PrintOptions );
 	
 	if ( Block.IsForTrait () )
 	{
 		
 		PrintString += " for ";
-		PrintString += OilStringTypeRef ( * Block.GetForTrait () );
+		PrintString += OilStringTypeRef ( * Block.GetForTrait (), PrintOptions );
 		
 	}
 	
@@ -735,10 +742,10 @@ void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent )
 	PrintString = "";
 	
 	for ( uint32_t I = 0; I < Block.GetFunctionCount (); I ++ )
-		OilPrintFunction ( * Block.GetFunction ( I ), Indent + 1 );
+		OilPrintFunction ( * Block.GetFunction ( I ), Indent + 1, PrintOptions );
 	
 	for ( uint32_t I = 0; I < Block.GetMethodCount (); I ++ )
-		OilPrintMethod ( * Block.GetMethod ( I ), Indent + 1 );
+		OilPrintMethod ( * Block.GetMethod ( I ), Indent + 1, PrintOptions );
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;
@@ -749,7 +756,7 @@ void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent )
 	
 }
 
-std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template )
+std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Template, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string OutString;
@@ -773,7 +780,7 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 			for ( uint32_t I = 0; I < Param -> GetRestrictionCount (); I ++ )
 			{
 				
-				OutString += OilStringTypeRef ( * Param -> GetRestriction ( I ) );
+				OutString += OilStringTypeRef ( * Param -> GetRestriction ( I ), PrintOptions );
 				
 				if ( I != Param -> GetRestrictionCount () - 1 )
 					OutString += " + ";
@@ -793,7 +800,7 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 	
 }
 
-void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent )
+void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -823,7 +830,7 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	{
 		
 		PrintString += " Template: ";
-		PrintString += OilStringTemplateDefinition ( * Function.GetTemplateDefinition () );
+		PrintString += OilStringTemplateDefinition ( * Function.GetTemplateDefinition (), PrintOptions );
 		
 	}
 	
@@ -843,7 +850,7 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 			
 			PrintString += ": ";
 			
-			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			PrintString += OilStringTypeRef ( * Parameter -> GetType (), PrintOptions );
 			
 			if ( I != ParamList -> GetParameterCount () - 1 )
 				PrintString += ", ";
@@ -858,7 +865,7 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	{
 		
 		PrintString += " Return Type: ";
-		PrintString += OilStringTypeRef ( * Function.GetReturnType () );
+		PrintString += OilStringTypeRef ( * Function.GetReturnType (), PrintOptions );
 		
 	}
 	
@@ -866,12 +873,12 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent 
 	
 	LOG_VERBOSE ( PrintString );
 	
-	OilPrintStatementBody ( * Function.GetStatementBody (), Indent );
+	OilPrintStatementBody ( * Function.GetStatementBody (), Indent, PrintOptions );
 	
 }
 
 
-void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent )
+void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -902,7 +909,7 @@ void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent )
 	{
 		
 		PrintString += " Template: ";
-		PrintString += OilStringTemplateDefinition ( * Method.GetTemplateDefinition () );
+		PrintString += OilStringTemplateDefinition ( * Method.GetTemplateDefinition (), PrintOptions );
 		
 	}
 	
@@ -922,7 +929,7 @@ void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent )
 			
 			PrintString += ": ";
 			
-			PrintString += OilStringTypeRef ( * Parameter -> GetType () );
+			PrintString += OilStringTypeRef ( * Parameter -> GetType (), PrintOptions );
 			
 			if ( I != ParamList -> GetParameterCount () - 1 )
 				PrintString += ", ";
@@ -939,22 +946,22 @@ void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent )
 	
 	LOG_VERBOSE ( PrintString );
 	
-	OilPrintStatementBody ( * Method.GetStatementBody (), Indent );
+	OilPrintStatementBody ( * Method.GetStatementBody (), Indent, PrintOptions );
 	
 }
 
-std :: string OilStringTypeRef ( const OilTypeRef & Ref )
+std :: string OilStringTypeRef ( const OilTypeRef & Ref, const OilPrintOptions & PrintOptions )
 {
 	
 	if ( ! Ref.IsDirectType () )
 	{
 		
 		if ( Ref.IsReference () )
-			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType () );
+			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions );
 		else if ( Ref.IsVoid () )
 			return std :: string ( "void" );
 		else
-			return std :: string ( "*" ) + OilStringTypeRef ( * Ref.GetSubType () );
+			return std :: string ( "*" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions );
 			
 	}
 	
@@ -976,13 +983,13 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref )
 	OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetName () );
 	
 	if ( Ref.IsTemplated () )
-		OutString += OilStringTemplateSpecification ( * Ref.GetTemplateSpecification () );
+		OutString += OilStringTemplateSpecification ( * Ref.GetTemplateSpecification (), PrintOptions );
 	
 	return OutString;
 	
 }
 
-std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template )
+std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & Template, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string OutString;
@@ -994,7 +1001,7 @@ std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & 
 	for ( uint32_t I = 0; I < ParamCount; I ++ )
 	{
 		
-		OutString += OilStringTypeRef ( * Template.GetTypeRef ( I ) );
+		OutString += OilStringTypeRef ( * Template.GetTypeRef ( I ), PrintOptions );
 		
 		if ( I != ParamCount - 1 )
 			OutString += ", ";
@@ -1007,7 +1014,7 @@ std :: string OilStringTemplateSpecification ( const OilTemplateSpecification & 
 	
 }
 
-void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent )
+void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString;
@@ -1019,7 +1026,7 @@ void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t In
 	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding.GetName () );
 	
 	PrintString += ": ";
-	PrintString += OilStringTypeRef ( * Binding.GetType () );
+	PrintString += OilStringTypeRef ( * Binding.GetType (), PrintOptions );
 	
 	if ( Binding.IsMutable () )
 		PrintString += " ( mut )";
@@ -1033,7 +1040,7 @@ void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t In
 	
 }
 
-void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilNamespaceDefinition * InitializedBindingContainer )
+void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, const OilPrintOptions & PrintOptions, const OilNamespaceDefinition * InitializedBindingContainer )
 {
 	
 	std :: string PrintString;
@@ -1070,7 +1077,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 		
 		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
 		PrintString += ": ";
-		PrintString += OilStringTypeRef ( * Binding -> GetType () );
+		PrintString += OilStringTypeRef ( * Binding -> GetType (), PrintOptions );
 		
 		LOG_VERBOSE ( PrintString );
 		
@@ -1096,7 +1103,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 		{
 			
 			case IOilStatement :: kStatementType_Body:
-				OilPrintStatementBody ( * dynamic_cast <const OilStatementBody *> ( Statement ), Indent + 1 );
+				OilPrintStatementBody ( * dynamic_cast <const OilStatementBody *> ( Statement ), Indent + 1, PrintOptions );
 				break;
 			
 			case IOilStatement :: kStatementType_Expression:
@@ -1105,7 +1112,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 				for ( uint32_t I = 0; I < Indent + 1; I ++ )
 					PrintString += OIL_PRINT_INDENTSTRING;
 				
-				PrintString += OilStringExpression ( * dynamic_cast <const OilExpression *> ( Statement ) );
+				PrintString += OilStringExpression ( * dynamic_cast <const OilExpression *> ( Statement ), PrintOptions );
 				
 				LOG_VERBOSE ( PrintString );
 				
@@ -1115,23 +1122,23 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 			break;
 			
 			case IOilStatement :: kStatementType_Break:
-				OilPrintBreak ( * dynamic_cast <const OilBreak *> ( Statement ), Indent + 1 );
+				OilPrintBreak ( * dynamic_cast <const OilBreak *> ( Statement ), Indent + 1, PrintOptions );
 				break;
 			
 			case IOilStatement :: kStatementType_IfElse:
-				OilPrintIfElse ( * dynamic_cast <const OilIfElse *> ( Statement ), Indent + 1 );
+				OilPrintIfElse ( * dynamic_cast <const OilIfElse *> ( Statement ), Indent + 1, PrintOptions );
 				break;
 				
 			case IOilStatement :: kStatementType_WhileLoop:
-				OilPrintWhileLoop ( * dynamic_cast <const OilWhileLoop *> ( Statement ), Indent + 1 );
+				OilPrintWhileLoop ( * dynamic_cast <const OilWhileLoop *> ( Statement ), Indent + 1, PrintOptions );
 				break;
 				
 			case IOilStatement :: kStatementType_DoWhileLoop:
-				OilPrintDoWhileLoop ( * dynamic_cast <const OilDoWhileLoop *> ( Statement ), Indent + 1 );
+				OilPrintDoWhileLoop ( * dynamic_cast <const OilDoWhileLoop *> ( Statement ), Indent + 1, PrintOptions );
 				break;
 				
 			case IOilStatement :: kStatementType_Loop:
-				OilPrintLoop ( * dynamic_cast <const OilLoop *> ( Statement ), Indent + 1 );
+				OilPrintLoop ( * dynamic_cast <const OilLoop *> ( Statement ), Indent + 1, PrintOptions );
 				break;
 			
 			case IOilStatement :: kStatementType_Return:
@@ -1157,7 +1164,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 				}
 				
 				PrintString += "[RETURN ";
-				PrintString += OilStringExpression ( * ReturnedExpression );
+				PrintString += OilStringExpression ( * ReturnedExpression, PrintOptions );
 				PrintString += "]";
 				
 				LOG_VERBOSE ( PrintString );
@@ -1180,7 +1187,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 				PrintString += "[LOCAL_INIT ";
 				PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Local -> GetName () );
 				PrintString += " = ";
-				PrintString += OilStringExpression ( * Local -> GetInitializerValue () );
+				PrintString += OilStringExpression ( * Local -> GetInitializerValue (), PrintOptions );
 				PrintString += "]";
 				
 				LOG_VERBOSE ( PrintString );
@@ -1207,7 +1214,7 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 					
 					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
 					PrintString += " = ";
-					PrintString += OilStringExpression ( * Binding -> GetInitializerValue () );
+					PrintString += OilStringExpression ( * Binding -> GetInitializerValue (), PrintOptions );
 					PrintString += "]";
 					
 				}
@@ -1239,15 +1246,15 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 	
 }
 
-std :: string OilStringExpression ( const OilExpression & Expression )
+std :: string OilStringExpression ( const OilExpression & Expression, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string OutString = "[EXPRESSION: ";
 	
 	if ( Expression.IsPrimary () )
-		OutString += OilStringPrimary ( * Expression.GetTermAsPrimary () );
+		OutString += OilStringPrimary ( * Expression.GetTermAsPrimary (), PrintOptions );
 	else
-		OutString += OilStringOperator ( * Expression.GetTermAsOperator () );
+		OutString += OilStringOperator ( * Expression.GetTermAsOperator (), PrintOptions );
 	
 	OutString += "]";
 	
@@ -1255,7 +1262,7 @@ std :: string OilStringExpression ( const OilExpression & Expression )
 	
 }
 
-std :: string OilStringPrimary ( const IOilPrimary & Primary )
+std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOptions & PrintOptions )
 {
 	
 	switch ( Primary.GetPrimaryType () )
@@ -1273,7 +1280,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "]";
 					
 				case OilAllusion :: kAllusionTarget_Indeterminate_Templated:
-					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification () ) + "]";
+					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]";
 					
 				case OilAllusion :: kAllusionTarget_Parameter:
 					return std :: string ( "[ALLUSION Parameter: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
@@ -1315,9 +1322,9 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 					std :: string PrintString = "[ALLUSION ?::";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
-						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification () ) + "::" ) : "::" );
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification (), PrintOptions ) + "::" ) : "::" );
 					
-					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( ( Allusion.GetDirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification () ) + "]" ) : "]" );
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( ( Allusion.GetDirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]" ) : "]" );
 					
 					return PrintString;
 					
@@ -1329,9 +1336,9 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 					std :: string PrintString = "[ALLUSION ";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
-						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification () ) + "::" ) : "::" );
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification (), PrintOptions ) + "::" ) : "::" );
 					
-					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( ( Allusion.GetDirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification () ) + "]" ) : "]" );
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( ( Allusion.GetDirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]" ) : "]" );
 					
 					return PrintString;
 					
@@ -1436,7 +1443,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 			{
 				
 				PrintString += "<";
-				PrintString += OilStringTypeRef ( * Literal.GetTypeSpecifier () );
+				PrintString += OilStringTypeRef ( * Literal.GetTypeSpecifier (), PrintOptions );
 				PrintString += ">";
 				
 			}
@@ -1445,7 +1452,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 			{
 				
 				PrintString += " (count = ";
-				PrintString += OilStringPrimary ( * Literal.GetCountExpression () );
+				PrintString += OilStringPrimary ( * Literal.GetCountExpression (), PrintOptions );
 				PrintString += ")";
 				
 			}
@@ -1460,12 +1467,12 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 				for ( uint32_t I = 0; I < MemberInitializerCount - 1; I ++ )
 				{
 					
-					PrintString += OilStringPrimary ( * Literal.GetMemberInitializer ( I ) );
+					PrintString += OilStringPrimary ( * Literal.GetMemberInitializer ( I ), PrintOptions );
 					PrintString += ", ";
 					
 				}
 				
-				PrintString += OilStringPrimary ( * Literal.GetMemberInitializer ( MemberInitializerCount - 1 ) );
+				PrintString += OilStringPrimary ( * Literal.GetMemberInitializer ( MemberInitializerCount - 1 ), PrintOptions );
 				
 				PrintString += "}";
 				
@@ -1629,7 +1636,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 		}
 		
 		case IOilPrimary :: kPrimaryType_Expression:
-			return OilStringExpression ( dynamic_cast <const OilExpression &> ( Primary ) );
+			return OilStringExpression ( dynamic_cast <const OilExpression &> ( Primary ), PrintOptions );
 		
 		default:
 		break;
@@ -1640,7 +1647,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary )
 	
 }
 
-std :: string OilStringOperator ( const IOilOperator & Operator )
+std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintOptions & PrintOptions )
 {
 	
 	std :: string PrintString = "( ";
@@ -1654,9 +1661,9 @@ std :: string OilStringOperator ( const IOilOperator & Operator )
 		PrintString += ": ";
 		
 		if ( UnOp.IsTermPrimary () )
-			PrintString += OilStringPrimary ( * UnOp.GetTermAsPrimary () );
+			PrintString += OilStringPrimary ( * UnOp.GetTermAsPrimary (), PrintOptions );
 		else
-			PrintString += OilStringOperator ( * UnOp.GetTermAsOperator () );
+			PrintString += OilStringOperator ( * UnOp.GetTermAsOperator (), PrintOptions );
 		
 		
 	}
@@ -1669,16 +1676,16 @@ std :: string OilStringOperator ( const IOilOperator & Operator )
 		PrintString += ": ";
 		
 		if ( BinOp.IsLeftPrimary () )
-			PrintString += OilStringPrimary ( * BinOp.GetLeftTermAsPrimary () );
+			PrintString += OilStringPrimary ( * BinOp.GetLeftTermAsPrimary (), PrintOptions );
 		else
-			PrintString += OilStringOperator ( * BinOp.GetLeftTermAsOperator () );
+			PrintString += OilStringOperator ( * BinOp.GetLeftTermAsOperator (), PrintOptions );
 		
 		PrintString += ", ";
 		
 		if ( BinOp.IsRightPrimary () )
-			PrintString += OilStringPrimary ( * BinOp.GetRightTermAsPrimary () );
+			PrintString += OilStringPrimary ( * BinOp.GetRightTermAsPrimary (), PrintOptions );
 		else
-			PrintString += OilStringOperator ( * BinOp.GetRightTermAsOperator () );
+			PrintString += OilStringOperator ( * BinOp.GetRightTermAsOperator (), PrintOptions );
 		
 	}
 	else

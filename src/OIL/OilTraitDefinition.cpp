@@ -8,7 +8,7 @@
 	#define NULL nullptr
 #endif
 
-OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, bool Builtin ):
+OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, bool IsBuiltin ):
 	Name ( Name ),
 	RequiredTraits ( new OilTypeRef * [ RequiredTraitCount ] ),
 	RequiredTraitCount ( RequiredTraitCount ),
@@ -17,7 +17,7 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTyp
 	TraitMethods ( new OilTraitMethod * [ MethodCount ] ),
 	MethodCount ( MethodCount ),
 	TemplateDefinition ( NULL ),
-	Builtin ( Builtin )
+	Builtin ( IsBuiltin )
 {
 	
 	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
@@ -31,7 +31,7 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTyp
 	
 }
 
-OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, OilTemplateDefinition * TemplateDefinition, bool Builtin ):
+OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTypeRef ** RequiredTraits, uint32_t RequiredTraitCount, OilTraitFunction ** TraitFunctions, uint32_t FunctionCount, OilTraitMethod ** TraitMethods, uint32_t MethodCount, OilTemplateDefinition * TemplateDefinition, bool IsBuiltin ):
 	Name ( Name ),
 	RequiredTraits ( new OilTypeRef * [ RequiredTraitCount ] ),
 	RequiredTraitCount ( RequiredTraitCount ),
@@ -40,7 +40,7 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTyp
 	TraitMethods ( new OilTraitMethod * [ MethodCount ] ),
 	MethodCount ( MethodCount ),
 	TemplateDefinition ( TemplateDefinition ),
-	Builtin ( Builtin )
+	Builtin ( IsBuiltin )
 {
 	
 	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )

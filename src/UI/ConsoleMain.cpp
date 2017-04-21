@@ -174,7 +174,12 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames )
 	if ( ! CompilationUnit :: RunSourceAnalysis ( OilRoot ) )
 		return 1;
 	
-	OilPrint ( OilRoot );
+	OilPrintOptions PrintOptions;
+	
+	PrintOptions.PrintBuiltins = true;
+	PrintOptions.HighlightBuiltins = true;
+	
+	OilPrint ( OilRoot, PrintOptions );
 	
 	Files.DestroyAll ();
 	

@@ -260,6 +260,8 @@ bool CompilationUnit :: RunBuiltinAddition ( OilNamespaceDefinition & RootNS )
 	
 	LOG_VERBOSE ( "[ ALL ]: compilation step: Builtin Addition" );
 	
+	(void) RootNS;
+	
 	// TODO: Add actual target selection to build
 	if ( ! OakAddBuiltinTypes ( RootNS, kTargetArch_X86_64, 0 ) )
 		return false;

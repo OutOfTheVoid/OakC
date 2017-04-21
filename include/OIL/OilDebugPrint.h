@@ -3,6 +3,14 @@
 
 class OilNamespaceDefinition;
 
-void OilPrint ( const OilNamespaceDefinition & Root );
+typedef struct
+{
+	
+	bool PrintBuiltins;
+	bool HighlightBuiltins;
+	
+} OilPrintOptions;
+
+void OilPrint ( const OilNamespaceDefinition & Root, const OilPrintOptions & PrintOptions );
 
 #endif

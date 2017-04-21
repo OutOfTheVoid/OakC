@@ -35,6 +35,9 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	// String literal
 	ITokenSplitRule * StringLiteralRule = new OakStringSplitRule ();
 	
+	// Decorator open
+	ITokenSplitRule * DecoratorOpenRule = new StringMatchSplitRule ( U"#[", OakTokenTags :: kTokenTag_DecoratorOpen );
+	
 	// Float literal
 	ITokenSplitRule * FloatLiteralRule = new OakFloatingPointSplitRule ();
 	
@@ -167,6 +170,7 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( CharLiteralRule, 2 );
 	NewTokenizer -> AddSplitRule ( IntegerLiteralRule, 2 );
 	
+	NewTokenizer -> AddSplitRule ( DecoratorOpenRule, 3 );
 	NewTokenizer -> AddSplitRule ( BackTickRule, 3 );
 	NewTokenizer -> AddSplitRule ( SemicolonRule, 3 );
 	NewTokenizer -> AddSplitRule ( CommaRule, 3 );
