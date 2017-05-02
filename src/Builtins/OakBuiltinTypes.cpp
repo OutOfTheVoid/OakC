@@ -76,7 +76,11 @@ bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS, TargetArchFlags Flags )
 	(void) RootNS;
 	(void) Flags;
 	
-	//OilTypeDefinition * BoolType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"bool", 1, 1, OilBuiltinStructDefinition :: kTypeFlag_None ) );
+	OilTypeDefinition * BoolType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"bool", 1, 1, OilBuiltinStructDefinition :: kTypeFlag_None ) );
+	RootNS.AddTypeDefinition ( BoolType );
+	
+	OilImplementBlock * BoolPrincipalImplementBlock = new OilImplementBlock ( new OilTypeRef ( U"bool" ) );
+	//BoolPrincipalImplementBlock -> AddFunction (  );
 	
 	//RootNS.AddTypeDefinition ( BoolType );
 	

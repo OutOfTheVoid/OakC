@@ -15,12 +15,16 @@ public:
 	
 	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType );
 	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
+	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType );
+	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType,  OilTemplateDefinition * TemplateDefinition );
 	~OilFunctionDefinition ();
 	
 	const std :: u32string GetName () const;
 	
-	const OilFunctionParameterList * GetParameterList () const;
+	const OilFunctionParameterList * GetParameterList () const; // 1:15:09 West World
 	OilFunctionParameterList * GetParameterList ();
+	
+	bool IsNative () const;
 	
 	const OilStatementBody * GetStatementBody () const;
 	OilStatementBody * GetStatementBody ();
@@ -29,7 +33,13 @@ public:
 	OilTemplateDefinition * GetTemplateDefinition ();
 	
 	const OilTypeRef * GetReturnType () const;
+	
 	OilTypeRef * GetReturnType ();
+	
+	void * GetNativeFunctionData ();
+	const void * GetNativeFunctionData () const;
+	
+	uint64_t GetNativeFunctionTag () const;
 	
 	bool IsTemplated () const;
 	bool ConstantTerms () const;
@@ -49,8 +59,18 @@ private:
 	OilTemplateDefinition * TemplateDefinition;
 	OilFunctionParameterList * ParameterList;
 	OilTypeRef * ReturnType;
-	OilStatementBody * StatementBody;
 	
+	bool NativeFunction;
+	
+	union
+	{
+		
+		OilStatementBody * StatementBody;
+		void * NativeFunctionTag;
+		
+	}
+	
+	uint64_t NativeFunctionTag;
 };
 
 #endif
