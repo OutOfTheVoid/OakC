@@ -131,8 +131,6 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
-	// TODO: Make sure types aren't double or triple-templated here.
-	
 	bool TemplateError = false;
 	
 	ASTElement * TypeElement = StructBindingElement -> GetSubElement ( StructBindingElement -> GetSubElementCount () - 1 );

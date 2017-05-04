@@ -4,8 +4,6 @@
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-// TODO: Implement
-
 class OakArrayLiteralConstructor : public virtual IASTConstructor
 {
 public:

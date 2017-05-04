@@ -12,6 +12,7 @@
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
 #include <OIL/OilTemplateSpecification.h>
+#include <OIL/OilImplementBlock.h>
 
 #include <Compilation/Targets.h>
 #include <Compilation/CompilationUnit.h>
@@ -22,25 +23,25 @@
 	#define NULL nullptr
 #endif
 
-bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS, TargetArchFlags Flags );
-bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS, TargetArchFlags Flags );
+bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS );
+bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS );
 
 bool AddUniversalTypes ( OilNamespaceDefinition & RootNS );
 
-bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS, TargetArchID Arch, TargetArchFlags Flags )
+bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS )
 {
 	
 	if ( ! AddUniversalTypes ( RootNS ) )
 		return false;
 	
-	switch ( Arch )
+	switch ( TargetArch )
 	{
 		
 		case kTargetArch_X86_32:
-			return AddTypesX86_32 ( RootNS, Flags );
+			return AddTypesX86_32 ( RootNS );
 			
 		case kTargetArch_X86_64:
-			return AddTypesX86_64 ( RootNS, Flags );
+			return AddTypesX86_64 ( RootNS );
 		
 	}
 	
@@ -53,16 +54,17 @@ bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS, TargetArchID Arch, Ta
 bool AddUniversalTypes ( OilNamespaceDefinition & RootNS )
 {
 	
+	(void) RootNS;
+	
 	return true;
 	
 }
 
-bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS, TargetArchFlags Flags )
+bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS )
 {
 	
-	// TODO
-	(void) RootNS;
-	(void) Flags;
+	OilTypeDefinition * BoolType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"bool", 1, 1, OilBuiltinStructDefinition :: kTypeFlag_None ) );
+	RootNS.AddTypeDefinition ( BoolType );
 	
 	//RootNS.AddTypeDefinition (  );
 	
@@ -70,16 +72,13 @@ bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS, TargetArchFlags Flags )
 	
 }
 
-bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS, TargetArchFlags Flags )
+bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS )
 {
-	// TODO
-	(void) RootNS;
-	(void) Flags;
 	
 	OilTypeDefinition * BoolType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"bool", 1, 1, OilBuiltinStructDefinition :: kTypeFlag_None ) );
 	RootNS.AddTypeDefinition ( BoolType );
 	
-	OilImplementBlock * BoolPrincipalImplementBlock = new OilImplementBlock ( new OilTypeRef ( U"bool" ) );
+	//OilImplementBlock * BoolPrincipalImplementBlock = new OilImplementBlock ( new OilTypeRef ( U"bool" ) );
 	//BoolPrincipalImplementBlock -> AddFunction (  );
 	
 	//RootNS.AddTypeDefinition ( BoolType );

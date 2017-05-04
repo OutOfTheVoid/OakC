@@ -2966,7 +2966,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			if ( Overflow64 )
 			{
 				
-				WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
+				WriteError ( LiteralElement, "Integer literal overflows signed pointer precision" );
 				
 				return NULL;
 				

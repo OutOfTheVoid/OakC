@@ -10,7 +10,9 @@ OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, 
 	TemplateDefinition ( NULL ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
-	StatementBody ( StatementBody )
+	NativeFunction ( false ),
+	StatementBody ( StatementBody ),
+	NativeFunctionTag ( 0 )
 {
 }
 	
@@ -21,9 +23,38 @@ OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, 
 	TemplateDefinition ( TemplateDefinition ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
-	StatementBody ( StatementBody )
+	NativeFunction ( false ),
+	StatementBody ( StatementBody ),
+	NativeFunctionTag ( 0 )
 {
 }
+
+OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType ):
+	Name ( Name ),
+	Public ( Public ),
+	Inline ( Inline ),
+	TemplateDefinition ( NULL ),
+	ParameterList ( ParameterList ),
+	ReturnType ( ReturnType ),
+	NativeFunction ( true ),
+	NativeFunctionData ( NativeFunctionData ),
+	NativeFunctionTag ( NativeFunctionTag )
+{
+}
+
+OilFunctionDefinition :: OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
+	Name ( Name ),
+	Public ( Public ),
+	Inline ( Inline ),
+	TemplateDefinition ( TemplateDefinition ),
+	ParameterList ( ParameterList ),
+	ReturnType ( ReturnType ),
+	NativeFunction ( true ),
+	NativeFunctionData ( NativeFunctionData ),
+	NativeFunctionTag ( NativeFunctionTag )
+{
+}
+	
 
 OilFunctionDefinition :: ~OilFunctionDefinition ()
 {
@@ -99,6 +130,13 @@ OilTypeRef * OilFunctionDefinition :: GetReturnType ()
 	
 }
 
+bool OilFunctionDefinition :: IsNative () const
+{
+	
+	return NativeFunction;
+	
+}
+
 bool OilFunctionDefinition :: IsPublic () const
 {
 	
@@ -132,5 +170,26 @@ bool OilFunctionDefinition :: ConstantTerms () const
 	
 	// FOR NOW
 	return false;
+	
+}
+
+void * OilFunctionDefinition :: GetNativeFunctionData ()
+{
+	
+	return NativeFunctionData;
+	
+}
+
+const void * OilFunctionDefinition :: GetNativeFunctionData () const
+{
+	
+	return NativeFunctionData;
+	
+}
+
+uint64_t OilFunctionDefinition :: GetNativeFunctionTag () const
+{
+	
+	return NativeFunctionTag;
 	
 }

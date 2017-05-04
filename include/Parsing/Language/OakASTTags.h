@@ -34,7 +34,7 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_NamespaceDefinition = 19;
 	
-	const uint64_t kASTTag_ImplementDefinition = 20; // TODO - In progress
+	const uint64_t kASTTag_ImplementDefinition = 20;
 	
 	const uint64_t kASTTag_FunctionDefinition = 21;
 	const uint64_t kASTTag_FunctionParameterList = 22;
@@ -48,7 +48,7 @@ namespace OakASTTags
 	const uint64_t kASTTag_SelfParameter = 27;
 	const uint64_t kASTTag_SelfParameterReference = 28;
 	
-	const uint64_t kASTTag_MethodDefinition = 29; // TODO
+	const uint64_t kASTTag_MethodDefinition = 29;
 	const uint64_t kASTTag_MethodParameterList = 30;
 	
 	const uint64_t kASTTag_ReturnType = 31;

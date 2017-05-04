@@ -22,6 +22,8 @@
 
 #include <EarlyAnalysis/OakLiteralParsing.h>
 
+#include <Compilation/Targets.h>
+
 #define VERSION_STRING "0.0.1b"
 
 void PrintHelp ();
@@ -67,7 +69,7 @@ int main ( int argc, const char * argv [] )
 			
 		}
 		
-		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "t", 0, true ) )
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "t", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "test", 0, true ) )
 		{
 			
 			if ( Action == kMainAction_Compile )
@@ -77,7 +79,67 @@ int main ( int argc, const char * argv [] )
 			
 		}
 		
-		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "l", 0, true ) && ( ! LogFileSet ) )
+		// TODO: ARCH AND OS PARSING
+		
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "a", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "arch", 0, true ) )
+		{
+			
+			if ( ( argc - 1 ) <= I )
+			{
+				
+				LOG_FATALERROR_NOFILE ( "No architecture supplied" );
+				return 1;
+				
+			}
+			
+			const std :: string ArchSwitch ( argv [ I + 1 ] );
+			
+			if ( ArchSwitch == TARGET_ARCH_NAME_X86 )
+				TargetArch = kTargetArch_X86_32;
+			else if ( ArchSwitch == TARGET_ARCH_NAME_X86_64 )
+				TargetArch = kTargetArch_X86_64;
+			else
+			{
+				
+				LOG_FATALERROR_NOFILE ( std :: string ( "Architecture not recognized: " ) + ArchSwitch );
+				return 1;
+				
+			}
+			
+		}
+		
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "os", 0, true ) )
+		{
+			
+			if ( ( argc - 1 ) <= I )
+			{
+				
+				LOG_FATALERROR_NOFILE ( "No architecture supplied" );
+				return 1;
+				
+			}
+			
+			const std :: string OSSwitch ( argv [ I + 1 ] );
+			
+			if ( OSSwitch == TARGET_OS_NAME_NONE )
+				TargetOS = kTargetOS_None;
+			else if ( OSSwitch == TARGET_OS_NAME_GNULINUX )
+				TargetOS = kTargetOS_GNULinux;
+			else if ( OSSwitch == TARGET_OS_NAME_WIN32 )
+				TargetOS = kTargetOS_Win32;
+			else if ( OSSwitch == TARGET_OS_NAME_MACOSX )
+				TargetOS = kTargetOS_MacOSX;
+			else
+			{
+				
+				LOG_FATALERROR_NOFILE ( std :: string ( "OS not recognized: " ) + OSSwitch );
+				return 1;
+				
+			}
+			
+		}
+		
+		if ( ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "l", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "log", 0, true ) ) && ( ! LogFileSet ) )
 		{
 			
 			if ( ( argc - 1 ) <= I )
@@ -93,11 +155,12 @@ int main ( int argc, const char * argv [] )
 			LogFileSet = true;
 			
 			I ++;
+			
 			continue;
 			
 		}
 		
-		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) )
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "verbose", 0, false ) )
 			Verbose = true;
 		else
 			SourceFileNames.push_back ( argv [ I ] );

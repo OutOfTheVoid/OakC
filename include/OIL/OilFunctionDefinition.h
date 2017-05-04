@@ -16,7 +16,7 @@ public:
 	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType );
 	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
 	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType );
-	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType,  OilTemplateDefinition * TemplateDefinition );
+	OilFunctionDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
 	~OilFunctionDefinition ();
 	
 	const std :: u32string GetName () const;
@@ -66,9 +66,9 @@ private:
 	{
 		
 		OilStatementBody * StatementBody;
-		void * NativeFunctionTag;
+		void * NativeFunctionData;
 		
-	}
+	};
 	
 	uint64_t NativeFunctionTag;
 };

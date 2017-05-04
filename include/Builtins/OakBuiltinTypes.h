@@ -5,6 +5,6 @@
 
 class OilNamespaceDefinition;
 
-bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS, TargetArchID Arch, TargetArchFlags Flags );
+bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS );
 
 #endif
