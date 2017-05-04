@@ -106,6 +106,10 @@ int main ( int argc, const char * argv [] )
 				
 			}
 			
+			I ++;
+			
+			continue;
+			
 		}
 		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "os", 0, true ) )
@@ -136,6 +140,10 @@ int main ( int argc, const char * argv [] )
 				return 1;
 				
 			}
+			
+			I ++;
+			
+			continue;
 			
 		}
 		
