@@ -5,6 +5,7 @@
 
 class OilNamespaceDefinition;
 
+// Adds all builtin type definitions
 bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS );
 
 #endif

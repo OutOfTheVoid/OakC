@@ -33,7 +33,7 @@ uint32_t FileTable :: GetCount ()
 	
 }
 
-CompilationUnit * FileTable :: GetUnit ( const std :: string RFileName )
+CompilationUnit * FileTable :: GetUnit ( const std :: string & RFileName )
 {
 	
 	std :: string FileName = CanonicalizePath ( RFileName );

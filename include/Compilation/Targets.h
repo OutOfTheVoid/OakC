@@ -8,24 +8,29 @@ typedef uint32_t TargetArchFlags;
 
 typedef uint32_t TargetOSID;
 
+// OS argument names
 #define TARGET_OS_NAME_NONE "none"
 #define TARGET_OS_NAME_GNULINUX "gnu_linux"
 #define TARGET_OS_NAME_WIN32 "windows"
 #define TARGET_OS_NAME_MACOSX "macosx"
 
+// Operating system IDs
 const TargetOSID kTargetOS_None = 0;
 const TargetOSID kTargetOS_GNULinux = 1;
 const TargetOSID kTargetOS_Win32 = 2;
 const TargetOSID kTargetOS_MacOSX = 3;
 
+// Architecture argument names
 #define TARGET_ARCH_NAME_X86 "x86"
 #define TARGET_ARCH_NAME_X86_64 "x86_64"
 
+// Architexture IDs
 const TargetArchID kTargetArch_X86_32 = 0;
 const TargetArchID kTargetArch_X86_64 = 1;
 
 const TargetArchID kTargetArch_Undefined = 0xFFFFFFFF;
 
+// Arch specific flags
 const TargetArchFlags kTargetArchFlag_X86_32_SSE2 = 1;
 const TargetArchFlags kTargetArchFlag_X86_32_SSE3 = 2;
 
@@ -77,6 +82,7 @@ const TargetArchID kTargetArch_ARM_V7;
 	
 #endif
 
+// Globals defined in Targets.cpp
 extern TargetOSID TargetOS;
 extern TargetArchID TargetArch;
 extern TargetArchFlags TargetFlags;
