@@ -3,7 +3,6 @@
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
-#include <Parsing/Language/OakPointerTypeConstructor.h>
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
@@ -24,7 +23,6 @@ OakBindingStatementConstructor OakBindingStatementConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakBindingStatementConstructor_TypeGroupEntries [] =
 {
 	
-	{ & OakPointerTypeConstructor :: Instance, 0 },
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
@@ -44,7 +42,7 @@ ASTConstructionGroup :: StaticInitEntry _OakBindingStatementConstructor_Initiali
 };
 
 OakBindingStatementConstructor :: OakBindingStatementConstructor ():
-	TypeGroup ( _OakBindingStatementConstructor_TypeGroupEntries, 7 ),
+	TypeGroup ( _OakBindingStatementConstructor_TypeGroupEntries, 6 ),
 	InitializerValueGroup ( _OakBindingStatementConstructor_InitializerValueGroupEntries, 1 )
 {
 }

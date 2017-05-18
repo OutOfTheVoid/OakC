@@ -10,8 +10,6 @@
 
 #include <Parsing/Language/OakVoidTypeConstructor.h>
 
-#include <Parsing/Language/OakPointerTypeConstructor.h>
-
 #include <Tokenization/Language/OakTokenTags.h>
 
 OakReferenceTypeConstructor OakReferenceTypeConstructor :: Instance;
@@ -19,7 +17,6 @@ OakReferenceTypeConstructor OakReferenceTypeConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakReferenceTypeConstructor_TypeGroupEntries [] =
 {
 	
-	{ & OakPointerTypeConstructor :: Instance, 0 },
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
@@ -32,7 +29,7 @@ ASTConstructionGroup :: StaticInitEntry _OakReferenceTypeConstructor_TypeGroupEn
 };
 
 OakReferenceTypeConstructor :: OakReferenceTypeConstructor ():
-	TypeGroup ( _OakReferenceTypeConstructor_TypeGroupEntries, 7 )
+	TypeGroup ( _OakReferenceTypeConstructor_TypeGroupEntries, 6 )
 {
 }
 
@@ -115,15 +112,6 @@ void OakReferenceTypeConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		ReferenceTypeData -> Templated = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> Templated;
 		ReferenceTypeData -> DoubleTemplateClose = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> DoubleTemplateClose;
 		ReferenceTypeData -> TripleTemplateClose = reinterpret_cast <ElementData *> ( SubTypeElement -> GetData () ) -> TripleTemplateClose;
-		
-	}
-	
-	if ( SubTypeTag == OakASTTags :: kASTTag_PointerType )
-	{
-		
-		ReferenceTypeData -> Templated = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> Templated;
-		ReferenceTypeData -> DoubleTemplateClose = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> DoubleTemplateClose;
-		ReferenceTypeData -> TripleTemplateClose = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( SubTypeElement -> GetData () ) -> TripleTemplateClose;
 		
 	}
 	

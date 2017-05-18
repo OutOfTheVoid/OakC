@@ -3,7 +3,6 @@
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
-#include <Parsing/Language/OakPointerTypeConstructor.h>
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
@@ -20,7 +19,6 @@ OakReturnTypeConstructor OakReturnTypeConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakReturnTypeConstructor_TypeGroupEntries [] =
 {
 	
-	{ & OakPointerTypeConstructor :: Instance, 0 },
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
@@ -117,16 +115,6 @@ void OakReturnTypeConstructor :: TryConstruct ( ASTConstructionInput & Input, AS
 	bool TemplateError = false;
 	
 	ASTElement * TypeElement = ReturnTypeElement -> GetSubElement ( ReturnTypeElement -> GetSubElementCount () - 1 );
-	
-	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_PointerType )
-	{
-		
-		OakPointerTypeConstructor :: ElementData * Data = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
-		
-		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
-			TemplateError = true;
-		
-	}
 	
 	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_ReferenceType )
 	{

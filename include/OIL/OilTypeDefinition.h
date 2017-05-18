@@ -13,12 +13,14 @@ class OilTypeDefinition
 {
 public:
 	
-	OilTypeDefinition ( OilStructDefinition * Structure );
-	OilTypeDefinition ( OilBuiltinStructDefinition * BuiltinStructure );
+	OilTypeDefinition ( OilStructDefinition * Structure, bool IsBuiltin = false );
+	OilTypeDefinition ( OilBuiltinStructDefinition * BuiltinStructure, bool IsBuiltin = false );
 	
 	~OilTypeDefinition ();
 	
 	const std :: u32string & GetName () const;
+	
+	bool IsBuiltinType () const;
 	
 	bool IsBuiltinStructure () const;
 	
@@ -51,6 +53,8 @@ private:
 	const std :: u32string Name;
 	
 	bool IsBuiltin;
+	
+	bool IsStructBuiltin;
 	
 	union
 	{

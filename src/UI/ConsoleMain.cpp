@@ -24,18 +24,29 @@
 
 #include <Compilation/Targets.h>
 
-#define VERSION_STRING "0.0.1b"
+#define VERSION_STRING "0.0.2b"
+
+int Test ();
+
+int Compile ( const std :: vector <std :: string> & SourceFileNames );
 
 void PrintHelp ();
-int Test ();
-int Compile ( const std :: vector <std :: string> & SourceFileNames );
+void ListArchitechtures ();
+void ListOperatingSystems ();
+void PrintVerboseHelp ();
+void PrintLogHelp ();
 
 typedef enum
 {
 	
+	kMainAction_None,
 	kMainAction_Compile,
 	kMainAction_Test,
-	kMainAction_Help
+	kMainAction_Help,
+	kMainAction_Help_Log,
+	kMainAction_Help_Verbose,
+	kMainAction_ListArchitechtures,
+	kMainAction_ListOperatingSystems,
 	
 } MainAction;
 
@@ -53,7 +64,7 @@ int main ( int argc, const char * argv [] )
 	bool Verbose = false;
 	bool LogFileSet = false;
 	
-	MainAction Action = kMainAction_Compile;
+	MainAction Action = kMainAction_None;
 	
 	std :: vector <std :: string> SourceFileNames;
 	
@@ -63,7 +74,40 @@ int main ( int argc, const char * argv [] )
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "h", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "help", 0, true ) )
 		{
 			
-			Action = kMainAction_Help;
+			if ( ( std :: string ( argv [ I + 1 ] ) == "l" ) || ( std :: string ( argv [ I + 1 ] ) == "log" ) )
+			{
+				
+				I ++;
+				
+				Action = kMainAction_Help_Log;
+				
+			}
+			else if ( std :: string ( argv [ I + 1 ] ) == "os" )
+			{
+				
+				I ++;
+				
+				Action = kMainAction_ListOperatingSystems;
+				
+			}
+			else if ( ( std :: string ( argv [ I + 1 ] ) == "a" ) || ( std :: string ( argv [ I + 1 ] ) == "arch" ) )
+			{
+				
+				I ++;
+				
+				Action = kMainAction_ListArchitechtures;
+				
+			}
+			else if ( ( std :: string ( argv [ I + 1 ] ) == "v" ) || ( std :: string ( argv [ I + 1 ] ) == "verbose" ) )
+			{
+				
+				I ++;
+				
+				Action = kMainAction_Help_Verbose;
+				
+			}
+			else 
+				Action = kMainAction_Help;
 			
 			continue;
 			
@@ -78,8 +122,6 @@ int main ( int argc, const char * argv [] )
 			continue;
 			
 		}
-		
-		// TODO: ARCH AND OS PARSING
 		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "a", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "arch", 0, true ) )
 		{
@@ -98,10 +140,12 @@ int main ( int argc, const char * argv [] )
 				TargetArch = kTargetArch_X86_32;
 			else if ( ArchSwitch == TARGET_ARCH_NAME_X86_64 )
 				TargetArch = kTargetArch_X86_64;
+			else if ( ( ArchSwitch == "list" ) || ( ArchSwitch == "help" ) )
+				Action = kMainAction_ListArchitechtures;
 			else
 			{
 				
-				LOG_FATALERROR_NOFILE ( std :: string ( "Architecture not recognized: " ) + ArchSwitch );
+				LOG_FATALERROR_NOFILE ( std :: string ( "Architecture not recognized: " ) + ArchSwitch + "\nUse oakc \"-arch <list | help>\" to list supported architectures" );
 				return 1;
 				
 			}
@@ -133,6 +177,8 @@ int main ( int argc, const char * argv [] )
 				TargetOS = kTargetOS_Win32;
 			else if ( OSSwitch == TARGET_OS_NAME_MACOSX )
 				TargetOS = kTargetOS_MacOSX;
+			else if ( ( OSSwitch == "list" ) || ( OSSwitch == "help" ) )
+				Action = kMainAction_ListOperatingSystems;
 			else
 			{
 				
@@ -171,7 +217,14 @@ int main ( int argc, const char * argv [] )
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "verbose", 0, false ) )
 			Verbose = true;
 		else
+		{
+			
 			SourceFileNames.push_back ( argv [ I ] );
+			
+			if ( Action == kMainAction_None )
+				Action = kMainAction_Compile;
+			
+		}
 		
 	}
 	
@@ -180,6 +233,7 @@ int main ( int argc, const char * argv [] )
 	switch ( Action )
 	{
 		
+		case kMainAction_None:
 		case kMainAction_Compile:
 			return Compile ( SourceFileNames );
 			
@@ -190,6 +244,42 @@ int main ( int argc, const char * argv [] )
 		{
 			
 			PrintHelp ();
+			
+			return 0;
+			
+		}
+		
+		case kMainAction_Help_Verbose:
+		{
+			
+			PrintVerboseHelp ();
+			
+			return 0;
+			
+		}
+		
+		case kMainAction_Help_Log:
+		{
+			
+			PrintLogHelp ();
+			
+			return 0;
+			
+		}
+		
+		case kMainAction_ListArchitechtures:
+		{
+			
+			ListArchitechtures ();
+			
+			return 0;
+			
+		}
+		
+		case kMainAction_ListOperatingSystems:
+		{
+			
+			ListOperatingSystems ();
 			
 			return 0;
 			
@@ -262,213 +352,74 @@ void PrintHelp ()
 {
 	
 	LOG ( "OakC: Oak Compiler." );
-	LOG ( "Usage: oakc [-<h|help>] [-v] [-l logfile] source.oak" );
+	LOG ( "Usage: oakc [-<h|help> ?<flag name>] [-v] [-<l|log> logfile] [-<a|arch> <{target architecture}|list>] [-os <{target os}|list>] source.oak" );
+	
+}
+
+void PrintVerboseHelp ()
+{
+	
+	LOG ( "\nVerbose flag:" );
+	LOG ( "=============" );
+	LOG ( "Puts the compiler in verbose mode." );
+	LOG ( "\nUsage: -<v|verbose>" );
+	
+}
+
+void PrintLogHelp ()
+{
+	
+	LOG ( "\nLog flag:" );
+	LOG ( "=============" );
+	LOG ( "Redirects all output to a log file." );
+	LOG ( "\nUsage: -<l|log> {file to log to}" );
+	
+}
+
+inline std :: string RightPaddedString ( const std :: string & In, uint32_t Length, char Pad )
+{
+	
+	std :: string Return = In;
+	
+	while ( Return.size () < Length )
+		Return.push_back ( Pad );
+	
+	return Return;
+	
+}
+
+void ListArchitechtures ()
+{
+	
+	LOG ( "\nTarget architecture select" );
+	LOG ( "==========================" );
+	LOG ( "\nUsage: -<a|arch> {target architecture}" );
+	LOG ( "\n--------------------------------------------------------------------------------" );
+	LOG ( "Flag value | Description" );
+	LOG ( "--------------------------------------------------------------------------------" );
+	LOG ( RightPaddedString ( TARGET_ARCH_NAME_X86, 11, ' ' ) + "| Intel i686+" );
+	LOG ( RightPaddedString ( TARGET_ARCH_NAME_X86_64, 11, ' ' ) + "| X86_64/AMD64" );
+	
+}
+
+void ListOperatingSystems ()
+{
+	
+	LOG ( "\nTarget OS select" );
+	LOG ( "================" );
+	LOG ( "\nUsage: -os {target_os}" );
+	LOG ( "\n--------------------------------------------------------------------------------" );
+	LOG ( "Flag value | Description" );
+	LOG ( "--------------------------------------------------------------------------------" );
+	LOG ( RightPaddedString ( TARGET_OS_NAME_NONE, 11, ' ' ) + "| No OS defined (implies no std library)" );
+	LOG ( RightPaddedString ( TARGET_OS_NAME_GNULINUX, 11, ' ' ) + "| GNU/Linux" );
+	LOG ( RightPaddedString ( TARGET_OS_NAME_MACOSX, 11, ' ' ) + "| Mac OS X" );
+	LOG ( RightPaddedString ( TARGET_OS_NAME_WIN32, 11, ' ' ) + "| Windows" );
 	
 }
 
 int Test ()
 {
-	
-	BigInteger A ( 0x7FFFFFFFFFFFFFFFULL );
-	BigInteger B ( 2LL );
-	
-	if ( A.Get64Bits ( 0 ) != 0x7FFFFFFFFFFFFFFFULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Increment ();
-	
-	if ( A.Get64Bits ( 0 ) != 0x8000000000000000ULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Decrement ();
-	
-	if ( A.Get64Bits ( 0 ) != 0x7FFFFFFFFFFFFFFFULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Add ( B );
-	
-	if ( A.Get64Bits ( 0 ) != 0x8000000000000001ULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Subtract ( B );
-	
-	if ( A.Get64Bits ( 0 ) != 0x7FFFFFFFFFFFFFFFULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A = 80LL;
-	B = 5LL;
-	
-	A.Subtract ( B );
-	
-	if ( A.Get64Bits ( 0 ) != 75ULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( { 0xFFFFFFFFFFFFFFFFULL }, BigInteger :: kSign_Positive );
-	A.Increment ();
-	
-	if ( ( A.Get64Bits ( 0 ) != 0ULL ) || ( A.Get64Bits ( 64 ) != 1ULL ) )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	B.Set ( 200LL );
-	A.Add ( B );
-	
-	if ( ( A.Get64Bits ( 0 ) != 200ULL ) || ( A.Get64Bits ( 64 ) != 1ULL ) )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Subtract ( B );
-	
-	if ( ( A.Get64Bits ( 0 ) != 0ULL ) || ( A.Get64Bits ( 64 ) != 1ULL ) )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	B.Set ( - 1LL );
-	A.Add ( B );
-	
-	if ( ( A.Get64Bits ( 0 ) != 0xFFFFFFFFFFFFFFFFULL ) || ( A.Get64Bits ( 64 ) != 0ULL ) )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( 1 );
-	
-	//LOG_VERBOSE ( std :: to_string ( A.Get64Bits ( 0 ) ) );
-	
-	A.LeftShift ( 1 );
-	
-	if ( A.Get64Bits ( 0 ) != 2 )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.LeftShift ( 2 );
-	
-	if ( A.Get64Bits ( 0 ) != 8 )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.RightShift ( 3 );
-	
-	if ( A.Get64Bits ( 0 ) != 1 )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( - 3LL );
-	B.Set ( - 9LL );
-	
-	A.Multiply ( B );
-	
-	if ( A.Get64Bits ( 0 ) != 27ULL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( 0LL );
-	
-	if ( A <= - 1LL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	if ( A != 0LL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( 6 );
-	B.Set ( 2 );
-	
-	if ( ! ( A > B ) )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	if ( B > A )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( { 0xFFFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL }, BigInteger :: kSign_Positive );
-	B.Set ( { 0xEFFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL, 0x7FFFFFFFFFFFFFFFULL }, BigInteger :: kSign_Positive );
-	
-	if ( A <= B )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	if ( B >= A )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( 6LL );
-	B.Set ( 2LL );
-	
-	A.Divide ( B );
-	
-	if ( A != 3LL )
-	{
-		
-		LOG_FATALERROR ( "bigint failed" );
-		
-		LOG_VERBOSE ( std :: string ( "A: " ) + std :: to_string ( A.Get64Bits ( 0 ) ) );
-		LOG_VERBOSE ( std :: string ( "B: " ) + std :: to_string ( B.Get64Bits ( 0 ) ) );
-		
-	}
-	
-	A.Set ( { 0x8000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL }, BigInteger :: kSign_Positive );
-	B.Set ( { 0x1000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL }, BigInteger :: kSign_Positive );
-	
-	A.Divide ( B );
-	
-	if ( A != 8LL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	A.Set ( { 0x8000000000000000ULL, 0x0000000000000000ULL, 0x0000000000000000ULL }, BigInteger :: kSign_Positive );
-	B.FlipSign ();
-	
-	A.Divide ( B );
-	
-	if ( A != - 8LL )
-		LOG_FATALERROR ( "bigint failed" );
-	
-	BigFloat C ( BigInteger ( 3LL ), -1, 0 ); // 0.3
-	BigFloat D ( BigInteger ( 2LL ), 1, 0 ); // 20.0
-	
-	C.Multiply ( D );
-	
-	if ( ! C.Equal ( BigFloat ( BigInteger ( 6LL ), 0, 0 ) ) )
-		LOG_FATALERROR ( "bigfloat failed" );
-	
-	D = BigFloat ( BigInteger ( 2LL ), 0, 0 );
-	
-	C.Divide ( D );
-	
-	if ( ! C.Equal ( BigFloat ( BigInteger ( 3LL ), 0, 0 ) ) )
-		LOG_FATALERROR ( "bigfloat failed" );
-	
-	if ( ! OakParseFloatLiteral ( U"0.1f", C ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( "Z" );
-	
-	if ( ! C.Equal ( BigFloat ( 1LL, 0LL, - 1LL ) ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) );
-	
-	if ( ! OakParseFloatLiteral ( U"0.12", C ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
-	
-	LOG_VERBOSE ( "Z" );
-	
-	if ( ! C.Equal ( BigFloat ( 12LL, 0LL, - 2LL ) ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) );
-	
-	if ( ! OakParseFloatLiteral ( U"0x1p+0", C ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( "Z" );
-	
-	if ( ! C.Equal ( BigFloat ( 1LL, 0LL, 0LL ) ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
-	
-	if ( ! OakParseFloatLiteral ( U"0x10FF45p-2f64", C ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( "Z" );
-	
-	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
-	
-	if ( ! C.Equal ( BigFloat ( 0x10FF45LL, - 2LL, 0LL ) ) )
-		LOG_FATALERROR ( "float parse failed" );
-	
-	LOG_VERBOSE ( std :: string ( "C: [ Sig: " ) + C.GetSignificand ().ToHexString () + ", P2: " + std :: to_string ( C.GetPower2 () ) + ", P10: " + std :: to_string ( C.GetPower10 () ) + " ]" );
-	
 	
 	return 0;
 	

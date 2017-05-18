@@ -23,7 +23,7 @@ public:
 		kOperator_LogicalNot,
 		kOperator_UnaryNegative,
 		kOperator_UnaryPositive,
-		kOperator_AddressOfRef,
+		kOperator_Reference,
 		kOperator_Dereference,
 		kOperator_ArrayAccess,
 		kOperator_FunctionCall,

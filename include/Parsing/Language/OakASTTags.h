@@ -42,7 +42,7 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_StatementBlock = 24;
 	
-	const uint64_t kASTTag_PointerType = 25;
+	
 	const uint64_t kASTTag_ReferenceType = 26;
 	
 	const uint64_t kASTTag_SelfParameter = 27;
@@ -77,8 +77,7 @@ namespace OakASTTags
 	const uint64_t kASTTag_Operator_LogicalNot = 45;
 	const uint64_t kASTTag_Operator_UnaryNegate = 46;
 	const uint64_t kASTTag_Operator_UnaryPositive = 47;
-	const uint64_t kASTTag_Operator_ReferenceAddressOf = 48;
-	const uint64_t kASTTag_Operator_PointerDeref = 49;
+	const uint64_t kASTTag_Operator_Reference = 48;
 	
 	const uint64_t kASTTag_Operator_Multiply = 50;
 	const uint64_t kASTTag_Operator_Divide = 51;
@@ -185,7 +184,7 @@ namespace OakASTTags
 		"FUNCTION_PARAMETER_LIST",
 		"FUNCTION_PARAMETER",
 		"STATEMENT_BLOCK",
-		"POINTER_TYPE",
+		"__RESERVED__",
 		"REFERENCE_TYPE",
 		"SELF_PARAMETER",
 		"SELF_PARAMETER_REFERENCE",

@@ -3,7 +3,6 @@
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
 
-#include <Parsing/Language/OakPointerTypeConstructor.h>
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
 
 #include <Parsing/Language/OakBareTypeNameConstructor.h>
@@ -22,7 +21,6 @@ OakStructBindingConstructor OakStructBindingConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakStructBindingConstructor_TypeGroupEntries [] =
 {
 	
-	{ & OakPointerTypeConstructor :: Instance, 0 },
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
@@ -35,7 +33,7 @@ ASTConstructionGroup :: StaticInitEntry _OakStructBindingConstructor_TypeGroupEn
 };
 
 OakStructBindingConstructor :: OakStructBindingConstructor ():
-	TypeGroup ( _OakStructBindingConstructor_TypeGroupEntries, 7 )
+	TypeGroup ( _OakStructBindingConstructor_TypeGroupEntries, 6 )
 {
 }
 
@@ -134,16 +132,6 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	bool TemplateError = false;
 	
 	ASTElement * TypeElement = StructBindingElement -> GetSubElement ( StructBindingElement -> GetSubElementCount () - 1 );
-	
-	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_PointerType )
-	{
-		
-		OakPointerTypeConstructor :: ElementData * Data = reinterpret_cast <OakPointerTypeConstructor :: ElementData *> ( TypeElement -> GetData () );
-		
-		if ( Data -> DoubleTemplateClose || Data -> TripleTemplateClose )
-			TemplateError = true;
-		
-	}
 	
 	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_ReferenceType )
 	{

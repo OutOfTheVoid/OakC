@@ -69,20 +69,6 @@ OilTypeRef :: OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, Ref
 	
 }
 
-OilTypeRef :: OilTypeRef ( PointerMarkerType PMType, OilTypeRef * SubType, RefFlag Flags ):
-	Mode ( kTypeMode_Pointer ),
-	Name ( U"" ),
-	NamespaceNameList ( NULL ),
-	NamespaceNameCount ( 0 ),
-	TemplateSpecification ( NULL ),
-	SubType ( SubType ),
-	Flags ( Flags )
-{
-	
-	(void) PMType;
-	
-}
-
 OilTypeRef :: OilTypeRef ( VoidMarkerType VType ):
 	Mode ( kTypeMode_Void ),
 	Name ( U"" ),
@@ -119,13 +105,6 @@ bool OilTypeRef :: IsVoid () const
 {
 	
 	return Mode == kTypeMode_Void;
-	
-}
-
-bool OilTypeRef :: IsReference () const
-{
-	
-	return Mode == kTypeMode_Reference;
 	
 }
 

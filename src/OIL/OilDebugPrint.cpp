@@ -38,6 +38,7 @@
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilMethodDefinition.h>
+#include <OIL/OilBuiltinStructDefinition.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -68,6 +69,7 @@ void OilPrintBreak ( const OilBreak & Break, uint32_t Indent, const OilPrintOpti
 void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & StructDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS, const OilPrintOptions & PrintOptions )
 {
@@ -122,7 +124,8 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		const OilTypeDefinition * Definition = Namespace.GetTypeDefinition ( I );
 		
-		OilPrintTypeDefinition ( * Definition, Indent, PrintOptions );
+		if ( ( ! Definition -> IsBuiltinType () ) || PrintOptions.PrintBuiltins )
+			OilPrintTypeDefinition ( * Definition, Indent, PrintOptions );
 		
 	}
 	
@@ -558,6 +561,7 @@ void OilPrintBreak ( const OilBreak & Break, uint32_t Indent, const OilPrintOpti
 void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
+	
 	std :: string PrintString;
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
@@ -574,8 +578,20 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 	
 	LOG_VERBOSE ( PrintString );
 	
-	if ( TypeDefinition.GetStructDefinition () != NULL )
-		OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1, PrintOptions );
+	if ( ! TypeDefinition.IsBuiltinStructure () )
+	{
+		
+		if ( TypeDefinition.GetStructDefinition () != NULL )
+			OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1, PrintOptions );
+		
+	}
+	else
+	{
+		
+		if ( TypeDefinition.GetBuiltinStructDefinition () != NULL )
+			OilPrintBuiltinStruct ( * TypeDefinition.GetBuiltinStructDefinition (), Indent + 1, PrintOptions );
+		
+	}
 	
 	if ( TypeDefinition.GetPrincipalImplementBlock () != NULL )
 		OilPrintImplementBlock ( * TypeDefinition.GetPrincipalImplementBlock (), Indent + 1, PrintOptions );
@@ -653,6 +669,48 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 	
 }
 
+void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & Struct, uint32_t Indent, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[BUILIN STRUCT ";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Struct.GetName () );
+	PrintString += " Size: ";
+	PrintString += std :: to_string ( Struct.GetSize () );
+	PrintString += ", Alignment: ";
+	PrintString += std :: to_string ( Struct.GetAlignment () );
+	
+	if ( Struct.GetFlags () != 0 )
+	{
+		
+		if ( ( Struct.GetFlags () & OilBuiltinStructDefinition :: kTypeFlag_RequiredAlignment ) != 0 )
+			PrintString += ", alignment_required";
+		
+	}
+	
+	if ( Struct.HasUnderlyingStructure () )
+	{
+		
+		PrintString += ", underlying_structure]\n";
+		LOG_VERBOSE ( PrintString );
+		
+		OilPrintStruct ( * Struct.GetUnderlyingStructure (), Indent + 1, PrintOptions );
+		
+	}
+	else
+	{
+		
+		PrintString += "]";
+		LOG_VERBOSE ( PrintString );
+		
+	}
+	
+}
+
 void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
@@ -666,7 +724,7 @@ void OilPrintStruct ( const OilStructDefinition & Struct, uint32_t Indent, const
 	if ( Struct.IsTemplated () )
 	{
 		
-		PrintString += "Template: ";
+		PrintString += " Template: ";
 		PrintString += OilStringTemplateDefinition ( * Struct.GetTemplateDefinition (), PrintOptions );
 		PrintString += "]\n";
 		
@@ -956,12 +1014,10 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref, const OilPrintOptions &
 	if ( ! Ref.IsDirectType () )
 	{
 		
-		if ( Ref.IsReference () )
-			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions );
-		else if ( Ref.IsVoid () )
+		if ( Ref.IsVoid () )
 			return std :: string ( "void" );
 		else
-			return std :: string ( "*" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions );
+			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions );
 			
 	}
 	

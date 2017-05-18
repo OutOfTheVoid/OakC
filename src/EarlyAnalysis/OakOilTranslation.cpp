@@ -61,7 +61,6 @@
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 #include <Parsing/Language/OakStructBindingConstructor.h>
 #include <Parsing/Language/OakFunctionDefinitionConstructor.h>
-#include <Parsing/Language/OakPointerTypeConstructor.h>
 #include <Parsing/Language/OakReferenceTypeConstructor.h>
 #include <Parsing/Language/OakFunctionParameterConstructor.h>
 #include <Parsing/Language/OakIgnoreStatementConstructor.h>
@@ -1023,18 +1022,6 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 				return NULL;
 			
 			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification, RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
-			
-		}
-		
-		case OakASTTags :: kASTTag_PointerType:
-		{
-			
-			OilTypeRef * SubTypeRef = OakTranslateTypeRefToOil ( TypeElement -> GetSubElement ( 0 ) );
-			
-			if ( SubTypeRef == NULL )
-				return NULL;
-			
-			return new OilTypeRef ( OilTypeRef :: kPointer, SubTypeRef );
 			
 		}
 		
@@ -3200,8 +3187,7 @@ const std :: map <uint64_t, OilUnaryOperator :: Operator> _OakOilTranslation_Ope
 	{ OakASTTags :: kASTTag_Operator_LogicalNot, OilUnaryOperator :: kOperator_LogicalNot },
 	{ OakASTTags :: kASTTag_Operator_UnaryPositive, OilUnaryOperator :: kOperator_UnaryPositive },
 	{ OakASTTags :: kASTTag_Operator_UnaryNegate, OilUnaryOperator :: kOperator_UnaryNegative },
-	{ OakASTTags :: kASTTag_Operator_ReferenceAddressOf, OilUnaryOperator :: kOperator_AddressOfRef },
-	{ OakASTTags :: kASTTag_Operator_PointerDeref, OilUnaryOperator :: kOperator_Dereference },
+	{ OakASTTags :: kASTTag_Operator_Reference, OilUnaryOperator :: kOperator_Reference},
 	{ OakASTTags :: kASTTag_Operator_ArrayAccess, OilUnaryOperator :: kOperator_ArrayAccess },
 	{ OakASTTags :: kASTTag_Operator_FunctionCall, OilUnaryOperator :: kOperator_FunctionCall },
 	
