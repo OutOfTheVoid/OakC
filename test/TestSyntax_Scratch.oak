@@ -1,1 +1,1 @@
-bind A: ptr:<i64>;
+const A: ptr:<i64> = null;

@@ -1,11 +1,12 @@
 #include <EarlyAnalysis/OilImplementResolution.h>
+#include <EarlyAnalysis/OilTypeResolution.h>
 
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTraitDefinition.h>
-#include <OIL/OilTraversal.h>
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilTypeRef.h>
+#include <OIL/OilTraversal.h>
 
 #include <Logging/Logging.h>
 #include <Encoding/CodeConversion.h>
@@ -13,72 +14,158 @@
 ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentNS, OilImplementBlock *& FailedBlock )
 {
 	
+	bool Progress = false;
+	bool Unresolved = false;
+	
 	FailedBlock = NULL;
 	
-	while ( CurrentNS.GetUnresolvedImplementBlockCount () > 0 )
+	uint32_t UnresolvedOffset = 0;
+	
+	while ( CurrentNS.GetUnresolvedImplementBlockCount () > UnresolvedOffset )
 	{
 		
-		OilImplementBlock * Block = CurrentNS.GetUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - 1 );
+		OilImplementBlock * Block = CurrentNS.GetUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - UnresolvedOffset - 1 );
+		OilTypeRef * ImplementedTypeRef = Block -> GetImplementedType ();
 		
-		bool TemplateMismatch = false;
-		OilTypeDefinition * ImplementedType = FindTypeDefinition ( * Block -> GetImplementedType (), CurrentNS, TemplateMismatch );
+		if ( ! ImplementedTypeRef -> IsResolved () )
+		{
+			
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef );
+			
+			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
+			{
+				
+				FailedBlock = Block;
+				
+				return kResolveImplementsStatus_Failure_TemplateMismatch;
+				
+			}
+			
+			if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
+			{
+				
+				FailedBlock = Block;
+				
+				return kResolveImplementsStatus_Failure_NonExistantType;
+				
+			}
+			
+			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				UnresolvedOffset ++;
+				
+				continue;
+				
+			}
+			else
+			{
+				
+				UnresolvedOffset ++;
+				
+				continue;
+				
+			}
+			
+		}
 		
-		if ( ImplementedType == NULL )
+		if ( ImplementedTypeRef -> IsResolvedAsTrait () )
 		{
 			
 			FailedBlock = Block;
 			
-			if ( TemplateMismatch )
-				return kResolveImplementsStatus_Failure_TemplateMismatch;
-			else
-				return kResolveImplementsStatus_Failure_NoResolution;
+			return kResolveImplementsStatus_Failure_ImplementingTrait;
 			
 		}
 		
-		Block -> GetImplementedType () -> SetResolvedTypeDefinition ( ImplementedType );
+		OilTypeDefinition * ImplementedType = ImplementedTypeRef -> GetResolvedTypeDefinition ();
 		
 		if ( Block -> IsForTrait () )
 		{
 			
-			TemplateMismatch = false;
+			OilTypeRef * TraitRef = Block -> GetForTrait ();
 			
-			OilTraitDefinition * ForTrait = FindTraitDefinition ( * Block -> GetForTrait (), CurrentNS, TemplateMismatch );
+			if ( ! TraitRef -> IsResolved () )
+			{
+				
+				TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef );
+				
+				if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
+				{
+					
+					FailedBlock = Block;
+					
+					return kResolveImplementsStatus_Failure_TemplateMismatch;
+					
+				}
+				
+				if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
+				{
+					
+					FailedBlock = Block;
+					
+					return kResolveImplementsStatus_Failure_NonExistantType;
+					
+				}
+				
+				if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					UnresolvedOffset ++;
+					
+					continue;
+					
+				}
+				else
+				{
+					
+					UnresolvedOffset ++;
+					
+					continue;
+					
+				}
+					
+			}
 			
-			if ( TemplateMismatch )
+			if ( ! TraitRef -> IsResolvedAsTrait () )
 			{
 				
 				FailedBlock = Block;
 				
-				return kResolveImplementsStatus_Failure_TemplateMismatch;
+				return kResolveImplementsStatus_Failure_ImplementedForNonTrait;
 				
 			}
-			
-			if ( ForTrait == NULL )
-			{
-				
-				FailedBlock = Block;
-				
-				return kResolveImplementsStatus_Failure_NoResolution_ForTrait;
-				
-			}
-			
-			Block -> GetForTrait () -> SetResolvedTraitDefinition ( ForTrait );
 			
 			std :: vector <std :: u32string> AbsoluteNamePath;
 			
-			BuildAbsoluteNamePath_Trait ( AbsoluteNamePath, * ForTrait );
+			BuildAbsoluteNamePath_Trait ( AbsoluteNamePath, * TraitRef -> GetResolvedTraitDefinition () );
 			
-			bool NameConflict = false;
-			bool RedefConflict = false;
+			bool NameConflict;
+			bool RedefinitionConflict;
 			
-			ImplementedType -> AddTraitImplementBlock ( & AbsoluteNamePath [ 0 ], AbsoluteNamePath.size (), Block, NameConflict, RedefConflict );
+			ImplementedType -> AddTraitImplementBlock ( & AbsoluteNamePath [ 0 ], AbsoluteNamePath.size (), Block, NameConflict, RedefinitionConflict );
 			
-			if ( NameConflict || RedefConflict )
+			if ( NameConflict )
 			{
 				
 				FailedBlock = Block;
 				
-				return kResolveImplementsStatus_Failure_Conflict;
+				return kResolveImplementsStatus_Failure_Conflict_TraitImplementation_NamespaceCollision;
+				
+			}
+			
+			if ( RedefinitionConflict )
+			{
+				
+				FailedBlock = Block;
+				
+				return kResolveImplementsStatus_Failure_Conflict_TraitImplementation_TraitCollision;
 				
 			}
 			
@@ -91,7 +178,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				
 				FailedBlock = Block;
 				
-				return kResolveImplementsStatus_Failure_Conflict;
+				return kResolveImplementsStatus_Failure_Conflict_PrincipalImplementation;
 				
 			}
 			
@@ -99,9 +186,11 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			
 		}
 		
-		CurrentNS.RemoveUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - 1 );
+		CurrentNS.RemoveUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - UnresolvedOffset - 1 );
 		
 	}
+	
+	Unresolved = CurrentNS.GetUnresolvedImplementBlockCount () != 0;
 	
 	ResolveImplementsStatus SubStatus;
 	
@@ -110,11 +199,32 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 		
 		SubStatus = OilResolveImplements ( * CurrentNS.GetNamespaceDefinition ( I ), FailedBlock );
 		
-		if ( SubStatus != kResolveImplementsStatus_Success )
+		if ( SubStatus == kResolveImplementsStatus_Success_Complete )
+			Progress = true;
+		else if ( SubStatus == kResolveImplementsStatus_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( SubStatus == kResolveImplementsStatus_Success_NoProgress )
+			Unresolved = true;
+		else
 			return SubStatus;
 		
 	}
 	
-	return kResolveImplementsStatus_Success;
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kResolveImplementsStatus_Success_Progress;
+		else
+			return kResolveImplementsStatus_Success_NoProgress;
+		
+	}
+	
+	return kResolveImplementsStatus_Success_Complete;
 		
 }

@@ -7,11 +7,16 @@ class OilImplementBlock;
 typedef enum
 {
 	
-	kResolveImplementsStatus_Success,
-	kResolveImplementsStatus_Failure_NoResolution,
-	kResolveImplementsStatus_Failure_NoResolution_ForTrait,
+	kResolveImplementsStatus_Success_Complete,
+	kResolveImplementsStatus_Success_Progress,
+	kResolveImplementsStatus_Success_NoProgress,
 	kResolveImplementsStatus_Failure_TemplateMismatch,
-	kResolveImplementsStatus_Failure_Conflict,
+	kResolveImplementsStatus_Failure_NonExistantType,
+	kResolveImplementsStatus_Failure_ImplementedForNonTrait,
+	kResolveImplementsStatus_Failure_ImplementingTrait,
+	kResolveImplementsStatus_Failure_Conflict_PrincipalImplementation,
+	kResolveImplementsStatus_Failure_Conflict_TraitImplementation_NamespaceCollision,
+	kResolveImplementsStatus_Failure_Conflict_TraitImplementation_TraitCollision
 	
 } ResolveImplementsStatus;
 

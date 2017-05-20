@@ -233,12 +233,128 @@ bool CompilationUnit :: ApplyToOil ( OilNamespaceDefinition & RootNS )
 	
 }
 
+void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool & Complete, bool & Error )
+{
+	
+	Error = false;
+	Complete = false;
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	OilImplementBlock * FailedImplementBlock = NULL;
+	
+	ResolveImplementsStatus ResolveResult_Implement = OilResolveImplements ( RootNS, FailedImplementBlock );
+	
+	if ( ResolveResult_Implement == kResolveImplementsStatus_Success_Complete )
+		Progress = true;
+	else if ( ResolveResult_Implement == kResolveImplementsStatus_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolveResult_Implement == kResolveImplementsStatus_Success_NoProgress )
+		Unresolved = true;
+	else
+	{
+		
+		Error = true;
+		
+		if ( FailedImplementBlock -> IsForTrait () )
+			LOG_FATALERROR_NOFILE ( std :: string ( "Implement resolution error! Failed implement of: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedImplementBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedImplementBlock -> GetForTrait () -> GetName () ) );
+		else
+			LOG_FATALERROR_NOFILE ( std :: string ( "Implement resolution error! Failed implement of: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedImplementBlock -> GetImplementedType () -> GetName () ) );
+		
+		// TODO: Print comprehensive error message...
+		
+		return;
+		
+	}
+	
+	OilConstStatement * FailedConstant = NULL;
+	
+	TypeResolutionResult ResolveResult_Constants = OilResolveTypes_Constants ( RootNS, FailedConstant );
+	
+	if ( ResolveResult_Constants == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( ResolveResult_Constants == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolveResult_Constants == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+	{
+		
+		Error = true;
+		
+		LOG_FATALERROR_NOFILE ( std :: string ( "Constant type resolution error! Failed to resolve type \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedConstant -> GetType () -> GetName () ) + "\" for constant: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedConstant -> GetName () ) );
+		
+		return;
+		
+	}
+	
+	
+	OilBindingStatement * FailedBinding = NULL;
+	
+	TypeResolutionResult ResolveResult_Bindings = OilResolveTypes_Bindings ( RootNS, FailedBinding );
+	
+	if ( ResolveResult_Bindings == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( ResolveResult_Bindings == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolveResult_Bindings == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+	{
+		
+		Error = true;
+		
+		LOG_FATALERROR_NOFILE ( std :: string ( "Binding type resolution error! Failed to resolve type \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBinding -> GetType () -> GetName () ) + "\" for constant: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBinding -> GetName () ) );
+		
+		return;
+		
+	}
+	
+	if ( ! Progress )
+		Error = true;
+	else if ( ! Unresolved )
+		Complete = true;
+	
+}
+
 bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 {
 	
 	LOG_VERBOSE ( "[ ALL ]: compilation step: Semantic analysis." );
 	
+	bool Stop = false;
 	
+	while ( ! Stop )
+	{
+		
+		bool Error;
+		bool Complete;
+		
+		TryResolveTypes ( RootNS, Complete, Error );
+		
+		if ( Error )
+			return false;
+		
+		if ( Complete )
+			break;
+		
+	}
 	
 	return true;
 	
