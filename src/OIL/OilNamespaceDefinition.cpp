@@ -106,6 +106,164 @@ OilNamespaceDefinition :: ~OilNamespaceDefinition ()
 	
 }
 
+void OilNamespaceDefinition :: SearchName ( const std :: u32string & Name, NameSearchResult & Result )
+{
+	
+	OilNamespaceDefinition * Namespace = FindNamespaceDefinition ( Name );
+	
+	if ( Namespace != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_SubNamespace;
+		Result.NamespaceDefinition = Namespace;
+		
+		return;
+		
+	}
+	
+	OilTypeDefinition * TypeDef = FindTypeDefinition ( Name );
+	
+	if ( TypeDef != NULL )
+	{
+		
+		Result.Type= kNameSearchResultType_TypeDefinition;
+		Result.TypeDefinition = TypeDef;
+		
+		return;
+		
+	}
+	
+	OilFunctionDefinition * FuncDef = FindFunctionDefinition ( Name );
+	
+	if ( FuncDef != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_FunctionDefinition;
+		Result.FunctionDefinition = FuncDef;
+		
+		return;
+		
+	}
+	
+	OilBindingStatement * Binding = FindBindingStatement ( Name );
+	
+	if ( Binding != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_BindingStatement;
+		Result.BindingStatement = Binding;
+		
+		return;
+		
+	}
+	
+	OilConstStatement * Const = FindConstStatement ( Name );
+	
+	if ( Const != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_ConstStatement;
+		Result.ConstStatement = Const;
+		
+		return;
+		
+	}
+	
+	OilTraitDefinition * TraitDef = FindTraitDefinition ( Name );
+	
+	if ( TraitDef != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_TraitDefinition;
+		Result.TraitDefinition = TraitDef;
+		
+		return;
+		
+	}
+	
+	Result.Type = kNameSearchResultType_None;
+	
+}
+
+void OilNamespaceDefinition :: SearchName ( const std :: u32string & Name, NameSearchResultConst & Result ) const
+{
+	
+	const OilNamespaceDefinition * Namespace = FindNamespaceDefinition ( Name );
+	
+	if ( Namespace != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_SubNamespace;
+		Result.NamespaceDefinition = Namespace;
+		
+		return;
+		
+	}
+	
+	const OilTypeDefinition * TypeDef = FindTypeDefinition ( Name );
+	
+	if ( TypeDef != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_TypeDefinition;
+		Result.TypeDefinition = TypeDef;
+		
+		return;
+		
+	}
+	
+	const OilFunctionDefinition * FuncDef = FindFunctionDefinition ( Name );
+	
+	if ( FuncDef != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_FunctionDefinition;
+		Result.FunctionDefinition = FuncDef;
+		
+		return;
+		
+	}
+	
+	const OilBindingStatement * Binding = FindBindingStatement ( Name );
+	
+	if ( Binding != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_BindingStatement;
+		Result.BindingStatement = Binding;
+		
+		return;
+		
+	}
+	
+	const OilConstStatement * Const = FindConstStatement ( Name );
+	
+	if ( Const != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_ConstStatement;
+		Result.ConstStatement = Const;
+		
+		return;
+		
+	}
+	
+	const OilTraitDefinition * TraitDef = FindTraitDefinition ( Name );
+	
+	if ( TraitDef != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_TraitDefinition;
+		Result.TraitDefinition = TraitDef;
+		
+		return;
+		
+	}
+	
+	Result.Type = kNameSearchResultType_None;
+	
+}
+
 uint32_t OilNamespaceDefinition :: GetSubNamespaceDefinitionCount () const
 {
 	

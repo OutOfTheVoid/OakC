@@ -137,6 +137,8 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 	
 	const ASTElement * SubElement = NULL;
 	
+	OilNamespaceDefinition :: NameSearchResult SearchResult;
+	
 	for ( uint64_t I = 0; I < SubElementCount; I ++ )
 	{
 		
@@ -197,10 +199,12 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				
 				const OakFunctionDefinitionConstructor :: ElementData * FuncData = reinterpret_cast <const OakFunctionDefinitionConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( GlobalNS.FindFunctionDefinition ( FuncData -> Name ) != NULL )
+				GlobalNS.SearchName ( FuncData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Function with the same name already exists in global namespace" );
+					WriteError ( SubElement, "Function name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -243,10 +247,12 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				
 				const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( GlobalNS.FindBindingStatement ( BindingData -> Name ) != NULL )
+				GlobalNS.SearchName ( BindingData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Binding with the same name already exists in global namespace" );
+					WriteError ( SubElement, "Binding name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -289,10 +295,12 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				
 				const OakConstStatementConstructor :: ElementData * ConstData = reinterpret_cast <const OakConstStatementConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( GlobalNS.FindConstStatement ( ConstData -> Name ) != NULL )
+				GlobalNS.SearchName ( ConstData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Constant with the same name already exists in global namespace" );
+					WriteError ( SubElement, "Constant name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -335,10 +343,12 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				
 				const OakTraitDefinitionConstructor :: ElementData * TraitData = reinterpret_cast <const OakTraitDefinitionConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( GlobalNS.FindTraitDefinition ( TraitData -> Name ) != NULL )
+				GlobalNS.SearchName ( TraitData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Trait with the same name already exists in global namespace" );
+					WriteError ( SubElement, "Trait name conflicts with previous namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -468,6 +478,8 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 	
 	const ASTElement * SubElement = NULL;
 	
+	OilNamespaceDefinition :: NameSearchResult SearchResult;
+	
 	for ( uint64_t I = 0; I < SumElementCount; I ++ )
 	{
 		
@@ -551,10 +563,12 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				
 				const OakFunctionDefinitionConstructor :: ElementData * FuncData = reinterpret_cast <const OakFunctionDefinitionConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( DefinedNamespaceDefinition -> FindFunctionDefinition ( FuncData -> Name ) != NULL )
+				DefinedNamespaceDefinition -> SearchName ( FuncData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Function with the same name already exists in namespace" );
+					WriteError ( SubElement, "Function name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -597,10 +611,12 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				
 				const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( DefinedNamespaceDefinition -> FindBindingStatement ( BindingData -> Name ) != NULL )
+				DefinedNamespaceDefinition -> SearchName ( BindingData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Binding with the same name already exists in namespace" );
+					WriteError ( SubElement, "Binding name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -643,10 +659,12 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				
 				const OakConstStatementConstructor :: ElementData * ConstData = reinterpret_cast <const OakConstStatementConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( DefinedNamespaceDefinition -> FindConstStatement ( ConstData -> Name ) != NULL )
+				DefinedNamespaceDefinition -> SearchName ( ConstData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Constant with the same name already exists in global namespace" );
+					WriteError ( SubElement, "Constant name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -689,10 +707,12 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				
 				const OakTraitDefinitionConstructor :: ElementData * TraitData = reinterpret_cast <const OakTraitDefinitionConstructor :: ElementData *> ( SubElement -> GetData () );
 				
-				if ( DefinedNamespaceDefinition -> FindTraitDefinition ( TraitData -> Name ) != NULL )
+				DefinedNamespaceDefinition -> SearchName ( TraitData -> Name, SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 				{
 					
-					WriteError ( SubElement, "Trait with the same name already exists in namespace" );
+					WriteError ( SubElement, "Trait name conflicts with previously defined namespace member" );
 					
 					while ( Decorators.size () != 0 )
 					{
@@ -797,10 +817,14 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 	
 	const OakStructDefinitionConstructor :: ElementData * StructData = reinterpret_cast <const OakStructDefinitionConstructor :: ElementData *> ( StructElement -> GetData () );
 	
-	if ( Container.FindTypeDefinition ( StructData -> Name ) != NULL )
+	OilNamespaceDefinition :: NameSearchResult SearchResult;
+	
+	Container.SearchName ( StructData -> Name, SearchResult );
+	
+	if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
 	{
 		
-		WriteError ( StructElement, "Duplicate struct definition: " + CodeConversion :: ConvertUTF32ToUTF8 ( StructData -> Name ) );
+		WriteError ( StructElement, "Struct definition conflicts with previously defined namespace member" );
 		
 		return false;
 		

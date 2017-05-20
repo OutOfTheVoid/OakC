@@ -19,9 +19,65 @@ class OilConstStatement;
 class OilNamespaceDefinition
 {
 public:
+	
+	enum NameSearchResultType
+	{
+		
+		kNameSearchResultType_None,
+		kNameSearchResultType_SubNamespace,
+		kNameSearchResultType_TypeDefinition,
+		kNameSearchResultType_FunctionDefinition,
+		kNameSearchResultType_BindingStatement,
+		kNameSearchResultType_ConstStatement,
+		kNameSearchResultType_TraitDefinition,
+		
+	};
+	
+	typedef struct
+	{
+		
+		NameSearchResultType Type;
+		
+		union
+		{
+			
+			OilNamespaceDefinition * NamespaceDefinition;
+			OilTypeDefinition * TypeDefinition;
+			OilFunctionDefinition * FunctionDefinition;
+			OilBindingStatement * BindingStatement;
+			OilConstStatement * ConstStatement;
+			OilTraitDefinition * TraitDefinition;
+			
+		};
+		
+		
+	} NameSearchResult;
+	
+	typedef struct
+	{
+		
+		NameSearchResultType Type;
+		
+		union
+		{
+			
+			const OilNamespaceDefinition * NamespaceDefinition;
+			const OilTypeDefinition * TypeDefinition;
+			const OilFunctionDefinition * FunctionDefinition;
+			const OilBindingStatement * BindingStatement;
+			const OilConstStatement * ConstStatement;
+			const OilTraitDefinition * TraitDefinition;
+			
+		};
+		
+		
+	} NameSearchResultConst;
 		
 	OilNamespaceDefinition ( const std :: u32string & ID );
 	~OilNamespaceDefinition ();
+	
+	void SearchName ( const std :: u32string & Name, NameSearchResult & Result );
+	void SearchName ( const std :: u32string & Name, NameSearchResultConst & Result ) const;
 	
 	uint32_t GetSubNamespaceDefinitionCount () const;
 	
