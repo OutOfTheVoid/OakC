@@ -11,13 +11,11 @@
 #include <Logging/Logging.h>
 #include <Encoding/CodeConversion.h>
 
-ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentNS, OilImplementBlock *& FailedBlock )
+ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Progress = false;
 	bool Unresolved = false;
-	
-	FailedBlock = NULL;
 	
 	uint32_t UnresolvedOffset = 0;
 	
@@ -33,22 +31,10 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef );
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
-			{
-				
-				FailedBlock = Block;
-				
 				return kResolveImplementsStatus_Failure_TemplateMismatch;
-				
-			}
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
-			{
-				
-				FailedBlock = Block;
-				
 				return kResolveImplementsStatus_Failure_NonExistantType;
-				
-			}
 			
 			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 				Progress = true;
@@ -75,7 +61,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 		if ( ImplementedTypeRef -> IsResolvedAsTrait () )
 		{
 			
-			FailedBlock = Block;
+			LOG_FATALERROR_NOFILE ( std :: string ( "Implement block attemptings to implement trait type: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( ImplementedTypeRef -> GetName () ) );
 			
 			return kResolveImplementsStatus_Failure_ImplementingTrait;
 			
@@ -94,22 +80,10 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef );
 				
 				if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
-				{
-					
-					FailedBlock = Block;
-					
 					return kResolveImplementsStatus_Failure_TemplateMismatch;
-					
-				}
 				
 				if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
-				{
-					
-					FailedBlock = Block;
-					
 					return kResolveImplementsStatus_Failure_NonExistantType;
-					
-				}
 				
 				if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 					Progress = true;
@@ -136,7 +110,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			if ( ! TraitRef -> IsResolvedAsTrait () )
 			{
 				
-				FailedBlock = Block;
+				LOG_FATALERROR_NOFILE ( std :: string ( "Implement block attempts to implement type: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( ImplementedTypeRef -> GetName () ) + " for a non-trait type: " + CodeConversion :: ConvertUTF32ToUTF8 ( TraitRef -> GetName () ) );
 				
 				return kResolveImplementsStatus_Failure_ImplementedForNonTrait;
 				
@@ -154,7 +128,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			if ( NameConflict )
 			{
 				
-				FailedBlock = Block;
+				LOG_FATALERROR_NOFILE ( std :: string ( "Name of implemented trait: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( TraitRef -> GetName () ) + " conflicts with namespace of the same name of previous implemented trait" );
 				
 				return kResolveImplementsStatus_Failure_Conflict_TraitImplementation_NamespaceCollision;
 				
@@ -163,7 +137,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			if ( RedefinitionConflict )
 			{
 				
-				FailedBlock = Block;
+				LOG_FATALERROR_NOFILE ( std :: string ( "Implementation of trait: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( TraitRef -> GetName () ) + " conflicts with previous implementation of the same trait" );
 				
 				return kResolveImplementsStatus_Failure_Conflict_TraitImplementation_TraitCollision;
 				
@@ -176,7 +150,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			if ( ImplementedType -> GetPrincipalImplementBlock () != NULL )
 			{
 				
-				FailedBlock = Block;
+				LOG_FATALERROR_NOFILE ( std :: string ( "Implement block for type: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( ImplementedTypeRef -> GetName () ) + " conflicts with previous implementation block for the same type" );
 				
 				return kResolveImplementsStatus_Failure_Conflict_PrincipalImplementation;
 				
@@ -197,7 +171,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 	for ( uint32_t I = 0; I < CurrentNS.GetSubNamespaceDefinitionCount (); I ++ )
 	{
 		
-		SubStatus = OilResolveImplements ( * CurrentNS.GetNamespaceDefinition ( I ), FailedBlock );
+		SubStatus = OilResolveImplements ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( SubStatus == kResolveImplementsStatus_Success_Complete )
 			Progress = true;

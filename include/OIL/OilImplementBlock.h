@@ -4,6 +4,7 @@
 class OilMethodDefinition;
 class OilFunctionDefinition;
 class OilTypeRef;
+class OilTemplateDefinition;
 
 #include <stdint.h>
 #include <string>
@@ -14,7 +15,9 @@ class OilImplementBlock
 public:
 	
 	OilImplementBlock ( OilTypeRef * ImplementedType );
+	OilImplementBlock ( OilTypeRef * ImplementedType, OilTemplateDefinition * WhereDefinition );
 	OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait );
+	OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait, OilTemplateDefinition * WhereDefinition );
 	~OilImplementBlock ();
 	
 	const OilTypeRef * GetImplementedType () const;
@@ -24,6 +27,11 @@ public:
 	OilTypeRef * GetForTrait ();
 	
 	bool IsForTrait () const;
+	
+	const OilTemplateDefinition * GetWhereDefinition () const;
+	OilTemplateDefinition * GetWhereDefinition ();
+	
+	bool HasWhereDefinition () const;
 	
 	void AddFunction ( OilFunctionDefinition * Function );
 	
@@ -49,6 +57,8 @@ private:
 	
 	OilTypeRef * ImplementedType;
 	OilTypeRef * ForTrait;
+	
+	OilTemplateDefinition * WhereDefinition;
 	
 	std :: map <std :: u32string, OilFunctionDefinition *> Functions;
 	std :: map <std :: u32string, OilMethodDefinition *> Methods;

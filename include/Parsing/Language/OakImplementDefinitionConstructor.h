@@ -12,6 +12,7 @@ public:
 	{
 		
 		bool ImplementsTrait;
+		bool HasWhereClause;
 		
 	} ElementData;
 	
@@ -29,6 +30,7 @@ private:
 	ASTConstructionGroup ImplementChildrenConstructionGroup;
 	ASTConstructionGroup TypeNameGroup;
 	ASTConstructionGroup TraitNameGroup;
+	ASTConstructionGroup WhereClauseGroup;
 	
 };
 

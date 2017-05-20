@@ -59,6 +59,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Loop = 47;
 	const uint64_t kKeywordAuxTags_Const = 48;
 	const uint64_t kKeywordAuxTags_Require = 49;
+	const uint64_t kKeywordAuxTags_Where = 50;
 	
 	const uint64_t kKeywordAuxTags_Mask_Meaning = 0xFFF;
 	

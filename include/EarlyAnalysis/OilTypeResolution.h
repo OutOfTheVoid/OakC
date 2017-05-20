@@ -1,6 +1,8 @@
 #ifndef EARLYANALYSIS_OILTYPERESOLUTION_H
 #define EARLYANALYSIS_OILTYPERESOLUTION_H
 
+#include <string>
+
 enum TypeResolutionResult
 {
 	
@@ -17,12 +19,21 @@ class OilConstStatement;
 class OilBindingStatement;
 class OilTypeRef;
 class OilTemplateSpecification;
+class OilStructDefinition;
 
-TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef );
-TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification );
+typedef struct
+{
+	
+	std :: u32string * Names;
+	uint32_t Count;
+	
+} TypeResolution_TemplateNameList;
 
-TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & RootNS, OilConstStatement *& FailedStatement );
-TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & RootNS, OilBindingStatement *& FailedStatement );
-//TypeResolutionResult OilResolveTypes_StructBindings ( OilNamespaceDefinition & RootNS, OilStructDefinition *& FailedStruct, std :: u32string & FailedBindingName );
+TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & RootNS );
+
+TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & RootNS );
 
 #endif

@@ -18,6 +18,7 @@
 #include <Parsing/Language/OakNamespacedTraitNameConstructor.h>
 #include <Parsing/Language/OakTemplatedTraitNameConstructor.h>
 #include <Parsing/Language/OakBareTraitNameConstructor.h>
+#include <Parsing/Language/OakWhereClauseConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -55,10 +56,18 @@ ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_Imple
 	
 };
 
+ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_WhereClauseGroupEntries [] =
+{
+	
+	{ & OakWhereClauseConstructor :: Instance, 0 },
+	
+};
+
 OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
 	ImplementChildrenConstructionGroup ( _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries, 2 ),
 	TypeNameGroup ( _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries, 4 ),
-	TraitNameGroup ( _OakImplementDefinitionConstructor_ImplementedTraitConstructionGroupEntries, 4 )
+	TraitNameGroup ( _OakImplementDefinitionConstructor_ImplementedTraitConstructionGroupEntries, 4 ),
+	WhereClauseGroup ( _OakImplementDefinitionConstructor_WhereClauseGroupEntries, 1 )
 {
 }
 
@@ -91,6 +100,7 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	ElementData * ImplementData = new ElementData ();
 	ImplementData -> ImplementsTrait = false;
+	ImplementData -> HasWhereClause = false;
 	
 	ASTElement * ImplementElement = new ASTElement ();
 	ImplementElement -> SetTag ( OakASTTags :: kASTTag_ImplementDefinition );
@@ -187,6 +197,39 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 			return;
 			
 		}
+		
+		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+		
+	}
+	
+	if ( WhereClauseGroup.TryConstruction ( ImplementElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
+	{
+		
+		if ( Error )
+		{
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
+		if ( TokenCount == 0 )
+		{
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = "Expected opening curly bracket in implement definition";
+			Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
+			
+			return;
+			
+		}
+		
+		ImplementData -> HasWhereClause = true;
 		
 		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		

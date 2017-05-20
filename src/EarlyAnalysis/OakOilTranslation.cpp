@@ -96,6 +96,7 @@ void WriteError ( const ASTElement * SourceRef, std :: string Error );
 bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNamespaceDefinition & Container );
 bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespaceDefinition & Container );
 OilTemplateDefinition * OakTranslateTemplateDefinitionToOil ( const ASTElement * TemplateDefinitionElement );
+OilTemplateDefinition * OakTranslateWhereClauseToOil ( const ASTElement * WhereDefinitionElement );
 OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTElement * TemplateSpecificationElement );
 OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TypeElement );
 OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement );
@@ -1219,6 +1220,8 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 		
 		OilTypeRef * ForTrait = OakTranslateTraitRefToOil ( ImplementElement -> GetSubElement ( ElementOffset ) );
 		
+		ElementOffset ++;
+		
 		if ( ForTrait == NULL )
 		{
 			
@@ -1228,13 +1231,56 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 			
 		}
 		
-		Block = new OilImplementBlock ( ImplementedType, ForTrait );
-		
-		ElementOffset ++;
+		if ( ImplementData -> HasWhereClause )
+		{
+			
+			OilTemplateDefinition * WhereDefinition = OakTranslateWhereClauseToOil ( ImplementElement -> GetSubElement ( ElementOffset ) );
+			
+			ElementOffset ++;
+			
+			if ( WhereDefinition == NULL )
+			{
+				
+				delete ImplementedType;
+				delete ForTrait;
+				
+				return NULL;
+				
+			}
+			
+			Block = new OilImplementBlock ( ImplementedType, ForTrait, WhereDefinition );
+			
+		}
+		else	
+			Block = new OilImplementBlock ( ImplementedType, ForTrait );
 		
 	}
 	else
-		Block = new OilImplementBlock ( ImplementedType );
+	{
+		
+		if ( ImplementData -> HasWhereClause )
+		{
+			
+			OilTemplateDefinition * WhereDefinition = OakTranslateWhereClauseToOil ( ImplementElement -> GetSubElement ( ElementOffset ) );
+			
+			ElementOffset ++;
+			
+			if ( WhereDefinition == NULL )
+			{
+				
+				delete ImplementedType;
+				
+				return NULL;
+				
+			}
+			
+			Block = new OilImplementBlock ( ImplementedType, WhereDefinition );
+			
+		}
+		else	
+			Block = new OilImplementBlock ( ImplementedType );
+		
+	}
 	
 	const ASTElement * ChildElement = ImplementElement -> GetSubElement ( ElementOffset );
 	ElementOffset ++;
@@ -1307,6 +1353,26 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 	}
 	
 	return Block;
+	
+}
+
+OilTemplateDefinition * OakTranslateWhereClauseToOil ( const ASTElement * WhereDefinitionElement )
+{
+	
+	if ( ( WhereDefinitionElement == NULL ) || ( WhereDefinitionElement -> GetTag () != OakASTTags :: kASTTag_WhereClause ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	OilTemplateDefinition * WhereTemplate = OakTranslateTemplateDefinitionToOil ( WhereDefinitionElement -> GetSubElement ( 0 ) );
+	
+	// MAYBE: restrict where clauses to only allowing restricted template types? Fully generic implements might be useful, but also hard to implement properly...
+	
+	return WhereTemplate;
 	
 }
 

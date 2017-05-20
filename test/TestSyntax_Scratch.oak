@@ -1,1 +1,22 @@
-const A: ptr:<i64> = null;
+struct MyType <A>
+{
+	
+	bind B:A
+	
+}
+
+trait SomeTrait
+{
+	
+	
+	
+}
+
+implement MyType:<A, i32> where <A: SomeTrait>
+{
+	
+	
+	
+}
+
+bind A: MyType:<i64> = null;

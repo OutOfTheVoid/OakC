@@ -20,6 +20,6 @@ typedef enum
 	
 } ResolveImplementsStatus;
 
-ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & GlobalNS, OilImplementBlock *& FailedBlock );
+ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & GlobalNS );
 
 #endif

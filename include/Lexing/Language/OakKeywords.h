@@ -41,6 +41,7 @@ namespace OakKeywords
 		std :: string Ignore;
 		std :: string Implement;
 		std :: string Self;
+		std :: string Where;
 		
 		std :: string Mut;
 		std :: string Public;
@@ -102,6 +103,7 @@ namespace OakKeywords
 		u8"ignore",
 		u8"implement",
 		u8"self",
+		u8"where",
 		
 		u8"mut",
 		u8"public",
@@ -162,6 +164,7 @@ namespace OakKeywords
 		u8"ignorer",
 		u8"réaliser", // implement
 		u8"soi", // self
+		u8"ou",
 	
 		u8"mut",
 		u8"public",

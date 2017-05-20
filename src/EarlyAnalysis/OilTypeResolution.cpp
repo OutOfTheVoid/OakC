@@ -12,8 +12,14 @@
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilStructBinding.h>
 #include <OIL/OilTemplateSpecification.h>
+#include <OIL/OilBuiltinStructDefinition.h>
+#include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilTemplateDefinitionParameter.h>
 
-TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef )
+#include <Logging/Logging.h>
+#include <Encoding/CodeConversion.h>
+
+TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames )
 {
 	
 	bool VoidType = false;
@@ -49,7 +55,13 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 			OilTypeDefinition * ResolvedType = FindTypeDefinition ( * Ref, CurrentNS, TemplateMismatch );
 			
 			if ( TemplateMismatch )
+			{
+				
+				LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: template of reference to " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+				
 				return kTypeResolutionResult_Failure_TemplateMismatch;
+				
+			}
 			
 			if ( ResolvedType != NULL )
 			{
@@ -66,10 +78,22 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 				OilTraitDefinition * ResolvedTrait = FindTraitDefinition ( * Ref, CurrentNS, TemplateMismatch );
 				
 				if ( TemplateMismatch )
+				{
+					
+					LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: reference to template of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+					
 					return kTypeResolutionResult_Failure_TemplateMismatch;
+					
+				}
 				
 				if ( ResolvedTrait == NULL )
+				{
+					
+					LOG_FATALERROR_NOFILE ( std :: string ( "Type not found: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) );
+					
 					return kTypeResolutionResult_Failure_NonExistantType;
+					
+				}
 				
 				Ref -> SetResolvedTraitDefinition ( ResolvedTrait );
 				
@@ -88,7 +112,13 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	OilTypeDefinition * ResolvedType = FindTypeDefinition ( * Ref, CurrentNS, TemplateMismatch );
 	
 	if ( TemplateMismatch )
+	{
+		
+		LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: template of reference to " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+		
 		return kTypeResolutionResult_Failure_TemplateMismatch;
+		
+	}
 	
 	if ( ResolvedType != NULL )
 	{
@@ -105,10 +135,40 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 		OilTraitDefinition * ResolvedTrait = FindTraitDefinition ( * Ref, CurrentNS, TemplateMismatch );
 		
 		if ( TemplateMismatch )
+		{
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: template of reference to " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+			
 			return kTypeResolutionResult_Failure_TemplateMismatch;
+			
+		}
 		
 		if ( ResolvedTrait == NULL )
+		{
+			
+			if ( TemplateNames != NULL )
+			{
+				
+				if ( ! ( Ref -> IsNamespaced () || Ref -> IsTemplated () ) )
+				{
+					
+					for ( uint32_t I = 0; I < TemplateNames -> Count; I ++ )
+					{
+						
+						if ( Ref -> GetName () == TemplateNames -> Names [ I ] )
+							return kTypeResolutionResult_Success_Complete;
+						
+					}
+					
+				}
+				
+			}
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Type not found: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) );
+			
 			return kTypeResolutionResult_Failure_NonExistantType;
+			
+		}
 		
 		Ref -> SetResolvedTraitDefinition ( ResolvedTrait );
 		
@@ -118,7 +178,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	
 }
 
-TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification )
+TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames )
 {
 	
 	bool Unresolved = false;
@@ -134,7 +194,7 @@ TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefin
 		if ( ! TypeRef -> IsResolved () )
 		{
 			
-			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TypeRef );
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TypeRef, TemplateNames );
 			
 			if ( ResolutionResult != kTypeResolutionResult_Success_Complete )
 			{
@@ -165,7 +225,7 @@ TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefin
 	
 }
 
-TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & CurrentNS, OilConstStatement *& FailedStatement )
+TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -182,13 +242,7 @@ TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & Curren
 		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TypeRef );
 		
 		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
-		{
-			
-			FailedStatement = Statement;
-			
 			return ResolutionResult;
-			
-		}
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -209,7 +263,7 @@ TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & Curren
 	for ( uint32_t I = 0; I < SubNamespaces; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_Constants ( * CurrentNS.GetNamespaceDefinition ( I ), FailedStatement );
+		TypeResolutionResult ResolutionResult = OilResolveTypes_Constants ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
 			return ResolutionResult;
@@ -242,7 +296,7 @@ TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & Curren
 	
 }
 
-TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & CurrentNS, OilBindingStatement *& FailedStatement )
+TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -259,13 +313,7 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TypeRef );
 		
 		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
-		{
-			
-			FailedStatement = Statement;
-			
 			return ResolutionResult;
-			
-		}
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -286,7 +334,7 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 	for ( uint32_t I = 0; I < SubNamespaces; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_Bindings ( * CurrentNS.GetNamespaceDefinition ( I ), FailedStatement );
+		TypeResolutionResult ResolutionResult = OilResolveTypes_Bindings ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
 			return ResolutionResult;
@@ -319,24 +367,112 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 	
 }
 
-// TODO
-/*TypeResolutionResult OilResolveTypes_StructBindings ( OilNamespaceDefinition & RootNS, OilStructDefinition *& FailedStruct, std :: u32string & FailedBindingName )
+TypeResolutionResult OilResolveTypes_StructBindings ( OilNamespaceDefinition & CurrentNS, OilStructDefinition *& FailedStruct, std :: u32string & FailedBindingName )
 {
 	
-	uint32_t TypeCount = CurrentNS.TypeDefinition ();
+	bool Unresolved = false;
+	bool Progress = false;
 	
-	for ( uint32_t I = 0; I < TypeCount; I ++ )
+	uint32_t TypeDefCount = CurrentNS.GetTypeDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < TypeDefCount; I ++ )
 	{
 		
-		OilTypeDefinition * Type = CurrentNS.GetTypeDefininition ( I );
+		OilTypeDefinition * TypeDef = CurrentNS.GetTypeDefinition ( I );
+		OilStructDefinition * StructDef = NULL;
+		OilTemplateDefinition * TemplateDef = NULL;
 		
-		if ( ! Type -> IsBuiltinStructure () )
+		if ( TypeDef -> IsBuiltinStructure () )
 		{
 			
+			OilBuiltinStructDefinition * BuiltinStructDef = TypeDef -> GetBuiltinStructDefinition ();
 			
+			if ( ! BuiltinStructDef -> HasUnderlyingStructure () )
+				continue;
+			
+			StructDef = BuiltinStructDef -> GetUnderlyingStructure ();
+			
+			if ( BuiltinStructDef -> IsTemplated () )
+				TemplateDef = BuiltinStructDef -> GetTemplateDefinition ();
+			
+		}
+		else
+			StructDef = TypeDef -> GetStructDefinition ();
+		
+		if ( StructDef -> IsTemplated () )
+			TemplateDef = StructDef -> GetTemplateDefinition ();
+		
+		TypeResolution_TemplateNameList TemplateNames;
+		
+		if ( TemplateDef != NULL )
+		{
+			
+			// TODO: Try and resolve template definition
+			
+			uint32_t NameCount = TemplateDef -> GetTemplateParameterCount ();
+			
+			TemplateNames.Names = new std :: u32string [ NameCount ];
+			TemplateNames.Count = NameCount;
+			
+			for ( uint32_t J = 0; J < NameCount; J ++ )
+				TemplateNames.Names [ J ] = TemplateDef -> GetTemplateParameter ( J ) -> GetName ();
 			
 		}
 		
+		uint32_t StructMemberCount = StructDef -> GetBindingCount ();
+		
+		for ( uint32_t J = 0; J < StructMemberCount; J ++ )
+		{
+			
+			OilStructBinding * Binding = StructDef -> GetBinding ( J );
+			OilTypeRef * BindingTypeRef = Binding -> GetTypeRef ();
+			
+			if ( BindingTypeRef -> IsResolved () )
+				continue;
+			
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * BindingTypeRef, & TemplateNames );
+			
+			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+			{
+				
+				if ( TemplateDef != NULL )
+					delete [] TemplateNames.Names;
+				
+				FailedStruct = StructDef;
+				FailedBindingName = Binding -> GetName ();
+				
+				return ResolutionResult;
+				
+			}
+			
+		}
+		
+		if ( TemplateDef != NULL )
+			delete [] TemplateNames.Names;
+		
 	}
 	
-}*/
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}

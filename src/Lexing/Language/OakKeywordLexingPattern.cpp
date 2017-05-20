@@ -59,6 +59,7 @@ void OakKeywordLexingPattern :: AddLocalization ( const OakKeywords :: KeywordLo
 	KeywordAuxTags.Set ( Localization.Ignore.c_str (), Localization.Ignore.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Ignore, Overwrite );
 	KeywordAuxTags.Set ( Localization.Implement.c_str (), Localization.Implement.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Implement, Overwrite );
 	KeywordAuxTags.Set ( Localization.Self.c_str (), Localization.Self.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Self, Overwrite );
+	KeywordAuxTags.Set ( Localization.Where.c_str (), Localization.Where.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Where, Overwrite );
 	
 	KeywordAuxTags.Set ( Localization.Mut.c_str (), Localization.Mut.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Mut, Overwrite );
 	KeywordAuxTags.Set ( Localization.Public.c_str (), Localization.Public.size (), ( LocalizationIndex << OakKeywordTokenTags :: kKeywordAuxTags_Shift_Localization ) | OakKeywordTokenTags :: kKeywordAuxTags_Public, Overwrite );

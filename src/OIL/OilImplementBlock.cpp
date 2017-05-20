@@ -12,6 +12,16 @@
 OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType ):
 	ImplementedType ( ImplementedType ),
 	ForTrait ( NULL ),
+	WhereDefinition ( NULL ),
+	Functions (),
+	Methods ()
+{
+}
+
+OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType, OilTemplateDefinition * WhereDefinition ):
+	ImplementedType ( ImplementedType ),
+	ForTrait ( NULL ),
+	WhereDefinition ( WhereDefinition ),
 	Functions (),
 	Methods ()
 {
@@ -20,6 +30,16 @@ OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType ):
 OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait ):
 	ImplementedType ( ImplementedType ),
 	ForTrait ( ForTrait ),
+	WhereDefinition ( NULL ),
+	Functions (),
+	Methods ()
+{
+}
+
+OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait, OilTemplateDefinition * WhereDefinition ):
+	ImplementedType ( ImplementedType ),
+	ForTrait ( ForTrait ),
+	WhereDefinition ( WhereDefinition ),
 	Functions (),
 	Methods ()
 {
@@ -93,6 +113,27 @@ void OilImplementBlock :: AddFunction ( OilFunctionDefinition * Function )
 {
 	
 	Functions [ Function -> GetName () ] = Function;
+	
+}
+
+const OilTemplateDefinition * OilImplementBlock :: GetWhereDefinition () const
+{
+	
+	return WhereDefinition;
+	
+}
+
+OilTemplateDefinition * OilImplementBlock :: GetWhereDefinition ()
+{
+	
+	return WhereDefinition;
+	
+}
+
+bool OilImplementBlock :: HasWhereDefinition () const
+{
+	
+	return WhereDefinition != NULL;
 	
 }
 
