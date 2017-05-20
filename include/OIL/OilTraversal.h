@@ -11,9 +11,12 @@ class OilTypeRef;
 OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch );
 const OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, const OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch );
 
+OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch );
+const OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, const OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch );
+
+void BuildAbsoluteNamePath_Trait ( std :: vector <std :: u32string> & AbsolutePath, const OilTraitDefinition & Trait );
+
 OilNamespaceDefinition * OilFindParentallyContainedNamespace ( OilNamespaceDefinition & SearchLeaf, const std :: u32string & Name );
 const OilNamespaceDefinition * OilFindParentallyContainedNamespace ( const OilNamespaceDefinition & SearchLeaf, const std :: u32string & Name );
-
-bool OilFindAndBuildAbsoluteTraitNamePath ( std :: vector <std :: u32string> & AbsoluteNamePath, OilTypeRef & Type, OilNamespaceDefinition & CurrentNS, OilTraitDefinition *& TraitOut, bool & TemplateMismatch );
 
 #endif

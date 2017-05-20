@@ -22,9 +22,12 @@
 
 #include <EarlyAnalysis/OakImportResolution.h>
 #include <EarlyAnalysis/OakOilTranslation.h>
-#include <EarlyAnalysis/OilTraitResolution.h>
+#include <EarlyAnalysis/OilImplementResolution.h>
 
 #include <Builtins/OakBuiltinTypes.h>
+
+#include <OIL/OilImplementBlock.h>
+#include <OIL/OilTypeRef.h>
 
 #include <iostream>
 
@@ -230,20 +233,61 @@ bool CompilationUnit :: ApplyToOil ( OilNamespaceDefinition & RootNS )
 bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 {
 	
-	LOG_VERBOSE ( "[ ALL ]: compilation step: Trait Resolution." );
+	LOG_VERBOSE ( "[ ALL ]: compilation step: Implement Resolution." );
 	
-	ResolveTraitsStatus TraitResolutionStatus = OilResolveTraits ( RootNS );
+	OilImplementBlock * FailedBlock = NULL;
+	ResolveImplementsStatus TraitResolutionStatus = OilResolveImplements ( RootNS, FailedBlock );
 	
 	switch ( TraitResolutionStatus )
 	{
 		
-		case kResolveTraitsStatus_Success_Complete:
+		case kResolveImplementsStatus_Success:
 			break;
+			
+		case kResolveImplementsStatus_Failure_NoResolution:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Implement resolution error! (No Resolution)" );
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) );
+			
+			return false;
+			
+		}
+		
+		case kResolveImplementsStatus_Failure_NoResolution_ForTrait:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Implement resolution error! (No trait Resolution)" );
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			
+			return false;
+			
+		}
+		
+		case kResolveImplementsStatus_Failure_TemplateMismatch:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Template Mismatch)" );
+			
+			return false;
+			
+		}
+		
+		case kResolveImplementsStatus_Failure_Conflict:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Name Conflict)" );
+			
+			return false;
+			
+		}
 			
 		default:
 		{
 			
-			LOG_FATALERROR_NOFILE ( "Trait resolution error!" );
+			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Unkown)" );
 			
 			return false;
 			

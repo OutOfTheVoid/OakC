@@ -28,13 +28,14 @@
 
 int Test ();
 
-int Compile ( const std :: vector <std :: string> & SourceFileNames );
+int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPrintOptions & PrintOptions );
 
 void PrintHelp ();
 void ListArchitechtures ();
 void ListOperatingSystems ();
 void PrintVerboseHelp ();
 void PrintLogHelp ();
+void PrintBuiltinHelp ();
 
 typedef enum
 {
@@ -43,6 +44,7 @@ typedef enum
 	kMainAction_Compile,
 	kMainAction_Test,
 	kMainAction_Help,
+	kMainAction_Help_Builtins,
 	kMainAction_Help_Log,
 	kMainAction_Help_Verbose,
 	kMainAction_ListArchitechtures,
@@ -62,6 +64,7 @@ int main ( int argc, const char * argv [] )
 	Logging :: SetGlobalLogOutput ( new STDLogOutput () );
 	
 	bool Verbose = false;
+	bool Builtins = false;
 	bool LogFileSet = false;
 	
 	MainAction Action = kMainAction_None;
@@ -104,6 +107,14 @@ int main ( int argc, const char * argv [] )
 				I ++;
 				
 				Action = kMainAction_Help_Verbose;
+				
+			}
+			else if ( ( std :: string ( argv [ I + 1 ] ) == "b" ) || ( std :: string ( argv [ I + 1 ] ) == "builtins" ) )
+			{
+				
+				I ++;
+				
+				Action = kMainAction_Help_Builtins;
 				
 			}
 			else 
@@ -214,6 +225,9 @@ int main ( int argc, const char * argv [] )
 			
 		}
 		
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "b", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "builtin", 0, false ) )
+			Builtins = true;
+		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "verbose", 0, false ) )
 			Verbose = true;
 		else
@@ -235,7 +249,16 @@ int main ( int argc, const char * argv [] )
 		
 		case kMainAction_None:
 		case kMainAction_Compile:
-			return Compile ( SourceFileNames );
+		{
+			
+			OilPrintOptions PrintOptions;
+			
+			PrintOptions.PrintBuiltins = Builtins;
+			PrintOptions.HighlightBuiltins = true;
+			
+			return Compile ( SourceFileNames, PrintOptions );
+			
+		}
 			
 		case kMainAction_Test:
 			return Test ();
@@ -267,6 +290,13 @@ int main ( int argc, const char * argv [] )
 			
 		}
 		
+		case kMainAction_Help_Builtins:
+		{
+			
+			PrintBuiltinHelp ();
+			
+		}
+		
 		case kMainAction_ListArchitechtures:
 		{
 			
@@ -291,7 +321,7 @@ int main ( int argc, const char * argv [] )
 	
 }
 
-int Compile ( const std :: vector <std :: string> & SourceFileNames )
+int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPrintOptions & PrintOptions )
 {
 	
 	if ( SourceFileNames.size () == 0 )
@@ -332,13 +362,10 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames )
 		
 	}
 	
+	OilPrint ( OilRoot, PrintOptions );
+	
 	if ( ! CompilationUnit :: RunSourceAnalysis ( OilRoot ) )
 		return 1;
-	
-	OilPrintOptions PrintOptions;
-	
-	PrintOptions.PrintBuiltins = true;
-	PrintOptions.HighlightBuiltins = true;
 	
 	OilPrint ( OilRoot, PrintOptions );
 	
@@ -375,6 +402,16 @@ void PrintLogHelp ()
 	LOG ( "\nUsage: -<l|log> {file to log to}" );
 	
 }
+
+void PrintBuiltinHelp ()
+{
+	
+	LOG ( "\nBuiltin flag:" );
+	LOG ( "=============" );
+	LOG ( "Shows builtin definitions in debug output." );
+	LOG ( "\nUsage: -<b|builtin>" );
+	
+};
 
 inline std :: string RightPaddedString ( const std :: string & In, uint32_t Length, char Pad )
 {

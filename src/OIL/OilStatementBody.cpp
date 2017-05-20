@@ -1,5 +1,6 @@
 #include <OIL/OilStatementBody.h>
 #include <OIL/OilBindingStatement.h>
+#include <OIL/OilConstStatement.h>
 #include <OIL/OilImplicitLocalInitialization.h>
 
 #ifndef NULL
@@ -9,7 +10,10 @@
 OilStatementBody :: OilStatementBody ():
 	IgnoredParameters (),
 	Statements (),
-	Locals ()
+	Locals (),
+	Constants (),
+	ParentBody ( NULL ),
+	ParentSelfIndex ( 0 )
 {
 }
 
@@ -31,6 +35,35 @@ OilStatementBody :: ~OilStatementBody ()
 			delete Locals [ I ].Binding;
 		
 	}
+	
+	for ( uint64_t I = 0; I < Constants.size (); I ++ )
+	{
+		
+		if ( Constants [ I ] != NULL )
+			delete Constants [ I ];
+		
+	}
+	
+}
+
+bool OilStatementBody :: IsRootBody () const
+{
+	
+	return ParentBody != NULL;
+	
+}
+
+OilStatementBody * OilStatementBody :: GetParentBody () const
+{
+	
+	return ParentBody;
+	
+}
+
+uint64_t OilStatementBody :: GetParentBodySelfIndex () const
+{
+	
+	return ParentSelfIndex;
 	
 }
 
@@ -72,6 +105,16 @@ void OilStatementBody :: TakeIgnoredParams ( OilStatementBody & SubBody )
 
 void OilStatementBody :: AddStatement ( IOilStatement * Statement )
 {
+	
+	if ( Statement -> GetStatementType () == kStatementType_Body )
+	{
+		
+		OilStatementBody * BodyStatement = dynamic_cast <OilStatementBody *> ( Statement );
+		
+		BodyStatement -> ParentBody = this;
+		BodyStatement -> ParentSelfIndex = Statements.size ();
+		
+	}
 	
 	Statements.push_back ( Statement );
 	
@@ -123,7 +166,6 @@ void OilStatementBody :: AddLocalBinding ( OilBindingStatement * LocalBinding )
 		
 		Data.InitializationStatementIndex = Statements.size ();
 		Statements.push_back ( new OilImplicitLocalInitialization ( Locals.size () ) );
-		
 		
 	}
 	else
@@ -190,6 +232,70 @@ uint64_t OilStatementBody :: GetLocalInitializationStatementIndex ( uint64_t Ind
 		return 0;
 	
 	return Locals [ Index ].InitializationStatementIndex;
+	
+}
+
+void OilStatementBody :: AddLocalConst ( OilConstStatement * Const )
+{
+	
+	Constants.push_back ( Const );
+	
+}
+
+uint64_t OilStatementBody :: GetLocalConstCount () const
+{
+	
+	return Constants.size ();
+	
+}
+
+const OilConstStatement * OilStatementBody :: GetLocalConst ( uint64_t Index ) const
+{
+	
+	if ( Index >= Constants.size () )
+		return NULL;
+	
+	return Constants [ Index ];
+	
+}
+
+OilConstStatement * OilStatementBody :: GetLocalConst ( uint64_t Index )
+{
+	
+	if ( Index >= Constants.size () )
+		return NULL;
+	
+	return Constants [ Index ];
+	
+}
+
+const OilConstStatement * OilStatementBody :: FindLocalConst ( const std :: u32string & ID ) const
+{
+	
+	for ( uint64_t I = 0; I < Constants.size (); I ++ )
+	{
+		
+		if ( Constants [ I ] -> GetName () == ID )
+			return Constants [ I ];
+		
+	}
+	
+	return NULL;
+	
+}
+
+OilConstStatement * OilStatementBody :: FindLocalConst ( const std :: u32string & ID )
+{
+	
+	for ( uint64_t I = 0; I < Constants.size (); I ++ )
+	{
+		
+		if ( Constants [ I ] -> GetName () == ID )
+			return Constants [ I ];
+		
+	}
+	
+	return NULL;
 	
 }
 

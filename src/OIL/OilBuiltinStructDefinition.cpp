@@ -1,12 +1,14 @@
 #include <OIL/OilBuiltinStructDefinition.h>
 #include <OIL/OilStructDefinition.h>
+#include <OIL/OilTemplateDefinition.h>
 
-OilBuiltinStructDefinition :: OilBuiltinStructDefinition ( const std :: u32string & Name, uint32_t Size, uint32_t Alignment, TypeFlag Flags ):
+OilBuiltinStructDefinition :: OilBuiltinStructDefinition ( const std :: u32string & Name, uint32_t Size, uint32_t Alignment, TypeFlag Flags, OilTemplateDefinition * TemplateDefinition ):
 	Name ( Name ),
 	Size ( Size ),
 	Alignment ( Alignment ),
 	Flags ( Flags ),
-	UnderlyingStructure ( NULL )
+	UnderlyingStructure ( NULL ),
+	TemplateDefinition ( TemplateDefinition )
 {
 }
 
@@ -15,7 +17,8 @@ OilBuiltinStructDefinition :: OilBuiltinStructDefinition ( const std :: u32strin
 	Size ( Size ),
 	Alignment ( Alignment ),
 	Flags ( Flags ),
-	UnderlyingStructure ( UnderlyingStructure ) 
+	UnderlyingStructure ( UnderlyingStructure ),
+	TemplateDefinition ( NULL )
 {
 }
 
@@ -24,6 +27,9 @@ OilBuiltinStructDefinition :: ~OilBuiltinStructDefinition ()
 	
 	if ( UnderlyingStructure != NULL )
 		delete UnderlyingStructure;
+	
+	if ( TemplateDefinition != NULL )
+		delete TemplateDefinition;
 	
 }
 
@@ -73,5 +79,26 @@ OilStructDefinition * OilBuiltinStructDefinition :: GetUnderlyingStructure ()
 {
 	
 	return UnderlyingStructure;
+	
+}
+
+bool OilBuiltinStructDefinition :: IsTemplated () const
+{
+	
+	return TemplateDefinition != NULL;
+	
+}
+
+const OilTemplateDefinition * OilBuiltinStructDefinition :: GetTemplateDefinition () const
+{
+	
+	return TemplateDefinition;
+	
+}
+
+OilTemplateDefinition * OilBuiltinStructDefinition :: GetTemplateDefinition ()
+{
+	
+	return TemplateDefinition;
 	
 }

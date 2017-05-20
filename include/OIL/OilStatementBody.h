@@ -7,6 +7,7 @@
 #include <string>
 
 class OilBindingStatement;
+class OilConstStatement;
 
 class OilStatementBody : public virtual IOilStatement
 {
@@ -14,6 +15,10 @@ public:
 	
 	OilStatementBody ();
 	~OilStatementBody ();
+	
+	bool IsRootBody () const;
+	OilStatementBody * GetParentBody () const;
+	uint64_t GetParentBodySelfIndex () const;
 	
 	void AddIgnoredParameter ( const std :: u32string & ParameterName );
 	
@@ -40,6 +45,16 @@ public:
 	
 	uint64_t GetLocalInitializationStatementIndex ( uint64_t Index ) const;
 	
+	uint64_t GetLocalConstCount () const;
+	
+	void AddLocalConst ( OilConstStatement * Const );
+	
+	const OilConstStatement * GetLocalConst ( uint64_t Index ) const;
+	OilConstStatement * GetLocalConst ( uint64_t Index );
+	
+	const OilConstStatement * FindLocalConst ( const std :: u32string & ID ) const;
+	OilConstStatement * FindLocalConst ( const std :: u32string & ID );
+	
 	StatementType GetStatementType () const;
 	
 private:
@@ -56,6 +71,10 @@ private:
 	std :: vector <IOilStatement *> Statements;
 	
 	std :: vector <LocalData> Locals;
+	std :: vector <OilConstStatement *> Constants;
+	
+	OilStatementBody * ParentBody;
+	uint64_t ParentSelfIndex;
 	
 };
 

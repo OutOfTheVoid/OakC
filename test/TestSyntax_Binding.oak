@@ -7,6 +7,18 @@ bind mut X: some_ns::Y;
 namespace NS
 {
 	
+	namespace OT
+	{
+		
+		implement S
+		{
+			
+			
+			
+		}
+		
+	}
+	
 	bind A: u32 = 0;
 	bind public B: f64 = 0.0 + 1.0f64;
 	bind mut C: bool = false;
@@ -27,15 +39,22 @@ namespace NS
 		
 	}
 	
+	struct T
+	{
+		
+		bind o:bool
+		
+	}
+	
 	struct S
 	{
 		
 		bind A: u32,
 		bind B: f64
 		
-	};
+	}
 	
-	implement S
+	/*implement S
 	{
 		
 		function M ( & self )
@@ -46,6 +65,13 @@ namespace NS
 			
 		}
 		
-	}
+	}*/
+	
+}
+
+implement T
+{
+	
+	
 	
 }

@@ -10,6 +10,7 @@ public:
 		
 		kStatementType_Body,
 		kStatementType_Binding,
+		kStatementType_Const,
 		kStatementType_Expression,
 		kStatementType_Return,
 		kStatementType_IfElse,

@@ -5,6 +5,7 @@
 #include <string>
 
 class OilStructDefinition;
+class OilTemplateDefinition;
 
 class OilBuiltinStructDefinition
 {
@@ -15,7 +16,7 @@ public:
 	static const TypeFlag kTypeFlag_None = 0;
 	static const TypeFlag kTypeFlag_RequiredAlignment = 1;
 	
-	OilBuiltinStructDefinition ( const std :: u32string & Name, uint32_t Size, uint32_t Alignment, TypeFlag Flags );
+	OilBuiltinStructDefinition ( const std :: u32string & Name, uint32_t Size, uint32_t Alignment, TypeFlag Flags, OilTemplateDefinition * TemplateDefinition = NULL );
 	OilBuiltinStructDefinition ( const std :: u32string & Name, uint32_t Size, uint32_t Alignment, TypeFlag Flags, OilStructDefinition * UnderlyingStructure );
 	
 	~OilBuiltinStructDefinition ();
@@ -32,6 +33,12 @@ public:
 	const OilStructDefinition * GetUnderlyingStructure () const;
 	OilStructDefinition * GetUnderlyingStructure ();
 	
+	bool IsTemplated () const;
+	
+	const OilTemplateDefinition * GetTemplateDefinition () const;
+	OilTemplateDefinition * GetTemplateDefinition ();
+	
+	
 private:
 	
 	const std :: u32string Name;
@@ -42,6 +49,7 @@ private:
 	uint32_t Flags;
 	
 	OilStructDefinition * UnderlyingStructure;
+	OilTemplateDefinition * TemplateDefinition;
 	
 };
 

@@ -1,0 +1,14 @@
+const public SOME_CONSTANT: u32 = 0;
+
+function some_func (): void
+{
+	
+	const a:u32 = 1;
+	
+	{
+		
+		const b: f64 = 0.1f64;
+		
+	}
+	
+}

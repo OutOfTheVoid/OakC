@@ -7,6 +7,7 @@ class OilTraitFunction;
 class OilTraitMethod;
 class OilTemplateDefinition;
 class OilTypeRef;
+class OilNamespaceDefinition;
 
 class OilTraitDefinition
 {
@@ -40,7 +41,11 @@ public:
 	
 	bool IsBuiltin () const;
 	
+	const OilNamespaceDefinition * GetParent () const;
+	
 private:
+	
+	friend class OilNamespaceDefinition;
 	
 	const std :: u32string Name;
 	
@@ -56,6 +61,8 @@ private:
 	OilTemplateDefinition * TemplateDefinition;
 	
 	bool Builtin;
+	
+	const OilNamespaceDefinition * Parent;
 	
 };
 

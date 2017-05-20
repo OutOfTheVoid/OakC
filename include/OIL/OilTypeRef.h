@@ -4,6 +4,7 @@
 #include <string>
 
 class OilTemplateSpecification;
+class OilTypeDefinition;
 
 class OilTypeRef
 {
@@ -56,6 +57,11 @@ public:
 	
 	RefFlag GetFlags () const;
 	
+	bool IsResolved ();
+	
+	void SetResolvedTypeDefintion ( OilTypeDefinition * TypeDefinition );
+	OilTypeDefinition * GetResolvedTypeDefinition () const;
+	
 private:
 	
 	typedef enum
@@ -79,6 +85,8 @@ private:
 	OilTypeRef * SubType;
 	
 	RefFlag Flags;
+	
+	OilTypeDefinition * ResolvedType;
 	
 };
 

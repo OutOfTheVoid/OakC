@@ -39,6 +39,7 @@
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilMethodDefinition.h>
 #include <OIL/OilBuiltinStructDefinition.h>
+#include <OIL/OilConstStatement.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -70,6 +71,7 @@ void OilPrintLoop ( const OilLoop & Loop, uint32_t Indent, const OilPrintOptions
 void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & StructDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintConstStatement ( const OilConstStatement & Constant, uint32_t Indent, const OilPrintOptions & PrintOptions );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS, const OilPrintOptions & PrintOptions )
 {
@@ -91,6 +93,17 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		const OilBindingStatement * Binding = Namespace.GetBindingStatement ( I );
 		
 		OilPrintBindingStatement ( * Binding, Indent, PrintOptions );
+		
+	}
+	
+	TempCount = Namespace.GetConstStatementCount ();
+	
+	for ( uint64_t I = 0; I < TempCount; I ++ )
+	{
+		
+		const OilConstStatement * Constant = Namespace.GetConstStatement ( I );
+		
+		OilPrintConstStatement ( * Constant, Indent, PrintOptions );
 		
 	}
 	
@@ -684,6 +697,14 @@ void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & Struct, uint32_t
 	PrintString += ", Alignment: ";
 	PrintString += std :: to_string ( Struct.GetAlignment () );
 	
+	if ( Struct.IsTemplated () )
+	{
+		
+		PrintString += ", Template: ";
+		PrintString += OilStringTemplateDefinition ( * Struct.GetTemplateDefinition (), PrintOptions );
+		
+	}
+	
 	if ( Struct.GetFlags () != 0 )
 	{
 		
@@ -1088,7 +1109,30 @@ void OilPrintBindingStatement ( const OilBindingStatement & Binding, uint32_t In
 		PrintString += " ( mut )";
 	
 	if ( Binding.IsPublic () )
-		PrintString += Binding.IsMutable () ? "( public )" : " ( public )";
+		PrintString += "( public )";
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	
+}
+
+void OilPrintConstStatement ( const OilConstStatement & Constant, uint32_t Indent, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[CONSTANT ";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Constant.GetName () );
+	
+	PrintString += ": ";
+	PrintString += OilStringTypeRef ( * Constant.GetType (), PrintOptions );
+	
+	if ( Constant.IsPublic () )
+		PrintString += " ( public )";
 	
 	PrintString += "]";
 	
@@ -1134,6 +1178,26 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Binding -> GetName () );
 		PrintString += ": ";
 		PrintString += OilStringTypeRef ( * Binding -> GetType (), PrintOptions );
+		
+		LOG_VERBOSE ( PrintString );
+		
+	}
+	
+	for ( uint32_t I = 0; I < Body.GetLocalConstCount (); I ++ )
+	{
+		
+		PrintString = "";
+		
+		for ( uint32_t I = 0; I < Indent; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		const OilConstStatement * Constant = Body.GetLocalConst ( I );
+		
+		PrintString += "* Const ";
+		
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Constant -> GetName () );
+		PrintString += ": ";
+		PrintString += OilStringTypeRef ( * Constant -> GetType (), PrintOptions );
 		
 		LOG_VERBOSE ( PrintString );
 		

@@ -44,6 +44,7 @@
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilDecoratorTag.h>
+#include <OIL/OilConstStatement.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -65,6 +66,7 @@
 #include <Parsing/Language/OakFunctionParameterConstructor.h>
 #include <Parsing/Language/OakIgnoreStatementConstructor.h>
 #include <Parsing/Language/OakBindingStatementConstructor.h>
+#include <Parsing/Language/OakConstStatementConstructor.h>
 #include <Parsing/Language/OakBindingAllusionConstructor.h>
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
 #include <Parsing/Language/OakTraitDefinitionConstructor.h>
@@ -115,6 +117,7 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
 OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTagElement );
+OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * ConstElement );
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS )
 {
@@ -245,7 +248,6 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					
 					WriteError ( SubElement, "Binding with the same name already exists in global namespace" );
 					
-					
 					while ( Decorators.size () != 0 )
 					{
 						
@@ -278,6 +280,52 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				}
 				
 				GlobalNS.AddBindingStatement ( BindingStatement );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_ConstStatement:
+			{
+				
+				const OakConstStatementConstructor :: ElementData * ConstData = reinterpret_cast <const OakConstStatementConstructor :: ElementData *> ( SubElement -> GetData () );
+				
+				if ( GlobalNS.FindConstStatement ( ConstData -> Name ) != NULL )
+				{
+					
+					WriteError ( SubElement, "Constant with the same name already exists in global namespace" );
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				OilConstStatement * ConstStatement = OakTranslateConstStatementToOil ( SubElement );
+				
+				if ( ConstStatement == NULL )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				GlobalNS.AddConstStatement ( ConstStatement );
 				
 			}
 			break;
@@ -590,6 +638,52 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			}
 			break;
 			
+			case OakASTTags :: kASTTag_ConstStatement:
+			{
+				
+				const OakConstStatementConstructor :: ElementData * ConstData = reinterpret_cast <const OakConstStatementConstructor :: ElementData *> ( SubElement -> GetData () );
+				
+				if ( DefinedNamespaceDefinition -> FindConstStatement ( ConstData -> Name ) != NULL )
+				{
+					
+					WriteError ( SubElement, "Constant with the same name already exists in global namespace" );
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				OilConstStatement * ConstStatement = OakTranslateConstStatementToOil ( SubElement );
+				
+				if ( ConstStatement == NULL )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				DefinedNamespaceDefinition -> AddConstStatement ( ConstStatement );
+				
+			}
+			break;
+			
 			case OakASTTags :: kASTTag_TraitDefinition:
 			{
 				
@@ -658,7 +752,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 					
 				}
 				
-				Container.AddUnresolvedImplementBlock ( Block );
+				DefinedNamespaceDefinition -> AddUnresolvedImplementBlock ( Block );
 				
 			}
 			break;
@@ -1811,6 +1905,37 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 			}
 			break;
 			
+			case OakASTTags :: kASTTag_ConstStatement:
+			{
+				
+				OilConstStatement * Constant = OakTranslateConstStatementToOil ( StatementElement );
+				
+				if ( Constant == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				if ( Constant -> IsPublic () )
+				{
+					
+					WriteError ( StatementElement, "Local constants cannot have access modifiers" );
+					
+					delete Constant;
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				Body -> AddLocalConst ( Constant );
+				
+			}
+			break;
+			
 			case OakASTTags :: kASTTag_WhileStatement:
 			{
 				
@@ -2131,6 +2256,42 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 	}
 	
 	return Body;
+	
+}
+
+OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * StatementElement )
+{
+	
+	if ( ( StatementElement == NULL ) || ( StatementElement -> GetTag () != OakASTTags :: kASTTag_ConstStatement ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	const OakConstStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakConstStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
+	
+	OilTypeRef * Type = OakTranslateTypeRefToOil ( StatementElement -> GetSubElement ( 0 ) );
+	
+	if ( Type == NULL )
+		return NULL;
+	
+	const ASTElement * IntiailizerElement = StatementElement -> GetSubElement ( 1 );
+	
+	OilExpression * InitializerExpression = OakTranslateExpressionToOil ( IntiailizerElement );
+	
+	if ( InitializerExpression == NULL )
+	{
+		
+		delete Type;
+		
+		return NULL;
+		
+	}
+	
+	return new OilConstStatement ( BindingData -> Name, BindingData -> Public, Type, InitializerExpression );
 	
 }
 

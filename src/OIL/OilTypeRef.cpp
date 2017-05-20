@@ -8,7 +8,8 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
 	NamespaceNameCount ( 0 ),
 	TemplateSpecification ( NULL ),
 	SubType ( NULL ),
-	Flags ( Flags )
+	Flags ( Flags ),
+	ResolvedType ( NULL )
 {
 }
 
@@ -18,7 +19,8 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	NamespaceNameCount ( NamespaceNameCount ),
 	TemplateSpecification ( NULL ),
 	SubType ( NULL ),
-	Flags ( Flags )
+	Flags ( Flags ),
+	ResolvedType ( NULL )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -35,7 +37,8 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecificati
 	NamespaceNameCount ( 0 ),
 	TemplateSpecification ( TemplateSpecification ),
 	SubType ( NULL ),
-	Flags ( Flags )
+	Flags ( Flags ),
+	ResolvedType ( NULL )
 {
 }
 
@@ -45,7 +48,8 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	NamespaceNameCount ( NamespaceNameCount ),
 	TemplateSpecification ( TemplateSpecification ),
 	SubType ( NULL ),
-	Flags ( Flags )
+	Flags ( Flags ),
+	ResolvedType ( NULL )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -62,7 +66,8 @@ OilTypeRef :: OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, Ref
 	NamespaceNameCount ( 0 ),
 	TemplateSpecification ( NULL ),
 	SubType ( SubType ),
-	Flags ( Flags )
+	Flags ( Flags ),
+	ResolvedType ( NULL )
 {
 	
 	(void) RMType;
@@ -76,7 +81,8 @@ OilTypeRef :: OilTypeRef ( VoidMarkerType VType ):
 	NamespaceNameCount ( 0 ),
 	TemplateSpecification ( NULL ),
 	SubType ( NULL ),
-	Flags ( 0 )
+	Flags ( 0 ),
+	ResolvedType ( NULL )
 {
 	
 	(void) VType;
@@ -180,5 +186,26 @@ const OilTypeRef * OilTypeRef :: GetSubType () const
 {
 	
 	return SubType;
+	
+}
+
+bool OilTypeRef :: IsResolved ()
+{
+	
+	return ResolvedType != NULL;
+	
+}
+
+void OilTypeRef :: SetResolvedTypeDefintion ( OilTypeDefinition * TypeDefinition )
+{
+	
+	ResolvedType = TypeDefinition;
+	
+}
+
+OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition () const
+{
+	
+	return ResolvedType;
 	
 }

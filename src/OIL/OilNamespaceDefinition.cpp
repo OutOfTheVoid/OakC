@@ -2,6 +2,7 @@
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilBindingStatement.h>
+#include <OIL/OilConstStatement.h>
 #include <OIL/OilImplicitBindingInitialization.h>
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilImplementBlock.h>
@@ -18,6 +19,7 @@ OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID )
 	TraitDefs (),
 	Bindings (),
 	ImplicitIntiailizationBody (),
+	Constants (),
 	UnresImplBlocks ()
 {
 }
@@ -77,6 +79,17 @@ OilNamespaceDefinition :: ~OilNamespaceDefinition ()
 		delete FindIterator_B -> second;
 		
 		FindIterator_B ++;
+		
+	}
+	
+	std :: map <std :: u32string, OilConstStatement *> :: iterator FindIterator_C = Constants.begin ();
+	
+	while ( FindIterator_C != Constants.end () )
+	{
+		
+		delete FindIterator_C -> second;
+		
+		FindIterator_C ++;
 		
 	}
 	
@@ -371,6 +384,72 @@ const OilBindingStatement * OilNamespaceDefinition :: FindBindingStatement ( con
 	
 }
 
+void OilNamespaceDefinition :: AddConstStatement ( OilConstStatement * ConstStatement )
+{
+	
+	Constants [ ConstStatement -> GetName () ] = ConstStatement;
+	
+}
+
+uint32_t OilNamespaceDefinition :: GetConstStatementCount () const
+{
+	
+	return Constants.size ();
+	
+}
+
+OilConstStatement * OilNamespaceDefinition :: GetConstStatement ( uint32_t Index )
+{
+	
+	std :: map <std :: u32string, OilConstStatement *> :: iterator IndexIter = Constants.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == Constants.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+const OilConstStatement * OilNamespaceDefinition :: GetConstStatement ( uint32_t Index ) const
+{
+	
+	std :: map <std :: u32string, OilConstStatement *> :: const_iterator IndexIter = Constants.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == Constants.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+OilConstStatement * OilNamespaceDefinition :: FindConstStatement ( const std :: u32string & ID )
+{
+	
+	std :: map <std :: u32string, OilConstStatement *> :: iterator FindIterator = Constants.find ( ID );
+	
+	if ( FindIterator != Constants.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+const OilConstStatement * OilNamespaceDefinition :: FindConstStatement ( const std :: u32string & ID ) const
+{
+	
+	std :: map <std :: u32string, OilConstStatement *> :: const_iterator FindIterator = Constants.find ( ID );
+	
+	if ( FindIterator != Constants.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
 uint32_t OilNamespaceDefinition :: GetTraitDefinitionCount () const
 {
 	
@@ -382,6 +461,7 @@ void OilNamespaceDefinition :: AddTraitDefinition ( OilTraitDefinition * TraitDe
 {
 	
 	TraitDefs [ TraitDef -> GetName () ] = TraitDef;
+	TraitDef -> Parent = this;
 	
 }
 

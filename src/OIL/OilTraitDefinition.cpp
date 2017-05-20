@@ -17,7 +17,8 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTyp
 	TraitMethods ( new OilTraitMethod * [ MethodCount ] ),
 	MethodCount ( MethodCount ),
 	TemplateDefinition ( NULL ),
-	Builtin ( IsBuiltin )
+	Builtin ( IsBuiltin ),
+	Parent ( NULL )
 {
 	
 	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
@@ -40,7 +41,8 @@ OilTraitDefinition :: OilTraitDefinition ( const std :: u32string & Name, OilTyp
 	TraitMethods ( new OilTraitMethod * [ MethodCount ] ),
 	MethodCount ( MethodCount ),
 	TemplateDefinition ( TemplateDefinition ),
-	Builtin ( IsBuiltin )
+	Builtin ( IsBuiltin ),
+	Parent ( NULL )
 {
 	
 	for ( uint32_t I = 0; I < RequiredTraitCount; I ++ )
@@ -188,5 +190,12 @@ const std :: u32string & OilTraitDefinition :: GetName () const
 {
 	
 	return Name;
+	
+}
+
+const OilNamespaceDefinition * OilTraitDefinition :: GetParent () const
+{
+	
+	return Parent;
 	
 }

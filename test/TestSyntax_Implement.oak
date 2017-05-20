@@ -1,4 +1,11 @@
 
+trait AddOp
+{
+	
+	function op_add ( LHS: & Self, RHS: & Self ): Self
+	
+}
+
 struct Test
 {
 	
@@ -6,29 +13,34 @@ struct Test
 	
 }
 
-implement Test
+namespace MyNS
 {
 	
-	public function set ( & self, A:i32 )
+	implement Test
 	{
 		
-		self.A = A;
+		public function set ( & self, A:i32 )
+		{
+			
+			self.A = A;
+			
+		}
 		
 	}
 	
-}
-
-implement Test for Add:<Test, Test>
-{
-	
-	function op_add ( LHS: & Self, RHS: & Self ): Self
+	implement Test for AddOp:<Test, Test>
 	{
 		
-		bind mut New:Self;
-		
-		New.set ( LHS.A + RHS.A );
-		
-		return New;
+		function op_add ( LHS: & Self, RHS: & Self ): Self
+		{
+			
+			bind mut New:Self;
+			
+			New.set ( LHS.A + RHS.A );
+			
+			return New;
+			
+		}
 		
 	}
 	
