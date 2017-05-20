@@ -1,4 +1,4 @@
-import "test/TestSyntax_Literals.oak";
+//import "test/TestSyntax_Literals.oak";
 
 namespace my_namespace::sub_namespace
 {
@@ -46,7 +46,7 @@ struct SomeStruct <A: SomeTrait + AnotherTrait, B, C, D: SomeTrait>
 {
 }
 
-implement MyType
+implement MyType:<A, B>
 {
 	
 	function test ( & self, string_value: & string ): u32

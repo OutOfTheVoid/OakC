@@ -90,7 +90,7 @@ OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, OilNamespac
 	if ( OutDef == NULL )
 		return NULL;
 	
-	if ( OutDef -> GetStructDefinition () -> IsTemplated () )
+	if ( OutDef -> IsTemplated () )
 	{
 		
 		if ( ! TypeRef.IsTemplated () )
@@ -102,7 +102,7 @@ OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, OilNamespac
 			
 		}
 		
-		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetStructDefinition () -> GetTemplateDefinition () -> GetTemplateParameterCount () )
+		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetTemplateDefinition () -> GetTemplateParameterCount () )
 		{
 			
 			TemplateMismatch = true;
@@ -196,7 +196,7 @@ const OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, const
 	if ( OutDef == NULL )
 		return NULL;
 	
-	if ( OutDef -> GetStructDefinition () -> IsTemplated () )
+	if ( OutDef -> IsTemplated () )
 	{
 		
 		if ( ! TypeRef.IsTemplated () )
@@ -208,7 +208,7 @@ const OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, const
 			
 		}
 		
-		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetStructDefinition () -> GetTemplateDefinition () -> GetTemplateParameterCount () )
+		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetTemplateDefinition () -> GetTemplateParameterCount () )
 		{
 			
 			TemplateMismatch = true;

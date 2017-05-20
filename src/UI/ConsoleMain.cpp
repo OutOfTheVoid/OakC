@@ -36,6 +36,7 @@ void ListOperatingSystems ();
 void PrintVerboseHelp ();
 void PrintLogHelp ();
 void PrintBuiltinHelp ();
+void PrintResolutionHelp ();
 
 typedef enum
 {
@@ -45,6 +46,7 @@ typedef enum
 	kMainAction_Test,
 	kMainAction_Help,
 	kMainAction_Help_Builtins,
+	kMainAction_Help_Resolution,
 	kMainAction_Help_Log,
 	kMainAction_Help_Verbose,
 	kMainAction_ListArchitechtures,
@@ -65,6 +67,7 @@ int main ( int argc, const char * argv [] )
 	
 	bool Verbose = false;
 	bool Builtins = false;
+	bool Resolution = false;
 	bool LogFileSet = false;
 	
 	MainAction Action = kMainAction_None;
@@ -109,12 +112,20 @@ int main ( int argc, const char * argv [] )
 				Action = kMainAction_Help_Verbose;
 				
 			}
-			else if ( ( std :: string ( argv [ I + 1 ] ) == "b" ) || ( std :: string ( argv [ I + 1 ] ) == "builtins" ) )
+			else if ( ( std :: string ( argv [ I + 1 ] ) == "sh_b" ) || ( std :: string ( argv [ I + 1 ] ) == "show_builtins" ) )
 			{
 				
 				I ++;
 				
 				Action = kMainAction_Help_Builtins;
+				
+			}
+			else if ( ( std :: string ( argv [ I + 1 ] ) == "sh_r" ) || ( std :: string ( argv [ I + 1 ] ) == "show_resolution" ) )
+			{
+				
+				I ++;
+				
+				Action = kMainAction_Help_Resolution;
 				
 			}
 			else 
@@ -225,8 +236,10 @@ int main ( int argc, const char * argv [] )
 			
 		}
 		
-		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "b", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "builtin", 0, false ) )
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "sh_b", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "show_builtins", 0, false ) )
 			Builtins = true;
+		else if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "sh_r", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "show_resolution", 0, false ) )
+			Resolution = true;
 		else if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "verbose", 0, false ) )
 			Verbose = true;
 		else
@@ -252,6 +265,7 @@ int main ( int argc, const char * argv [] )
 			
 			OilPrintOptions PrintOptions;
 			
+			PrintOptions.ShowResolution = Resolution;
 			PrintOptions.PrintBuiltins = Builtins;
 			PrintOptions.HighlightBuiltins = true;
 			
@@ -293,6 +307,17 @@ int main ( int argc, const char * argv [] )
 		{
 			
 			PrintBuiltinHelp ();
+			
+			return 0;
+			
+		}
+		
+		case kMainAction_Help_Resolution:
+		{
+			
+			PrintResolutionHelp ();
+			
+			return 0;
 			
 		}
 		
@@ -408,9 +433,19 @@ void PrintBuiltinHelp ()
 	LOG ( "\nBuiltin flag:" );
 	LOG ( "=============" );
 	LOG ( "Shows builtin definitions in debug output." );
-	LOG ( "\nUsage: -<b|builtin>" );
+	LOG ( "\nUsage: -<sh_b|show_builtins>" );
 	
 };
+
+void PrintResolutionHelp ()
+{
+	
+	LOG ( "\nResolution flag:" );
+	LOG ( "=============" );
+	LOG ( "Shows resolution status of definitions in debug output." );
+	LOG ( "\nUsage: -<sh_r|show_resolution>" );
+	
+}
 
 inline std :: string RightPaddedString ( const std :: string & In, uint32_t Length, char Pad )
 {

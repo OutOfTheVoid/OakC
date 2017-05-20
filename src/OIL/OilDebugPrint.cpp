@@ -1017,6 +1017,9 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref, const OilPrintOptions &
 	
 	std :: string OutString;
 	
+	if ( PrintOptions.ShowResolution )
+		OutString += Ref.IsResolved () ? "(resolved) " : "(unresolved) ";
+	
 	if ( Ref.IsNamespaced () )
 	{
 		

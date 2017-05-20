@@ -23,10 +23,13 @@
 #include <EarlyAnalysis/OakImportResolution.h>
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OilImplementResolution.h>
+#include <EarlyAnalysis/OilTypeResolution.h>
 
 #include <Builtins/OakBuiltinTypes.h>
 
 #include <OIL/OilImplementBlock.h>
+#include <OIL/OilConstStatement.h>
+#include <OIL/OilBindingStatement.h>
 #include <OIL/OilTypeRef.h>
 
 #include <iostream>
@@ -236,9 +239,9 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 	LOG_VERBOSE ( "[ ALL ]: compilation step: Implement Resolution." );
 	
 	OilImplementBlock * FailedBlock = NULL;
-	ResolveImplementsStatus TraitResolutionStatus = OilResolveImplements ( RootNS, FailedBlock );
+	ResolveImplementsStatus ImplementResolutionStatus = OilResolveImplements ( RootNS, FailedBlock );
 	
-	switch ( TraitResolutionStatus )
+	switch ( ImplementResolutionStatus )
 	{
 		
 		case kResolveImplementsStatus_Success:
@@ -260,7 +263,10 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 			
 			LOG_FATALERROR_NOFILE ( "Implement resolution error! (No trait Resolution)" );
 			
-			LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			if ( FailedBlock -> IsForTrait () )
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			else
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) );
 			
 			return false;
 			
@@ -271,7 +277,10 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 			
 			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Template Mismatch)" );
 			
-			LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			if ( FailedBlock -> IsForTrait () )
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			else
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) );
 			
 			return false;
 			
@@ -282,6 +291,11 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 			
 			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Name Conflict)" );
 			
+			if ( FailedBlock -> IsForTrait () )
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			else
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) );
+			
 			return false;
 			
 		}
@@ -290,6 +304,81 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 		{
 			
 			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Unkown)" );
+			
+			if ( FailedBlock -> IsForTrait () )
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			else
+				LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) );
+			
+			return false;
+			
+		}
+		
+	}
+	
+	OilConstStatement * FailedConstant = NULL;
+	
+	TypeResolutionResult TypeResolutionStatus = OilResolveTypes_Constants ( RootNS, FailedConstant );
+	
+	switch ( TypeResolutionStatus )
+	{
+		
+		case kTypeResolutionResult_Success:
+			break;
+		
+		case kTypeResolutionResult_Failure_TemplateMismatch:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Type resolution error! (Template Mismatch)" );
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed constant " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedConstant -> GetName () ) );
+			
+			return false;
+			
+			
+		}
+		
+		case kTypeResolutionResult_Failure_NonExistantType:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Type resolution error! (Non-existant Type)" );
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed constant " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedConstant -> GetName () ) );
+			
+			return false;
+			
+		}
+		
+	}
+	
+	OilBindingStatement * FailedBinding = NULL;
+	
+	TypeResolutionStatus = OilResolveTypes_Bindings ( RootNS, FailedBinding );
+	
+	switch ( TypeResolutionStatus )
+	{
+		
+		case kTypeResolutionResult_Success:
+			break;
+		
+		case kTypeResolutionResult_Failure_TemplateMismatch:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Type resolution error! (Template Mismatch)" );
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed binding " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBinding -> GetName () ) );
+			
+			return false;
+			
+			
+		}
+		
+		case kTypeResolutionResult_Failure_NonExistantType:
+		{
+			
+			LOG_FATALERROR_NOFILE ( "Type resolution error! (Non-existant Type)" );
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed binding " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBinding -> GetName () ) );
 			
 			return false;
 			

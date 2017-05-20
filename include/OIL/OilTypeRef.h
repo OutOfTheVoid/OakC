@@ -5,6 +5,7 @@
 
 class OilTemplateSpecification;
 class OilTypeDefinition;
+class OilTraitDefinition;
 
 class OilTypeRef
 {
@@ -57,10 +58,17 @@ public:
 	
 	RefFlag GetFlags () const;
 	
-	bool IsResolved ();
+	bool IsResolved () const;
+	bool IsResolvedAsTrait () const;
 	
-	void SetResolvedTypeDefintion ( OilTypeDefinition * TypeDefinition );
+	void SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinition );
+	void SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefinition );
+	
 	OilTypeDefinition * GetResolvedTypeDefinition () const;
+	OilTypeDefinition * GetResolvedTypeDefinition ();
+	
+	OilTraitDefinition * GetResolvedTraitDefinition () const;
+	OilTraitDefinition * GetResolvedTraitDefinition ();
 	
 private:
 	
@@ -86,7 +94,15 @@ private:
 	
 	RefFlag Flags;
 	
-	OilTypeDefinition * ResolvedType;
+	bool ResolvedAsTrait;
+	
+	union
+	{
+		
+		OilTypeDefinition * ResolvedType;
+		OilTraitDefinition * ResolvedTrait;
+		
+	};
 	
 };
 

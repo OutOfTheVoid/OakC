@@ -77,7 +77,7 @@ bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS )
 	OilTypeDefinition * Int32Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"i32", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( Int32Type );
 	
-	OilTypeDefinition * Int64Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"i64", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
+	OilTypeDefinition * Int64Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"i64", 8, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( Int64Type );
 	
 	OilTypeDefinition * IntPtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"iptr", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
@@ -92,11 +92,21 @@ bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS )
 	OilTypeDefinition * UInt32Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"u32", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UInt32Type );
 	
-	OilTypeDefinition * UInt64Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"u64", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
+	OilTypeDefinition * UInt64Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"u64", 8, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UInt64Type );
 	
 	OilTypeDefinition * UIntPtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"uptr", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UIntPtrType );
+	
+	OilTypeDefinition * PtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"ptr", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	PtrType -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"T" ) );
+	
+	RootNS.AddTypeDefinition ( PtrType );
+	
+	OilTypeDefinition * TraitPtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"trait_ptr", 8, 4, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	TraitPtrType -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"TRAIT" ) );
+	
+	RootNS.AddTypeDefinition ( TraitPtrType );
 	
 	AddFunctionTypes ( RootNS, 4, 4 );
 	
@@ -140,12 +150,17 @@ bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS )
 	OilTypeDefinition * UIntPtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"uptr", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UIntPtrType );
 	
+	OilTypeDefinition * PtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"ptr", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	PtrType -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"T" ) );
+	
+	RootNS.AddTypeDefinition ( PtrType );
+	
+	OilTypeDefinition * TraitPtrType = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"trait_ptr", 16, 8, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	TraitPtrType -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"TRAIT" ) );
+	
+	RootNS.AddTypeDefinition ( TraitPtrType );
+	
 	AddFunctionTypes ( RootNS, 8, 8 );
-	
-	//OilImplementBlock * BoolPrincipalImplementBlock = new OilImplementBlock ( new OilTypeRef ( U"bool" ) );
-	//BoolPrincipalImplementBlock -> AddFunction (  );
-	
-	//RootNS.AddTypeDefinition ( BoolType );
 	
 	return true;
 	
@@ -476,7 +491,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func20Type );
 	
-	OilTypeDefinition * Func21Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_21", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func21Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_21", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func21Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func21Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func21Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -503,7 +518,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func21Type );
 	
-	OilTypeDefinition * Func22Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_22", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func22Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_22", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func22Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func22Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func22Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -531,7 +546,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func22Type );
 	
-	OilTypeDefinition * Func23Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_23", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func23Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_23", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func23Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func23Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func23Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -560,7 +575,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func23Type );
 	
-	OilTypeDefinition * Func24Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_24", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func24Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_24", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func24Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func24Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func24Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -590,7 +605,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func24Type );
 	
-	OilTypeDefinition * Func25Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_25", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func25Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_25", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func25Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func25Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func25Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -621,7 +636,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func25Type );
 	
-	OilTypeDefinition * Func26Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_26", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func26Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_26", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func26Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func26Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func26Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -653,7 +668,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func26Type );
 	
-	OilTypeDefinition * Func27Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_27", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func27Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_27", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func27Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func27Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func27Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -686,7 +701,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func27Type );
 	
-	OilTypeDefinition * Func28Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_28", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func28Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_28", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func28Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func28Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func28Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );
@@ -720,7 +735,7 @@ void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint3
 	
 	RootNS.AddTypeDefinition ( Func28Type );
 	
-	OilTypeDefinition * Func29Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"Func_29", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
+	OilTypeDefinition * Func29Type = new OilTypeDefinition ( new OilBuiltinStructDefinition ( U"func_29", PTRSize, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition () ), true );
 	Func29Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func29Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"RETURN_T" ) );
 	Func29Type -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( U"PARAM1_T" ) );

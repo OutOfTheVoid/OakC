@@ -8,6 +8,7 @@ typedef struct
 	
 	bool PrintBuiltins;
 	bool HighlightBuiltins;
+	bool ShowResolution;
 	
 } OilPrintOptions;
 

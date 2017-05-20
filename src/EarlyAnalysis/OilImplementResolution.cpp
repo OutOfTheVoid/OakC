@@ -35,6 +35,8 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			
 		}
 		
+		Block -> GetImplementedType () -> SetResolvedTypeDefinition ( ImplementedType );
+		
 		if ( Block -> IsForTrait () )
 		{
 			
@@ -59,6 +61,8 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				return kResolveImplementsStatus_Failure_NoResolution_ForTrait;
 				
 			}
+			
+			Block -> GetForTrait () -> SetResolvedTraitDefinition ( ForTrait );
 			
 			std :: vector <std :: u32string> AbsoluteNamePath;
 			

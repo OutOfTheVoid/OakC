@@ -1,4 +1,6 @@
 #include <OIL/OilTypeRef.h>
+#include <OIL/OilTypeDefinition.h>
+#include <OIL/OilTraitDefinition.h>
 #include <OIL/OilTemplateSpecification.h>
 
 OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
@@ -9,6 +11,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
 	TemplateSpecification ( NULL ),
 	SubType ( NULL ),
 	Flags ( Flags ),
+	ResolvedAsTrait ( false ),
 	ResolvedType ( NULL )
 {
 }
@@ -20,6 +23,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	TemplateSpecification ( NULL ),
 	SubType ( NULL ),
 	Flags ( Flags ),
+	ResolvedAsTrait ( false ),
 	ResolvedType ( NULL )
 {
 	
@@ -38,6 +42,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecificati
 	TemplateSpecification ( TemplateSpecification ),
 	SubType ( NULL ),
 	Flags ( Flags ),
+	ResolvedAsTrait ( false ),
 	ResolvedType ( NULL )
 {
 }
@@ -49,6 +54,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	TemplateSpecification ( TemplateSpecification ),
 	SubType ( NULL ),
 	Flags ( Flags ),
+	ResolvedAsTrait ( false ),
 	ResolvedType ( NULL )
 {
 	
@@ -67,6 +73,7 @@ OilTypeRef :: OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, Ref
 	TemplateSpecification ( NULL ),
 	SubType ( SubType ),
 	Flags ( Flags ),
+	ResolvedAsTrait ( false ),
 	ResolvedType ( NULL )
 {
 	
@@ -82,6 +89,7 @@ OilTypeRef :: OilTypeRef ( VoidMarkerType VType ):
 	TemplateSpecification ( NULL ),
 	SubType ( NULL ),
 	Flags ( 0 ),
+	ResolvedAsTrait ( false ),
 	ResolvedType ( NULL )
 {
 	
@@ -189,23 +197,74 @@ const OilTypeRef * OilTypeRef :: GetSubType () const
 	
 }
 
-bool OilTypeRef :: IsResolved ()
+bool OilTypeRef :: IsResolved () const
 {
 	
-	return ResolvedType != NULL;
+	if ( Mode != kTypeMode_Direct )
+	{
+		
+		if ( Mode == kTypeMode_Void )
+			return true;
+		
+		return SubType -> IsResolved ();
+		
+	}
+	
+	if ( ResolvedAsTrait )
+		return ResolvedTrait != NULL;
+	else
+		return ResolvedType != NULL;
 	
 }
 
-void OilTypeRef :: SetResolvedTypeDefintion ( OilTypeDefinition * TypeDefinition )
+void OilTypeRef :: SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinition )
 {
 	
 	ResolvedType = TypeDefinition;
+	ResolvedAsTrait = false;
+	
+}
+
+
+void OilTypeRef :: SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefinition )
+{
+	
+	ResolvedTrait = TraitDefinition;
+	ResolvedAsTrait = true;
+	
+}
+
+bool OilTypeRef :: IsResolvedAsTrait () const
+{
+	
+	return ResolvedAsTrait;
 	
 }
 
 OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition () const
 {
 	
-	return ResolvedType;
+	return ResolvedAsTrait ? NULL : ResolvedType;
+	
+}
+
+OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition ()
+{
+	
+	return ResolvedAsTrait ? NULL : ResolvedType;
+	
+}
+
+OilTraitDefinition * OilTypeRef :: GetResolvedTraitDefinition () const
+{
+	
+	return ResolvedAsTrait ? ResolvedTrait : NULL;
+	
+}
+
+OilTraitDefinition * OilTypeRef :: GetResolvedTraitDefinition ()
+{
+	
+	return ResolvedAsTrait ? ResolvedTrait : NULL;
 	
 }

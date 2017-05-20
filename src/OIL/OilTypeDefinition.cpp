@@ -455,3 +455,24 @@ OilImplementBlock * OilTypeDefinition :: GetImplementBlockAt ( const std :: u32s
 	return Iter -> second -> TraitElement.Block;
 	
 }
+
+bool OilTypeDefinition :: IsTemplated () const
+{
+	
+	return IsStructBuiltin ? BuiltinStructDefinition -> IsTemplated () : StructDefinition -> IsTemplated ();
+	
+}
+
+const OilTemplateDefinition * OilTypeDefinition :: GetTemplateDefinition () const
+{
+	
+	return IsStructBuiltin ? BuiltinStructDefinition -> GetTemplateDefinition () : StructDefinition -> GetTemplateDefinition ();
+	
+}
+
+OilTemplateDefinition * OilTypeDefinition :: GetTemplateDefinition ()
+{
+	
+	return IsStructBuiltin ? BuiltinStructDefinition -> GetTemplateDefinition () : StructDefinition -> GetTemplateDefinition ();
+	
+}

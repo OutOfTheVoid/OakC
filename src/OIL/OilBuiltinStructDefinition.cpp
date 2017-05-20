@@ -18,7 +18,7 @@ OilBuiltinStructDefinition :: OilBuiltinStructDefinition ( const std :: u32strin
 	Alignment ( Alignment ),
 	Flags ( Flags ),
 	UnderlyingStructure ( UnderlyingStructure ),
-	TemplateDefinition ( NULL )
+	TemplateDefinition ( UnderlyingStructure -> IsTemplated () ? UnderlyingStructure -> GetTemplateDefinition () : NULL )
 {
 }
 

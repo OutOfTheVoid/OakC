@@ -8,6 +8,7 @@ class OilImplementBlock;
 class OilTraitDefinition;
 class OilStructDefinition;
 class OilBuiltinStructDefinition;
+class OilTemplateDefinition;
 
 class OilTypeDefinition
 {
@@ -23,6 +24,11 @@ public:
 	bool IsBuiltinType () const;
 	
 	bool IsBuiltinStructure () const;
+	
+	bool IsTemplated () const;
+	
+	const OilTemplateDefinition * GetTemplateDefinition () const;
+	OilTemplateDefinition * GetTemplateDefinition ();
 	
 	const OilBuiltinStructDefinition * GetBuiltinStructDefinition () const;
 	OilBuiltinStructDefinition * GetBuiltinStructDefinition ();
