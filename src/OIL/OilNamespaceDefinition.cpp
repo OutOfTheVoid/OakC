@@ -11,7 +11,7 @@
 #include <iterator>
 
 OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID ):
-	Parent (),
+	Parent ( NULL ),
 	ID ( ID ),
 	SubNamespaces (),
 	TypeDefs (),
@@ -185,7 +185,6 @@ void OilNamespaceDefinition :: AddTypeDefinition ( OilTypeDefinition * TypeDef )
 {
 	
 	TypeDefs [ TypeDef -> GetName () ] = TypeDef;
-	
 	
 }
 

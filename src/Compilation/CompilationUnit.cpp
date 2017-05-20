@@ -271,6 +271,8 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 			
 			LOG_FATALERROR_NOFILE ( "Implement resolution error! (Template Mismatch)" );
 			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Failed implement of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetImplementedType () -> GetName () ) + " for trait: " + CodeConversion :: ConvertUTF32ToUTF8 ( FailedBlock -> GetForTrait () -> GetName () ) );
+			
 			return false;
 			
 		}

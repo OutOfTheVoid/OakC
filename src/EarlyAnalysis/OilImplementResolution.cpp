@@ -15,7 +15,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 	
 	FailedBlock = NULL;
 	
-	while ( CurrentNS.GetUnresolvedImplementBlockCount () != 0 )
+	while ( CurrentNS.GetUnresolvedImplementBlockCount () > 0 )
 	{
 		
 		OilImplementBlock * Block = CurrentNS.GetUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - 1 );
@@ -38,7 +38,18 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 		if ( Block -> IsForTrait () )
 		{
 			
+			TemplateMismatch = false;
+			
 			OilTraitDefinition * ForTrait = FindTraitDefinition ( * Block -> GetForTrait (), CurrentNS, TemplateMismatch );
+			
+			if ( TemplateMismatch )
+			{
+				
+				FailedBlock = Block;
+				
+				return kResolveImplementsStatus_Failure_TemplateMismatch;
+				
+			}
 			
 			if ( ForTrait == NULL )
 			{

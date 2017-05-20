@@ -227,8 +227,7 @@ int main ( int argc, const char * argv [] )
 		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "b", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "builtin", 0, false ) )
 			Builtins = true;
-		
-		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "verbose", 0, false ) )
+		else if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "v", 0, false ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "verbose", 0, false ) )
 			Verbose = true;
 		else
 		{

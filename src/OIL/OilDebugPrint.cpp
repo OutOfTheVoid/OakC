@@ -571,6 +571,37 @@ void OilPrintBreak ( const OilBreak & Break, uint32_t Indent, const OilPrintOpti
 	
 }
 
+void OilPrintTraitImplementations ( const OilTypeDefinition & Root, std :: vector <std :: u32string> & Path, uint32_t Indent, const OilPrintOptions & PrintOptions )
+{
+	
+	uint32_t NamespaceCount = Root.GetNamespaceCountAt ( & Path [ 0 ], Path.size () );
+	
+	if ( NamespaceCount == 0 )
+	{
+		
+		const OilImplementBlock * Block = Root.FindTraitImplementBlock ( & Path [ 0 ], Path.size () );
+		
+		if ( Block != NULL )
+			OilPrintImplementBlock ( * Block, Indent, PrintOptions );
+		
+		return;
+		
+	}
+	
+	for ( uint32_t I = 0; I < NamespaceCount; I ++ )
+	{
+		
+		std :: u32string SubNamespace = Root.GetImplementNamespaceAt ( & Path [ 0 ], Path.size (), I );
+		Path.push_back ( SubNamespace );
+		
+		OilPrintTraitImplementations ( Root, Path, Indent, PrintOptions );
+		
+		Path.pop_back ();
+		
+	}
+	
+}
+
 void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
@@ -609,67 +640,9 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 	if ( TypeDefinition.GetPrincipalImplementBlock () != NULL )
 		OilPrintImplementBlock ( * TypeDefinition.GetPrincipalImplementBlock (), Indent + 1, PrintOptions );
 	
-	std :: vector <uint32_t> IndexStack;
-	std :: vector <std :: u32string> NameStack;
+	std :: vector <std :: u32string> RelativeNamePath;
 	
-	IndexStack.push_back ( 0 );
-	
-	while ( IndexStack.size () != 0 )
-	{
-		
-		uint32_t CurrentSpaceSize = TypeDefinition.GetNamespaceCountAt ( & NameStack [ 0 ], NameStack.size () );
-		
-		if ( CurrentSpaceSize == 0 )
-		{
-			
-			const OilImplementBlock * Block = TypeDefinition.FindTraitImplementBlock ( & NameStack [ 0 ], NameStack.size () );
-			
-			if ( Block != NULL )
-				OilPrintImplementBlock ( * Block, Indent + 1, PrintOptions );
-			
-			IndexStack.pop_back ();
-			
-			if ( IndexStack.size () != 0 )
-			{
-				
-				NameStack.pop_back ();
-				IndexStack [ IndexStack.size () - 1 ] ++;
-				
-			}
-			
-		}
-		else
-		{
-			
-			std :: u32string Name = TypeDefinition.GetImplementNamespaceAt ( & NameStack [ 0 ], NameStack.size (), IndexStack [ IndexStack.size () - 1 ] );
-			
-			if ( Name != U"" )
-			{
-				
-				IndexStack.push_back ( 0 );
-				NameStack.push_back ( Name );
-				
-				continue;
-				
-			}
-			else
-			{
-				
-				IndexStack.pop_back ();
-				
-				if ( IndexStack.size () != 0 )
-				{
-					
-					NameStack.pop_back ();
-					IndexStack [ IndexStack.size () - 1 ] ++;
-					
-				}
-				
-			}
-			
-		}
-		
-	}
+	OilPrintTraitImplementations ( TypeDefinition, RelativeNamePath, Indent + 1, PrintOptions );
 	
 	PrintString = "";
 	

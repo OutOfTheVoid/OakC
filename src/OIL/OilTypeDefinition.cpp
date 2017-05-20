@@ -152,8 +152,7 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * Abso
 		
 		TraitMap = new TraitMapElement ();
 		TraitMap -> IsTrait = false;
-		
-		TraitMap -> NameMap = new std :: map <std :: u32string, struct TraitMapElement_Struct *> ();
+		TraitMap -> NameMap = new std :: map <std :: u32string, TraitMapElement *> ();
 		
 	}
 	
@@ -161,25 +160,12 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * Abso
 	
 	uint32_t PathIndex = 0;
 	
-	std :: map <std :: u32string, struct TraitMapElement_Struct *> :: iterator Iter;
+	std :: map <std :: u32string, TraitMapElement *> :: iterator Iter;
 	
-	while ( PathIndex + 1 != NamePathSize )
+	while ( PathIndex + 1 < NamePathSize )
 	{
 		
-		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
-		
-		if ( Iter == CurrentElement -> NameMap -> end () )
-		{
-			
-			CurrentElement = ( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = new TraitMapElement ();
-			CurrentElement -> IsTrait  = false;
-			CurrentElement -> NameMap = new std :: map <std :: u32string, struct TraitMapElement_Struct *> ();
-			
-		}
-		else
-			CurrentElement = Iter -> second;
-		
-		if ( ! CurrentElement -> IsTrait )
+		if ( CurrentElement -> IsTrait )
 		{
 			
 			NameConflict = true;
@@ -187,6 +173,22 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * Abso
 			return;
 			
 		}
+		
+		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
+		
+		if ( Iter == CurrentElement -> NameMap -> end () )
+		{
+			
+			TraitMapElement * New = new TraitMapElement ();
+			New -> IsTrait  = false;
+			New -> NameMap = new std :: map <std :: u32string, TraitMapElement *> ();
+			
+			( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = New;
+			CurrentElement = New;
+			
+		}
+		else
+			CurrentElement = Iter -> second;
 		
 		PathIndex ++;
 		
@@ -198,15 +200,16 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * Abso
 	{
 		
 		RedefinitionConflict = true;
-			
+		
 		return;
 		
 	}
 	
-	CurrentElement = ( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = new TraitMapElement ();
+	TraitMapElement * New = new TraitMapElement ();
+	New -> IsTrait = true;
+	New -> TraitElement.Block = Implement;
 	
-	CurrentElement -> IsTrait = true;
-	CurrentElement -> TraitElement.Block = Implement;
+	( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = New;
 	
 }
 
@@ -222,7 +225,7 @@ const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const s
 	
 	std :: map <std :: u32string, struct TraitMapElement_Struct *> :: const_iterator Iter;
 	
-	while ( PathIndex + 1 != NamePathSize )
+	while ( PathIndex + 1 < NamePathSize )
 	{
 		
 		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
@@ -319,6 +322,8 @@ uint32_t OilTypeDefinition :: GetNamespaceCountAt ( const std :: u32string * Abs
 		if ( CurrentElement -> IsTrait )
 			return 0;
 		
+		PathIndex ++;
+		
 	}
 	
 	return CurrentElement -> NameMap -> size ();
@@ -349,6 +354,8 @@ const std :: u32string OilTypeDefinition :: GetImplementNamespaceAt ( const std 
 		
 		if ( CurrentElement -> IsTrait )
 			return NullString;
+		
+		PathIndex ++;
 		
 	}
 	

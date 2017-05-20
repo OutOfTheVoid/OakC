@@ -27,13 +27,18 @@ OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, OilNamespac
 		while ( Parent -> GetParent () != NULL )
 			Parent = Parent -> GetParent ();
 		
-		for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+		if ( TypeRef.IsNamespaced () )
 		{
 			
-			Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
-			
-			if ( Parent == NULL )
-				return NULL;
+			for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					return NULL;
+				
+			}
 			
 		}
 		
@@ -128,13 +133,18 @@ const OilTypeDefinition * FindTypeDefinition ( const OilTypeRef & TypeRef, const
 		while ( Parent -> GetParent () != NULL )
 			Parent = Parent -> GetParent ();
 		
-		for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+		if ( TypeRef.IsNamespaced () )
 		{
 			
-			Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
-			
-			if ( Parent == NULL )
-				return NULL;
+			for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					return NULL;
+				
+			}
 			
 		}
 		
@@ -229,13 +239,18 @@ OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, OilNamesp
 		while ( Parent -> GetParent () != NULL )
 			Parent = Parent -> GetParent ();
 		
-		for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+		if ( TypeRef.IsNamespaced () )
 		{
 			
-			Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
-			
-			if ( Parent == NULL )
-				return NULL;
+			for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					return NULL;
+				
+			}
 			
 		}
 		
@@ -300,6 +315,19 @@ OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, OilNamesp
 		}
 		
 		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetTemplateDefinition () -> GetTemplateParameterCount () )
+		{
+			
+			TemplateMismatch = true;
+			
+			return NULL;
+			
+		}
+		
+	}
+	else
+	{
+		
+		if ( TypeRef.IsTemplated () )
 		{
 			
 			TemplateMismatch = true;
@@ -330,13 +358,18 @@ const OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, con
 		while ( Parent -> GetParent () != NULL )
 			Parent = Parent -> GetParent ();
 		
-		for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+		if ( TypeRef.IsNamespaced () )
 		{
 			
-			Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
-			
-			if ( Parent == NULL )
-				return NULL;
+			for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					return NULL;
+				
+			}
 			
 		}
 		
@@ -401,6 +434,19 @@ const OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, con
 		}
 		
 		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetTemplateDefinition () -> GetTemplateParameterCount () )
+		{
+			
+			TemplateMismatch = true;
+			
+			return NULL;
+			
+		}
+		
+	}
+	else
+	{
+		
+		if ( TypeRef.IsTemplated () )
 		{
 			
 			TemplateMismatch = true;
@@ -465,92 +511,13 @@ void BuildAbsoluteNamePath_Trait ( std :: vector <std :: u32string> & AbsolutePa
 	const OilNamespaceDefinition * Parent = Trait.GetParent ();
 	
 	while ( Parent -> GetParent () != NULL )
+	{
+		
 		AbsolutePath.insert ( AbsolutePath.begin (), Parent -> GetID () );
+		Parent = Parent -> GetParent ();
+		
+	}
 	
 	AbsolutePath.push_back ( Trait.GetName () );
 	
 }
-
-/*bool OilFindAndBuildAbsoluteTraitNamePath ( std :: vector <std :: u32string> & AbsoluteNamePath, OilTypeRef & Type, OilNamespaceDefinition & CurrentNS, OilTraitDefinition *& TraitOut, bool & TemplateMismatch )
-{
-	
-	TraitOut = NULL;
-	
-	OilNamespaceDefinition * LocalNS = & CurrentNS;
-	
-	if ( Type.IsNamespaced () )
-	{
-		
-		LocalNS = OilFindParentallyContainedNamespace ( * LocalNS, Type.GetNamespaceName ( 0 ) );
-		
-		if ( LocalNS == NULL )
-			return false;
-		
-		AbsoluteNamePath.push_back ( Type.GetNamespaceName ( 0 ) );
-		
-		uint32_t Index = 1;
-		
-		while ( Index < Type.GetNamespaceNameCount () )
-		{
-			
-			LocalNS = LocalNS -> FindNamespaceDefinition ( Type.GetNamespaceName ( Index ) );
-			
-			if ( LocalNS == NULL )
-			{
-				
-				AbsoluteNamePath.clear ();
-				
-				return false;
-				
-			}
-			
-			AbsoluteNamePath.push_back ( Type.GetNamespaceName ( Index ) );
-			
-			Index ++;
-			
-		}
-		
-	}
-	
-	TraitOut = LocalNS -> FindTraitDefinition ( Type.GetName () );
-	
-	if ( TraitOut == NULL )
-	{
-		
-		AbsoluteNamePath.clear ();
-		
-		return false;
-		
-	}
-	
-	if ( Type.IsTemplated () != TraitOut -> IsTemplated () )
-	{
-		
-		AbsoluteNamePath.clear ();
-		TemplateMismatch = true;
-		
-		return false;
-		
-	}
-	
-	if ( TraitOut -> IsTemplated () )
-	{
-		
-		if ( TraitOut -> GetTemplateDefinition () -> GetTemplateParameterCount () != Type.GetTemplateSpecification () -> GetTypeRefCount () )	
-		{
-			
-			AbsoluteNamePath.clear ();
-			TemplateMismatch = true;
-			
-			return false;
-			
-		}
-	
-	}
-	
-	AbsoluteNamePath.push_back ( Type.GetName () );
-	
-	return true;
-	
-}*/
-

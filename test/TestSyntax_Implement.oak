@@ -1,20 +1,27 @@
 
-trait AddOp
-{
-	
-	function op_add ( LHS: & Self, RHS: & Self ): Self
-	
-}
 
-struct Test
+namespace std::operators
 {
 	
-	bind A:i32
+	#[builtin]
+	trait AddOp
+	{
+		
+		function op_add ( LHS: & Self, RHS: & Self ): Self
+		
+	}
 	
 }
 
 namespace MyNS
 {
+	
+	struct Test
+	{
+		
+		bind A:i32
+		
+	}
 	
 	implement Test
 	{
@@ -28,7 +35,7 @@ namespace MyNS
 		
 	}
 	
-	implement Test for AddOp:<Test, Test>
+	implement Test for ::std::operators::AddOp:<Test, Test>
 	{
 		
 		function op_add ( LHS: & Self, RHS: & Self ): Self
