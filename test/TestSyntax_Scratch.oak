@@ -1,22 +1,21 @@
-struct MyType <A>
+struct MyType <T1, T2>
 {
 	
-	bind B:A
+	bind SomeBinding:T1,
+	bind SomeOtherBinding:T2
 	
 }
 
 trait SomeTrait
 {
-	
-	
-	
 }
 
 implement MyType:<A, i32> where <A: SomeTrait>
 {
-	
-	
-	
 }
 
-bind A: MyType:<i64> = null;
+implement i32 for SomeTrait
+{
+}
+
+bind A: MyType:<i32, i32>;

@@ -783,6 +783,14 @@ void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent, 
 		
 	}
 	
+	if ( Block.HasWhereDefinition () )
+	{
+		
+		PrintString += " where ";
+		PrintString += OilStringTemplateDefinition ( * Block.GetWhereDefinition (), PrintOptions );
+		
+	}
+	
 	PrintString += "]\n";
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )

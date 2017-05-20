@@ -1248,6 +1248,87 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 				
 			}
 			
+			if ( ! ( ImplementedType -> IsTemplated () || ForTrait -> IsTemplated () ) )
+			{
+				
+				WriteError ( ImplementElement, "Implement block of non-generic type for non-generic trait cannot contain a where clause." );
+				
+				delete ImplementedType;
+				delete ForTrait;
+				
+				return NULL;
+				
+			}
+			
+			OilTemplateSpecification * ImplementedSpecification = ImplementedType -> GetTemplateSpecification ();
+			OilTemplateSpecification * ForSpecification = ForTrait -> GetTemplateSpecification ();
+			
+			for ( uint32_t I = 0; I < WhereDefinition -> GetTemplateParameterCount (); I ++ )
+			{
+				
+				OilTemplateDefinitionParameter * WhereParam = WhereDefinition -> GetTemplateParameter ( I );
+				
+				bool Found = false;
+				
+				for ( uint32_t J = 0; J < ImplementedSpecification -> GetTypeRefCount (); J ++ )
+				{
+					
+					OilTypeRef * Ref = ImplementedSpecification -> GetTypeRef ( J );
+					
+					if ( ( ! Ref -> IsNamespaced () ) && Ref -> IsDirectType () )
+					{
+						
+						if ( Ref -> GetName () == WhereParam -> GetName () )
+						{
+							
+							Found = true;
+							
+							break;
+							
+						}
+						
+					}
+					
+				}
+				
+				if ( Found )
+					continue;
+				
+				for ( uint32_t J = 0; J < ForSpecification -> GetTypeRefCount (); J ++ )
+				{
+					
+					OilTypeRef * Ref = ForSpecification -> GetTypeRef ( J );
+					
+					if ( ( ! Ref -> IsNamespaced () ) && Ref -> IsDirectType () )
+					{
+						
+						if ( Ref -> GetName () == WhereParam -> GetName () )
+						{
+							
+							Found = true;
+							
+							break;
+							
+						}
+						
+					}
+					
+				}
+				
+				if ( ! Found )
+				{
+					
+					WriteError ( ImplementElement, "Where clause of implement block cannot contain type parameter not used in trait or implemented type reference" );
+					
+					delete ImplementedType;
+					delete ForTrait;
+					
+					return NULL;
+					
+				}
+				
+			}
+			
 			Block = new OilImplementBlock ( ImplementedType, ForTrait, WhereDefinition );
 			
 		}
@@ -1271,6 +1352,60 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 				delete ImplementedType;
 				
 				return NULL;
+				
+			}
+			
+			if ( ! ImplementedType -> IsTemplated () )
+			{
+				
+				WriteError ( ImplementElement, "Implement block of non-generic type cannot contain a where clause." );
+				
+				delete ImplementedType;
+				
+				return NULL;
+				
+			}
+			
+			OilTemplateSpecification * ImplementedSpecification = ImplementedType -> GetTemplateSpecification ();
+			
+			for ( uint32_t I = 0; I < WhereDefinition -> GetTemplateParameterCount (); I ++ )
+			{
+				
+				OilTemplateDefinitionParameter * WhereParam = WhereDefinition -> GetTemplateParameter ( I );
+				
+				bool Found = false;
+				
+				for ( uint32_t J = 0; J < ImplementedSpecification -> GetTypeRefCount (); J ++ )
+				{
+					
+					OilTypeRef * Ref = ImplementedSpecification -> GetTypeRef ( J );
+					
+					if ( ( ! Ref -> IsNamespaced () ) && Ref -> IsDirectType () )
+					{
+						
+						if ( Ref -> GetName () == WhereParam -> GetName () )
+						{
+							
+							Found = true;
+							
+							break;
+							
+						}
+						
+					}
+					
+				}
+				
+				if ( ! Found )
+				{
+					
+					WriteError ( ImplementElement, "Where clause of implement block cannot contain type parameter not used in implemented type reference" );
+					
+					delete ImplementedType;
+					
+					return NULL;
+					
+				}
 				
 			}
 			

@@ -2,6 +2,7 @@
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilMethodDefinition.h>
 #include <OIL/OilTypeRef.h>
+#include <OIL/OilTemplateDefinition.h>
 
 #include <algorithm>
 
@@ -92,6 +93,12 @@ OilImplementBlock :: ~OilImplementBlock ()
 	}
 	
 	delete ImplementedType;
+	
+	if ( ForTrait != NULL )
+		delete ForTrait;
+	
+	if ( WhereDefinition != NULL )
+		delete WhereDefinition;
 	
 }
 
@@ -271,5 +278,54 @@ OilMethodDefinition * OilImplementBlock :: FindMethod ( const std :: u32string &
 		return NULL;
 	
 	return MIter -> second;
+	
+}
+
+bool OilImplementBlock :: AreBlocksAmbiguous ( const OilImplementBlock & A, const OilImplementBlock & B )
+{
+		
+	if ( ( A.GetImplementedType () -> GetResolvedTypeDefinition () == NULL ) || ( B.GetImplementedType () -> GetResolvedTypeDefinition () == NULL ) )
+		return false;
+	
+	if ( A.GetImplementedType () -> GetResolvedTypeDefinition () != B.GetImplementedType () -> GetResolvedTypeDefinition () )
+			return false;
+	
+	if ( A.IsForTrait () )
+	{
+		
+		if ( ! B.IsForTrait () )
+			return false;
+		
+		if ( ( A.GetForTrait () -> GetResolvedTraitDefinition () == NULL ) || ( B.GetForTrait () -> GetResolvedTraitDefinition () == NULL ) )
+			return false;
+		
+		if ( A.GetForTrait () -> GetResolvedTraitDefinition () != B.GetForTrait () -> GetResolvedTraitDefinition () )
+			return false;
+		
+	}
+	else
+	{
+		
+		if ( B.IsForTrait () )
+			return false;
+		
+	}
+	
+	if ( A.HasWhereDefinition () )
+	{
+		
+		if ( B.HasWhereDefinition () )
+		{
+			
+			//const OilTemplateDefinition * WhereA = A.GetWhereDefinition ();
+			//const OilTemplateDefinition * WhereB = B.GetWhereDefinition ();
+			
+			//if ( WhereA )
+			
+		}
+		
+	}
+	
+	return true;
 	
 }

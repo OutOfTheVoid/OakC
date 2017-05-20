@@ -53,6 +53,8 @@ public:
 	const OilMethodDefinition * FindMethod ( const std :: u32string & Name ) const;
 	OilMethodDefinition * FindMethod ( const std :: u32string & Name );
 	
+	static bool AreBlocksAmbiguous ( const OilImplementBlock & A, const OilImplementBlock & B );
+	
 private:
 	
 	OilTypeRef * ImplementedType;

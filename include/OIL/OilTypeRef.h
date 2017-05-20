@@ -60,15 +60,19 @@ public:
 	
 	bool IsResolved () const;
 	bool IsResolvedAsTrait () const;
+	bool IsResolvedAsTemplateParam () const;
 	
 	void SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinition );
 	void SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefinition );
+	void SetResolvedTemplateParamName ();
 	
 	OilTypeDefinition * GetResolvedTypeDefinition () const;
 	OilTypeDefinition * GetResolvedTypeDefinition ();
 	
 	OilTraitDefinition * GetResolvedTraitDefinition () const;
 	OilTraitDefinition * GetResolvedTraitDefinition ();
+	
+	const std :: u32string & GetResolvedTemplateParamName () const;
 	
 private:
 	
@@ -95,6 +99,7 @@ private:
 	RefFlag Flags;
 	
 	bool ResolvedAsTrait;
+	bool ResolvedAsTemplateParam;
 	
 	union
 	{

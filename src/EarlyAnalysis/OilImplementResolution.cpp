@@ -7,6 +7,8 @@
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilTypeRef.h>
 #include <OIL/OilTraversal.h>
+#include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilTemplateDefinitionParameter.h>
 
 #include <Logging/Logging.h>
 #include <Encoding/CodeConversion.h>
@@ -25,10 +27,63 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 		OilImplementBlock * Block = CurrentNS.GetUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - UnresolvedOffset - 1 );
 		OilTypeRef * ImplementedTypeRef = Block -> GetImplementedType ();
 		
+		TypeResolution_TemplateNameList TemplateNames;
+		
+		bool UseWhere = Block -> HasWhereDefinition ();
+		
+		if ( UseWhere )
+		{
+			
+			OilTemplateDefinition * WhereDefinition = Block -> GetWhereDefinition ();
+			
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * WhereDefinition );
+			
+			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
+				return kResolveImplementsStatus_Failure_TemplateMismatch;
+			
+			if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
+				return kResolveImplementsStatus_Failure_NonExistantType;
+			
+			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				UnresolvedOffset ++;
+				
+				continue;
+				
+			}
+			else
+			{
+				
+				UnresolvedOffset ++;
+				
+				continue;
+				
+			}
+			
+			uint32_t NameCount = WhereDefinition -> GetTemplateParameterCount ();
+			
+			TemplateNames.Names = new std :: u32string [ NameCount ];
+			TemplateNames.Count = NameCount;
+			
+			for ( uint32_t I = 0; I < NameCount; I ++ )
+			{
+				
+				OilTemplateDefinitionParameter * Parameter = WhereDefinition -> GetTemplateParameter ( I );
+				
+				TemplateNames.Names [ I ] = Parameter -> GetName ();
+				
+			}
+			
+		}
+		
 		if ( ! ImplementedTypeRef -> IsResolved () )
 		{
 			
-			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef );
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef, UseWhere ? ( & TemplateNames ) : NULL );
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
 				return kResolveImplementsStatus_Failure_TemplateMismatch;
@@ -67,6 +122,15 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			
 		}
 		
+		if ( ImplementedTypeRef -> IsResolvedAsTemplateParam () )
+		{
+			
+			LOG_FATALERROR_NOFILE ( std :: string ( "Implement block attemptings to implement template parameter: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( ImplementedTypeRef -> GetName () ) );
+			
+			return kResolveImplementsStatus_Failure_ImplementingTemplateParam;
+			
+		}
+		
 		OilTypeDefinition * ImplementedType = ImplementedTypeRef -> GetResolvedTypeDefinition ();
 		
 		if ( Block -> IsForTrait () )
@@ -77,7 +141,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			if ( ! TraitRef -> IsResolved () )
 			{
 				
-				TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef );
+				TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TraitRef, UseWhere ? ( & TemplateNames ) : NULL );
 				
 				if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
 					return kResolveImplementsStatus_Failure_TemplateMismatch;
@@ -159,6 +223,9 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			ImplementedType -> SetPrincipalImplementBlock ( Block );
 			
 		}
+		
+		if ( Block -> HasWhereDefinition () )
+				delete [] TemplateNames.Names;
 		
 		CurrentNS.RemoveUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - UnresolvedOffset - 1 );
 		

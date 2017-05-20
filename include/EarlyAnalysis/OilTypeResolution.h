@@ -20,6 +20,7 @@ class OilBindingStatement;
 class OilTypeRef;
 class OilTemplateSpecification;
 class OilStructDefinition;
+class OilTemplateDefinition;
 
 typedef struct
 {
@@ -31,6 +32,7 @@ typedef struct
 
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition );
 TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & RootNS );
 
 TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & RootNS );

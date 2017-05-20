@@ -15,6 +15,7 @@
 #include <OIL/OilBuiltinStructDefinition.h>
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
+#include <OIL/OilTemplateDefinition.h>
 
 #include <Logging/Logging.h>
 #include <Encoding/CodeConversion.h>
@@ -45,7 +46,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	if ( Ref -> IsTemplated () )
 	{
 		
-		TypeResolutionResult TemplateResult = OilTypeResolution_TemplateSpecification ( CurrentNS, * Ref -> GetTemplateSpecification () );
+		TypeResolutionResult TemplateResult = OilTypeResolution_TemplateSpecification ( CurrentNS, * Ref -> GetTemplateSpecification (), TemplateNames );
 		
 		if ( TemplateResult == kTypeResolutionResult_Success_Complete )
 		{
@@ -156,7 +157,13 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 					{
 						
 						if ( Ref -> GetName () == TemplateNames -> Names [ I ] )
+						{
+							
+							Ref -> SetResolvedTemplateParamName ();
+							
 							return kTypeResolutionResult_Success_Complete;
+							
+						}
 						
 					}
 					
@@ -220,6 +227,83 @@ TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefin
 	
 	if ( Unresolved )
 		return kTypeResolutionResult_Success_Progress;
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition )
+{
+	
+	bool Unresolved = false;
+	
+	uint32_t ResolvedCount = 0;
+	uint32_t ParamCount = TemplateDefinition.GetTemplateParameterCount ();
+	
+	for ( uint32_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		OilTemplateDefinitionParameter * Param = TemplateDefinition.GetTemplateParameter ( I );
+		
+		if ( Param -> IsRestricted () )
+		{
+			
+			uint32_t RestrictionCount = Param -> GetRestrictionCount ();
+			
+			for ( uint32_t J = 0; J < RestrictionCount; J ++ )
+			{
+				
+				OilTypeRef * RestrictType = Param -> GetRestriction ( J );
+				
+				if ( ! RestrictType -> IsResolved () )
+				{
+					
+					TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * RestrictType, NULL );
+					
+					if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+					{
+						
+						ResolvedCount ++;
+						
+						if ( ! RestrictType -> IsResolvedAsTrait () )
+						{
+							
+							LOG_FATALERROR_NOFILE ( "Template restrictions cannot reference non-trait types" );
+							
+							return kTypeResolutionResult_Failure_NonExistantType;
+							
+						}
+						
+					}
+					else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+					{
+						
+						ResolvedCount ++;
+						Unresolved = true;
+						
+					}
+					else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return ResolutionResult;
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( ResolvedCount > 0 )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
 	
 	return kTypeResolutionResult_Success_Complete;
 	
