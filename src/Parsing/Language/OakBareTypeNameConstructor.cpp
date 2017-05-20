@@ -59,7 +59,30 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
-	const Token * CurrentToken = Input.Tokens [ 0 ];
+	uint32_t Offset = 0;
+	bool Absolute = false;
+	
+	const Token * CurrentToken = Input.Tokens [ Offset ];
+	
+	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_DoubleColon )
+	{
+		
+		Absolute = true;
+		
+		if ( Input.AvailableTokenCount < 2 )
+		{
+			
+			Output.Accepted = false;
+			
+			return;
+			
+		}
+		
+		Offset ++;
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+	}
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Identifier )
 	{
@@ -79,19 +102,22 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
+	Offset ++;
+	
 	ElementData * BareTypeNameData = new ElementData ();
 	
 	BareTypeNameData -> TypeName = CurrentToken -> GetSource ();
 	BareTypeNameData -> TypeTag = CurrentToken -> GetTag ();
+	BareTypeNameData -> Absolute = Absolute;
 	
 	ASTElement * BareTypeNameElement = new ASTElement ();
 	
 	BareTypeNameElement -> SetTag ( OakASTTags :: kASTTag_TypeName_Bare );
 	BareTypeNameElement -> SetData ( BareTypeNameData, & ElementDataDestructor );
-	BareTypeNameElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	BareTypeNameElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	
 	Output.Accepted = true;
-	Output.TokensConsumed = 1;
+	Output.TokensConsumed = Offset;
 	Output.ConstructedElement = BareTypeNameElement;
 	
 }

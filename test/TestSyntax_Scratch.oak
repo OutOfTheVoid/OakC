@@ -18,4 +18,4 @@ implement i32 for SomeTrait
 {
 }
 
-bind A: MyType:<i32, i32>;
+bind A: MyType:<i32, ::i32>;

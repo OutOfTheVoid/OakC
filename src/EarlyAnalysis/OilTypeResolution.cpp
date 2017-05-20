@@ -420,9 +420,6 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 		
 		TypeResolutionResult ResolutionResult = OilResolveTypes_Bindings ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
-		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
-			return ResolutionResult;
-		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
 		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
@@ -432,8 +429,11 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 			Unresolved = true;
 			
 		}
-		else
+		else if ( kTypeResolutionResult_Success_NoProgress )
 			Unresolved = true;
+		else
+			return ResolutionResult;
+		
 		
 	}
 	
@@ -451,7 +451,7 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 	
 }
 
-TypeResolutionResult OilResolveTypes_StructBindings ( OilNamespaceDefinition & CurrentNS, OilStructDefinition *& FailedStruct, std :: u32string & FailedBindingName )
+TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -491,7 +491,29 @@ TypeResolutionResult OilResolveTypes_StructBindings ( OilNamespaceDefinition & C
 		if ( TemplateDef != NULL )
 		{
 			
-			// TODO: Try and resolve template definition
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * TemplateDef );
+			
+			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+				continue;
+				
+			}
+			else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			{
+				
+				Unresolved = true;
+				
+				continue;
+				
+			}
+			else
+				return ResolutionResult;
 			
 			uint32_t NameCount = TemplateDef -> GetTemplateParameterCount ();
 			
@@ -532,9 +554,6 @@ TypeResolutionResult OilResolveTypes_StructBindings ( OilNamespaceDefinition & C
 				
 				if ( TemplateDef != NULL )
 					delete [] TemplateNames.Names;
-				
-				FailedStruct = StructDef;
-				FailedBindingName = Binding -> GetName ();
 				
 				return ResolutionResult;
 				

@@ -1038,40 +1038,40 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 		case OakASTTags :: kASTTag_TraitName_Bare:
 		{
 			
-			const OakBareTraitNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakBareTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
+			const OakBareTraitNameConstructor :: ElementData * TraitRefData = reinterpret_cast <const OakBareTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
-			return new OilTypeRef ( RestrictionData -> Name, OilTypeRef :: kRefFlag_Trait );
+			return new OilTypeRef ( TraitRefData -> Name, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> Absolute ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
 		case OakASTTags :: kASTTag_TraitName_Templated:
 		{
 			
-			const OakTemplatedTraitNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakTemplatedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
+			const OakTemplatedTraitNameConstructor :: ElementData * TraitRefData = reinterpret_cast <const OakTemplatedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TraitElement -> GetSubElement ( 0 ) );
 			
-			return new OilTypeRef ( RestrictionData -> Name, TemplateSpecification, OilTypeRef :: kRefFlag_Trait );
+			return new OilTypeRef ( TraitRefData -> Name, TemplateSpecification, OilTypeRef :: kRefFlag_Trait );
 			
 		}
 		
 		case OakASTTags :: kASTTag_TraitName_Namespaced:
 		{
 			
-			const OakNamespacedTraitNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakNamespacedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
+			const OakNamespacedTraitNameConstructor :: ElementData * TraitRefData = reinterpret_cast <const OakNamespacedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
-			return new OilTypeRef ( RestrictionData -> Name, RestrictionData -> IdentList, RestrictionData -> IdentListLength, OilTypeRef :: kRefFlag_Trait | ( RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
+			return new OilTypeRef ( TraitRefData -> Name, TraitRefData -> IdentList, TraitRefData -> IdentListLength, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
 		case OakASTTags :: kASTTag_TraitName_NamespacedTemplated:
 		{
 			
-			const OakNamespacedTemplatedTraitNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakNamespacedTemplatedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
+			const OakNamespacedTemplatedTraitNameConstructor :: ElementData * TraitRefData = reinterpret_cast <const OakNamespacedTemplatedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TraitElement -> GetSubElement ( 0 ) );
 			
-			return new OilTypeRef ( RestrictionData -> Name, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification, OilTypeRef :: kRefFlag_Trait | ( RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
+			return new OilTypeRef ( TraitRefData -> Name, TraitRefData -> IdentList, TraitRefData -> IdentListLength, TemplateSpecification, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
@@ -1101,46 +1101,46 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 		case OakASTTags :: kASTTag_TypeName_Bare:
 		{
 			
-			const OakBareTypeNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakBareTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+			const OakBareTypeNameConstructor :: ElementData * TypeRefData = reinterpret_cast <const OakBareTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
-			return new OilTypeRef ( RestrictionData -> TypeName );
+			return new OilTypeRef ( TypeRefData -> TypeName, TypeRefData -> Absolute ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
 		case OakASTTags :: kASTTag_TypeName_Templated:
 		{
 			
-			const OakTemplatedTypeNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+			const OakTemplatedTypeNameConstructor :: ElementData * TypeRefData = reinterpret_cast <const OakTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TypeElement -> GetSubElement ( 0 ) );
 			
 			if ( TemplateSpecification == NULL )
 				return NULL;
 			
-			return new OilTypeRef ( RestrictionData -> TypeName, TemplateSpecification );
+			return new OilTypeRef ( TypeRefData -> TypeName, TemplateSpecification );
 			
 		}
 		
 		case OakASTTags :: kASTTag_TypeName_Namespaced:
 		{
 			
-			const OakNamespacedTypeNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakNamespacedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+			const OakNamespacedTypeNameConstructor :: ElementData * TypeRefData = reinterpret_cast <const OakNamespacedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
-			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength, RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
+			return new OilTypeRef ( TypeRefData -> TypeName, TypeRefData -> IdentList, TypeRefData -> IdentListLength, TypeRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
 		case OakASTTags :: kASTTag_TypeName_NamespacedTemplated:
 		{
 			
-			const OakNamespacedTemplatedTypeNameConstructor :: ElementData * RestrictionData = reinterpret_cast <const OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
+			const OakNamespacedTemplatedTypeNameConstructor :: ElementData * TypeRefData = reinterpret_cast <const OakNamespacedTemplatedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TypeElement -> GetSubElement ( 0 ) );
 			
 			if ( TemplateSpecification == NULL )
 				return NULL;
 			
-			return new OilTypeRef ( RestrictionData -> TypeName, RestrictionData -> IdentList, RestrictionData -> IdentListLength, TemplateSpecification, RestrictionData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
+			return new OilTypeRef ( TypeRefData -> TypeName, TypeRefData -> IdentList, TypeRefData -> IdentListLength, TemplateSpecification, TypeRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		

@@ -16,6 +16,8 @@ public:
 		std :: u32string TypeName;
 		uint64_t TypeTag;
 		
+		bool Absolute;
+		
 	} ElementData;
 	
 	OakBareTypeNameConstructor ();

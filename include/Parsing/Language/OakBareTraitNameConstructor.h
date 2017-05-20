@@ -12,6 +12,8 @@ public:
 		
 		std :: u32string Name;
 		
+		bool Absolute;
+		
 	} ElementData;
 	
 	OakBareTraitNameConstructor ();

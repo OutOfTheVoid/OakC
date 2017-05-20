@@ -29,7 +29,30 @@ void OakBareTraitNameConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
-	const Token * CurrentToken = Input.Tokens [ 0 ];
+	uint32_t Offset = 0;
+	bool Absolute = false;
+	
+	const Token * CurrentToken = Input.Tokens [ Offset ];
+	
+	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_DoubleColon )
+	{
+		
+		Absolute = true;
+		
+		if ( Input.AvailableTokenCount < 2 )
+		{
+			
+			Output.Accepted = false;
+			
+			return;
+			
+		}
+		
+		Offset ++;
+		
+		CurrentToken = Input.Tokens [ Offset ];
+		
+	}
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
@@ -40,17 +63,20 @@ void OakBareTraitNameConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
+	Offset ++;
+	
 	ElementData * NameData = new ElementData ();
 	
 	NameData -> Name = CurrentToken -> GetSource ();
+	NameData -> Absolute = Absolute;
 	
 	ASTElement * ParameterElement = new ASTElement ();
 	ParameterElement -> SetTag ( OakASTTags :: kASTTag_TraitName_Bare );
-	ParameterElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	ParameterElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	ParameterElement -> SetData ( NameData, & ElementDataDestructor );
 	
 	Output.Accepted = true;
-	Output.TokensConsumed = 1;
+	Output.TokensConsumed = Offset;
 	Output.ConstructedElement = ParameterElement;
 	
 }
