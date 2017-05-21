@@ -4138,6 +4138,6 @@ void WriteError ( const ASTElement * SourceRefElement, std :: string Error )
 		
 	}
 	
-	LOG_ERROR_NOFILE ( SourceToken -> GetSourceUnit () -> GetFileName () + " Line " + std :: to_string ( SourceToken -> GetLine () ) + ", Char " + std :: to_string ( SourceToken -> GetChar () ) + ": " + Error );
+	LOG_ERROR_NOFILE ( SourceToken -> GetSourceRef ().GetUnit () -> GetFileName () + " Line " + std :: to_string ( SourceToken -> GetSourceRef ().GetLine () ) + ", Char " + std :: to_string ( SourceToken -> GetSourceRef ().GetChar () ) + ": " + Error );
 	
 }

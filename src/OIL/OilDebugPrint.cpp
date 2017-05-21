@@ -579,10 +579,12 @@ void OilPrintTraitImplementations ( const OilTypeDefinition & Root, std :: vecto
 	if ( NamespaceCount == 0 )
 	{
 		
-		const OilImplementBlock * Block = Root.FindTraitImplementBlock ( & Path [ 0 ], Path.size () );
+		std :: vector <const OilImplementBlock *> Blocks;
 		
-		if ( Block != NULL )
-			OilPrintImplementBlock ( * Block, Indent, PrintOptions );
+		Root.FindTraitImplementBlocks ( & Path [ 0 ], Path.size (), Blocks );
+		
+		for ( uint32_t I = 0; I < Blocks.size (); I ++ )
+			OilPrintImplementBlock ( * Blocks [ I ], Indent, PrintOptions );
 		
 		return;
 		
@@ -637,8 +639,11 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 		
 	}
 	
-	if ( TypeDefinition.GetPrincipalImplementBlock () != NULL )
-		OilPrintImplementBlock ( * TypeDefinition.GetPrincipalImplementBlock (), Indent + 1, PrintOptions );
+	std :: vector <const OilImplementBlock *> Blocks;
+	TypeDefinition.GetPrincipalImplementBlocks ( Blocks );
+	
+	for ( uint32_t I = 0; I < Blocks.size (); I ++ )
+		OilPrintImplementBlock ( * Blocks [ I ], Indent + 1, PrintOptions );
 	
 	std :: vector <std :: u32string> RelativeNamePath;
 	

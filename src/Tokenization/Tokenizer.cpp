@@ -72,7 +72,7 @@ bool Tokenizer :: TokenizeString ( const std :: u32string & Source, std :: vecto
 					
 					Found = true;
 					
-					TokenList.push_back ( new Token ( Source.substr ( Offset, SplitResult.SplitLength ), Char + 1, Line + 1, SplitResult.Tag, SplitResult.AuxTag, SourceUnit ) );
+					TokenList.push_back ( new Token ( Source.substr ( Offset, SplitResult.SplitLength ), SplitResult.Tag, SplitResult.AuxTag, SourceRef ( Char + 1, Line + 1 , SourceUnit ) ) );
 					
 					uint64_t NewOffset = Offset + SplitResult.SplitLength;
 					

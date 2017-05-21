@@ -1,22 +1,18 @@
 #include <Tokenization/Token.h>
 
-Token :: Token ( const std :: u32string & Source, uint64_t Char, uint64_t Line, uint64_t Tag, uint64_t AuxTag, CompilationUnit * SourceUnit ):
+Token :: Token ( const std :: u32string & Source, uint64_t Tag, uint64_t AuxTag, const SourceRef & Ref ):
 	Source ( Source ),
-	Char ( Char ),
-	Line ( Line ),
 	Tag ( Tag ),
 	AuxTag ( AuxTag ),
-	SourceUnit ( SourceUnit )
+	Ref ( Ref )
 {
 }
 
 Token :: Token ( const Token & CopyFrom ):
 	Source ( CopyFrom.Source ),
-	Char ( CopyFrom.Char ),
-	Line ( CopyFrom.Line ),
 	Tag ( CopyFrom.Tag ),
 	AuxTag ( CopyFrom.AuxTag ),
-	SourceUnit ( CopyFrom.SourceUnit )
+	Ref ( CopyFrom.Ref )
 {
 }
 
@@ -28,20 +24,6 @@ const std :: u32string & Token :: GetSource () const
 {
 	
 	return Source;
-	
-}
-
-uint64_t Token :: GetChar () const
-{
-	
-	return Char;
-	
-}
-
-uint64_t Token :: GetLine () const
-{
-	
-	return Line;
 	
 }
 
@@ -59,9 +41,9 @@ uint64_t Token :: GetAuxTag () const
 	
 }
 
-CompilationUnit * Token :: GetSourceUnit () const
+const SourceRef & Token :: GetSourceRef () const
 {
 	
-	return SourceUnit;
+	return Ref;
 	
 }

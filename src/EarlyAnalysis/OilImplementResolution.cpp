@@ -184,10 +184,9 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			
 			BuildAbsoluteNamePath_Trait ( AbsoluteNamePath, * TraitRef -> GetResolvedTraitDefinition () );
 			
-			bool NameConflict;
-			bool RedefinitionConflict;
+			bool NameConflict = false;
 			
-			ImplementedType -> AddTraitImplementBlock ( & AbsoluteNamePath [ 0 ], AbsoluteNamePath.size (), Block, NameConflict, RedefinitionConflict );
+			ImplementedType -> AddTraitImplementBlock ( & AbsoluteNamePath [ 0 ], AbsoluteNamePath.size (), Block, NameConflict );
 			
 			if ( NameConflict )
 			{
@@ -198,31 +197,9 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				
 			}
 			
-			if ( RedefinitionConflict )
-			{
-				
-				LOG_FATALERROR_NOFILE ( std :: string ( "Implementation of trait: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( TraitRef -> GetName () ) + " conflicts with previous implementation of the same trait" );
-				
-				return kResolveImplementsStatus_Failure_Conflict_TraitImplementation_TraitCollision;
-				
-			}
-			
 		}
 		else
-		{
-			
-			if ( ImplementedType -> GetPrincipalImplementBlock () != NULL )
-			{
-				
-				LOG_FATALERROR_NOFILE ( std :: string ( "Implement block for type: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( ImplementedTypeRef -> GetName () ) + " conflicts with previous implementation block for the same type" );
-				
-				return kResolveImplementsStatus_Failure_Conflict_PrincipalImplementation;
-				
-			}
-			
-			ImplementedType -> SetPrincipalImplementBlock ( Block );
-			
-		}
+			ImplementedType -> AddPrincipalImplementBlock ( Block );
 		
 		if ( Block -> HasWhereDefinition () )
 				delete [] TemplateNames.Names;

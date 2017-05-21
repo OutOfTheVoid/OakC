@@ -84,7 +84,7 @@ public:
 	* 
 	* @return The source file name.
 	*/
-	const std :: string & GetFileName ();
+	const std :: string & GetFileName () const;
 	
 	
 private:

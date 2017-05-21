@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 class OilImplementBlock;
 class OilTraitDefinition;
@@ -36,21 +37,18 @@ public:
 	const OilStructDefinition * GetStructDefinition () const;
 	OilStructDefinition * GetStructDefinition ();
 	
-	void SetPrincipalImplementBlock ( OilImplementBlock * Implement );
+	void AddPrincipalImplementBlock ( OilImplementBlock * Implement );
 	
-	const OilImplementBlock * GetPrincipalImplementBlock () const;
-	OilImplementBlock * GetPrincipalImplementBlock ();
+	void GetPrincipalImplementBlocks ( std :: vector <const OilImplementBlock *> & Out ) const;
+	void GetPrincipalImplementBlocks ( std :: vector <OilImplementBlock *> & Out );
 	
-	void AddTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict, bool & RedefinitionConflict );
+	void AddTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict );
 	
-	const OilImplementBlock * FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
-	OilImplementBlock * FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize );
+	void FindTraitImplementBlocks ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, std :: vector <const OilImplementBlock *> & Out ) const;
+	void FindTraitImplementBlocks ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, std :: vector <OilImplementBlock *> & Out );
 	
 	uint32_t GetNamespaceCountAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
 	const std :: u32string GetImplementNamespaceAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const;
-	
-	const OilImplementBlock * GetImplementBlockAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const;
-	OilImplementBlock * GetImplementBlockAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index );
 	
 private:
 	
@@ -70,13 +68,13 @@ private:
 		
 	};
 		
-	OilImplementBlock * PrincipalImplementBlock;
+	std :: vector <OilImplementBlock *> PrincipalImplementBlocks;
 	
 	typedef struct
 	{
 		
 		OilTraitDefinition * Trait;
-		OilImplementBlock * Block;
+		std :: vector <OilImplementBlock *> * Blocks;
 		
 	} ImplementedTraitElement;
 	

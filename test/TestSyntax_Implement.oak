@@ -35,6 +35,18 @@ namespace MyNS
 		
 	}
 	
+	implement Test
+	{
+		
+		public function get ( & self ): i32
+		{
+			
+			return self.A;
+			
+		}
+		
+	}
+	
 	implement Test for ::std::operators::AddOp
 	{
 		

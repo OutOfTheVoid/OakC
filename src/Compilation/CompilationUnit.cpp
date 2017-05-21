@@ -77,7 +77,7 @@ void _PrintAST ( const ASTElement * Root, uint32_t Indent )
 	
 }
 
-const std :: string & CompilationUnit :: GetFileName ()
+const std :: string & CompilationUnit :: GetFileName () const
 {
 	
 	return SourceFile.GetName ();
@@ -178,7 +178,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 	{
 		
 		if ( ErrorToken != NULL )
-			LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
+			LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetSourceRef ().GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetSourceRef ().GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
 		else
 			LOG_FATALERROR_NOFILE ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : std :: string ( "unkown error" ) );
 		
@@ -193,7 +193,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 		
 		ErrorToken = PostLexTokens [ PostLexTokens.size () - AvailableTokens ];
 		
-		LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
+		LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetSourceRef ().GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetSourceRef ().GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
 		
 	}
 	else

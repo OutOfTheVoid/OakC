@@ -39,7 +39,7 @@ bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string
 					LOG_ERROR ( "Null first token for import statement" );
 				
 				LOG_ERROR_NOFILE ( ParseError );
-				LOG_ERROR_NOFILE ( SourceFileName + " Line " + std :: to_string ( FirstToken -> GetLine () ) + ", Char " + std :: to_string ( FirstToken -> GetChar () ) + ": " + ParseError );
+				LOG_ERROR_NOFILE ( SourceFileName + " Line " + std :: to_string ( FirstToken -> GetSourceRef ().GetLine () ) + ", Char " + std :: to_string ( FirstToken -> GetSourceRef ().GetChar () ) + ": " + ParseError );
 				
 				return false;
 				

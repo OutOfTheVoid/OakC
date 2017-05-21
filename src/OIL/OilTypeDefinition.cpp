@@ -9,7 +9,7 @@ OilTypeDefinition :: OilTypeDefinition ( OilStructDefinition * Structure, bool I
 	IsBuiltin ( IsBuiltin ),
 	IsStructBuiltin ( false ),
 	StructDefinition ( Structure ),
-	PrincipalImplementBlock ( NULL ),
+	PrincipalImplementBlocks (),
 	TraitMap ( NULL )
 {
 }
@@ -19,7 +19,7 @@ OilTypeDefinition :: OilTypeDefinition ( OilBuiltinStructDefinition * Structure,
 	IsBuiltin ( IsBuiltin ),
 	IsStructBuiltin ( true ),
 	BuiltinStructDefinition ( Structure ),
-	PrincipalImplementBlock ( NULL ),
+	PrincipalImplementBlocks (),
 	TraitMap ( NULL )
 {
 }
@@ -32,8 +32,8 @@ OilTypeDefinition :: ~OilTypeDefinition ()
 	else
 		delete StructDefinition;
 	
-	if ( PrincipalImplementBlock != NULL )
-		delete PrincipalImplementBlock;
+	for ( uint32_t I = 0; I < PrincipalImplementBlocks.size (); I ++ )
+		delete PrincipalImplementBlocks [ I ];
 	
 	if ( TraitMap != NULL )
 		DeleteTraitMap ( TraitMap );
@@ -53,10 +53,10 @@ void OilTypeDefinition :: DeleteTraitMap ( TraitMapElement * Element )
 	if ( Element -> IsTrait )
 	{
 		
-		if ( Element -> TraitElement.Trait != NULL )
-			delete Element -> TraitElement.Trait;
+		for ( uint32_t I = 0; I < Element -> TraitElement.Blocks -> size (); I ++ )
+			delete ( * Element -> TraitElement.Blocks ) [ I ];
 		
-		delete Element -> TraitElement.Block;
+		delete Element -> TraitElement.Blocks;
 		
 	}
 	else
@@ -123,28 +123,30 @@ OilStructDefinition * OilTypeDefinition :: GetStructDefinition ()
 	
 }
 
-void OilTypeDefinition :: SetPrincipalImplementBlock ( OilImplementBlock * Implement )
+void OilTypeDefinition :: AddPrincipalImplementBlock ( OilImplementBlock * Implement )
 {
 	
-	this -> PrincipalImplementBlock = Implement;
+	PrincipalImplementBlocks.push_back ( Implement );
 	
 }
 
-const OilImplementBlock * OilTypeDefinition :: GetPrincipalImplementBlock () const
+void OilTypeDefinition :: GetPrincipalImplementBlocks ( std :: vector <const OilImplementBlock *> & Blocks ) const
 {
 	
-	return PrincipalImplementBlock;
+	for ( uint32_t I = 0; I < PrincipalImplementBlocks.size (); I ++ )
+		Blocks.push_back ( PrincipalImplementBlocks [ I ] );
 	
 }
 
-OilImplementBlock * OilTypeDefinition :: GetPrincipalImplementBlock ()
+void OilTypeDefinition :: GetPrincipalImplementBlocks ( std :: vector <OilImplementBlock *> & Blocks )
 {
 	
-	return PrincipalImplementBlock;
+	for ( uint32_t I = 0; I < PrincipalImplementBlocks.size (); I ++ )
+		Blocks.push_back ( PrincipalImplementBlocks [ I ] );
 	
 }
 
-void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict, bool & RedefinitionConflict )
+void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, OilImplementBlock * Implement, bool & NameConflict )
 {
 	
 	if ( TraitMap == NULL )
@@ -199,7 +201,7 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * Abso
 	if ( Iter != CurrentElement -> NameMap -> end () )
 	{
 		
-		RedefinitionConflict = true;
+		Iter -> second -> TraitElement.Blocks -> push_back ( Implement );
 		
 		return;
 		
@@ -207,17 +209,18 @@ void OilTypeDefinition :: AddTraitImplementBlock ( const std :: u32string * Abso
 	
 	TraitMapElement * New = new TraitMapElement ();
 	New -> IsTrait = true;
-	New -> TraitElement.Block = Implement;
+	New -> TraitElement.Blocks = new std :: vector <OilImplementBlock *> ();
+	New -> TraitElement.Blocks -> push_back ( Implement );
 	
 	( * CurrentElement -> NameMap ) [ AbsoluteNamePath [ PathIndex ] ] = New;
 	
 }
 
-const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const
+void OilTypeDefinition :: FindTraitImplementBlocks ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, std :: vector <const OilImplementBlock *> & Out ) const
 {
 	
 	if ( TraitMap == NULL )
-		return NULL;
+		return;
 	
 	TraitMapElement * CurrentElement = TraitMap;
 	
@@ -231,12 +234,12 @@ const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const s
 		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 		
 		if ( Iter == CurrentElement -> NameMap -> end () )
-			return NULL;
+			return;
 		
 		CurrentElement = Iter -> second;
 		
 		if ( CurrentElement -> IsTrait )
-			return NULL;
+			return;
 		
 		PathIndex ++;
 		
@@ -245,39 +248,41 @@ const OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const s
 	Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 	
 	if ( Iter == CurrentElement -> NameMap -> end () )
-		return NULL;
+		return;
 	
 	if ( ! Iter -> second -> IsTrait )
-		return NULL;
+		return;
 	
-	return Iter -> second -> TraitElement.Block;
+	
+	for ( uint32_t I = 0; I < Iter -> second -> TraitElement.Blocks -> size (); I ++ )
+		Out.push_back ( ( * Iter -> second -> TraitElement.Blocks ) [ I ] );
 	
 }
 
-OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize )
+void OilTypeDefinition :: FindTraitImplementBlocks ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, std :: vector <OilImplementBlock *> & Out )
 {
 	
 	if ( TraitMap == NULL )
-		return NULL;
+		return;
 	
 	TraitMapElement * CurrentElement = TraitMap;
 	
 	uint32_t PathIndex = 0;
 	
-	std :: map <std :: u32string, struct TraitMapElement_Struct *> :: iterator Iter;
+	std :: map <std :: u32string, struct TraitMapElement_Struct *> :: const_iterator Iter;
 	
-	while ( PathIndex + 1 != NamePathSize )
+	while ( PathIndex + 1 < NamePathSize )
 	{
 		
 		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 		
 		if ( Iter == CurrentElement -> NameMap -> end () )
-			return NULL;
+			return;
 		
 		CurrentElement = Iter -> second;
 		
 		if ( CurrentElement -> IsTrait )
-			return NULL;
+			return;
 		
 		PathIndex ++;
 		
@@ -286,12 +291,14 @@ OilImplementBlock * OilTypeDefinition :: FindTraitImplementBlock ( const std :: 
 	Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
 	
 	if ( Iter == CurrentElement -> NameMap -> end () )
-		return NULL;
+		return;
 	
 	if ( ! Iter -> second -> IsTrait )
-		return NULL;
+		return;
 	
-	return Iter -> second -> TraitElement.Block;
+	
+	for ( uint32_t I = 0; I < Iter -> second -> TraitElement.Blocks -> size (); I ++ )
+		Out.push_back ( ( * Iter -> second -> TraitElement.Blocks ) [ I ] );
 	
 }
 
@@ -367,92 +374,6 @@ const std :: u32string OilTypeDefinition :: GetImplementNamespaceAt ( const std 
 		return NullString;
 	
 	return Iter -> first;
-	
-}
-
-const OilImplementBlock * OilTypeDefinition :: GetImplementBlockAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const
-{
-	
-	if ( TraitMap == NULL )
-		return NULL;
-	
-	TraitMapElement * CurrentElement = TraitMap;
-	
-	uint32_t PathIndex = 0;
-	
-	std :: map <std :: u32string, struct TraitMapElement_Struct *> :: const_iterator Iter;
-	
-	while ( PathIndex != NamePathSize )
-	{
-		
-		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
-		
-		if ( Iter == CurrentElement -> NameMap -> end () )
-			return NULL;
-		
-		CurrentElement = Iter -> second;
-		
-		if ( CurrentElement -> IsTrait )
-			return NULL;
-		
-		PathIndex ++;
-		
-	}
-	
-	Iter = CurrentElement -> NameMap -> begin ();
-	
-	std :: advance ( Iter, Index );
-	
-	if ( Iter == CurrentElement -> NameMap -> end () )
-		return NULL;
-	
-	if ( ! Iter -> second -> IsTrait )
-		return NULL;
-	
-	return Iter -> second -> TraitElement.Block;
-	
-}
-
-OilImplementBlock * OilTypeDefinition :: GetImplementBlockAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index )
-{
-	
-	if ( TraitMap == NULL )
-		return NULL;
-	
-	TraitMapElement * CurrentElement = TraitMap;
-	
-	uint32_t PathIndex = 0;
-	
-	std :: map <std :: u32string, struct TraitMapElement_Struct *> :: iterator Iter;
-	
-	while ( PathIndex != NamePathSize )
-	{
-		
-		Iter = CurrentElement -> NameMap -> find ( AbsoluteNamePath [ PathIndex ] );
-		
-		if ( Iter == CurrentElement -> NameMap -> end () )
-			return NULL;
-		
-		CurrentElement = Iter -> second;
-		
-		if ( CurrentElement -> IsTrait )
-			return NULL;
-		
-		PathIndex ++;
-		
-	}
-	
-	Iter = CurrentElement -> NameMap -> begin ();
-	
-	std :: advance ( Iter, Index );
-	
-	if ( Iter == CurrentElement -> NameMap -> end () )
-		return NULL;
-	
-	if ( ! Iter -> second -> IsTrait )
-		return NULL;
-	
-	return Iter -> second -> TraitElement.Block;
 	
 }
 

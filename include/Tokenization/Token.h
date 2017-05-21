@@ -4,6 +4,8 @@
 #include <string>
 #include <stdint.h>
 
+#include <Tokenization/SourceRef.h>
+
 class CompilationUnit;
 
 class Token
@@ -11,7 +13,7 @@ class Token
 public:
 	
 	/// Token constructor. Sets associated fields.
-	Token ( const std :: u32string & Source, uint64_t Char, uint64_t Line, uint64_t Tag, uint64_t AuxTag, CompilationUnit * SourceUnit );
+	Token ( const std :: u32string & Source, uint64_t Tag, uint64_t AuxTag, const SourceRef & Ref );
 	/// Copy constructor.
 	Token ( const Token & CopyFrom );
 	/// Destructor.
@@ -20,27 +22,21 @@ public:
 	/// Gets the source segment that the token represents.
 	const std :: u32string & GetSource () const;
 	
-	/// Gets the character position of the line in the file.
-	uint64_t GetChar () const;
-	/// Gets the line in the file.
-	uint64_t GetLine () const;
 	/// Gets the optional tag set to aid the lexer.
 	uint64_t GetTag () const;
 	/// Gets the optional tag-specific auxiliary tag.
 	uint64_t GetAuxTag () const;
-	/// Gets the comilation unit that generated the token.
-	CompilationUnit * GetSourceUnit () const;
+	
+	const SourceRef & GetSourceRef () const;
 	
 private:
 	
 	const std :: u32string Source;
 	
-	uint64_t Char;
-	uint64_t Line;
 	uint64_t Tag;
 	uint64_t AuxTag;
 	
-	CompilationUnit * SourceUnit;
+	SourceRef Ref;
 	
 };
 
