@@ -4,13 +4,15 @@
 #include <string>
 #include <map>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTemplateDefinitionParameter;
 
 class OilTemplateDefinition
 {
 public:
 	
-	OilTemplateDefinition ();
+	OilTemplateDefinition ( const SourceRef & Ref );
 	~OilTemplateDefinition ();
 	
 	void AddParameter ( OilTemplateDefinitionParameter * Parameter );
@@ -23,9 +25,13 @@ public:
 	const OilTemplateDefinitionParameter * GetTemplateParameter ( const std :: u32string & Name ) const;
 	OilTemplateDefinitionParameter * GetTemplateParameter ( const std :: u32string & Name );
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	std :: map <std :: u32string, OilTemplateDefinitionParameter *> Parameters;
+	
+	SourceRef Ref;
 	
 };
 

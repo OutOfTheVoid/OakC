@@ -5,8 +5,9 @@
 	#define NULL nullptr
 #endif
 
-OilExpressionStatement :: OilExpressionStatement ( OilExpression * Expression ):
-	Expression ( Expression )
+OilExpressionStatement :: OilExpressionStatement ( const SourceRef & Ref, OilExpression * Expression ):
+	Expression ( Expression ),
+	Ref ( Ref )
 {
 }
 
@@ -36,5 +37,12 @@ void OilExpressionStatement :: DisownExpression ()
 {
 	
 	Expression = NULL;
+	
+}
+
+const SourceRef & OilExpressionStatement :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

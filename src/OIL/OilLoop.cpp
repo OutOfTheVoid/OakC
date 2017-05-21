@@ -1,15 +1,17 @@
 #include <OIL/OilLoop.h>
 #include <OIL/OilStatementBody.h>
 
-OilLoop :: OilLoop ( OilStatementBody * StatementBody ):
+OilLoop :: OilLoop ( const SourceRef & Ref, OilStatementBody * StatementBody ):
 	StatementBody ( StatementBody ),
-	LoopLabel ( U"" )
+	LoopLabel ( U"" ),
+	Ref ( Ref )
 {
 }
 
-OilLoop :: OilLoop ( OilStatementBody * StatementBody, const std :: u32string & LoopLabel ):
+OilLoop :: OilLoop ( const SourceRef & Ref, OilStatementBody * StatementBody, const std :: u32string & LoopLabel ):
 	StatementBody ( StatementBody ),
-	LoopLabel ( LoopLabel )
+	LoopLabel ( LoopLabel ),
+	Ref ( Ref )
 {	
 }
 
@@ -52,5 +54,12 @@ IOilStatement :: StatementType OilLoop :: GetStatementType () const
 {
 	
 	return kStatementType_Loop;
+	
+}
+
+const SourceRef & OilLoop :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

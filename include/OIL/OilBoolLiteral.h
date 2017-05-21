@@ -3,11 +3,13 @@
 
 #include <OIL/IOilPrimary.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilBoolLiteral : public virtual IOilPrimary
 {
 public:
 	
-	OilBoolLiteral ( bool Value );
+	OilBoolLiteral ( const SourceRef & Ref, bool Value );
 	~OilBoolLiteral ();
 	
 	bool GetValue () const;
@@ -15,9 +17,13 @@ public:
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	bool Value;
+	
+	SourceRef Ref;
 	
 };
 

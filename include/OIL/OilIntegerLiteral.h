@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilIntegerLiteral : public virtual IOilPrimary
 {
 public:
@@ -59,8 +61,8 @@ public:
 		
 	} IntType;
 	
-	OilIntegerLiteral ( IntType Type, uint64_t UValue );
-	OilIntegerLiteral ( IntType Type, int64_t SValue );
+	OilIntegerLiteral ( const SourceRef & Ref, IntType Type, uint64_t UValue );
+	OilIntegerLiteral ( const SourceRef & Ref, IntType Type, int64_t SValue );
 	
 	void Set ( IntType Type, uint64_t UValue );
 	void Set ( IntType Type, int64_t SValue );
@@ -73,6 +75,8 @@ public:
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	union
@@ -84,6 +88,8 @@ private:
 	};
 	
 	IntType Type;
+	
+	SourceRef Ref;
 	
 };
 

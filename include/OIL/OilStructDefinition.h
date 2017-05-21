@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include <Tokenization/SourceRef.h>
+
 class OilStructBinding;
 class OilTemplateDefinition;
 
@@ -11,8 +13,8 @@ class OilStructDefinition// public virtual IOilTypeDefinition
 {
 public:
 		
-	OilStructDefinition ( const std :: u32string & ID );
-	OilStructDefinition ( const std :: u32string & ID, OilTemplateDefinition * TemplateDefinition );
+	OilStructDefinition ( const SourceRef & Ref, const std :: u32string & ID );
+	OilStructDefinition ( const SourceRef & Ref, const std :: u32string & ID, OilTemplateDefinition * TemplateDefinition );
 	~OilStructDefinition ();
 	
 	void AddBinding ( OilStructBinding * Binding );
@@ -32,6 +34,8 @@ public:
 	OilTemplateDefinition * GetTemplateDefinition ();
 	const OilTemplateDefinition * GetTemplateDefinition () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string ID;
@@ -39,6 +43,8 @@ private:
 	OilTemplateDefinition * TemplateDefinition;
 	
 	std :: map <std :: u32string, OilStructBinding *> Bindings;
+	
+	SourceRef Ref;
 	
 };
 

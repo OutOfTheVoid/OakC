@@ -6,20 +6,22 @@
 #include <stdint.h>
 #include <vector>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTypeRef;
 
 class OilArrayLiteral : public virtual IOilPrimary
 {
 public:
 	
-	OilArrayLiteral ();
-	OilArrayLiteral ( IOilPrimary * CountExpression );
-	OilArrayLiteral ( IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier );
-	OilArrayLiteral ( OilTypeRef * TypeSpecifier );
-	OilArrayLiteral ( IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
-	OilArrayLiteral ( IOilPrimary * CountExpression, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
-	OilArrayLiteral ( IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
-	OilArrayLiteral ( OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
+	OilArrayLiteral ( const SourceRef & Ref );
+	OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression );
+	OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier );
+	OilArrayLiteral ( const SourceRef & Ref, OilTypeRef * TypeSpecifier );
+	OilArrayLiteral ( const SourceRef & Ref, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
+	OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
+	OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
+	OilArrayLiteral ( const SourceRef & Ref, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount );
 	
 	~OilArrayLiteral ();
 	
@@ -41,6 +43,8 @@ public:
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	IOilPrimary * CountExpression;
@@ -48,6 +52,8 @@ private:
 	OilTypeRef * TypeSpecifier;
 	
 	std :: vector <IOilPrimary *> MemberInitializerExpressions;
+	
+	SourceRef Ref;
 	
 };
 

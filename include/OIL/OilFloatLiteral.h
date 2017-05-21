@@ -5,6 +5,8 @@
 
 #include <OIL/IOilPrimary.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilFloatLiteral : public virtual IOilPrimary
 {
 public:
@@ -18,7 +20,7 @@ public:
 		
 	} FloatType;
 	
-	OilFloatLiteral ( const BigFloat & Value, FloatType Type );
+	OilFloatLiteral ( const SourceRef & Ref, const BigFloat & Value, FloatType Type );
 	~OilFloatLiteral ();
 	
 	void SetValue ( const BigFloat & Value, FloatType Type );
@@ -30,11 +32,15 @@ public:
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	BigFloat Value;
 	
 	FloatType Type;
+	
+	SourceRef Ref;
 	
 };
 

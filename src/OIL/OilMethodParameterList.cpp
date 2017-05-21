@@ -1,9 +1,10 @@
 #include <OIL/OilMethodParameterList.h>
 #include <OIL/OilFunctionParameter.h>
 
-OilMethodParameterList :: OilMethodParameterList ( bool SelfIsReference ):
+OilMethodParameterList :: OilMethodParameterList ( const SourceRef & Ref, bool SelfIsReference ):
 	SelfIsReference ( SelfIsReference ),
-	Parameters ()
+	Parameters (),
+	Ref ( Ref )
 {
 }
 
@@ -93,5 +94,12 @@ OilFunctionParameter * OilMethodParameterList :: FindFunctionParameter ( const s
 		return Iter -> second;
 	
 	return NULL;
+	
+}
+
+const SourceRef & OilMethodParameterList :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

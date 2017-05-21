@@ -3,13 +3,15 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTypeRef;
 
 class OilStructBinding
 {
 public:
 	
-	OilStructBinding ( const std :: u32string & Name, OilTypeRef * TypeRef );
+	OilStructBinding ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef * TypeRef );
 	~OilStructBinding ();
 	
 	const std :: u32string & GetName () const;
@@ -17,10 +19,14 @@ public:
 	const OilTypeRef * GetTypeRef () const;
 	OilTypeRef * GetTypeRef ();
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string Name;
 	OilTypeRef * TypeRef;
+	
+	SourceRef Ref;
 	
 };
 

@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilMethodParameterList;
 class OilTypeRef;
 class OilTemplateDefinition;
@@ -11,8 +13,8 @@ class OilTraitMethod
 {
 public:
 	
-	OilTraitMethod ( const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType );
-	OilTraitMethod ( const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
+	OilTraitMethod ( const SourceRef & Ref, const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType );
+	OilTraitMethod ( const SourceRef & Ref, const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
 	~OilTraitMethod ();
 	
 	const std :: u32string & GetName () const;
@@ -30,6 +32,8 @@ public:
 	
 	bool HasReturnType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string Name;
@@ -37,6 +41,8 @@ private:
 	OilMethodParameterList * ParameterList;
 	OilTypeRef * ReturnType;
 	OilTemplateDefinition * TemplateDefinition;
+	
+	SourceRef Ref;
 	
 };
 

@@ -10,14 +10,16 @@ class OilTemplateDefinition;
 #include <string>
 #include <map>
 
+#include <Tokenization/SourceRef.h>
+
 class OilImplementBlock
 {
 public:
 	
-	OilImplementBlock ( OilTypeRef * ImplementedType );
-	OilImplementBlock ( OilTypeRef * ImplementedType, OilTemplateDefinition * WhereDefinition );
-	OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait );
-	OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait, OilTemplateDefinition * WhereDefinition );
+	OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType );
+	OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType, OilTemplateDefinition * WhereDefinition );
+	OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType, OilTypeRef * ForTrait );
+	OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType, OilTypeRef * ForTrait, OilTemplateDefinition * WhereDefinition );
 	~OilImplementBlock ();
 	
 	const OilTypeRef * GetImplementedType () const;
@@ -55,6 +57,8 @@ public:
 	
 	static bool AreBlocksAmbiguous ( const OilImplementBlock & A, const OilImplementBlock & B );
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	OilTypeRef * ImplementedType;
@@ -64,6 +68,8 @@ private:
 	
 	std :: map <std :: u32string, OilFunctionDefinition *> Functions;
 	std :: map <std :: u32string, OilMethodDefinition *> Methods;
+	
+	SourceRef Ref;
 	
 };
 

@@ -10,39 +10,43 @@
 	#define NULL nullptr
 #endif
 
-OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType ):
+OilImplementBlock :: OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType ):
 	ImplementedType ( ImplementedType ),
 	ForTrait ( NULL ),
 	WhereDefinition ( NULL ),
 	Functions (),
-	Methods ()
+	Methods (),
+	Ref ( Ref )
 {
 }
 
-OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType, OilTemplateDefinition * WhereDefinition ):
+OilImplementBlock :: OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType, OilTemplateDefinition * WhereDefinition ):
 	ImplementedType ( ImplementedType ),
 	ForTrait ( NULL ),
 	WhereDefinition ( WhereDefinition ),
 	Functions (),
-	Methods ()
+	Methods (),
+	Ref ( Ref )
 {
 }
 
-OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait ):
+OilImplementBlock :: OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType, OilTypeRef * ForTrait ):
 	ImplementedType ( ImplementedType ),
 	ForTrait ( ForTrait ),
 	WhereDefinition ( NULL ),
 	Functions (),
-	Methods ()
+	Methods (),
+	Ref ( Ref )
 {
 }
 
-OilImplementBlock :: OilImplementBlock ( OilTypeRef * ImplementedType, OilTypeRef * ForTrait, OilTemplateDefinition * WhereDefinition ):
+OilImplementBlock :: OilImplementBlock ( const SourceRef & Ref, OilTypeRef * ImplementedType, OilTypeRef * ForTrait, OilTemplateDefinition * WhereDefinition ):
 	ImplementedType ( ImplementedType ),
 	ForTrait ( ForTrait ),
 	WhereDefinition ( WhereDefinition ),
 	Functions (),
-	Methods ()
+	Methods (),
+	Ref ( Ref )
 {
 }
 
@@ -327,5 +331,12 @@ bool OilImplementBlock :: AreBlocksAmbiguous ( const OilImplementBlock & A, cons
 	}
 	
 	return true;
+	
+}
+
+const SourceRef & OilImplementBlock :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

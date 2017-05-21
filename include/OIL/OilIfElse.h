@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <vector>
 
+#include <Tokenization/SourceRef.h>
+
 class OilExpression;
 class OilStatementBody;
 
@@ -13,9 +15,9 @@ class OilIfElse : public virtual IOilStatement
 {
 public:
 		
-	OilIfElse ( OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody );
-	OilIfElse ( OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilStatementBody * ElseStatementBody );
-	OilIfElse ( OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilExpression ** ElseIfConditionExpressions, OilStatementBody ** ElseIfStatementBodies, uint32_t ElseIfCount, OilStatementBody * ElseStatementBody );
+	OilIfElse ( const SourceRef & Ref, OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody );
+	OilIfElse ( const SourceRef & Ref, OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilStatementBody * ElseStatementBody );
+	OilIfElse ( const SourceRef & Ref, OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilExpression ** ElseIfConditionExpressions, OilStatementBody ** ElseIfStatementBodies, uint32_t ElseIfCount, OilStatementBody * ElseStatementBody );
 	
 	~OilIfElse ();
 	
@@ -42,6 +44,8 @@ public:
 	
 	StatementType GetStatementType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	OilExpression * IfConditionExpression;
@@ -58,6 +62,8 @@ private:
 	} ElseIfClause;
 	
 	std :: vector <ElseIfClause> ElseIfClauses;
+	
+	SourceRef Ref;
 	
 };
 

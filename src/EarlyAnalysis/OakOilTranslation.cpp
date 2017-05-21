@@ -455,21 +455,23 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 		
 	}
 	
+	SourceRef Ref = NamespaceElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	OilNamespaceDefinition * DefinedNamespaceDefinition = NULL;
 	
 	const OakNamespaceDefinitionConstructor :: ElementData * NamespaceData = reinterpret_cast <const OakNamespaceDefinitionConstructor :: ElementData *> ( NamespaceElement -> GetData () );
 	
 	if ( NamespaceData -> DirectGlobalReference )
-		DefinedNamespaceDefinition = Container.FindOrCreateNamespaceDefinition ( NamespaceData -> Name );
+		DefinedNamespaceDefinition = Container.FindOrCreateNamespaceDefinition ( Ref, NamespaceData -> Name );
 	else
 	{
 		
-		OilNamespaceDefinition * ParentDefinition = Container.FindOrCreateNamespaceDefinition ( NamespaceData -> IdentList [ 0 ] );
+		OilNamespaceDefinition * ParentDefinition = Container.FindOrCreateNamespaceDefinition ( Ref, NamespaceData -> IdentList [ 0 ] );
 		
 		for ( uint32_t I = 1; I < NamespaceData -> IdentListLength; I ++ )
-			ParentDefinition = ParentDefinition -> FindOrCreateNamespaceDefinition ( NamespaceData -> IdentList [ I ] );
+			ParentDefinition = ParentDefinition -> FindOrCreateNamespaceDefinition ( Ref, NamespaceData -> IdentList [ I ] );
 		
-		DefinedNamespaceDefinition = ParentDefinition -> FindOrCreateNamespaceDefinition ( NamespaceData -> Name );
+		DefinedNamespaceDefinition = ParentDefinition -> FindOrCreateNamespaceDefinition ( Ref, NamespaceData -> Name );
 		
 	}
 	
@@ -831,6 +833,8 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 		
 	}
 	
+	SourceRef Ref = StructElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	uint64_t SubElementCount = StructElement -> GetSubElementCount ();
 	
 	if ( StructData -> Templated )
@@ -841,7 +845,7 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 		if ( TemplateDefinition == NULL )
 			return false;
 		
-		OilStructDefinition * StructDef = new OilStructDefinition ( StructData -> Name, TemplateDefinition );
+		OilStructDefinition * StructDef = new OilStructDefinition ( Ref, StructData -> Name, TemplateDefinition );
 		
 		for ( uint64_t I = 1; I < SubElementCount; I ++ )
 		{
@@ -863,13 +867,13 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 			
 		}
 		
-		Container.AddTypeDefinition ( new OilTypeDefinition ( StructDef ) );
+		Container.AddTypeDefinition ( new OilTypeDefinition ( Ref, StructDef ) );
 		
 	}
 	else
 	{
 		
-		OilStructDefinition * StructDef = new OilStructDefinition ( StructData -> Name );
+		OilStructDefinition * StructDef = new OilStructDefinition ( Ref, StructData -> Name );
 		
 		for ( uint64_t I = 0; I < SubElementCount; I ++ )
 		{
@@ -891,7 +895,7 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 			
 		}
 		
-		Container.AddTypeDefinition ( new OilTypeDefinition ( StructDef ) );
+		Container.AddTypeDefinition ( new OilTypeDefinition ( Ref, StructDef ) );
 		
 	}
 	
@@ -914,7 +918,9 @@ OilTemplateDefinition * OakTranslateTemplateDefinitionToOil ( const ASTElement *
 	if ( TemplateDefinitionElement -> GetTag () != OakASTTags :: kASTTag_TemplateDefinition )
 		return NULL;
 	
-	OilTemplateDefinition * Result = new OilTemplateDefinition ();
+	SourceRef Ref = TemplateDefinitionElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
+	OilTemplateDefinition * Result = new OilTemplateDefinition ( Ref );
 	
 	uint64_t SubElementCount = TemplateDefinitionElement -> GetSubElementCount ();
 	
@@ -923,12 +929,14 @@ OilTemplateDefinition * OakTranslateTemplateDefinitionToOil ( const ASTElement *
 		
 		const ASTElement * ParamElement = TemplateDefinitionElement -> GetSubElement ( I );
 		
+		Ref = ParamElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+		
 		if ( ParamElement -> GetTag () == OakASTTags :: kASTTag_UnrestrictedTemplateParameter )
 		{
 			
 			const OakUnrestrictedTemplateParameterConstructor :: ElementData * ParamData = reinterpret_cast <const OakUnrestrictedTemplateParameterConstructor :: ElementData *> ( ParamElement -> GetData () );
 			
-			Result -> AddParameter ( new OilTemplateDefinitionParameter ( ParamData -> Name ) );
+			Result -> AddParameter ( new OilTemplateDefinitionParameter ( Ref, ParamData -> Name ) );
 			
 		}
 		else if ( ParamElement -> GetTag () == OakASTTags :: kASTTag_RestrictedTemplateParameter )
@@ -963,7 +971,7 @@ OilTemplateDefinition * OakTranslateTemplateDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			Result -> AddParameter ( new OilTemplateDefinitionParameter ( ParamData -> Name, & RestrictionTypes [ 0 ], RestrictionTypes.size () ) );
+			Result -> AddParameter ( new OilTemplateDefinitionParameter ( Ref, ParamData -> Name, & RestrictionTypes [ 0 ], RestrictionTypes.size () ) );
 			
 		}
 		else
@@ -993,6 +1001,8 @@ OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTEle
 		
 	}
 	
+	SourceRef Ref = TemplateSpecificationElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	uint64_t SubElementCount = TemplateSpecificationElement -> GetSubElementCount ();
 	
 	std :: vector <OilTypeRef *> TypeList;
@@ -1016,7 +1026,7 @@ OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTEle
 		
 	}
 	
-	return new OilTemplateSpecification ( & TypeList [ 0 ], TypeList.size () );
+	return new OilTemplateSpecification ( Ref, & TypeList [ 0 ], TypeList.size () );
 	
 }
 
@@ -1032,6 +1042,8 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 		
 	}
 	
+	SourceRef Ref = TraitElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	switch ( TraitElement -> GetTag () )
 	{
 		
@@ -1040,7 +1052,7 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 			
 			const OakBareTraitNameConstructor :: ElementData * TraitRefData = reinterpret_cast <const OakBareTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
-			return new OilTypeRef ( TraitRefData -> Name, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> Absolute ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
+			return new OilTypeRef ( Ref, TraitRefData -> Name, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> Absolute ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
@@ -1051,7 +1063,7 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TraitElement -> GetSubElement ( 0 ) );
 			
-			return new OilTypeRef ( TraitRefData -> Name, TemplateSpecification, OilTypeRef :: kRefFlag_Trait );
+			return new OilTypeRef ( Ref, TraitRefData -> Name, TemplateSpecification, OilTypeRef :: kRefFlag_Trait );
 			
 		}
 		
@@ -1060,7 +1072,7 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 			
 			const OakNamespacedTraitNameConstructor :: ElementData * TraitRefData = reinterpret_cast <const OakNamespacedTraitNameConstructor :: ElementData *> ( TraitElement -> GetData () );
 			
-			return new OilTypeRef ( TraitRefData -> Name, TraitRefData -> IdentList, TraitRefData -> IdentListLength, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
+			return new OilTypeRef ( Ref, TraitRefData -> Name, TraitRefData -> IdentList, TraitRefData -> IdentListLength, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
@@ -1071,7 +1083,7 @@ OilTypeRef * OakTranslateTraitRefToOil ( const ASTElement * TraitElement )
 			
 			OilTemplateSpecification * TemplateSpecification = OakTranslateTemplateSpecificationToOil ( TraitElement -> GetSubElement ( 0 ) );
 			
-			return new OilTypeRef ( TraitRefData -> Name, TraitRefData -> IdentList, TraitRefData -> IdentListLength, TemplateSpecification, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
+			return new OilTypeRef ( Ref, TraitRefData -> Name, TraitRefData -> IdentList, TraitRefData -> IdentListLength, TemplateSpecification, OilTypeRef :: kRefFlag_Trait | ( TraitRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 ) );
 			
 		}
 		
@@ -1095,6 +1107,8 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 		
 	}
 	
+	SourceRef Ref = TypeElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	switch ( TypeElement -> GetTag () )
 	{
 		
@@ -1103,7 +1117,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			
 			const OakBareTypeNameConstructor :: ElementData * TypeRefData = reinterpret_cast <const OakBareTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
-			return new OilTypeRef ( TypeRefData -> TypeName, TypeRefData -> Absolute ? OilTypeRef :: kRefFlag_Absolute : 0 );
+			return new OilTypeRef ( Ref, TypeRefData -> TypeName, TypeRefData -> Absolute ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
@@ -1117,7 +1131,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			if ( TemplateSpecification == NULL )
 				return NULL;
 			
-			return new OilTypeRef ( TypeRefData -> TypeName, TemplateSpecification );
+			return new OilTypeRef ( Ref, TypeRefData -> TypeName, TemplateSpecification );
 			
 		}
 		
@@ -1126,7 +1140,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			
 			const OakNamespacedTypeNameConstructor :: ElementData * TypeRefData = reinterpret_cast <const OakNamespacedTypeNameConstructor :: ElementData *> ( TypeElement -> GetData () );
 			
-			return new OilTypeRef ( TypeRefData -> TypeName, TypeRefData -> IdentList, TypeRefData -> IdentListLength, TypeRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
+			return new OilTypeRef ( Ref, TypeRefData -> TypeName, TypeRefData -> IdentList, TypeRefData -> IdentListLength, TypeRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
@@ -1140,7 +1154,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			if ( TemplateSpecification == NULL )
 				return NULL;
 			
-			return new OilTypeRef ( TypeRefData -> TypeName, TypeRefData -> IdentList, TypeRefData -> IdentListLength, TemplateSpecification, TypeRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
+			return new OilTypeRef ( Ref, TypeRefData -> TypeName, TypeRefData -> IdentList, TypeRefData -> IdentListLength, TemplateSpecification, TypeRefData -> DirectGlobalReference ? OilTypeRef :: kRefFlag_Absolute : 0 );
 			
 		}
 		
@@ -1152,12 +1166,12 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement )
 			if ( SubTypeRef == NULL )
 				return NULL;
 			
-			return new OilTypeRef ( OilTypeRef :: kReference, SubTypeRef );
+			return new OilTypeRef ( Ref, OilTypeRef :: kReference, SubTypeRef );
 			
 		}
 		
 		case OakASTTags :: kASTTag_VoidType:
-			return new OilTypeRef ( OilTypeRef :: kVoid );
+			return new OilTypeRef ( Ref, OilTypeRef :: kVoid );
 		
 	}
 	
@@ -1179,6 +1193,8 @@ OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingEl
 		
 	}
 	
+	SourceRef Ref = BindingElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	const ASTElement * TypeElement = BindingElement -> GetSubElement ( 0 );
 	
 	OilTypeRef * BindingType = OakTranslateTypeRefToOil ( TypeElement );
@@ -1188,7 +1204,7 @@ OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingEl
 	
 	const OakStructBindingConstructor :: ElementData * BindingData = reinterpret_cast <const OakStructBindingConstructor :: ElementData *> ( BindingElement -> GetData () );
 	
-	return new OilStructBinding ( BindingData -> Name, BindingType );
+	return new OilStructBinding ( Ref, BindingData -> Name, BindingType );
 	
 }
 
@@ -1203,6 +1219,8 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = ImplementElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakImplementDefinitionConstructor :: ElementData * ImplementData = reinterpret_cast <const OakImplementDefinitionConstructor :: ElementData *> ( ImplementElement -> GetData () );
 	
@@ -1329,11 +1347,11 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 				
 			}
 			
-			Block = new OilImplementBlock ( ImplementedType, ForTrait, WhereDefinition );
+			Block = new OilImplementBlock ( Ref, ImplementedType, ForTrait, WhereDefinition );
 			
 		}
 		else	
-			Block = new OilImplementBlock ( ImplementedType, ForTrait );
+			Block = new OilImplementBlock ( Ref, ImplementedType, ForTrait );
 		
 	}
 	else
@@ -1409,11 +1427,11 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 				
 			}
 			
-			Block = new OilImplementBlock ( ImplementedType, WhereDefinition );
+			Block = new OilImplementBlock ( Ref, ImplementedType, WhereDefinition );
 			
 		}
 		else	
-			Block = new OilImplementBlock ( ImplementedType );
+			Block = new OilImplementBlock ( Ref, ImplementedType );
 		
 	}
 	
@@ -1523,6 +1541,8 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		
 	}
 	
+	SourceRef Ref = FunctionDefElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	const OakFunctionDefinitionConstructor :: ElementData * FunctionDefData = reinterpret_cast <const OakFunctionDefinitionConstructor :: ElementData *> ( FunctionDefElement -> GetData () );
 	
 	if ( FunctionDefData -> Templated )
@@ -1572,7 +1592,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType, TemplateDefinition );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType, TemplateDefinition );
 			
 		}
 		else
@@ -1590,7 +1610,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL, TemplateDefinition );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL, TemplateDefinition );
 			
 		}
 		
@@ -1629,7 +1649,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType );
 			
 		}
 		else
@@ -1646,7 +1666,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL );
 			
 		}
 		
@@ -1666,6 +1686,8 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = MethodDefElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakMethodDefinitionConstructor :: ElementData * MethodDefData = reinterpret_cast <const OakMethodDefinitionConstructor :: ElementData *> ( MethodDefElement -> GetData () );
 	
@@ -1716,7 +1738,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType, TemplateDefinition );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType, TemplateDefinition );
 			
 		}
 		else
@@ -1734,7 +1756,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL, TemplateDefinition );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL, TemplateDefinition );
 			
 		}
 		
@@ -1773,7 +1795,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType );
 			
 		}
 		else
@@ -1790,7 +1812,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL );
 			
 		}
 		
@@ -1809,6 +1831,8 @@ OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = ParameterListElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const ASTElement * ParameterElement = ParameterListElement -> GetSubElement ( 0 );
 	
@@ -1836,7 +1860,7 @@ OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement
 	
 	uint64_t ParamCount = ParameterListElement -> GetSubElementCount ();
 	
-	OilMethodParameterList * ParamList = new OilMethodParameterList ( SelfIsReference );
+	OilMethodParameterList * ParamList = new OilMethodParameterList ( Ref, SelfIsReference );
 	
 	for ( uint64_t I = 1; I < ParamCount; I ++ )
 	{
@@ -1856,6 +1880,8 @@ OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement
 		
 		const OakFunctionParameterConstructor :: ElementData * ParameterData = reinterpret_cast <const OakFunctionParameterConstructor :: ElementData *> ( ParameterElement -> GetData () );
 		
+		Ref = ParameterElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+		
 		OilTypeRef * Type = OakTranslateTypeRefToOil ( ParameterElement -> GetSubElement ( 0 ) );
 		
 		if ( Type == NULL )
@@ -1880,7 +1906,7 @@ OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement
 			
 		}
 		
-		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type, ParameterData -> Mut ) );
+		ParamList -> AddParameter ( new OilFunctionParameter ( Ref, ParameterData -> Name, Type, ParameterData -> Mut ) );
 		
 	}
 	
@@ -1900,7 +1926,9 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 		
 	}
 	
-	OilFunctionParameterList * ParamList = new OilFunctionParameterList ();
+	SourceRef Ref = ParameterListElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
+	OilFunctionParameterList * ParamList = new OilFunctionParameterList ( Ref );
 	
 	uint64_t ParamCount = ParameterListElement -> GetSubElementCount ();
 	
@@ -1908,6 +1936,8 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 	{
 		
 		const ASTElement * ParameterElement = ParameterListElement -> GetSubElement ( I );
+		
+		Ref = ParameterElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 		
 		if ( ( ParameterElement == NULL ) || ( ParameterElement -> GetTag () != OakASTTags :: kASTTag_FunctionParameter ) )
 		{
@@ -1946,7 +1976,7 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 			
 		}
 		
-		ParamList -> AddParameter ( new OilFunctionParameter ( ParameterData -> Name, Type, ParameterData -> Mut ) );
+		ParamList -> AddParameter ( new OilFunctionParameter ( Ref, ParameterData -> Name, Type, ParameterData -> Mut ) );
 		
 	}
 	
@@ -1984,7 +2014,9 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 		
 	}
 	
-	OilStatementBody * Body = new OilStatementBody ();
+	SourceRef Ref = BodyElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
+	OilStatementBody * Body = new OilStatementBody ( Ref );
 	
 	uint64_t SubElementCount = BodyElement -> GetSubElementCount ();
 	
@@ -2003,6 +2035,13 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 			return NULL;
 			
 		}
+		
+		const Token * StatementToken = StatementElement -> GetToken ( 0, 0 );
+		
+		if ( StatementToken != NULL )
+			Ref = StatementToken -> GetSourceRef ();
+		else
+			Ref = { 0, 0, NULL };
 		
 		switch ( StatementElement -> GetTag () )
 		{
@@ -2090,11 +2129,11 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 						
 					}
 					
-					Body -> AddStatement ( new OilReturn ( ReturnedExpression ) );
+					Body -> AddStatement ( new OilReturn ( Ref, ReturnedExpression ) );
 					
 				}
 				else
-					Body -> AddStatement ( new OilReturn () );
+					Body -> AddStatement ( new OilReturn ( Ref ) );
 				
 			}
 			break;
@@ -2212,7 +2251,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 					
 				}
 				
-				Body -> AddStatement ( new OilWhileLoop ( ConditionExpression, StatementBody, LoopLabel ) );
+				Body -> AddStatement ( new OilWhileLoop ( Ref, ConditionExpression, StatementBody, LoopLabel ) );
 				
 			}
 			break;
@@ -2273,7 +2312,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 					
 				}
 				
-				Body -> AddStatement ( new OilDoWhileLoop ( StatementBody, ConditionExpression, LoopLabel ) );
+				Body -> AddStatement ( new OilDoWhileLoop ( Ref, StatementBody, ConditionExpression, LoopLabel ) );
 				
 			}
 			break;
@@ -2319,7 +2358,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 					
 				}
 				
-				Body -> AddStatement ( new OilLoop ( StatementBody, LoopLabel ) );
+				Body -> AddStatement ( new OilLoop ( Ref, StatementBody, LoopLabel ) );
 				
 			}
 			break;
@@ -2345,11 +2384,11 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 						
 					}
 					
-					Body -> AddStatement ( new OilBreak ( reinterpret_cast <const OakLoopLabelConstructor :: ElementData *> ( LoopLabelElement -> GetData () ) -> Label ) );
+					Body -> AddStatement ( new OilBreak ( Ref, reinterpret_cast <const OakLoopLabelConstructor :: ElementData *> ( LoopLabelElement -> GetData () ) -> Label ) );
 					
 				}
 				else
-					Body -> AddStatement ( new OilBreak () );
+					Body -> AddStatement ( new OilBreak ( Ref ) );
 				
 			}
 			break;
@@ -2468,7 +2507,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 					
 				}
 				
-				Body -> AddStatement ( new OilIfElse ( IfCondition, IfStatementBody, & ElseIfConditions [ 0 ], & ElseIfStatementBodies [ 0 ], IfElseData -> ElseIfCount, ElseStatementBody ) );
+				Body -> AddStatement ( new OilIfElse ( Ref, IfCondition, IfStatementBody, & ElseIfConditions [ 0 ], & ElseIfStatementBodies [ 0 ], IfElseData -> ElseIfCount, ElseStatementBody ) );
 				
 			}
 			break;
@@ -2496,6 +2535,8 @@ OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * Stateme
 		
 	}
 	
+	SourceRef Ref = StatementElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	const OakConstStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakConstStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
 	
 	OilTypeRef * Type = OakTranslateTypeRefToOil ( StatementElement -> GetSubElement ( 0 ) );
@@ -2516,7 +2557,7 @@ OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * Stateme
 		
 	}
 	
-	return new OilConstStatement ( BindingData -> Name, BindingData -> Public, Type, InitializerExpression );
+	return new OilConstStatement ( Ref, BindingData -> Name, BindingData -> Public, Type, InitializerExpression );
 	
 }
 
@@ -2531,6 +2572,8 @@ OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * Sta
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = StatementElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakBindingStatementConstructor :: ElementData * BindingData = reinterpret_cast <const OakBindingStatementConstructor :: ElementData *> ( StatementElement -> GetData () );
 	
@@ -2555,11 +2598,11 @@ OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * Sta
 			
 		}
 		
-		return new OilBindingStatement ( BindingData -> Name, BindingData -> Public, BindingData -> Mutable, Type, InitializerExpression );
+		return new OilBindingStatement ( Ref, BindingData -> Name, BindingData -> Public, BindingData -> Mutable, Type, InitializerExpression );
 		
 	}
 	else
-		return new OilBindingStatement ( BindingData -> Name, BindingData -> Public, BindingData -> Mutable, Type );
+		return new OilBindingStatement ( Ref, BindingData -> Name, BindingData -> Public, BindingData -> Mutable, Type );
 	
 }
 
@@ -2575,6 +2618,13 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 		
 	}
 	
+	const Token * ExpressionToken = ExpressionElement -> GetToken ( 0, 0 );
+	
+	SourceRef Ref = { 0, 0, NULL };
+	
+	if ( ExpressionToken != NULL )
+		Ref = ExpressionToken -> GetSourceRef ();
+	
 	const ASTElement * SubExpressionElement = ExpressionElement -> GetSubElement ( 0 );
 	
 	if ( SubExpressionElement -> GetTag () == OakASTTags :: kASTTag_PrimaryExpression )
@@ -2585,7 +2635,7 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 		if ( Primary == NULL )
 			return NULL;
 		
-		return new OilExpression ( Primary );
+		return new OilExpression ( Ref, Primary );
 		
 		
 	}
@@ -2608,7 +2658,7 @@ OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionEleme
 		if ( Operator == NULL )
 			return NULL;
 		
-		return new OilExpression ( Operator );
+		return new OilExpression ( Ref, Operator );
 		
 	}
 	
@@ -2629,6 +2679,8 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = ArrayElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakArrayLiteralConstructor :: ElementData * LiteralData = reinterpret_cast <const OakArrayLiteralConstructor :: ElementData *> ( ArrayElement -> GetData () );
 	
@@ -2727,16 +2779,16 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 	{
 		
 		if ( InitializerValues.size () > 0 )
-			return new OilArrayLiteral ( SizePrimary, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+			return new OilArrayLiteral ( Ref, SizePrimary, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
 		else
-			return new OilArrayLiteral ( SizePrimary, TypeSpecifier );
+			return new OilArrayLiteral ( Ref, SizePrimary, TypeSpecifier );
 		
 	}
 	
 	if ( InitializerValues.size () > 0 )
-		return new OilArrayLiteral ( TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+		return new OilArrayLiteral ( Ref, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
 	
-	return new OilArrayLiteral ( TypeSpecifier );
+	return new OilArrayLiteral ( Ref, TypeSpecifier );
 	
 }
 
@@ -2754,6 +2806,8 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 		
 	}
 	
+	SourceRef Ref = SubElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	switch ( SubElement -> GetTag () )
 	{
 		
@@ -2767,7 +2821,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 			return OakTranslateArrayLiteral ( SubElement );
 		
 		case OakASTTags :: kASTTag_SelfAllusion:
-			return new OilAllusion ( OilAllusion :: SELF_ALLUSION );
+			return new OilAllusion ( Ref, OilAllusion :: SELF_ALLUSION );
 		
 		case OakASTTags :: kASTTag_BindingAllusion:
 		{
@@ -2819,7 +2873,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 							
 						}
 						
-						return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
+						return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
 						
 					}
 					else
@@ -2848,7 +2902,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 						if ( DirectTemplateSpec == NULL )
 							return NULL;
 						
-						return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
+						return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
 						
 					}
 					
@@ -2881,7 +2935,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 					if ( IndirectTemplateSpec == NULL )
 						return NULL;
 					
-					return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
+					return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
 					
 				}
 				else
@@ -2905,7 +2959,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 						
 					}
 					
-					return new OilAllusion ( & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
+					return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
 					
 				}
 				
@@ -2921,11 +2975,11 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 					if ( DirectTemplateSpec == NULL )
 						return NULL;
 					
-					return new OilAllusion ( AllusionData -> IdentList [ 0 ].Name, DirectTemplateSpec );
+					return new OilAllusion ( Ref, AllusionData -> IdentList [ 0 ].Name, DirectTemplateSpec );
 					
 				}
 				else
-					return new OilAllusion ( AllusionData -> IdentList [ 0 ].Name );
+					return new OilAllusion ( Ref, AllusionData -> IdentList [ 0 ].Name );
 				
 			}
 			
@@ -2954,6 +3008,8 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 	
 	const Token * LiteralToken = LiteralElement -> GetToken ( 0, 0 );
 	
+	SourceRef Ref = LiteralToken -> GetSourceRef ();
+	
 	switch ( LiteralToken -> GetTag () )
 	{
 		
@@ -2964,13 +3020,13 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			{
 				
 				case OakKeywordTokenTags :: kKeywordAuxTags_True:
-					return new OilBoolLiteral ( true );
+					return new OilBoolLiteral ( Ref, true );
 				
 				case OakKeywordTokenTags :: kKeywordAuxTags_False:
-					return new OilBoolLiteral ( false );
+					return new OilBoolLiteral ( Ref, false );
 				
 				case OakKeywordTokenTags :: kKeywordAuxTags_Null:
-					return new OilNullPointerLiteral ();
+					return new OilNullPointerLiteral ( Ref );
 					
 				default:
 				{
@@ -3004,7 +3060,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_Indeterminate, ValueString );
+			return new OilStringLiteral ( Ref, OilStringLiteral :: kEncodingType_Indeterminate, ValueString );
 			
 		}
 		break;
@@ -3027,7 +3083,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_UTF8, ValueString );
+			return new OilStringLiteral ( Ref, OilStringLiteral :: kEncodingType_UTF8, ValueString );
 			
 		}
 		break;
@@ -3050,7 +3106,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_UTF16, ValueString );
+			return new OilStringLiteral ( Ref, OilStringLiteral :: kEncodingType_UTF16, ValueString );
 			
 		}
 		break;
@@ -3073,7 +3129,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilStringLiteral ( OilStringLiteral :: kEncodingType_UTF32, ValueString );
+			return new OilStringLiteral ( Ref, OilStringLiteral :: kEncodingType_UTF32, ValueString );
 			
 		}
 		break;
@@ -3097,7 +3153,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilCharLiteral ( Charachter );
+			return new OilCharLiteral ( Ref, Charachter );
 			
 		}
 		break;
@@ -3116,7 +3172,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilFloatLiteral ( FloatValue, OilFloatLiteral :: kFloatType_Indeterminate );
+			return new OilFloatLiteral ( Ref, FloatValue, OilFloatLiteral :: kFloatType_Indeterminate );
 			
 		}
 		break;
@@ -3135,7 +3191,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilFloatLiteral ( FloatValue, OilFloatLiteral :: kFloatType_32 );
+			return new OilFloatLiteral ( Ref, FloatValue, OilFloatLiteral :: kFloatType_32 );
 			
 		}
 		break;
@@ -3154,7 +3210,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilFloatLiteral ( FloatValue, OilFloatLiteral :: kFloatType_64 );
+			return new OilFloatLiteral ( Ref, FloatValue, OilFloatLiteral :: kFloatType_64 );
 			
 		}
 		break;
@@ -3177,28 +3233,28 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x80 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI8, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI8, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x80 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI8_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI8_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			if ( Value < 0x8000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI16, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI16, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x8000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI16_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI16_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			if ( Value < 0x80000000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI32, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI32, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x80000000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI32_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI32_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			if ( Value < 0x8000000000000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI64, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI64, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x8000000000000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinI64_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinI64_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
 			
@@ -3225,10 +3281,10 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x80 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I8, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I8, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x80 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I8_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I8_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			WriteError ( LiteralElement, "Integer literal overflows signed 8-bit precision" );
 			
@@ -3255,10 +3311,10 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x8000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I16, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I16, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x8000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I16_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I16_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			WriteError ( LiteralElement, "Integer literal overflows signed 16-bit precision" );
 			
@@ -3285,10 +3341,10 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x80000000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I32, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I32, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x80000000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I32_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I32_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			WriteError ( LiteralElement, "Integer literal overflows signed 32-bit precision" );
 			
@@ -3315,10 +3371,10 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x8000000000000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I64, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I64, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x8000000000000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_I64_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_I64_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			WriteError ( LiteralElement, "Integer literal overflows signed 64-bit precision" );
 			
@@ -3345,7 +3401,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_IPtr, static_cast <int64_t> ( Value ) );
+			return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_IPtr, static_cast <int64_t> ( Value ) );
 			
 		}
 		break;
@@ -3368,15 +3424,15 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x100 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU8, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinU8, Value );
 			
 			if ( Value < 0x10000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU16, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinU16, Value );
 			
 			if ( Value < 0x100000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Implied_MinU32, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Implied_MinU32, Value );
 			
-			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
+			return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_U64, Value );
 			
 		}
 		break;
@@ -3399,7 +3455,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x100 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U8, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_U8, Value );
 			
 			WriteError ( LiteralElement, "Integer literal overflows unsigned 8-bit precision" );
 			
@@ -3426,7 +3482,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x100 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U16, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_U16, Value );
 			
 			WriteError ( LiteralElement, "Integer literal overflows unsigned 16-bit precision" );
 			
@@ -3453,7 +3509,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x100000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U32, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_U32, Value );
 			
 			WriteError ( LiteralElement, "Integer literal overflows unsigned 32-bit precision" );
 			
@@ -3479,7 +3535,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
+			return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_U64, Value );
 			
 		}
 		break;
@@ -3501,7 +3557,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 				
 			}
 			
-			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_UPtr, static_cast <int64_t> ( Value ) );
+			return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_UPtr, static_cast <int64_t> ( Value ) );
 			
 		}
 		break;
@@ -3524,30 +3580,30 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 			}
 			
 			if ( Value < 0x80 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI8, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI8, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x80 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI8_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI8_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			if ( Value < 0x8000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI16, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI16, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x8000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI16_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI16_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			if ( Value < 0x80000000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI32, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI32, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x80000000 )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI32_IfNegative, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI32_IfNegative, static_cast <int64_t> ( Value ) );
 			
 			if ( Value < 0x8000000000000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI64, static_cast <int64_t> ( Value ) );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI64, static_cast <int64_t> ( Value ) );
 			
 			if ( Value == 0x8000000000000000ULL )
-				return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Indeterminate_MinI64_IfNegative, Value );
+				return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Indeterminate_MinI64_IfNegative, Value );
 			
-			return new OilIntegerLiteral ( OilIntegerLiteral :: kIntType_Explicit_U64, Value );
+			return new OilIntegerLiteral ( Ref, OilIntegerLiteral :: kIntType_Explicit_U64, Value );
 			
 			return NULL;
 			
@@ -3634,6 +3690,8 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 		
 	}
 	
+	SourceRef Ref = OperatorElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	std :: map <uint64_t, OilUnaryOperator :: Operator> :: const_iterator UnaryIter = _OakOilTranslation_OperatorTypeMap_Unary.find ( Tag );
 	std :: map <uint64_t, OilBinaryOperator :: Operator> :: const_iterator BinaryIter = ( UnaryIter == _OakOilTranslation_OperatorTypeMap_Unary.end () ) ? _OakOilTranslation_OperatorTypeMap_Binary.find ( Tag ) : _OakOilTranslation_OperatorTypeMap_Binary.end ();
 	
@@ -3659,7 +3717,7 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			if ( PrimaryTerm == NULL )
 				return NULL;
 			
-			return new OilUnaryOperator ( UnaryIter -> second, PrimaryTerm );
+			return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
 			
 		}
 		
@@ -3668,7 +3726,7 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 		if ( OperatorTerm == NULL )
 			return NULL;
 		
-		return new OilUnaryOperator ( UnaryIter -> second, OperatorTerm );
+		return new OilUnaryOperator ( Ref, UnaryIter -> second, OperatorTerm );
 		
 	}
 	else if ( BinaryIter != _OakOilTranslation_OperatorTypeMap_Binary.end () )
@@ -3708,7 +3766,7 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 					
 				}
 				
-				return new OilBinaryOperator ( BinaryIter -> second, LeftPrimary, RightPrimary );
+				return new OilBinaryOperator ( Ref, BinaryIter -> second, LeftPrimary, RightPrimary );
 				
 			}
 			
@@ -3723,7 +3781,7 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				
 			}
 			
-			return new OilBinaryOperator ( BinaryIter -> second, LeftPrimary, RightOperator );
+			return new OilBinaryOperator ( Ref, BinaryIter -> second, LeftPrimary, RightOperator );
 			
 		}
 		
@@ -3746,7 +3804,7 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				
 			}
 			
-			return new OilBinaryOperator ( BinaryIter -> second, LeftOperator, RightPrimary );
+			return new OilBinaryOperator ( Ref, BinaryIter -> second, LeftOperator, RightPrimary );
 			
 		}
 		
@@ -3761,7 +3819,7 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			
 		}
 		
-		return new OilBinaryOperator ( BinaryIter -> second, LeftOperator, RightOperator );
+		return new OilBinaryOperator ( Ref, BinaryIter -> second, LeftOperator, RightOperator );
 		
 	}
 	
@@ -3782,6 +3840,8 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement, O
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = TraitElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakTraitDefinitionConstructor :: ElementData * TraitData = reinterpret_cast <const OakTraitDefinitionConstructor :: ElementData *> ( TraitElement -> GetData () );
 	
@@ -3940,7 +4000,7 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement, O
 		
 	}
 	
-	OilTraitDefinition * TraitDef = new OilTraitDefinition ( TraitData -> Name, & RequiredTraitRefs [ 0 ], RequiredTraitRefs.size (), & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition, Builtin );
+	OilTraitDefinition * TraitDef = new OilTraitDefinition ( Ref, TraitData -> Name, & RequiredTraitRefs [ 0 ], RequiredTraitRefs.size (), & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition, Builtin );
 	
 	if ( TraitDef -> IsBuiltin () && ( ! Builtin ) )
 		LOG_FATALERROR ( "BUILTIN FAILURE" );
@@ -3960,6 +4020,8 @@ OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = MethodElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakTraitMethodConstructor :: ElementData * TraitMethodData = reinterpret_cast <const OakTraitMethodConstructor :: ElementData *> ( MethodElement -> GetData () );
 	
@@ -4017,7 +4079,7 @@ OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement
 		
 	}
 	
-	return new OilTraitMethod ( TraitMethodData -> Name, ParameterList, ReturnType, TemplateDefinition );
+	return new OilTraitMethod ( Ref, TraitMethodData -> Name, ParameterList, ReturnType, TemplateDefinition );
 	
 }
 
@@ -4032,6 +4094,8 @@ OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionE
 		return NULL;
 		
 	}
+	
+	SourceRef Ref = FunctionElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	const OakTraitFunctionConstructor :: ElementData * TraitFunctionData = reinterpret_cast <const OakTraitFunctionConstructor :: ElementData *> ( FunctionElement -> GetData () );
 	
@@ -4089,7 +4153,7 @@ OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionE
 		
 	}
 	
-	return new OilTraitFunction ( TraitFunctionData -> Name, ParameterList, ReturnType, TemplateDefinition );
+	return new OilTraitFunction ( Ref, TraitFunctionData -> Name, ParameterList, ReturnType, TemplateDefinition );
 	
 }
 
@@ -4105,9 +4169,11 @@ OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTa
 		
 	}
 	
+	SourceRef Ref = DecoratorTagElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
 	const OakDecoratorTagConstructor :: ElementData * DecoratorData = reinterpret_cast <const OakDecoratorTagConstructor :: ElementData *> ( DecoratorTagElement -> GetData () );
 	
-	OilDecoratorTag * NewTag = new OilDecoratorTag ( DecoratorData -> ID );
+	OilDecoratorTag * NewTag = new OilDecoratorTag ( Ref, DecoratorData -> ID );
 	
 	return NewTag;
 	

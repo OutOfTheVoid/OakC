@@ -5,8 +5,9 @@
 	#define NULL nullptr
 #endif
 
-OilTemplateDefinition :: OilTemplateDefinition ():
-	Parameters ()
+OilTemplateDefinition :: OilTemplateDefinition ( const SourceRef & Ref ):
+	Parameters (),
+	Ref ( Ref )
 {	
 }
 
@@ -89,5 +90,12 @@ const OilTemplateDefinitionParameter * OilTemplateDefinition :: GetTemplateParam
 		return NULL;
 	
 	return Iter -> second;
+	
+}
+
+const SourceRef & OilTemplateDefinition :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

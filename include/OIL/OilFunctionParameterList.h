@@ -5,13 +5,15 @@
 #include <string>
 #include <map>
 
+#include <Tokenization/SourceRef.h>
+
 class OilFunctionParameter;
 
 class OilFunctionParameterList
 {
 public:
 	
-	OilFunctionParameterList ();
+	OilFunctionParameterList ( const SourceRef & Ref );
 	~OilFunctionParameterList ();
 	
 	void AddParameter ( OilFunctionParameter * AddParameter );
@@ -24,9 +26,13 @@ public:
 	const OilFunctionParameter * FindFunctionParameter ( const std :: u32string & Name ) const;
 	OilFunctionParameter * FindFunctionParameter ( const std :: u32string & Name );
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	std :: map <std :: u32string, OilFunctionParameter *> Parameters;
+	
+	SourceRef Ref;
 	
 };
 

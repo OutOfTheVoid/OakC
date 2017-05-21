@@ -1,8 +1,9 @@
 #include <OIL/OilFunctionParameterList.h>
 #include <OIL/OilFunctionParameter.h>
 
-OilFunctionParameterList :: OilFunctionParameterList ():
-	Parameters ()
+OilFunctionParameterList :: OilFunctionParameterList ( const SourceRef & Ref ):
+	Parameters (),
+	Ref ( Ref )
 {
 }
 
@@ -85,5 +86,12 @@ OilFunctionParameter * OilFunctionParameterList :: FindFunctionParameter ( const
 		return Iter -> second;
 	
 	return NULL;
+	
+}
+
+const SourceRef & OilFunctionParameterList :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

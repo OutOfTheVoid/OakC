@@ -371,7 +371,7 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPr
 	
 	LOG_VERBOSE ( "\n[ ALL ]: compilation step: Early analysis." );
 	
-	OilNamespaceDefinition OilRoot ( U"[global]" );
+	OilNamespaceDefinition OilRoot ( { 0, 0, NULL }, U"[global]" );
 	
 	if ( ! CompilationUnit :: RunBuiltinAddition ( OilRoot ) )
 		return 1;

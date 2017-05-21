@@ -1,6 +1,8 @@
 #ifndef TOKENIZATION_SOURCEREF_H
 #define TOKENIZATION_SOURCEREF_H
 
+#include <stdint.h>
+
 class CompilationUnit;
 
 class SourceRef

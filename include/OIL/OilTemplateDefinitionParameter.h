@@ -3,14 +3,16 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTypeRef;
 
 class OilTemplateDefinitionParameter
 {
 public:
 		
-	OilTemplateDefinitionParameter ( const std :: u32string & Name );
-	OilTemplateDefinitionParameter ( const std :: u32string & Name, OilTypeRef ** RestrictionTypes, uint32_t RestrictionCount );
+	OilTemplateDefinitionParameter ( const SourceRef & Ref, const std :: u32string & Name );
+	OilTemplateDefinitionParameter ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef ** RestrictionTypes, uint32_t RestrictionCount );
 	~OilTemplateDefinitionParameter ();
 	
 	const std :: u32string & GetName () const;
@@ -21,12 +23,16 @@ public:
 	OilTypeRef * GetRestriction ( uint32_t Index );
 	const OilTypeRef * GetRestriction ( uint32_t Index ) const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string Name;
 	
 	OilTypeRef ** RestrictionTypes;
 	uint32_t RestrictionCount;
+	
+	SourceRef Ref;
 	
 };
 

@@ -1,6 +1,7 @@
 #include <OIL/OilNullPointerLiteral.h>
 
-OilNullPointerLiteral :: OilNullPointerLiteral ()
+OilNullPointerLiteral :: OilNullPointerLiteral ( const SourceRef & Ref ):
+	Ref ( Ref )
 {
 }
 
@@ -19,5 +20,12 @@ IOilPrimary :: PrimaryType OilNullPointerLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_NullPointerLiteral;
+	
+}
+
+const SourceRef & OilNullPointerLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

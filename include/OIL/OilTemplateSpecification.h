@@ -3,23 +3,29 @@
 
 #include <stdint.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTypeRef;
 
 class OilTemplateSpecification
 {
 public:
 	
-	OilTemplateSpecification ( OilTypeRef ** TypeRefList, uint32_t TypeRefCount );
+	OilTemplateSpecification ( const SourceRef & Ref, OilTypeRef ** TypeRefList, uint32_t TypeRefCount );
 	~OilTemplateSpecification ();
 	
 	uint32_t GetTypeRefCount () const;
 	OilTypeRef * GetTypeRef ( uint32_t Index );
 	const OilTypeRef * GetTypeRef ( uint32_t Index ) const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	OilTypeRef ** TypeRefList;
 	uint32_t TypeRefCount;
+	
+	SourceRef Ref;
 	
 };
 

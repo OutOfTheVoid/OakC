@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilExpression;
 class IOilPrimary;
 
@@ -30,8 +32,8 @@ public:
 		
 	} Operator;
 	
-	OilUnaryOperator ( Operator Op, IOilOperator * Term );
-	OilUnaryOperator ( Operator Op, IOilPrimary * Term );
+	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * Term );
+	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * Term );
 	
 	~OilUnaryOperator ();
 	
@@ -52,6 +54,8 @@ public:
 	
 	void DisownTerm ();
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	static const std :: string OperatorStrings [];
@@ -69,6 +73,8 @@ private:
 		IOilOperator * OperatorTerm;
 		
 	};
+	
+	SourceRef Ref;
 	
 };
 

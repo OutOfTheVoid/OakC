@@ -6,15 +6,17 @@
 	#define NULL nullptr
 #endif
 
-OilExpression :: OilExpression ( IOilPrimary * Primary ):
+OilExpression :: OilExpression ( const SourceRef & Ref, IOilPrimary * Primary ):
 	TermIsPrimary ( true ),
-	PrimaryTerm ( Primary )
+	PrimaryTerm ( Primary ),
+	Ref ( Ref )
 {
 }
 
-OilExpression :: OilExpression ( IOilOperator * Operator ):
+OilExpression :: OilExpression ( const SourceRef & Ref, IOilOperator * Operator ):
 	TermIsPrimary ( false ),
-	OperatorTerm ( Operator )
+	OperatorTerm ( Operator ),
+	Ref ( Ref )
 {
 }
 
@@ -136,5 +138,12 @@ IOilPrimary :: PrimaryType OilExpression :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_Expression;
+	
+}
+
+const SourceRef & OilExpression :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

@@ -42,6 +42,12 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	
 	ElementData * DecoratorData = new ElementData ();
 	
+	ASTElement * DecoratorElement = new ASTElement ();
+	
+	DecoratorElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	DecoratorElement -> SetTag ( OakASTTags :: kASTTag_DecoratorTag );
+	DecoratorElement -> SetData ( DecoratorData, & ElementDataDestructor );
+	
 	CurrentToken = Input.Tokens [ 1 ];
 	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
@@ -57,6 +63,8 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		return;
 		
 	}
+	
+	DecoratorElement -> AddTokenSection ( & Input.Tokens [ 1 ], 1 );
 	
 	DecoratorData -> ID = CurrentToken -> GetSource ();
 	
@@ -76,10 +84,7 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
-	ASTElement * DecoratorElement = new ASTElement ();
-	
-	DecoratorElement -> SetTag ( OakASTTags :: kASTTag_DecoratorTag );
-	DecoratorElement -> SetData ( DecoratorData, & ElementDataDestructor );
+	DecoratorElement -> AddTokenSection ( & Input.Tokens [ 2 ], 1 );
 	
 	Output.Accepted = true;
 	Output.ConstructedElement = DecoratorElement;

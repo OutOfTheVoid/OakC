@@ -93,9 +93,7 @@ void OakStatementBlockConstructor :: TryConstruct ( ASTConstructionInput & Input
 	
 	BlockElement -> SetTag ( OakASTTags :: kASTTag_StatementBlock );
 	BlockElement -> SetData ( BlockData, & ElementDataDestructor );
-	
-	if ( IsBlock )
-		BlockElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	BlockElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
 	
 	bool Error = false;
 	std :: string ErrorString;

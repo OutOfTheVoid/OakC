@@ -5,20 +5,26 @@
 
 #include <stdint.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilImplicitLocalInitialization : public virtual IOilStatement
 {
 public:
 	
-	OilImplicitLocalInitialization ( uint64_t LocalIndex );
+	OilImplicitLocalInitialization ( const SourceRef & Ref, uint64_t LocalIndex );
 	~OilImplicitLocalInitialization ();
 	
 	StatementType GetStatementType () const;
 	
 	uint64_t GetLocalIndex () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	uint64_t LocalIndex;
+	
+	SourceRef Ref;
 	
 };
 

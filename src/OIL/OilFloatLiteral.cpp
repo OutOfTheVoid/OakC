@@ -1,8 +1,9 @@
 #include <OIL/OilFloatLiteral.h>
 
-OilFloatLiteral :: OilFloatLiteral ( const BigFloat & Value, FloatType Type ):
+OilFloatLiteral :: OilFloatLiteral ( const SourceRef & Ref, const BigFloat & Value, FloatType Type ):
 	Value ( Value ),
-	Type ( Type )
+	Type ( Type ),
+	Ref ( Ref )
 {
 }
 
@@ -43,5 +44,12 @@ IOilPrimary :: PrimaryType OilFloatLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_FloatLiteral;
+	
+}
+
+const SourceRef & OilFloatLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

@@ -3,25 +3,27 @@
 
 #include <vector>
 
-OilAllusion :: OilAllusion ( SelfType SELF_ALLUSION ):
+OilAllusion :: OilAllusion ( const SourceRef & Ref, SelfType SELF_ALLUSION ):
 	NamespaceNameCount ( 0 ),
 	NamespaceNameList ( NULL ),
 	Name ( U"" ),
 	DirectTemplateSpecification ( NULL ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( kAllusionTarget_Self )
+	Target ( kAllusionTarget_Self ),
+	Ref ( Ref )
 {
 	
 	(void) SELF_ALLUSION;
 	
 }
 
-OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name ):
+OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name ):
 	NamespaceNameCount ( NamespaceNameCount ),
 	Name ( Name ),
 	DirectTemplateSpecification ( NULL ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue : kAllusionTarget_Namespaced )
+	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue : kAllusionTarget_Namespaced ),
+	Ref ( Ref )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -31,12 +33,13 @@ OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_
 	
 }
 
-OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification ):
+OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification ):
 	NamespaceNameCount ( NamespaceNameCount ),
 	Name ( Name ),
 	DirectTemplateSpecification ( DirectTemplateSpecification ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue_Templated : kAllusionTarget_Namespaced_Templated )
+	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue_Templated : kAllusionTarget_Namespaced_Templated ),
+	Ref ( Ref )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -46,12 +49,13 @@ OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_
 	
 }
 
-OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification, OilTemplateSpecification * IndirectTemplateSpecification ):
+OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification, OilTemplateSpecification * IndirectTemplateSpecification ):
 	NamespaceNameCount ( NamespaceNameCount ),
 	Name ( Name ),
 	DirectTemplateSpecification ( DirectTemplateSpecification ),
 	IndirectTemplateSpecification ( IndirectTemplateSpecification ),
-	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue_Templated : kAllusionTarget_Namespaced_Templated )
+	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue_Templated : kAllusionTarget_Namespaced_Templated ),
+	Ref ( Ref )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -61,23 +65,25 @@ OilAllusion :: OilAllusion ( const std :: u32string * NamespaceNameList, uint32_
 	
 }
 
-OilAllusion :: OilAllusion ( const std :: u32string & Name ):
+OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string & Name ):
 	NamespaceNameCount ( 0 ),
 	NamespaceNameList ( NULL ),
 	Name ( Name ),
 	DirectTemplateSpecification ( NULL ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( kAllusionTarget_Indeterminate )
+	Target ( kAllusionTarget_Indeterminate ),
+	Ref ( Ref )
 {
 }
 
-OilAllusion :: OilAllusion ( const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification ):
+OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification ):
 	NamespaceNameCount ( 0 ),
 	NamespaceNameList ( NULL ),
 	Name ( Name ),
 	DirectTemplateSpecification ( TemplateSpecification ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( kAllusionTarget_Indeterminate_Templated )
+	Target ( kAllusionTarget_Indeterminate_Templated ),
+	Ref ( Ref )
 {
 }
 
@@ -186,5 +192,12 @@ IOilPrimary :: PrimaryType OilAllusion :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_Allusion;
+	
+}
+
+const SourceRef & OilAllusion :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

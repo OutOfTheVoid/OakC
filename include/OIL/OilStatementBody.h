@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilBindingStatement;
 class OilConstStatement;
 
@@ -13,7 +15,7 @@ class OilStatementBody : public virtual IOilStatement
 {
 public:
 	
-	OilStatementBody ();
+	OilStatementBody ( const SourceRef & Ref );
 	~OilStatementBody ();
 	
 	bool IsRootBody () const;
@@ -57,6 +59,8 @@ public:
 	
 	StatementType GetStatementType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	typedef struct
@@ -75,6 +79,8 @@ private:
 	
 	OilStatementBody * ParentBody;
 	uint64_t ParentSelfIndex;
+	
+	SourceRef Ref;
 	
 };
 

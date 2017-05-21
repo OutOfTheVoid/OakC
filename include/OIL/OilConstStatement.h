@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTypeRef;
 class OilExpression;
 
@@ -12,7 +14,7 @@ class OilConstStatement : public virtual IOilStatement
 {
 public:
 	
-	OilConstStatement ( const std :: u32string & Name, bool Public, OilTypeRef * Type, OilExpression * InitializerValue );
+	OilConstStatement ( const SourceRef & Ref, const std :: u32string & Name, bool Public, OilTypeRef * Type, OilExpression * InitializerValue );
 	~OilConstStatement ();
 	
 	const std :: u32string & GetName () const;
@@ -29,6 +31,8 @@ public:
 	
 	StatementType GetStatementType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string Name;
@@ -37,6 +41,8 @@ private:
 	
 	OilTypeRef * Type;
 	OilExpression * InitializerValue;
+	
+	SourceRef Ref;
 	
 };
 

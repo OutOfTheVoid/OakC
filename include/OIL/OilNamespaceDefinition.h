@@ -8,6 +8,8 @@
 #include <string>
 #include <map>
 
+#include <Tokenization/SourceRef.h>
+
 class OilStructDefinition;
 class OilTypeDefinition;
 class OilFunctionDefinition;
@@ -73,7 +75,7 @@ public:
 		
 	} NameSearchResultConst;
 		
-	OilNamespaceDefinition ( const std :: u32string & ID );
+	OilNamespaceDefinition ( const SourceRef & Ref, const std :: u32string & ID );
 	~OilNamespaceDefinition ();
 	
 	void SearchName ( const std :: u32string & Name, NameSearchResult & Result );
@@ -84,7 +86,7 @@ public:
 	OilNamespaceDefinition * GetNamespaceDefinition ( uint32_t Index );
 	const OilNamespaceDefinition * GetNamespaceDefinition ( uint32_t Index ) const;
 	
-	OilNamespaceDefinition * FindOrCreateNamespaceDefinition ( const std :: u32string & ID );
+	OilNamespaceDefinition * FindOrCreateNamespaceDefinition ( const SourceRef & Ref, const std :: u32string & ID );
 	
 	OilNamespaceDefinition * FindNamespaceDefinition ( const std :: u32string & ID );
 	const OilNamespaceDefinition * FindNamespaceDefinition ( const std :: u32string & ID ) const;
@@ -156,6 +158,8 @@ public:
 	
 	void RemoveUnresolvedImplementBlock ( uint32_t Index );
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	OilNamespaceDefinition * Parent;
@@ -173,6 +177,8 @@ private:
 	std :: map <std :: u32string, OilConstStatement *> Constants;
 	
 	std :: vector <OilImplementBlock *> UnresImplBlocks;
+	
+	SourceRef Ref;
 	
 };
 

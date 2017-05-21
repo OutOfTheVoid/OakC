@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class IOilPrimary;
 
 class OilBinaryOperator : public virtual IOilOperator
@@ -52,10 +54,10 @@ public:
 		
 	} Operator;
 	
-	OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm );
-	OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilPrimary * RightTerm );
-	OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm );
-	OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm );
+	OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm );
+	OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * LeftTerm, IOilPrimary * RightTerm );
+	OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm );
+	OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm );
 	
 	~OilBinaryOperator ();
 	
@@ -80,6 +82,8 @@ public:
 	OperatorType GetOperatorType () const;
 	
 	void DisownTerms ();
+	
+	const SourceRef & GetSourceRef () const;
 	
 private:
 	
@@ -107,6 +111,8 @@ private:
 		IOilPrimary * RightPrimaryTerm;
 		
 	};
+	
+	SourceRef Ref;
 	
 };
 

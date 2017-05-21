@@ -1,13 +1,15 @@
 #ifndef OIL_OILEXPRESSIONSTATEMENT_H
 #define OIL_OILEXPRESSIONSTATEMENT_H
 
+#include <Tokenization/SourceRef.h>
+
 class OilExpression;
 
 class OilExpressionStatement
 {
 public:
 	
-	OilExpressionStatement ( OilExpression * Expression );
+	OilExpressionStatement ( const SourceRef & Ref, OilExpression * Expression );
 	~OilExpressionStatement ();
 	
 	OilExpression * GetExpression ();
@@ -15,9 +17,13 @@ public:
 	
 	void DisownExpression ();
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	OilExpression * Expression;
+	
+	SourceRef Ref;
 	
 };
 

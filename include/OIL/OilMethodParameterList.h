@@ -8,11 +8,13 @@ class OilFunctionParameter;
 #include <string>
 #include <map>
 
+#include <Tokenization/SourceRef.h>
+
 class OilMethodParameterList
 {
 public:
 	
-	OilMethodParameterList ( bool SelfIsReference );
+	OilMethodParameterList ( const SourceRef & Ref, bool SelfIsReference );
 	~OilMethodParameterList ();
 	
 	void AddParameter ( OilFunctionParameter * AddParameter );
@@ -27,11 +29,15 @@ public:
 	const OilFunctionParameter * FindFunctionParameter ( const std :: u32string & Name ) const;
 	OilFunctionParameter * FindFunctionParameter ( const std :: u32string & Name );
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	bool SelfIsReference;
 	
 	std :: map <std :: u32string, OilFunctionParameter *> Parameters;
+	
+	SourceRef Ref;
 	
 };
 

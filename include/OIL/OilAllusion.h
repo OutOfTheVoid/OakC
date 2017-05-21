@@ -5,6 +5,8 @@
 
 #include <OIL/IOilPrimary.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTemplateSpecification;
 
 class OilAllusion : public virtual IOilPrimary
@@ -32,12 +34,12 @@ public:
 		
 	} SelfType;
 	
-	OilAllusion ( SelfType SELF_ALLUSION );
-	OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name );
-	OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification );
-	OilAllusion ( const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification, OilTemplateSpecification * IndirectTemplateSpecification );
-	OilAllusion ( const std :: u32string & Name );
-	OilAllusion ( const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification );
+	OilAllusion ( const SourceRef & Ref, SelfType SELF_ALLUSION );
+	OilAllusion ( const SourceRef & Ref, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name );
+	OilAllusion ( const SourceRef & Ref, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification );
+	OilAllusion ( const SourceRef & Ref, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, bool Absolute, const std :: u32string Name, OilTemplateSpecification * DirectTemplateSpecification, OilTemplateSpecification * IndirectTemplateSpecification );
+	OilAllusion ( const SourceRef & Ref, const std :: u32string & Name );
+	OilAllusion ( const SourceRef & Ref, const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification );
 	~OilAllusion ();
 	
 	AllusionTarget GetTarget () const;
@@ -60,6 +62,8 @@ public:
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	uint32_t NamespaceNameCount;
@@ -70,6 +74,8 @@ private:
 	OilTemplateSpecification * IndirectTemplateSpecification;
 	
 	AllusionTarget Target;
+	
+	SourceRef Ref;
 	
 };
 

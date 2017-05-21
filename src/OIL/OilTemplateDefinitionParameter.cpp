@@ -5,16 +5,18 @@
 	#define NULL nullptr
 #endif
 
-OilTemplateDefinitionParameter :: OilTemplateDefinitionParameter ( const std :: u32string & Name ):
+OilTemplateDefinitionParameter :: OilTemplateDefinitionParameter ( const SourceRef & Ref, const std :: u32string & Name ):
 	Name ( Name ),
 	RestrictionTypes ( NULL ),
-	RestrictionCount ( 0 )
+	RestrictionCount ( 0 ),
+	Ref ( Ref )
 {
 }
 
-OilTemplateDefinitionParameter :: OilTemplateDefinitionParameter ( const std :: u32string & Name, OilTypeRef ** RestrictionTypes, uint32_t RestrictionCount ):
+OilTemplateDefinitionParameter :: OilTemplateDefinitionParameter ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef ** RestrictionTypes, uint32_t RestrictionCount ):
 	Name ( Name ),
-	RestrictionCount ( RestrictionCount )
+	RestrictionCount ( RestrictionCount ),
+	Ref ( Ref )
 {
 	
 	this -> RestrictionTypes = new OilTypeRef * [ RestrictionCount ];
@@ -77,5 +79,12 @@ const OilTypeRef * OilTemplateDefinitionParameter :: GetRestriction ( uint32_t I
 		return NULL;
 	
 	return RestrictionTypes [ Index ];
+	
+}
+
+const SourceRef & OilTemplateDefinitionParameter :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

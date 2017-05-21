@@ -1,59 +1,67 @@
 #include <OIL/OilArrayLiteral.h>
 #include <OIL/OilTypeRef.h>
 
-OilArrayLiteral :: OilArrayLiteral ():
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref ):
 	CountExpression ( NULL ),
 	TypeSpecifier ( NULL ),
-	MemberInitializerExpressions ()
+	MemberInitializerExpressions (),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( IOilPrimary * CountExpression ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression ):
 	CountExpression ( CountExpression ),
 	TypeSpecifier ( NULL ),
-	MemberInitializerExpressions ()
+	MemberInitializerExpressions (),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier ):
 	CountExpression ( CountExpression ),
 	TypeSpecifier ( TypeSpecifier ),
-	MemberInitializerExpressions ()
+	MemberInitializerExpressions (),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( OilTypeRef * TypeSpecifier ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, OilTypeRef * TypeSpecifier ):
 	CountExpression ( 0 ),
 	TypeSpecifier ( TypeSpecifier ),
-	MemberInitializerExpressions ()
+	MemberInitializerExpressions (),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
 	CountExpression ( 0 ),
 	TypeSpecifier ( NULL ),
-	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount )
+	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount ),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( IOilPrimary * CountExpression, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
 	CountExpression ( CountExpression ),
 	TypeSpecifier ( NULL ),
-	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount )
+	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount ),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, IOilPrimary * CountExpression, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
 	CountExpression ( CountExpression ),
 	TypeSpecifier ( TypeSpecifier ),
-	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount )
+	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount ),
+	Ref ( Ref )
 {
 }
 
-OilArrayLiteral :: OilArrayLiteral ( OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
+OilArrayLiteral :: OilArrayLiteral ( const SourceRef & Ref, OilTypeRef * TypeSpecifier, IOilPrimary ** MemberInitializerExpressions, uint64_t ValueCount ):
 	CountExpression ( NULL ),
 	TypeSpecifier ( TypeSpecifier ),
-	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount )
+	MemberInitializerExpressions ( MemberInitializerExpressions, MemberInitializerExpressions + ValueCount ),
+	Ref ( Ref )
 {
 }
 
@@ -166,5 +174,12 @@ IOilPrimary :: PrimaryType OilArrayLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_ArrayLiteral;
+	
+}
+
+const SourceRef & OilArrayLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

@@ -2,6 +2,7 @@
 #define PARSING_ASTELEMENT_H
 
 #include <Tokenization/Token.h>
+#include <Tokenization/SourceRef.h>
 
 #include <vector>
 #include <stdint.h>

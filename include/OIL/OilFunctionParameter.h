@@ -3,13 +3,15 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTypeRef;
 
 class OilFunctionParameter
 {
 public:
 	
-	OilFunctionParameter ( const std :: u32string Name, OilTypeRef * Type, bool Mut );
+	OilFunctionParameter ( const SourceRef & Ref, const std :: u32string Name, OilTypeRef * Type, bool Mut );
 	~OilFunctionParameter ();
 	
 	const OilTypeRef * GetType () const;
@@ -19,6 +21,8 @@ public:
 	
 	bool GetMut () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string Name;
@@ -26,6 +30,8 @@ private:
 	OilTypeRef * Type;
 	
 	bool Mut;
+	
+	SourceRef Ref;
 	
 };
 

@@ -2,8 +2,9 @@
 
 #include <OIL/OilTypeRef.h>
 
-OilTemplateSpecification :: OilTemplateSpecification ( OilTypeRef ** TypeRefList, uint32_t TypeRefCount ):
-	TypeRefCount ( TypeRefCount )
+OilTemplateSpecification :: OilTemplateSpecification ( const SourceRef & Ref, OilTypeRef ** TypeRefList, uint32_t TypeRefCount ):
+	TypeRefCount ( TypeRefCount ),
+	Ref ( Ref )
 {
 	
 	this -> TypeRefList = new OilTypeRef * [ TypeRefCount ];
@@ -47,5 +48,12 @@ const OilTypeRef * OilTemplateSpecification :: GetTypeRef ( uint32_t Index ) con
 		return NULL;
 	
 	return TypeRefList [ Index ];
+	
+}
+
+const SourceRef & OilTemplateSpecification :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

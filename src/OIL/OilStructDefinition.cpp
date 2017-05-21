@@ -2,17 +2,19 @@
 #include <OIL/OilStructBinding.h>
 #include <OIL/OilTemplateDefinition.h>
 
-OilStructDefinition :: OilStructDefinition ( const std :: u32string & ID ):
+OilStructDefinition :: OilStructDefinition ( const SourceRef & Ref, const std :: u32string & ID ):
 	ID ( ID ),
 	TemplateDefinition ( NULL ),
-	Bindings ()
+	Bindings (),
+	Ref ( Ref )
 {
 };
 
-OilStructDefinition :: OilStructDefinition ( const std :: u32string & ID, OilTemplateDefinition * TemplateDefinition ):
+OilStructDefinition :: OilStructDefinition (  const SourceRef & Ref, const std :: u32string & ID, OilTemplateDefinition * TemplateDefinition ):
 	ID ( ID ),
 	TemplateDefinition ( TemplateDefinition ),
-	Bindings ()
+	Bindings (),
+	Ref ( Ref )
 {
 };
 
@@ -126,5 +128,12 @@ bool OilStructDefinition :: IsTemplated () const
 {
 	
 	return TemplateDefinition != NULL;
+	
+}
+
+const SourceRef & OilStructDefinition :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

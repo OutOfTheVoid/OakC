@@ -8,12 +8,14 @@ class OilStatementBody;
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilWhileLoop : public virtual IOilStatement
 {
 public:
 	
-	OilWhileLoop ( OilExpression * ConditionExpression, OilStatementBody * LoopBody );
-	OilWhileLoop ( OilExpression * ConditionExpression, OilStatementBody * LoopBody, const std :: u32string & LoopLabel );
+	OilWhileLoop ( const SourceRef & Ref, OilExpression * ConditionExpression, OilStatementBody * LoopBody );
+	OilWhileLoop ( const SourceRef & Ref, OilExpression * ConditionExpression, OilStatementBody * LoopBody, const std :: u32string & LoopLabel );
 	
 	bool HasLoopLabel () const;
 	
@@ -27,12 +29,16 @@ public:
 	
 	StatementType GetStatementType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	OilExpression * ConditionExpression;
 	OilStatementBody * LoopBody;
 	
 	const std :: u32string LoopLabel;
+	
+	SourceRef Ref;
 	
 };
 

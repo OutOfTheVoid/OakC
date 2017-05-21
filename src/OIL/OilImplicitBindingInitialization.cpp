@@ -1,7 +1,8 @@
 #include <OIL/OilImplicitBindingInitialization.h>
 
-OilImplicitBindingInitialization :: OilImplicitBindingInitialization ( const std :: u32string & BindingID ):
-	BindingID ( BindingID )
+OilImplicitBindingInitialization :: OilImplicitBindingInitialization ( const SourceRef & Ref, const std :: u32string & BindingID ):
+	BindingID ( BindingID ),
+	Ref ( Ref )
 {
 }
 
@@ -20,5 +21,12 @@ const std :: u32string & OilImplicitBindingInitialization :: GetBindingID () con
 {
 	
 	return BindingID;
+	
+}
+
+const SourceRef & OilImplicitBindingInitialization :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

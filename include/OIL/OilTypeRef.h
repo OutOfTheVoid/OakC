@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilTemplateSpecification;
 class OilTypeDefinition;
 class OilTraitDefinition;
@@ -31,12 +33,12 @@ public:
 	static const RefFlag kRefFlag_Trait = 1;
 	static const RefFlag kRefFlag_Absolute = 2;
 	
-	OilTypeRef ( const std :: u32string & Name, RefFlag Flags = kRefFlag_None );
-	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags = kRefFlag_None );
-	OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
-	OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
-	OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, RefFlag Flags = kRefFlag_None );
-	OilTypeRef ( VoidMarkerType VType );
+	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const SourceRef & Ref, ReferenceMarkerType RMType, OilTypeRef * SubType, RefFlag Flags = kRefFlag_None );
+	OilTypeRef ( const SourceRef & Ref, VoidMarkerType VType );
 	~OilTypeRef ();
 	
 	bool IsDirectType () const;
@@ -74,6 +76,8 @@ public:
 	
 	const std :: u32string & GetResolvedTemplateParamName () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	typedef enum
@@ -108,6 +112,8 @@ private:
 		OilTraitDefinition * ResolvedTrait;
 		
 	};
+	
+	SourceRef Ref;
 	
 };
 

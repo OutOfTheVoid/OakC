@@ -10,7 +10,7 @@
 #include <map>
 #include <iterator>
 
-OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID ):
+OilNamespaceDefinition :: OilNamespaceDefinition ( const SourceRef & Ref, const std :: u32string & ID ):
 	Parent ( NULL ),
 	ID ( ID ),
 	SubNamespaces (),
@@ -18,9 +18,10 @@ OilNamespaceDefinition :: OilNamespaceDefinition ( const std :: u32string & ID )
 	FuncDefs (),
 	TraitDefs (),
 	Bindings (),
-	ImplicitIntiailizationBody (),
+	ImplicitIntiailizationBody ( Ref ),
 	Constants (),
-	UnresImplBlocks ()
+	UnresImplBlocks (),
+	Ref ( Ref )
 {
 }
 
@@ -299,7 +300,7 @@ const OilNamespaceDefinition * OilNamespaceDefinition :: GetNamespaceDefinition 
 	
 }
 
-OilNamespaceDefinition * OilNamespaceDefinition :: FindOrCreateNamespaceDefinition ( const std :: u32string & ID )
+OilNamespaceDefinition * OilNamespaceDefinition :: FindOrCreateNamespaceDefinition ( const SourceRef & Ref, const std :: u32string & ID )
 {
 	
 	std :: map <std :: u32string, OilNamespaceDefinition *> :: iterator FindIterator = SubNamespaces.find ( ID );
@@ -307,7 +308,7 @@ OilNamespaceDefinition * OilNamespaceDefinition :: FindOrCreateNamespaceDefiniti
 	if ( FindIterator != SubNamespaces.end () )
 		return FindIterator -> second;
 	
-	OilNamespaceDefinition * NewNamespace = new OilNamespaceDefinition ( ID );
+	OilNamespaceDefinition * NewNamespace = new OilNamespaceDefinition ( Ref, ID );
 	NewNamespace -> Parent = this;
 	SubNamespaces [ ID ] = NewNamespace;
 	
@@ -478,7 +479,7 @@ void OilNamespaceDefinition :: AddBindingStatement ( OilBindingStatement * Bindi
 	Bindings [ BindingStatement -> GetName () ] = BindingStatement;
 	
 	if ( BindingStatement -> HasInitializer () )
-		ImplicitIntiailizationBody.AddStatement ( new OilImplicitBindingInitialization ( BindingStatement -> GetName () ) );
+		ImplicitIntiailizationBody.AddStatement ( new OilImplicitBindingInitialization ( BindingStatement -> GetSourceRef (), BindingStatement -> GetName () ) );
 	
 }
 
@@ -750,5 +751,12 @@ void OilNamespaceDefinition :: RemoveUnresolvedImplementBlock ( uint32_t Index )
 		return;
 	
 	UnresImplBlocks.erase ( UnresImplBlocks.begin () + Index );
+	
+}
+
+const SourceRef & OilNamespaceDefinition :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

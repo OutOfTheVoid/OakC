@@ -6,27 +6,30 @@
 	#define NULL nullptr
 #endif
 
-OilIfElse :: OilIfElse ( OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody ):
+OilIfElse :: OilIfElse ( const SourceRef & Ref, OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody ):
 	IfConditionExpression ( IfConditionExpression ),
 	IfStatementBody ( IfStatementBody ),
 	ElseStatementBody ( NULL ),
-	ElseIfClauses ()
+	ElseIfClauses (),
+	Ref ( Ref )
 {
 }
 	
-OilIfElse :: OilIfElse ( OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilStatementBody * ElseStatementBody ):
+OilIfElse :: OilIfElse ( const SourceRef & Ref, OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilStatementBody * ElseStatementBody ):
 	IfConditionExpression ( IfConditionExpression ),
 	IfStatementBody ( IfStatementBody ),
 	ElseStatementBody ( ElseStatementBody ),
-	ElseIfClauses ()
+	ElseIfClauses (),
+	Ref ( Ref )
 {
 }
 
-OilIfElse :: OilIfElse ( OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilExpression ** ElseIfConditionExpressions, OilStatementBody ** ElseIfStatementBodies, uint32_t ElseIfCount, OilStatementBody * ElseStatementBody ):
+OilIfElse :: OilIfElse ( const SourceRef & Ref, OilExpression * IfConditionExpression, OilStatementBody * IfStatementBody, OilExpression ** ElseIfConditionExpressions, OilStatementBody ** ElseIfStatementBodies, uint32_t ElseIfCount, OilStatementBody * ElseStatementBody ):
 	IfConditionExpression ( IfConditionExpression ),
 	IfStatementBody ( IfStatementBody ),
 	ElseStatementBody ( ElseStatementBody ),
-	ElseIfClauses ()
+	ElseIfClauses (),
+	Ref ( Ref )
 {
 	
 	for ( uint32_t I = 0; I < ElseIfCount; I ++ )
@@ -169,5 +172,12 @@ IOilStatement :: StatementType OilIfElse :: GetStatementType () const
 {
 	
 	return kStatementType_IfElse;
+	
+}
+
+const SourceRef & OilIfElse :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

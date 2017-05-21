@@ -4,23 +4,25 @@
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilBuiltinStructDefinition.h>
 
-OilTypeDefinition :: OilTypeDefinition ( OilStructDefinition * Structure, bool IsBuiltin ):
+OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilStructDefinition * Structure, bool IsBuiltin ):
 	Name ( Structure -> GetID () ),
 	IsBuiltin ( IsBuiltin ),
 	IsStructBuiltin ( false ),
 	StructDefinition ( Structure ),
 	PrincipalImplementBlocks (),
-	TraitMap ( NULL )
+	TraitMap ( NULL ),
+	Ref ( Ref )
 {
 }
 
-OilTypeDefinition :: OilTypeDefinition ( OilBuiltinStructDefinition * Structure, bool IsBuiltin ):
+OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilBuiltinStructDefinition * Structure, bool IsBuiltin ):
 	Name ( Structure -> GetName () ),
 	IsBuiltin ( IsBuiltin ),
 	IsStructBuiltin ( true ),
 	BuiltinStructDefinition ( Structure ),
 	PrincipalImplementBlocks (),
-	TraitMap ( NULL )
+	TraitMap ( NULL ),
+	Ref ( Ref )
 {
 }
 
@@ -395,5 +397,12 @@ OilTemplateDefinition * OilTypeDefinition :: GetTemplateDefinition ()
 {
 	
 	return IsStructBuiltin ? BuiltinStructDefinition -> GetTemplateDefinition () : StructDefinition -> GetTemplateDefinition ();
+	
+}
+
+const SourceRef & OilTypeDefinition :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

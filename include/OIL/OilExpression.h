@@ -4,14 +4,16 @@
 #include <OIL/IOilPrimary.h>
 #include <OIL/IOilStatement.h>
 
+#include <Tokenization/SourceRef.h>
+
 class IOilOperator;
 
 class OilExpression : public virtual IOilPrimary, public virtual IOilStatement
 {
 public:
 	
-	OilExpression ( IOilPrimary * Primary );
-	OilExpression ( IOilOperator * Operator );
+	OilExpression ( const SourceRef & Ref, IOilPrimary * Primary );
+	OilExpression ( const SourceRef & Ref, IOilOperator * Operator );
 	~OilExpression ();
 	
 	bool IsPrimary () const;
@@ -29,6 +31,8 @@ public:
 	StatementType GetStatementType () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	bool TermIsPrimary;
@@ -40,6 +44,8 @@ private:
 		IOilPrimary * PrimaryTerm;
 		
 	};
+	
+	SourceRef Ref;
 	
 };
 

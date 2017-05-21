@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 
+#include <Tokenization/SourceRef.h>
+
 class OilImplementBlock;
 class OilTraitDefinition;
 class OilStructDefinition;
@@ -15,8 +17,8 @@ class OilTypeDefinition
 {
 public:
 	
-	OilTypeDefinition ( OilStructDefinition * Structure, bool IsBuiltin = false );
-	OilTypeDefinition ( OilBuiltinStructDefinition * BuiltinStructure, bool IsBuiltin = false );
+	OilTypeDefinition ( const SourceRef & Ref, OilStructDefinition * Structure, bool IsBuiltin = false );
+	OilTypeDefinition ( const SourceRef & Ref, OilBuiltinStructDefinition * BuiltinStructure, bool IsBuiltin = false );
 	
 	~OilTypeDefinition ();
 	
@@ -49,6 +51,8 @@ public:
 	
 	uint32_t GetNamespaceCountAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
 	const std :: u32string GetImplementNamespaceAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const;
+	
+	const SourceRef & GetSourceRef () const;
 	
 private:
 	
@@ -96,6 +100,8 @@ private:
 	static void DeleteTraitMap ( TraitMapElement * Element );
 	
 	TraitMapElement * TraitMap;
+	
+	SourceRef Ref;
 	
 };
 

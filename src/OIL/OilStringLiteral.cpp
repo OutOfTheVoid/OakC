@@ -1,8 +1,9 @@
 #include <OIL/OilStringLiteral.h>
 
-OilStringLiteral :: OilStringLiteral ( EncodingType Type, const std :: u32string & Value ):
+OilStringLiteral :: OilStringLiteral ( const SourceRef & Ref, EncodingType Type, const std :: u32string & Value ):
 	Type ( Type ),
-	Value ( Value )
+	Value ( Value ),
+	Ref ( Ref )
 {
 }
 
@@ -42,5 +43,12 @@ IOilPrimary :: PrimaryType OilStringLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_StringLiteral;
+	
+}
+
+const SourceRef & OilStringLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

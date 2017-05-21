@@ -1,7 +1,8 @@
 #include <OIL/OilCharLiteral.h>
 
-OilCharLiteral :: OilCharLiteral ( char32_t Value ):
-	Value ( Value )
+OilCharLiteral :: OilCharLiteral ( const SourceRef & Ref, char32_t Value ):
+	Value ( Value ),
+	Ref ( Ref )
 {
 }
 
@@ -27,5 +28,12 @@ IOilPrimary :: PrimaryType OilCharLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_CharLiteral;
+	
+}
+
+const SourceRef & OilCharLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

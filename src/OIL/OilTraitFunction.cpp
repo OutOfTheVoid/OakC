@@ -6,19 +6,21 @@
 	#define NULL nullptr
 #endif
 
-OilTraitFunction :: OilTraitFunction ( const std :: u32string & Name, OilFunctionParameterList * ParameterList, OilTypeRef * ReturnType ):
+OilTraitFunction :: OilTraitFunction ( const SourceRef & Ref, const std :: u32string & Name, OilFunctionParameterList * ParameterList, OilTypeRef * ReturnType ):
 	Name ( Name ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
-	TemplateDefinition ( NULL )
+	TemplateDefinition ( NULL ),
+	Ref ( Ref )
 {
 }
 
-OilTraitFunction :: OilTraitFunction ( const std :: u32string & Name, OilFunctionParameterList * ParameterList, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
+OilTraitFunction :: OilTraitFunction ( const SourceRef & Ref, const std :: u32string & Name, OilFunctionParameterList * ParameterList, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
 	Name ( Name ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
-	TemplateDefinition ( TemplateDefinition )
+	TemplateDefinition ( TemplateDefinition ),
+	Ref ( Ref )
 {
 }
 
@@ -92,5 +94,12 @@ OilTemplateDefinition * OilTraitFunction :: GetTemplateDefinition ()
 {
 	
 	return TemplateDefinition;
+	
+}
+
+const SourceRef & OilTraitFunction :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilStructDefinition;
 class OilTemplateDefinition;
 
@@ -38,6 +40,7 @@ public:
 	const OilTemplateDefinition * GetTemplateDefinition () const;
 	OilTemplateDefinition * GetTemplateDefinition ();
 	
+	const SourceRef & GetSourceRef () const;
 	
 private:
 	
@@ -50,6 +53,8 @@ private:
 	
 	OilStructDefinition * UnderlyingStructure;
 	OilTemplateDefinition * TemplateDefinition;
+	
+	SourceRef Ref;
 	
 };
 

@@ -7,13 +7,14 @@
 	#define NULL nullptr
 #endif
 
-OilStatementBody :: OilStatementBody ():
+OilStatementBody :: OilStatementBody ( const SourceRef & Ref ):
 	IgnoredParameters (),
 	Statements (),
 	Locals (),
 	Constants (),
 	ParentBody ( NULL ),
-	ParentSelfIndex ( 0 )
+	ParentSelfIndex ( 0 ),
+	Ref ( Ref )
 {
 }
 
@@ -165,7 +166,7 @@ void OilStatementBody :: AddLocalBinding ( OilBindingStatement * LocalBinding )
 	{
 		
 		Data.InitializationStatementIndex = Statements.size ();
-		Statements.push_back ( new OilImplicitLocalInitialization ( Locals.size () ) );
+		Statements.push_back ( new OilImplicitLocalInitialization ( LocalBinding -> GetSourceRef (), Locals.size () ) );
 		
 	}
 	else
@@ -303,5 +304,12 @@ OilStatementBody :: StatementType OilStatementBody :: GetStatementType () const
 {
 	
 	return kStatementType_Body;
+	
+}
+
+const SourceRef & OilStatementBody :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

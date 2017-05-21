@@ -1,10 +1,11 @@
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilTypeRef.h>
 
-OilFunctionParameter :: OilFunctionParameter ( const std :: u32string Name, OilTypeRef * Type, bool Mut ):
+OilFunctionParameter :: OilFunctionParameter ( const SourceRef & Ref, const std :: u32string Name, OilTypeRef * Type, bool Mut ):
 	Name ( Name ),
 	Type ( Type ),
-	Mut ( Mut )
+	Mut ( Mut ),
+	Ref ( Ref )
 {
 }
 
@@ -40,5 +41,12 @@ bool OilFunctionParameter :: GetMut () const
 {
 	
 	return Mut;
+	
+}
+
+const SourceRef & OilFunctionParameter :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

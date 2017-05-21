@@ -51,39 +51,43 @@ const uint32_t OilBinaryOperator :: MaxOpString = 34;
 
 const std :: string OilBinaryOperator :: UnknownOpString = "UNKOWN_OP";
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * LeftTerm, IOilOperator * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( false ),
 	RightIsPrimary ( false ),
 	LeftOperatorTerm ( LeftTerm ),
-	RightOperatorTerm ( RightTerm )
+	RightOperatorTerm ( RightTerm ),
+	Ref ( Ref )
 {
 }
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilOperator * LeftTerm, IOilPrimary * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * LeftTerm, IOilPrimary * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( false ),
 	RightIsPrimary ( true ),
 	LeftOperatorTerm ( LeftTerm ),
-	RightPrimaryTerm ( RightTerm )
+	RightPrimaryTerm ( RightTerm ),
+	Ref ( Ref )
 {
 }
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * LeftTerm, IOilOperator * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( true ),
 	RightIsPrimary ( false ),
 	LeftPrimaryTerm ( LeftTerm ),
-	RightOperatorTerm ( RightTerm )
+	RightOperatorTerm ( RightTerm ),
+	Ref ( Ref )
 {
 }
 
-OilBinaryOperator :: OilBinaryOperator ( Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm ):
+OilBinaryOperator :: OilBinaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * LeftTerm, IOilPrimary * RightTerm ):
 	Op ( Op ),
 	LeftIsPrimary ( true ),
 	RightIsPrimary ( true ),
 	LeftPrimaryTerm ( LeftTerm ),
-	RightPrimaryTerm ( RightTerm )
+	RightPrimaryTerm ( RightTerm ),
+	Ref ( Ref )
 {
 }
 
@@ -300,5 +304,12 @@ const std :: string & OilBinaryOperator :: GetOpName () const
 		return UnknownOpString;
 	
 	return OperatorStrings [ Op ];
+	
+}
+
+const SourceRef & OilBinaryOperator :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

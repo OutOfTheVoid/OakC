@@ -1,16 +1,18 @@
 #include <OIL/OilDoWhileLoop.h>
 
-OilDoWhileLoop :: OilDoWhileLoop ( OilStatementBody * LoopBody, OilExpression * ConditionExpression ):
+OilDoWhileLoop :: OilDoWhileLoop ( const SourceRef & Ref, OilStatementBody * LoopBody, OilExpression * ConditionExpression ):
 	ConditionExpression ( ConditionExpression ),
 	LoopBody ( LoopBody ),
-	LoopLabel ( U"" )
+	LoopLabel ( U"" ),
+	Ref ( Ref )
 {
 }
 
-OilDoWhileLoop :: OilDoWhileLoop ( OilStatementBody * LoopBody, OilExpression * ConditionExpression, const std :: u32string & LoopLabel ):
+OilDoWhileLoop :: OilDoWhileLoop ( const SourceRef & Ref, OilStatementBody * LoopBody, OilExpression * ConditionExpression, const std :: u32string & LoopLabel ):
 	ConditionExpression ( ConditionExpression ),
 	LoopBody ( LoopBody ),
-	LoopLabel ( LoopLabel )
+	LoopLabel ( LoopLabel ),
+	Ref ( Ref )
 {
 }
 
@@ -60,5 +62,12 @@ IOilStatement :: StatementType OilDoWhileLoop :: GetStatementType () const
 {
 	
 	return kStatementType_DoWhileLoop;
+	
+}
+
+const SourceRef & OilDoWhileLoop :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

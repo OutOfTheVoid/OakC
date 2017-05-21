@@ -1,14 +1,16 @@
 #include <OIL/OilIntegerLiteral.h>
 
-OilIntegerLiteral :: OilIntegerLiteral ( IntType Type, uint64_t UValue ):
+OilIntegerLiteral :: OilIntegerLiteral ( const SourceRef & Ref, IntType Type, uint64_t UValue ):
 	UValue ( UValue ),
-	Type ( Type )
+	Type ( Type ),
+	Ref ( Ref )
 {
 }
 
-OilIntegerLiteral :: OilIntegerLiteral ( IntType Type, int64_t SValue ):
+OilIntegerLiteral :: OilIntegerLiteral ( const SourceRef & Ref, IntType Type, int64_t SValue ):
 	SValue ( SValue ),
-	Type ( Type )
+	Type ( Type ),
+	Ref ( Ref )
 {
 }
 
@@ -60,5 +62,12 @@ IOilPrimary :: PrimaryType OilIntegerLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_IntegerLiteral;
+	
+}
+
+const SourceRef & OilIntegerLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

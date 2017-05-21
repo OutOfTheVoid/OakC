@@ -1,12 +1,14 @@
 #include <OIL/OilBreak.h>
 
-OilBreak :: OilBreak ():
-	LoopLabel ( U"" )
+OilBreak :: OilBreak ( const SourceRef & Ref ):
+	LoopLabel ( U"" ),
+	Ref ( Ref )
 {
 }
 
-OilBreak :: OilBreak ( const std :: u32string & LoopLabel ):
-	LoopLabel ( LoopLabel )
+OilBreak :: OilBreak ( const SourceRef & Ref, const std :: u32string & LoopLabel ):
+	LoopLabel ( LoopLabel ),
+	Ref ( Ref )
 {
 }
 
@@ -32,5 +34,12 @@ IOilStatement :: StatementType OilBreak :: GetStatementType () const
 {
 	
 	return kStatementType_Break;
+	
+}
+
+const SourceRef & OilBreak :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

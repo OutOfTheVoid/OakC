@@ -3,7 +3,7 @@
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilTemplateSpecification.h>
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
+OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, RefFlag Flags ):
 	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameList ( NULL ),
@@ -13,11 +13,12 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, RefFlag Flags ):
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
-	ResolvedType ( NULL )
+	ResolvedType ( NULL ),
+	Ref ( Ref )
 {
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags ):
+OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags ):
 	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
@@ -26,7 +27,8 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
-	ResolvedType ( NULL )
+	ResolvedType ( NULL ),
+	Ref ( Ref )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -36,7 +38,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
+OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
 	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameList ( NULL ),
@@ -46,11 +48,12 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, OilTemplateSpecificati
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
-	ResolvedType ( NULL )
+	ResolvedType ( NULL ),
+	Ref ( Ref )
 {
 }
 
-OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
+OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, OilTemplateSpecification * TemplateSpecification, RefFlag Flags ):
 	Mode ( kTypeMode_Direct ),
 	Name ( Name ),
 	NamespaceNameCount ( NamespaceNameCount ),
@@ -59,7 +62,8 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
-	ResolvedType ( NULL )
+	ResolvedType ( NULL ),
+	Ref ( Ref )
 {
 	
 	this -> NamespaceNameList = new std :: u32string [ NamespaceNameCount ];
@@ -69,7 +73,7 @@ OilTypeRef :: OilTypeRef ( const std :: u32string & Name, const std :: u32string
 	
 }
 
-OilTypeRef :: OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, RefFlag Flags ):
+OilTypeRef :: OilTypeRef ( const SourceRef & Ref, ReferenceMarkerType RMType, OilTypeRef * SubType, RefFlag Flags ):
 	Mode ( kTypeMode_Reference ),
 	Name ( U"" ),
 	NamespaceNameList ( NULL ),
@@ -79,14 +83,15 @@ OilTypeRef :: OilTypeRef ( ReferenceMarkerType RMType, OilTypeRef * SubType, Ref
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
-	ResolvedType ( NULL )
+	ResolvedType ( NULL ),
+	Ref ( Ref )
 {
 	
 	(void) RMType;
 	
 }
 
-OilTypeRef :: OilTypeRef ( VoidMarkerType VType ):
+OilTypeRef :: OilTypeRef ( const SourceRef & Ref, VoidMarkerType VType ):
 	Mode ( kTypeMode_Void ),
 	Name ( U"" ),
 	NamespaceNameList ( NULL ),
@@ -96,7 +101,8 @@ OilTypeRef :: OilTypeRef ( VoidMarkerType VType ):
 	Flags ( 0 ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
-	ResolvedType ( NULL )
+	ResolvedType ( NULL ),
+	Ref ( Ref )
 {
 	
 	(void) VType;
@@ -296,5 +302,12 @@ OilTraitDefinition * OilTypeRef :: GetResolvedTraitDefinition ()
 {
 	
 	return ResolvedAsTrait ? ResolvedTrait : NULL;
+	
+}
+
+const SourceRef & OilTypeRef :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

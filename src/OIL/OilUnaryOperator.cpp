@@ -28,17 +28,19 @@ const uint32_t OilUnaryOperator :: MaxOpString = 11;
 
 const std :: string OilUnaryOperator :: UnknownOpString = "UNKOWN_OP";
 
-OilUnaryOperator :: OilUnaryOperator ( Operator Op, IOilOperator * Term ):
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * Term ):
 	Op ( Op ),
 	TermIsPrimary ( false ),
-	OperatorTerm ( Term )
+	OperatorTerm ( Term ),
+	Ref ( Ref )
 {
 }
 	
-OilUnaryOperator :: OilUnaryOperator ( Operator Op, IOilPrimary * Term ):
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * Term ):
 	Op ( Op ),
 	TermIsPrimary ( true ),
-	PrimaryTerm ( Term )
+	PrimaryTerm ( Term ),
+	Ref ( Ref )
 {
 }
 
@@ -169,5 +171,12 @@ const std :: string & OilUnaryOperator :: GetOpName () const
 		return UnknownOpString;
 	
 	return OperatorStrings [ Op ];
+	
+}
+
+const SourceRef & OilUnaryOperator :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

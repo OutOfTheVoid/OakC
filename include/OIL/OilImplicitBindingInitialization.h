@@ -6,20 +6,26 @@
 #include <stdint.h>
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilImplicitBindingInitialization : public virtual IOilStatement
 {
 public:
 	
-	OilImplicitBindingInitialization ( const std :: u32string & BindingID );
+	OilImplicitBindingInitialization ( const SourceRef & Ref, const std :: u32string & BindingID );
 	~OilImplicitBindingInitialization ();
 	
 	StatementType GetStatementType () const;
 	
 	const std :: u32string & GetBindingID () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string BindingID;
+	
+	SourceRef Ref;
 	
 };
 

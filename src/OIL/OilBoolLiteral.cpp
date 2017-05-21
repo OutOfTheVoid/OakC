@@ -1,7 +1,8 @@
 #include <OIL/OilBoolLiteral.h>
 
-OilBoolLiteral :: OilBoolLiteral ( bool Value ):
-	Value ( Value )
+OilBoolLiteral :: OilBoolLiteral ( const SourceRef & Ref, bool Value ):
+	Value ( Value ),
+	Ref ( Ref )
 {
 }
 
@@ -27,5 +28,12 @@ IOilPrimary :: PrimaryType OilBoolLiteral :: GetPrimaryType () const
 {
 	
 	return kPrimaryType_BoolLiteral;
+	
+}
+
+const SourceRef & OilBoolLiteral :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

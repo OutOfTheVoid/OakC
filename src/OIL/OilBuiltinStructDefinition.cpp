@@ -8,7 +8,8 @@ OilBuiltinStructDefinition :: OilBuiltinStructDefinition ( const std :: u32strin
 	Alignment ( Alignment ),
 	Flags ( Flags ),
 	UnderlyingStructure ( NULL ),
-	TemplateDefinition ( TemplateDefinition )
+	TemplateDefinition ( TemplateDefinition ),
+	Ref { 0, 0, NULL }
 {
 }
 
@@ -18,7 +19,8 @@ OilBuiltinStructDefinition :: OilBuiltinStructDefinition ( const std :: u32strin
 	Alignment ( Alignment ),
 	Flags ( Flags ),
 	UnderlyingStructure ( UnderlyingStructure ),
-	TemplateDefinition ( UnderlyingStructure -> IsTemplated () ? UnderlyingStructure -> GetTemplateDefinition () : NULL )
+	TemplateDefinition ( UnderlyingStructure -> IsTemplated () ? UnderlyingStructure -> GetTemplateDefinition () : NULL ),
+	Ref { 0, 0, NULL }
 {
 }
 
@@ -100,5 +102,12 @@ OilTemplateDefinition * OilBuiltinStructDefinition :: GetTemplateDefinition ()
 {
 	
 	return TemplateDefinition;
+	
+}
+
+const SourceRef & OilBuiltinStructDefinition :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

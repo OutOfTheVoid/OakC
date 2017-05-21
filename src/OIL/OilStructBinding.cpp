@@ -1,9 +1,10 @@
 #include <OIL/OilStructBinding.h>
 #include <OIL/OilTypeRef.h>
 
-OilStructBinding :: OilStructBinding ( const std :: u32string & Name, OilTypeRef * TypeRef ):
+OilStructBinding :: OilStructBinding ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef * TypeRef ):
 	Name ( Name ),
-	TypeRef ( TypeRef )
+	TypeRef ( TypeRef ),
+	Ref ( Ref )
 {
 }
 
@@ -32,5 +33,12 @@ const OilTypeRef * OilStructBinding :: GetTypeRef () const
 {
 	
 	return TypeRef;
+	
+}
+
+const SourceRef & OilStructBinding :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

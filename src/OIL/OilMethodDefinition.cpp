@@ -3,25 +3,27 @@
 #include <OIL/OilMethodParameterList.h>
 #include <OIL/OilStatementBody.h>
 
-OilMethodDefinition :: OilMethodDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType ):
+OilMethodDefinition :: OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType ):
 	Name ( Name ),
 	Public ( Public ),
 	Inline ( Inline ),
 	TemplateDefinition ( NULL ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
-	StatementBody ( StatementBody )
+	StatementBody ( StatementBody ),
+	Ref ( Ref )
 {
 }
 	
-OilMethodDefinition :: OilMethodDefinition ( const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
+OilMethodDefinition :: OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
 	Name ( Name ),
 	Public ( Public ),
 	Inline ( Inline ),
 	TemplateDefinition ( TemplateDefinition ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
-	StatementBody ( StatementBody )
+	StatementBody ( StatementBody ),
+	Ref ( Ref )
 {
 }
 
@@ -132,5 +134,12 @@ bool OilMethodDefinition :: ConstantTerms () const
 	
 	// FOR NOW
 	return false;
+	
+}
+
+const SourceRef & OilMethodDefinition :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

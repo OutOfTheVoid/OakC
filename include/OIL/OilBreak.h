@@ -5,12 +5,14 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilBreak : public virtual IOilStatement
 {
 public:
 	
-	OilBreak ();
-	OilBreak ( const std :: u32string & LoopLabel );
+	OilBreak ( const SourceRef & Ref );
+	OilBreak ( const SourceRef & Ref, const std :: u32string & LoopLabel );
 	~OilBreak ();
 	
 	bool HasLoopLabel () const;
@@ -19,9 +21,13 @@ public:
 	
 	StatementType GetStatementType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	const std :: u32string LoopLabel;
+	
+	SourceRef Ref;
 	
 };
 

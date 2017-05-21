@@ -6,11 +6,12 @@
 	#define NULL nullptr
 #endif
 
-OilConstStatement :: OilConstStatement ( const std :: u32string & Name, bool Public, OilTypeRef * Type, OilExpression * InitializerValue ):
+OilConstStatement :: OilConstStatement ( const SourceRef & Ref, const std :: u32string & Name, bool Public, OilTypeRef * Type, OilExpression * InitializerValue ):
 	Name ( Name ),
 	Public ( Public ),
 	Type ( Type ),
-	InitializerValue ( InitializerValue )
+	InitializerValue ( InitializerValue ),
+	Ref ( Ref )
 {
 }
 
@@ -74,5 +75,12 @@ IOilStatement :: StatementType OilConstStatement :: GetStatementType () const
 {
 	
 	return kStatementType_Const;
+	
+}
+
+const SourceRef & OilConstStatement :: GetSourceRef () const
+{
+	
+	return Ref;
 	
 }

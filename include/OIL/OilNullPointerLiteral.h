@@ -3,15 +3,23 @@
 
 #include <OIL/IOilPrimary.h>
 
+#include <Tokenization/SourceRef.h>
+
 class OilNullPointerLiteral : public virtual IOilPrimary
 {
 public:
 	
-	OilNullPointerLiteral ();
+	OilNullPointerLiteral ( const SourceRef & Ref );
 	~OilNullPointerLiteral ();
 	
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
+	
+	const SourceRef & GetSourceRef () const;
+	
+private:
+	
+	SourceRef Ref;
 	
 };
 

@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <Tokenization/SourceRef.h>
+
 class OilStringLiteral : public virtual IOilPrimary
 {
 public:
@@ -19,7 +21,7 @@ public:
 		
 	} EncodingType;
 	
-	OilStringLiteral ( EncodingType Type, const std :: u32string & Value );
+	OilStringLiteral ( const SourceRef & Ref, EncodingType Type, const std :: u32string & Value );
 	~OilStringLiteral ();
 	
 	void SetType ( EncodingType Type );
@@ -30,11 +32,15 @@ public:
 	bool IsConstant () const;
 	PrimaryType GetPrimaryType () const;
 	
+	const SourceRef & GetSourceRef () const;
+	
 private:
 	
 	EncodingType Type;
 	
 	const std :: u32string Value;
+	
+	SourceRef Ref;
 	
 };
 
