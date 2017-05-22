@@ -566,6 +566,29 @@ TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition 
 		
 	}
 	
+	uint32_t SubNSCount = CurrentNS.GetSubNamespaceDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < SubNSCount; I ++ )
+	{
+		
+		TypeResolutionResult ResolutionResult = OilResolveTypes_StructDefinitions ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ResolutionResult;
+		
+	}
+	
 	if ( Unresolved )
 	{
 		
