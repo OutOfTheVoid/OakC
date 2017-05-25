@@ -1,7 +1,8 @@
-public function Test ()
+
+public function Test ( count: i32 ): i32
 {
 	
-	bind i:i32 = 10;
+	bind i:i32 = count;
 	
 	loop
 	`my_loop:
@@ -13,5 +14,7 @@ public function Test ()
 		i --;
 		
 	}
+	
+	return i;
 	
 }

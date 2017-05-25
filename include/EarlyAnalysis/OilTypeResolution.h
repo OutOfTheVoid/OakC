@@ -33,9 +33,11 @@ typedef struct
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition );
-TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & RootNS );
+//TypeResolutionResult OilTypeResolution_Statement ( OilNamespaceDefinition & CurrentNS, OilIStatement & Statement, TypeResolution_TemplateNameList * TemplateNames );
 
+TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & CurrentNS );
 
 #endif

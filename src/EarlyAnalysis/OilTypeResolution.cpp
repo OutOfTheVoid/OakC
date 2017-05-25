@@ -16,8 +16,12 @@
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
 #include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilFunctionDefinition.h>
+#include <OIL/OilFunctionParameter.h>
+#include <OIL/OilFunctionParameterList.h>
 
 #include <Logging/Logging.h>
+#include <Logging/ErrorUtils.h>
 #include <Encoding/CodeConversion.h>
 
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames )
@@ -58,7 +62,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 			if ( TemplateMismatch )
 			{
 				
-				LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: template of reference to " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+				LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Template mismatch: template of reference to " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
 				
 				return kTypeResolutionResult_Failure_TemplateMismatch;
 				
@@ -81,7 +85,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 				if ( TemplateMismatch )
 				{
 					
-					LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: reference to template of " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Template mismatch: reference to template of " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
 					
 					return kTypeResolutionResult_Failure_TemplateMismatch;
 					
@@ -115,7 +119,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	if ( TemplateMismatch )
 	{
 		
-		LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: template of reference to " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+		LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Template mismatch: template of reference to " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
 		
 		return kTypeResolutionResult_Failure_TemplateMismatch;
 		
@@ -138,7 +142,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 		if ( TemplateMismatch )
 		{
 			
-			LOG_FATALERROR_NOFILE ( std :: string ( "Template mismatch: template of reference to " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+			LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Template mismatch: template of reference to " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
 			
 			return kTypeResolutionResult_Failure_TemplateMismatch;
 			
@@ -171,7 +175,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 				
 			}
 			
-			LOG_FATALERROR_NOFILE ( std :: string ( "Type not found: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) );
+			LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Type not found: " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) );
 			
 			return kTypeResolutionResult_Failure_NonExistantType;
 			
@@ -268,7 +272,7 @@ TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefiniti
 						if ( ! RestrictType -> IsResolvedAsTrait () )
 						{
 							
-							LOG_FATALERROR_NOFILE ( "Template restrictions cannot reference non-trait types" );
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( RestrictType -> GetSourceRef () ) + "Template restrictions cannot reference non-trait types" );
 							
 							return kTypeResolutionResult_Failure_NonExistantType;
 							
@@ -586,6 +590,121 @@ TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition 
 			Unresolved = true;
 		else
 			return ResolutionResult;
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & CurrentNS )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	// TODO
+	uint32_t FunctionCount = CurrentNS.GetFunctionDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < FunctionCount; I ++ )
+	{
+		
+		OilFunctionDefinition * Definition = CurrentNS.GetFunctionDefinition ( I );
+		
+		TypeResolution_TemplateNameList TemplateNames;
+		
+		if ( Definition -> IsTemplated () )
+		{
+			
+			OilTemplateDefinition * TemplateDef = Definition -> GetTemplateDefinition ();
+			
+			uint32_t TemplateParamCount = TemplateDef -> GetTemplateParameterCount ();
+			
+			TemplateNames.Names = new std :: u32string [ TemplateParamCount ];
+			TemplateNames.Count = TemplateParamCount;
+			
+			for ( uint32_t J = 0; J < TemplateParamCount; J ++ )
+				TemplateNames.Names [ J ] = TemplateDef -> GetTemplateParameter ( J ) -> GetName ();
+			
+		}
+		
+		if ( ! Definition -> GetReturnType () -> IsResolved () )
+		{
+			
+			TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Definition -> GetReturnType (), Definition -> IsTemplated () ? & TemplateNames : NULL );
+			
+			if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+			{
+				
+				if ( Definition -> IsTemplated () )
+					delete [] TemplateNames.Names;
+				
+				return ReturnTypeResolutionResult;
+				
+			}
+				
+		}
+		
+		OilFunctionParameterList * ParameterList = Definition -> GetParameterList ();
+		
+		uint32_t ParamCount = ParameterList -> GetParameterCount ();
+		
+		for ( uint32_t I = 0; I < ParamCount; I ++ )
+		{
+			
+			OilFunctionParameter * Parameter = ParameterList -> GetFunctionParameter ( I );
+			OilTypeRef * ParamType = Parameter -> GetType ();
+			
+			if ( ! ParamType -> IsResolved () )
+			{
+				
+				TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ParamType, Definition -> IsTemplated () ? & TemplateNames : NULL );
+				
+				if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+				{
+					
+					if ( Definition -> IsTemplated () )
+						delete [] TemplateNames.Names;
+					
+					return ReturnTypeResolutionResult;
+					
+				}
+				
+			}
+			
+		}
 		
 	}
 	
