@@ -352,6 +352,30 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
+	//OilResolveTypes_ImplementMembers
+	
+	TypeResolutionResult ResolveResult_ImplementMembers = OilResolveTypes_ImplementMembers ( RootNS );
+	
+	if ( ResolveResult_ImplementMembers == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( ResolveResult_ImplementMembers == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolveResult_ImplementMembers == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+	{
+		
+		Error = true;
+		
+		return;
+		
+	}
+	
 	if ( ! Progress )
 		Error = true;
 	else if ( ! Unresolved )

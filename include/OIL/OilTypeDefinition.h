@@ -52,6 +52,9 @@ public:
 	uint32_t GetNamespaceCountAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize ) const;
 	const std :: u32string GetImplementNamespaceAt ( const std :: u32string * AbsoluteNamePath, uint32_t NamePathSize, uint32_t Index ) const;
 	
+	void GetAllImplementBlocks ( std :: vector <OilImplementBlock *> & Out );
+	void GetAllImplementBlocks ( std :: vector <const OilImplementBlock *> & Out ) const;
+	
 	const SourceRef & GetSourceRef () const;
 	
 private:

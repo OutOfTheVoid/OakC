@@ -4,6 +4,8 @@
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilBuiltinStructDefinition.h>
 
+#include <iterator>
+
 OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilStructDefinition * Structure, bool IsBuiltin ):
 	Name ( Structure -> GetID () ),
 	IsBuiltin ( IsBuiltin ),
@@ -404,5 +406,144 @@ const SourceRef & OilTypeDefinition :: GetSourceRef () const
 {
 	
 	return Ref;
+	
+}
+
+// TEMPORARY
+#include <Logging/Logging.h>
+#include <Encoding/CodeConversion.h>
+
+void OilTypeDefinition :: GetAllImplementBlocks ( std :: vector <OilImplementBlock *> & Out )
+{
+	
+	for ( uint32_t I = 0; I < PrincipalImplementBlocks.size (); I ++ )
+		Out.push_back ( PrincipalImplementBlocks [ I ] );
+	
+	std :: vector <uint32_t> IndexStack;
+	std :: vector <TraitMapElement *> ElementStack;
+	IndexStack.push_back ( 0 );
+	
+	if ( TraitMap == NULL )
+		return;
+	
+	TraitMapElement * Element = TraitMap;
+	
+	if ( Element -> IsTrait )
+	{
+		
+		for ( uint32_t I = 0; I < Element -> TraitElement.Blocks -> size (); I ++ )
+			Out.push_back ( ( * Element -> TraitElement.Blocks ) [ I ] );
+		
+		return;
+		
+	}
+	
+	do
+	{
+		
+		std :: map <std :: u32string, struct TraitMapElement_Struct *> :: iterator Iter = Element -> NameMap -> begin ();
+		
+		std :: advance ( Iter, IndexStack [ IndexStack.size () - 1 ] );
+		
+		if ( Iter == Element -> NameMap -> end () )
+		{
+			
+			IndexStack.pop_back ();
+			ElementStack.pop_back ();
+			
+			Element = ElementStack [ ElementStack.size () - 1 ];
+			
+			continue;
+			
+		}
+		
+		if ( Iter -> second -> IsTrait )
+		{
+			
+			for ( uint32_t I = 0; I < Iter -> second -> TraitElement.Blocks -> size (); I ++ )
+				Out.push_back ( ( * Iter -> second -> TraitElement.Blocks ) [ I ] );
+			
+			IndexStack [ IndexStack.size () - 1 ] ++;
+			
+		}
+		else
+		{
+			
+			IndexStack [ IndexStack.size () - 1 ] ++;
+			IndexStack.push_back ( 0 );
+			ElementStack.push_back ( Element );
+			Element = Iter -> second;
+			
+		}
+		
+	}
+	while ( ElementStack.size () != 0 );
+	
+}
+
+void OilTypeDefinition :: GetAllImplementBlocks ( std :: vector <const OilImplementBlock *> & Out ) const
+{
+	
+	for ( uint32_t I = 0; I < PrincipalImplementBlocks.size (); I ++ )
+		Out.push_back ( PrincipalImplementBlocks [ I ] );
+	
+	std :: vector <uint32_t> IndexStack;
+	std :: vector <TraitMapElement *> ElementStack;
+	IndexStack.push_back ( 0 );
+	
+	if ( TraitMap == NULL )
+		return;
+	
+	TraitMapElement * Element = TraitMap;
+	
+	if ( Element -> IsTrait )
+	{
+		
+		for ( uint32_t I = 0; I < Element -> TraitElement.Blocks -> size (); I ++ )
+			Out.push_back ( ( * Element -> TraitElement.Blocks ) [ I ] );
+		
+		return;
+		
+	}
+	
+	while ( IndexStack.size () != 0 )
+	{
+		
+		std :: map <std :: u32string, struct TraitMapElement_Struct *> :: iterator Iter = Element -> NameMap -> begin ();
+		
+		std :: advance ( Iter, IndexStack [ IndexStack.size () - 1 ] );
+		
+		if ( Iter == Element -> NameMap -> end () )
+		{
+			
+			IndexStack.pop_back ();
+			
+			Element = ElementStack [ ElementStack.size () - 1 ];
+			ElementStack.pop_back ();
+			
+			continue;
+			
+		}
+		
+		if ( Iter -> second -> IsTrait )
+		{
+			
+			for ( uint32_t I = 0; I < Iter -> second -> TraitElement.Blocks -> size (); I ++ )
+				Out.push_back ( ( * Iter -> second -> TraitElement.Blocks ) [ I ] );
+			
+			IndexStack [ IndexStack.size () - 1 ] ++;
+			
+		}
+		else
+		{
+			
+			IndexStack [ IndexStack.size () - 1 ] ++;
+			IndexStack.push_back ( 0 );
+			ElementStack.push_back ( Element );
+			Element = Iter -> second;
+			
+		}
+		
+	}
 	
 }

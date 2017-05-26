@@ -19,6 +19,7 @@
 #include <OIL/OilFunctionDefinition.h>
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilFunctionParameterList.h>
+#include <OIL/OilImplementBlock.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -613,7 +614,6 @@ TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & Curren
 	bool Unresolved = false;
 	bool Progress = false;
 	
-	// TODO
 	uint32_t FunctionCount = CurrentNS.GetFunctionDefinitionCount ();
 	
 	for ( uint32_t I = 0; I < FunctionCount; I ++ )
@@ -638,10 +638,109 @@ TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & Curren
 			
 		}
 		
-		if ( ! Definition -> GetReturnType () -> IsResolved () )
+		TypeResolutionResult ResolutionResult = OilTypeResolution_FunctionDefinition ( CurrentNS, * Definition, Definition -> IsTemplated () ? & TemplateNames : NULL );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
 		{
 			
-			TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Definition -> GetReturnType (), Definition -> IsTemplated () ? & TemplateNames : NULL );
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+		{
+			
+			if ( Definition -> IsTemplated () )
+				delete [] TemplateNames.Names;
+			
+			return ResolutionResult;
+			
+		}
+		
+	}
+	
+	uint32_t SubNSCount = CurrentNS.GetSubNamespaceDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < SubNSCount; I ++ )
+	{
+		
+		TypeResolutionResult ResolutionResult = OilResolveTypes_Functions ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ResolutionResult;
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Definition, TypeResolution_TemplateNameList * TemplateNames )
+{
+	
+	bool Progress = false;
+	bool Unresolved = false;
+	
+	if ( ! Definition.GetReturnType () -> IsResolved () )
+	{
+		
+		TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Definition.GetReturnType (), TemplateNames );
+		
+		if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ReturnTypeResolutionResult;
+			
+	}
+		
+	OilFunctionParameterList * ParameterList = Definition.GetParameterList ();
+	
+	uint32_t ParamCount = ParameterList -> GetParameterCount ();
+	
+	for ( uint32_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		OilFunctionParameter * Parameter = ParameterList -> GetFunctionParameter ( I );
+		OilTypeRef * ParamType = Parameter -> GetType ();
+		
+		if ( ! ParamType -> IsResolved () )
+		{
+			
+			TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ParamType, TemplateNames );
 			
 			if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
 				Progress = true;
@@ -655,56 +754,136 @@ TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & Curren
 			else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
 				Unresolved = true;
 			else
-			{
-				
-				if ( Definition -> IsTemplated () )
-					delete [] TemplateNames.Names;
-				
 				return ReturnTypeResolutionResult;
-				
-			}
-				
+			
 		}
 		
-		OilFunctionParameterList * ParameterList = Definition -> GetParameterList ();
+	}
+	
+	// TODO: try and resolve struct bodies
+	
+	if ( Unresolved )
+	{
 		
-		uint32_t ParamCount = ParameterList -> GetParameterCount ();
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
 		
-		for ( uint32_t I = 0; I < ParamCount; I ++ )
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Function, TypeResolution_TemplateNameList * TemplateNames )
+{
+	
+	(void) CurrentNS;
+	(void) Function;
+	(void) TemplateNames;
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilResolveTypes_ImplementMembers ( OilNamespaceDefinition & CurrentNS )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	uint32_t TypeCount = CurrentNS.GetTypeDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < TypeCount; I ++ )
+	{
+		
+		OilTypeDefinition * TypeDefinition = CurrentNS.GetTypeDefinition ( I );
+		
+		std :: vector <OilImplementBlock *> ImplementBlocks;
+		TypeDefinition -> GetAllImplementBlocks ( ImplementBlocks );
+		
+		uint32_t BlockCount = ImplementBlocks.size ();
+		
+		for ( uint32_t J = 0; J < BlockCount; J ++ )
 		{
 			
-			OilFunctionParameter * Parameter = ParameterList -> GetFunctionParameter ( I );
-			OilTypeRef * ParamType = Parameter -> GetType ();
+			OilImplementBlock * Block = ImplementBlocks [ J ];
 			
-			if ( ! ParamType -> IsResolved () )
+			TypeResolution_TemplateNameList TemplateNames;
+		
+			if ( Block -> HasWhereDefinition () )
 			{
 				
-				TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ParamType, Definition -> IsTemplated () ? & TemplateNames : NULL );
+				OilTemplateDefinition * TemplateDef = Block -> GetWhereDefinition ();
 				
-				if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
+				uint32_t TemplateParamCount = TemplateDef -> GetTemplateParameterCount ();
+				
+				TemplateNames.Names = new std :: u32string [ TemplateParamCount ];
+				TemplateNames.Count = TemplateParamCount;
+				
+				for ( uint32_t K = 0; K < TemplateParamCount; K ++ )
+					TemplateNames.Names [ K ] = TemplateDef -> GetTemplateParameter ( K ) -> GetName ();
+				
+			}
+			
+			uint32_t FunctionCount = Block -> GetFunctionCount ();
+			
+			for ( uint32_t K = 0; K < FunctionCount; K ++ )
+			{
+				
+				OilFunctionDefinition * FunctionDefinition = Block -> GetFunction ( K );
+				
+				TypeResolutionResult FunctionResolutionResult = OilTypeResolution_FunctionDefinition ( CurrentNS, * FunctionDefinition, Block -> HasWhereDefinition () ? & TemplateNames : NULL );
+				if ( FunctionResolutionResult == kTypeResolutionResult_Success_Complete )
 					Progress = true;
-				else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Progress )
+				else if ( FunctionResolutionResult == kTypeResolutionResult_Success_Progress )
 				{
 					
 					Progress = true;
 					Unresolved = true;
 					
 				}
-				else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
+				else if ( FunctionResolutionResult == kTypeResolutionResult_Success_NoProgress )
 					Unresolved = true;
 				else
 				{
 					
-					if ( Definition -> IsTemplated () )
+					if ( Block -> HasWhereDefinition () )
 						delete [] TemplateNames.Names;
 					
-					return ReturnTypeResolutionResult;
+					return FunctionResolutionResult;
 					
 				}
 				
 			}
 			
+			// TODO: Resolve methods
+			
 		}
+		
+	}
+	
+	uint32_t SubNSCount = CurrentNS.GetSubNamespaceDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < SubNSCount; I ++ )
+	{
+		
+		TypeResolutionResult ResolutionResult = OilResolveTypes_ImplementMembers ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ResolutionResult;
 		
 	}
 	
