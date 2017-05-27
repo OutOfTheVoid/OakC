@@ -10,11 +10,20 @@ trait SomeTrait
 {
 }
 
-implement MyType:<A, i32> where <A: SomeTrait>
+trait SomeOtherTrait <OTHER_T: SomeTrait>
 {
 }
 
+implement MyType:<A, B> where <A: SomeTrait, B: SomeOtherTrait:<A>>
+{
+	
+}
+
 implement i32 for SomeTrait
+{
+}
+
+implement i32 for SomeOtherTrait:<i32>
 {
 }
 

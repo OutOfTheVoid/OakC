@@ -36,7 +36,21 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			
 			OilTemplateDefinition * WhereDefinition = Block -> GetWhereDefinition ();
 			
-			TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * WhereDefinition );
+			uint32_t NameCount = WhereDefinition -> GetTemplateParameterCount ();
+			
+			TemplateNames.Names = new std :: u32string [ NameCount ];
+			TemplateNames.Count = NameCount;
+			
+			for ( uint32_t I = 0; I < NameCount; I ++ )
+			{
+				
+				OilTemplateDefinitionParameter * Parameter = WhereDefinition -> GetTemplateParameter ( I );
+				
+				TemplateNames.Names [ I ] = Parameter -> GetName ();
+				
+			}
+			
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * WhereDefinition, & TemplateNames );
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
 				return kResolveImplementsStatus_Failure_TemplateMismatch;
@@ -61,20 +75,6 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				UnresolvedOffset ++;
 				
 				continue;
-				
-			}
-			
-			uint32_t NameCount = WhereDefinition -> GetTemplateParameterCount ();
-			
-			TemplateNames.Names = new std :: u32string [ NameCount ];
-			TemplateNames.Count = NameCount;
-			
-			for ( uint32_t I = 0; I < NameCount; I ++ )
-			{
-				
-				OilTemplateDefinitionParameter * Parameter = WhereDefinition -> GetTemplateParameter ( I );
-				
-				TemplateNames.Names [ I ] = Parameter -> GetName ();
 				
 			}
 			

@@ -264,7 +264,7 @@ TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefin
 	
 }
 
-TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition )
+TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition, TypeResolution_TemplateNameList * TemplateNames )
 {
 	
 	bool Unresolved = false;
@@ -290,7 +290,7 @@ TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefiniti
 				if ( ! RestrictType -> IsResolved () )
 				{
 					
-					TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * RestrictType, NULL );
+					TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * RestrictType, TemplateNames );
 					
 					if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 					{
