@@ -174,6 +174,16 @@ const std :: u32string & OilTypeRef :: GetNamespaceName ( uint32_t Index ) const
 	
 }
 
+void OilTypeRef :: SetTemplateSpecification ( OilTemplateSpecification * TemplateSpecification )
+{
+	
+	if ( this -> TemplateSpecification != NULL )
+		delete this -> TemplateSpecification;
+	
+	this -> TemplateSpecification = TemplateSpecification;
+	
+}
+
 OilTemplateSpecification * OilTypeRef :: GetTemplateSpecification ()
 {
 	

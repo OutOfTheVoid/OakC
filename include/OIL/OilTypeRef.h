@@ -52,6 +52,8 @@ public:
 	uint32_t GetNamespaceNameCount () const;
 	const std :: u32string & GetNamespaceName ( uint32_t Index ) const;
 	
+	void SetTemplateSpecification ( OilTemplateSpecification * TemplateSpecification );
+	
 	OilTemplateSpecification * GetTemplateSpecification ();
 	const OilTemplateSpecification * GetTemplateSpecification () const;
 	

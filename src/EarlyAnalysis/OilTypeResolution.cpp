@@ -20,12 +20,14 @@
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilFunctionParameterList.h>
 #include <OIL/OilImplementBlock.h>
+#include <OIL/OilMethodDefinition.h>
+#include <OIL/OilMethodParameterList.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
 #include <Encoding/CodeConversion.h>
 
-TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames )
+TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
 	bool VoidType = false;
@@ -171,6 +173,31 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 						}
 						
 					}
+					
+				}
+				
+			}
+			
+			if ( SelfType != NULL )
+			{
+				
+				// TODO: Localize Self
+				if ( ( Ref -> GetName () == U"Self" ) && ( ! Ref -> IsNamespaced () ) )
+				{
+					
+					if ( Ref -> IsTemplated () )
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Self type reference cannot have template specification" );
+						
+						return kTypeResolutionResult_Failure_TemplateMismatch;
+						
+					}
+					
+					Ref -> SetResolvedTypeDefinition ( SelfType );
+					Ref -> SetTemplateSpecification ( SelfTemplateSpec );
+					
+					return kTypeResolutionResult_Success_Complete;
 					
 				}
 				
@@ -700,7 +727,7 @@ TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & Curren
 	
 }
 
-TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Definition, TypeResolution_TemplateNameList * TemplateNames )
+TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Definition, TypeResolution_TemplateNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
 	bool Progress = false;
@@ -709,7 +736,7 @@ TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefiniti
 	if ( ! Definition.GetReturnType () -> IsResolved () )
 	{
 		
-		TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Definition.GetReturnType (), TemplateNames );
+		TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Definition.GetReturnType (), TemplateNames, SelfType, SelfTemplateSpec );
 		
 		if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -740,7 +767,7 @@ TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefiniti
 		if ( ! ParamType -> IsResolved () )
 		{
 			
-			TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ParamType, TemplateNames );
+			TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ParamType, TemplateNames, SelfType, SelfTemplateSpec );
 			
 			if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
 				Progress = true;
@@ -776,12 +803,77 @@ TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefiniti
 	
 }
 
-TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Function, TypeResolution_TemplateNameList * TemplateNames )
+TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Definition, OilTypeDefinition & SelfType, OilTemplateSpecification * SelfTemplateSpec, TypeResolution_TemplateNameList * TemplateNames )
 {
 	
-	(void) CurrentNS;
-	(void) Function;
-	(void) TemplateNames;
+	bool Progress = false;
+	bool Unresolved = false;
+	
+	if ( ! Definition.GetReturnType () -> IsResolved () )
+	{
+		
+		TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Definition.GetReturnType (), TemplateNames, & SelfType, SelfTemplateSpec );
+		
+		if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ReturnTypeResolutionResult;
+			
+	}
+		
+	OilMethodParameterList * ParameterList = Definition.GetParameterList ();
+	
+	uint32_t ParamCount = ParameterList -> GetParameterCount ();
+	
+	for ( uint32_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		OilFunctionParameter * Parameter = ParameterList -> GetFunctionParameter ( I );
+		OilTypeRef * ParamType = Parameter -> GetType ();
+		
+		if ( ! ParamType -> IsResolved () )
+		{
+			
+			TypeResolutionResult ReturnTypeResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ParamType, TemplateNames, & SelfType, SelfTemplateSpec );
+			
+			if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ReturnTypeResolutionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return ReturnTypeResolutionResult;
+			
+		}
+		
+	}
+	
+	// TODO: try and resolve struct bodies
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
 	
 	return kTypeResolutionResult_Success_Complete;
 	
@@ -834,7 +926,8 @@ TypeResolutionResult OilResolveTypes_ImplementMembers ( OilNamespaceDefinition &
 				
 				OilFunctionDefinition * FunctionDefinition = Block -> GetFunction ( K );
 				
-				TypeResolutionResult FunctionResolutionResult = OilTypeResolution_FunctionDefinition ( CurrentNS, * FunctionDefinition, Block -> HasWhereDefinition () ? & TemplateNames : NULL );
+				TypeResolutionResult FunctionResolutionResult = OilTypeResolution_FunctionDefinition ( CurrentNS, * FunctionDefinition, Block -> HasWhereDefinition () ? & TemplateNames : NULL, TypeDefinition, Block -> GetImplementedType () -> GetTemplateSpecification () );
+				
 				if ( FunctionResolutionResult == kTypeResolutionResult_Success_Complete )
 					Progress = true;
 				else if ( FunctionResolutionResult == kTypeResolutionResult_Success_Progress )
@@ -858,7 +951,37 @@ TypeResolutionResult OilResolveTypes_ImplementMembers ( OilNamespaceDefinition &
 				
 			}
 			
-			// TODO: Resolve methods
+			uint32_t MethodCount = Block -> GetMethodCount ();
+			
+			for ( uint32_t K = 0; K < MethodCount; K ++ )
+			{
+				
+				OilMethodDefinition * MethodDefinition = Block -> GetMethod ( K );
+				
+				TypeResolutionResult MethodResolutionResult = OilTypeResolution_MethodDefinition ( CurrentNS, * MethodDefinition, * TypeDefinition, Block -> GetImplementedType () -> GetTemplateSpecification (), Block -> HasWhereDefinition () ? & TemplateNames : NULL );
+				
+				if ( MethodResolutionResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( MethodResolutionResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( MethodResolutionResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+				{
+					
+					if ( Block -> HasWhereDefinition () )
+						delete [] TemplateNames.Names;
+					
+					return MethodResolutionResult;
+					
+				}
+				
+			}
 			
 		}
 		

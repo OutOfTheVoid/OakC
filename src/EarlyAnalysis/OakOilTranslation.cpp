@@ -1610,7 +1610,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL, TemplateDefinition );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), TemplateDefinition );
 			
 		}
 		
@@ -1666,7 +1666,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, NULL );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ) );
 			
 		}
 		
@@ -1756,7 +1756,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL, TemplateDefinition );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), TemplateDefinition );
 			
 		}
 		
@@ -1812,7 +1812,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, NULL );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ) );
 			
 		}
 		

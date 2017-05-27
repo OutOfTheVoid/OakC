@@ -23,6 +23,7 @@ class OilStructDefinition;
 class OilTemplateDefinition;
 class OilFunctionDefinition;
 class OilMethodDefinition;
+class OilTypeDefinition;
 
 typedef struct
 {
@@ -32,13 +33,13 @@ typedef struct
 	
 } TypeResolution_TemplateNameList;
 
-TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition );
 // TODO: Implement
-TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Function, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Function, TypeResolution_TemplateNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
 // TODO: Implement
-TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Function, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Method, OilTypeDefinition & SelfType, OilTemplateSpecification * SelfTemplateSpec, TypeResolution_TemplateNameList * TemplateNames = NULL );
 
 TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & RootNS );
