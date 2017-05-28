@@ -138,6 +138,40 @@ void OakAliasDeclarationConstructor :: TryConstruct ( ASTConstructionInput & Inp
 		
 	}
 	
+	if ( TokenCount == 0 )
+	{
+		
+		delete AliasElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected semicolon at end of alias statement";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
+		
+		return;
+		
+	}
+	
+	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+	
+	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Equals )
+	{
+		
+		delete AliasElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected equal sign between alias name and aliased type.";
+		Output.ErrorProvokingToken = CurrentToken;
+		
+		return;
+		
+	}
+	
+	AliasElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], 1 );
+	
+	TokenCount --;
+	
 	if ( TypeGroup.TryConstruction ( AliasElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
