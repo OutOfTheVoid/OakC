@@ -80,6 +80,26 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 				return kTypeResolutionResult_Success_Complete;
 				
 			}
+			
+			OilTypeAlias * ResolvedAlias = FindTypeAlias ( * Ref, CurrentNS, TemplateMismatch );
+			
+			if ( TemplateMismatch )
+			{
+				
+				LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Template mismatch: template of reference to " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+				
+				return kTypeResolutionResult_Failure_TemplateMismatch;
+				
+			}
+			
+			if ( ResolvedAlias != NULL )
+			{
+				
+				Ref -> SetResolvedTypeAlias ( ResolvedAlias );
+				
+				return kTypeResolutionResult_Success_Complete;
+				
+			}
 			else
 			{
 				
@@ -133,6 +153,26 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	{
 		
 		Ref -> SetResolvedTypeDefinition ( ResolvedType );
+		
+		return kTypeResolutionResult_Success_Complete;
+		
+	}
+	
+	OilTypeAlias * ResolvedAlias = FindTypeAlias ( * Ref, CurrentNS, TemplateMismatch );
+	
+	if ( TemplateMismatch )
+	{
+		
+		LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Template mismatch: template of reference to " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) + " does not match definition." );
+		
+		return kTypeResolutionResult_Failure_TemplateMismatch;
+		
+	}
+	
+	if ( ResolvedAlias != NULL )
+	{
+		
+		Ref -> SetResolvedTypeAlias ( ResolvedAlias );
 		
 		return kTypeResolutionResult_Success_Complete;
 		

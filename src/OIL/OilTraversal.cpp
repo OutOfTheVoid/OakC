@@ -6,6 +6,7 @@
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilStructDefinition.h>
 #include <OIL/OilTraitDefinition.h>
+#include <OIL/OilTypeAlias.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -447,6 +448,218 @@ const OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, con
 	{
 		
 		if ( TypeRef.IsTemplated () )
+		{
+			
+			TemplateMismatch = true;
+			
+			return NULL;
+			
+		}
+		
+	}
+	
+	return OutDef;
+	
+}
+
+OilTypeAlias * FindTypeAlias ( const OilTypeRef & TypeRef, OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch )
+{
+	
+	if ( ! TypeRef.IsDirectType () )
+		return NULL;
+	
+	OilTypeAlias * OutDef = NULL;
+	
+	OilNamespaceDefinition * Parent = & ImmediateContainer;
+	
+	if ( ( TypeRef.GetFlags () & OilTypeRef :: kRefFlag_Absolute ) != 0 )
+	{
+		
+		while ( Parent -> GetParent () != NULL )
+			Parent = Parent -> GetParent ();
+		
+		if ( TypeRef.IsNamespaced () )
+		{
+			
+			for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					return NULL;
+				
+			}
+			
+		}
+		
+		if ( Parent != NULL )
+			OutDef = Parent -> FindTypeAlias ( TypeRef.GetName () );
+		
+	}
+	else
+	{
+			
+		if ( TypeRef.IsNamespaced () )
+		{
+			
+			Parent = OilFindParentallyContainedNamespace ( * Parent, TypeRef.GetNamespaceName ( 0 ) );
+			
+			for ( uint32_t I = 1; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					break;
+				
+			}
+			
+			if ( Parent != NULL )
+				OutDef = Parent -> FindTypeAlias ( TypeRef.GetName () );
+			
+		}
+		else
+		{
+			
+			while ( Parent != NULL )
+			{
+				
+				OutDef = Parent -> FindTypeAlias ( TypeRef.GetName () );
+				
+				if ( OutDef != NULL )
+					break;
+				
+				Parent = Parent -> GetParent ();
+				
+			}
+			
+		}
+		
+	}
+	
+	if ( OutDef == NULL )
+		return NULL;
+	
+	if ( OutDef -> IsTemplated () )
+	{
+		
+		if ( ! TypeRef.IsTemplated () )
+		{
+			
+			TemplateMismatch = true;
+			
+			return NULL;
+			
+		}
+		
+		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetTemplateDefinition () -> GetTemplateParameterCount () )
+		{
+			
+			TemplateMismatch = true;
+			
+			return NULL;
+			
+		}
+		
+	}
+	
+	return OutDef;
+	
+}
+
+const OilTypeAlias * FindTypeAlias ( const OilTypeRef & TypeRef, const OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch )
+{
+	
+	if ( ! TypeRef.IsDirectType () )
+		return NULL;
+	
+	const OilTypeAlias * OutDef = NULL;
+	
+	const OilNamespaceDefinition * Parent = & ImmediateContainer;
+	
+	if ( ( TypeRef.GetFlags () & OilTypeRef :: kRefFlag_Absolute ) != 0 )
+	{
+		
+		while ( Parent -> GetParent () != NULL )
+			Parent = Parent -> GetParent ();
+		
+		if ( TypeRef.IsNamespaced () )
+		{
+			
+			for ( uint32_t I = 0; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					return NULL;
+				
+			}
+			
+		}
+		
+		if ( Parent != NULL )
+			OutDef = Parent -> FindTypeAlias ( TypeRef.GetName () );
+		
+	}
+	else
+	{
+			
+		if ( TypeRef.IsNamespaced () )
+		{
+			
+			Parent = OilFindParentallyContainedNamespace ( * Parent, TypeRef.GetNamespaceName ( 0 ) );
+			
+			for ( uint32_t I = 1; I < TypeRef.GetNamespaceNameCount (); I ++ )
+			{
+				
+				Parent = Parent -> FindNamespaceDefinition ( TypeRef.GetNamespaceName ( I ) );
+				
+				if ( Parent == NULL )
+					break;
+				
+			}
+			
+			if ( Parent != NULL )
+				OutDef = Parent -> FindTypeAlias ( TypeRef.GetName () );
+			
+		}
+		else
+		{
+			
+			while ( Parent != NULL )
+			{
+				
+				OutDef = Parent -> FindTypeAlias ( TypeRef.GetName () );
+				
+				if ( OutDef != NULL )
+					break;
+				
+				Parent = Parent -> GetParent ();
+				
+			}
+			
+		}
+		
+	}
+	
+	if ( OutDef == NULL )
+		return NULL;
+	
+	if ( OutDef -> IsTemplated () )
+	{
+		
+		if ( ! TypeRef.IsTemplated () )
+		{
+			
+			TemplateMismatch = true;
+			
+			return NULL;
+			
+		}
+		
+		if ( TypeRef.GetTemplateSpecification () -> GetTypeRefCount () != OutDef -> GetTemplateDefinition () -> GetTemplateParameterCount () )
 		{
 			
 			TemplateMismatch = true;
