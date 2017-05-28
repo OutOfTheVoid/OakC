@@ -13,6 +13,7 @@ OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name,
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
+	ResolvedAsTypeAlias ( false ),
 	ResolvedType ( NULL ),
 	Ref ( Ref )
 {
@@ -27,6 +28,7 @@ OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name,
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
+	ResolvedAsTypeAlias ( false ),
 	ResolvedType ( NULL ),
 	Ref ( Ref )
 {
@@ -48,6 +50,7 @@ OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name,
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
+	ResolvedAsTypeAlias ( false ),
 	ResolvedType ( NULL ),
 	Ref ( Ref )
 {
@@ -62,6 +65,7 @@ OilTypeRef :: OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name,
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
+	ResolvedAsTypeAlias ( false ),
 	ResolvedType ( NULL ),
 	Ref ( Ref )
 {
@@ -83,6 +87,7 @@ OilTypeRef :: OilTypeRef ( const SourceRef & Ref, ReferenceMarkerType RMType, Oi
 	Flags ( Flags ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
+	ResolvedAsTypeAlias ( false ),
 	ResolvedType ( NULL ),
 	Ref ( Ref )
 {
@@ -101,6 +106,7 @@ OilTypeRef :: OilTypeRef ( const SourceRef & Ref, VoidMarkerType VType ):
 	Flags ( 0 ),
 	ResolvedAsTrait ( false ),
 	ResolvedAsTemplateParam ( false ),
+	ResolvedAsTypeAlias ( false ),
 	ResolvedType ( NULL ),
 	Ref ( Ref )
 {
@@ -115,7 +121,7 @@ OilTypeRef :: ~OilTypeRef ()
 	if ( NamespaceNameList != NULL )
 		delete [] NamespaceNameList;
 	
-	if ( Mode != kTypeMode_Direct )
+	if ( ( Mode != kTypeMode_Direct ) && ( SubType != NULL ) )
 		delete SubType;
 	
 }
@@ -234,6 +240,8 @@ bool OilTypeRef :: IsResolved () const
 	
 	if ( ResolvedAsTrait )
 		return ResolvedTrait != NULL;
+	else if ( ResolvedAsTypeAlias )
+		return ResolvedTypeAlias != NULL;
 	else
 	{
 		
@@ -252,6 +260,7 @@ void OilTypeRef :: SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinitio
 	ResolvedType = TypeDefinition;
 	ResolvedAsTrait = false;
 	ResolvedAsTemplateParam = false;
+	ResolvedAsTypeAlias = false;
 	
 }
 
@@ -262,6 +271,7 @@ void OilTypeRef :: SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefini
 	ResolvedTrait = TraitDefinition;
 	ResolvedAsTrait = true;
 	ResolvedAsTemplateParam = false;
+	ResolvedAsTypeAlias = false;
 	
 }
 
@@ -270,6 +280,24 @@ void OilTypeRef :: SetResolvedTemplateParamName ()
 	
 	ResolvedAsTrait = false;
 	ResolvedAsTemplateParam = true;
+	ResolvedAsTypeAlias = false;
+	
+}
+
+void OilTypeRef :: SetResolvedTypeAlias ( OilTypeAlias * TypeAlias )
+{
+	
+	ResolvedTypeAlias = TypeAlias;
+	ResolvedAsTypeAlias = true;
+	ResolvedAsTrait = false;
+	ResolvedAsTemplateParam = false;
+	
+}
+
+bool OilTypeRef :: IsResolvedAsType () const
+{
+	
+	return ( ! ( ResolvedAsTrait || ResolvedAsTemplateParam || ResolvedAsTypeAlias ) ) && ( ResolvedType != NULL );
 	
 }
 
@@ -283,35 +311,63 @@ bool OilTypeRef :: IsResolvedAsTrait () const
 bool OilTypeRef :: IsResolvedAsTemplateParam () const
 {
 	
-	return ( ! ResolvedAsTrait ) && ResolvedAsTemplateParam;
+	return ResolvedAsTemplateParam;
 	
 }
 
-OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition () const
+bool OilTypeRef :: IsResolvedAsTypeAlias () const
 {
 	
-	return ResolvedAsTrait ? NULL : ResolvedAsTemplateParam ? NULL :ResolvedType;
+	return ResolvedAsTypeAlias;
+	
+}
+
+const OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition () const
+{
+	
+	return IsResolvedAsType () ? ResolvedType : NULL;
 	
 }
 
 OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition ()
 {
 	
-	return ResolvedAsTrait ? NULL : ResolvedAsTemplateParam ? NULL : ResolvedType;
+	return IsResolvedAsType () ? ResolvedType : NULL;
 	
 }
 
-OilTraitDefinition * OilTypeRef :: GetResolvedTraitDefinition () const
+const OilTraitDefinition * OilTypeRef :: GetResolvedTraitDefinition () const
 {
 	
-	return ResolvedAsTrait ? ResolvedTrait : NULL;
+	return IsResolvedAsTrait () ? ResolvedTrait : NULL;
 	
 }
 
 OilTraitDefinition * OilTypeRef :: GetResolvedTraitDefinition ()
 {
 	
-	return ResolvedAsTrait ? ResolvedTrait : NULL;
+	return IsResolvedAsTrait () ? ResolvedTrait : NULL;
+	
+}
+
+const OilTypeAlias * OilTypeRef :: GetResolvedTypeAlias () const
+{
+	
+	return IsResolvedAsTypeAlias () ? ResolvedTypeAlias : NULL;
+	
+}
+
+OilTypeAlias * OilTypeRef :: GetResolvedTypeAlias ()
+{
+	
+	return IsResolvedAsTypeAlias () ? ResolvedTypeAlias : NULL;
+	
+}
+
+void OilTypeRef :: SetResolvedVoid ()
+{
+	
+	Mode = kTypeMode_Void;
 	
 }
 

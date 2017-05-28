@@ -1,82 +1,13 @@
 //import "test/TestSyntax_Literals.oak";
 
-namespace my_namespace::sub_namespace
-{
-	
-	struct namespaced_struct
-	{
-		
-		bind yay:u32,
-		
-	}
-	
-	namespace sub_sub_namespace
-	{
-		
-		struct another_struct
-		{
-			
-			bind floating_binding:f64
-			
-		}
-		
-	}
-	
-}
-
-function my_global_func ( some_param : i32 ) : void
-{
-	
-	some_namespace :: SomeTemplatedType.static_method ();
-	::some_globally_parented_namespace::some_namespace :: SomeType.static_method ();
-	
-}
-
-struct MyType <A, B>
-{
-	
-	bind test_string: str,
-	bind test_int: some_ns::a_struct,
-	bind test_array: Array:<Array:<Array:<B>>>,
-	bind test_array2: Array:<Array:<Array:<A>>>
-	
-}
-
-struct SomeStruct <A: SomeTrait + AnotherTrait, B, C, D: SomeTrait>
-{
-}
-
-implement MyType:<A, B>
-{
-	
-	function test ( & self, string_value: & string ): u32
-	{
-		
-		self -> test_string = string_value;
-		self -> test_int = 1u;
-		
-	}
-	
-	function SayHello ( & self )
-	{
-		
-		//Std::IO :: Print ( self -> TestString + ", " + String::ToString ( TestInt ) );
-		
-	}
-	
-}
-
-function Main ( ProgramArguments: Array:<string> ) : i32
+function Main ( ProgramArguments: Array:<str> ) : i32
 {
 	
 	ignore ProgramArguments;
 	
-	bind MyString: string = "Hello, world!";
-	bind MyStruct: MyType = ::MyType::new ( MyString.copy () );
+	bind MyString: str = "Hello, world!";
 	
 	bind MyArray: Array : <u32> = [:u32; 0u32, 1_u32, 2, 3, 4, 5, 6 ];
-	
-	MyType.SayHello ();
 	
 	bind comp:u32 = 0;
 	

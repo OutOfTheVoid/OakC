@@ -17,6 +17,7 @@ class OilBindingStatement;
 class OilTraitDefinition;
 class OilImplementBlock;
 class OilConstStatement;
+class OilTypeAlias;
 
 class OilNamespaceDefinition
 {
@@ -32,6 +33,7 @@ public:
 		kNameSearchResultType_BindingStatement,
 		kNameSearchResultType_ConstStatement,
 		kNameSearchResultType_TraitDefinition,
+		kNameSearchResultType_TypeAlias,
 		
 	};
 	
@@ -49,6 +51,7 @@ public:
 			OilBindingStatement * BindingStatement;
 			OilConstStatement * ConstStatement;
 			OilTraitDefinition * TraitDefinition;
+			OilTypeAlias * Alias;
 			
 		};
 		
@@ -160,6 +163,16 @@ public:
 	
 	const SourceRef & GetSourceRef () const;
 	
+	uint32_t GetTypeAliasCount () const;
+	
+	void AddTypeAlias ( OilTypeAlias * Alias );
+	
+	OilTypeAlias * GetTypeAlias ( uint32_t Index );
+	const OilTypeAlias * GetTypeAlias ( uint32_t Index ) const;
+	
+	OilTypeAlias * FindTypeAlias ( const std :: u32string & Name );
+	const OilTypeAlias * FindTypeAlias ( const std :: u32string & Name ) const;
+	
 private:
 	
 	OilNamespaceDefinition * Parent;
@@ -177,6 +190,8 @@ private:
 	std :: map <std :: u32string, OilConstStatement *> Constants;
 	
 	std :: vector <OilImplementBlock *> UnresImplBlocks;
+	
+	std :: map <std :: u32string, OilTypeAlias *> Aliases;
 	
 	SourceRef Ref;
 	

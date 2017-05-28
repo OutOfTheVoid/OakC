@@ -1,0 +1,9 @@
+trait MyTrait
+{
+}
+
+struct MyStruct <A:MyTrait, B>
+{
+}
+
+alias MyAlias<A: MyTrait> MyStruct:<A, A>;

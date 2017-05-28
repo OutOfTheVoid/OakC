@@ -24,6 +24,7 @@ class OilTemplateDefinition;
 class OilFunctionDefinition;
 class OilMethodDefinition;
 class OilTypeDefinition;
+class OilTypeAlias;
 
 typedef struct
 {
@@ -36,15 +37,15 @@ typedef struct
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition, TypeResolution_TemplateNameList * TemplateNames = NULL );
-// TODO: Implement
 TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Function, TypeResolution_TemplateNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
-// TODO: Implement
 TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Method, OilTypeDefinition & SelfType, OilTemplateSpecification * SelfTemplateSpec, TypeResolution_TemplateNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_TypeAlias ( OilNamespaceDefinition & CurrentNS, OilTypeAlias & Alias );
 
-TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & RootNS );
-TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & RootNS );
-TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & RootNS );
-TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & RootNS );
-TypeResolutionResult OilResolveTypes_ImplementMembers ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_Constants ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_Bindings ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_ImplementMembers ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_TypeAliases ( OilNamespaceDefinition & RootNS );
 
 #endif

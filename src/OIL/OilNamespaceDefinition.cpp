@@ -6,6 +6,7 @@
 #include <OIL/OilImplicitBindingInitialization.h>
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilImplementBlock.h>
+#include <OIL/OilTypeAlias.h>
 
 #include <map>
 #include <iterator>
@@ -21,6 +22,7 @@ OilNamespaceDefinition :: OilNamespaceDefinition ( const SourceRef & Ref, const 
 	ImplicitIntiailizationBody ( Ref ),
 	Constants (),
 	UnresImplBlocks (),
+	Aliases (),
 	Ref ( Ref )
 {
 }
@@ -103,7 +105,18 @@ OilNamespaceDefinition :: ~OilNamespaceDefinition ()
 		
 		Iter_UIB ++;
 		
-	} 
+	}
+	
+	std :: map <std :: u32string, OilTypeAlias *> :: iterator FindIterator_A = Aliases.begin ();
+	
+	while ( FindIterator_A != Aliases.end () )
+	{
+		
+		delete FindIterator_A -> second;
+		
+		FindIterator_A ++;
+		
+	}
 	
 }
 
@@ -177,6 +190,18 @@ void OilNamespaceDefinition :: SearchName ( const std :: u32string & Name, NameS
 		
 		Result.Type = kNameSearchResultType_TraitDefinition;
 		Result.TraitDefinition = TraitDef;
+		
+		return;
+		
+	}
+	
+	OilTypeAlias * Alias = FindTypeAlias ( Name );
+	
+	if ( Alias != NULL )
+	{
+		
+		Result.Type = kNameSearchResultType_TypeAlias;
+		Result.Alias = Alias;
 		
 		return;
 		
@@ -758,5 +783,72 @@ const SourceRef & OilNamespaceDefinition :: GetSourceRef () const
 {
 	
 	return Ref;
+	
+}
+
+uint32_t OilNamespaceDefinition :: GetTypeAliasCount () const
+{
+	
+	return Aliases.size ();
+	
+}
+
+void OilNamespaceDefinition :: AddTypeAlias ( OilTypeAlias * Alias )
+{
+	
+	Aliases [ Alias -> GetName () ] = Alias;
+	
+}
+
+OilTypeAlias * OilNamespaceDefinition :: GetTypeAlias ( uint32_t Index )
+{
+	
+	std :: map <std :: u32string, OilTypeAlias *> :: iterator IndexIter = Aliases.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == Aliases.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+
+const OilTypeAlias * OilNamespaceDefinition :: GetTypeAlias ( uint32_t Index ) const
+{
+	
+	std :: map <std :: u32string, OilTypeAlias *> :: const_iterator IndexIter = Aliases.begin ();
+	
+	std :: advance ( IndexIter, Index );
+	
+	if ( IndexIter == Aliases.end () )
+		return NULL;
+	
+	return IndexIter -> second;
+	
+}
+
+OilTypeAlias * OilNamespaceDefinition :: FindTypeAlias ( const std :: u32string & Name )
+{
+	
+	std :: map <std :: u32string, OilTypeAlias *> :: iterator FindIterator = Aliases.find ( Name );
+	
+	if ( FindIterator != Aliases.end () )
+		return FindIterator -> second;
+	
+	return NULL;
+	
+}
+
+const OilTypeAlias * OilNamespaceDefinition :: FindTypeAlias ( const std :: u32string & Name ) const
+{
+	
+	std :: map <std :: u32string, OilTypeAlias *> :: const_iterator FindIterator = Aliases.find ( Name );
+	
+	if ( FindIterator != Aliases.end () )
+		return FindIterator -> second;
+	
+	return NULL;
 	
 }

@@ -264,7 +264,7 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	TypeResolutionResult ResolveResult_Constants = OilResolveTypes_Constants ( RootNS );
+	TypeResolutionResult ResolveResult_Constants = OilTypeResolution_Constants ( RootNS );
 	
 	if ( ResolveResult_Constants == kTypeResolutionResult_Success_Complete )
 		Progress = true;
@@ -286,7 +286,7 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	TypeResolutionResult ResolveResult_Bindings = OilResolveTypes_Bindings ( RootNS );
+	TypeResolutionResult ResolveResult_Bindings = OilTypeResolution_Bindings ( RootNS );
 	
 	if ( ResolveResult_Bindings == kTypeResolutionResult_Success_Complete )
 		Progress = true;
@@ -308,7 +308,7 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	TypeResolutionResult ResolveResult_Structs = OilResolveTypes_StructDefinitions ( RootNS );
+	TypeResolutionResult ResolveResult_Structs = OilTypeResolution_StructDefinitions ( RootNS );
 	
 	if ( ResolveResult_Structs == kTypeResolutionResult_Success_Complete )
 		Progress = true;
@@ -330,7 +330,7 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	TypeResolutionResult ResolveResult_Functions = OilResolveTypes_Functions ( RootNS );
+	TypeResolutionResult ResolveResult_Functions = OilTypeResolution_Functions ( RootNS );
 	
 	if ( ResolveResult_Functions == kTypeResolutionResult_Success_Complete )
 		Progress = true;
@@ -352,9 +352,7 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	//OilResolveTypes_ImplementMembers
-	
-	TypeResolutionResult ResolveResult_ImplementMembers = OilResolveTypes_ImplementMembers ( RootNS );
+	TypeResolutionResult ResolveResult_ImplementMembers = OilTypeResolution_ImplementMembers ( RootNS );
 	
 	if ( ResolveResult_ImplementMembers == kTypeResolutionResult_Success_Complete )
 		Progress = true;
@@ -366,6 +364,28 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	else if ( ResolveResult_ImplementMembers == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+	{
+		
+		Error = true;
+		
+		return;
+		
+	}
+	
+	TypeResolutionResult ResolveResult_TypeAliases = OilTypeResolution_TypeAliases ( RootNS );
+	
+	if ( ResolveResult_TypeAliases == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( ResolveResult_TypeAliases == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolveResult_TypeAliases == kTypeResolutionResult_Success_NoProgress )
 		Unresolved = true;
 	else
 	{

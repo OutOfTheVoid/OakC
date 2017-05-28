@@ -20,18 +20,17 @@ ASTConstructionGroup :: StaticInitEntry _OakReturnTypeConstructor_TypeGroupEntri
 {
 	
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	{ & OakVoidTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
 	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
-	
 };
 
 OakReturnTypeConstructor :: OakReturnTypeConstructor ():
-	TypeGroup ( _OakReturnTypeConstructor_TypeGroupEntries, 7 )
+	TypeGroup ( _OakReturnTypeConstructor_TypeGroupEntries, 6 )
 {
 }
 

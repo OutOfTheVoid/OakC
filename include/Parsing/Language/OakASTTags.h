@@ -42,6 +42,7 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_StatementBlock = 24;
 	
+	const uint64_t kASTTag_TypeAlias = 25;
 	
 	const uint64_t kASTTag_ReferenceType = 26;
 	
@@ -186,7 +187,7 @@ namespace OakASTTags
 		"FUNCTION_PARAMETER_LIST",
 		"FUNCTION_PARAMETER",
 		"STATEMENT_BLOCK",
-		"__RESERVED__",
+		"ALIAS_DECLARATION",
 		"REFERENCE_TYPE",
 		"SELF_PARAMETER",
 		"SELF_PARAMETER_REFERENCE",

@@ -45,6 +45,7 @@
 #include <OIL/OilTypeDefinition.h>
 #include <OIL/OilDecoratorTag.h>
 #include <OIL/OilConstStatement.h>
+#include <OIL/OilTypeAlias.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -80,6 +81,7 @@
 #include <Parsing/Language/OakImplementDefinitionConstructor.h>
 #include <Parsing/Language/OakMethodDefinitionConstructor.h>
 #include <Parsing/Language/OakDecoratorTagConstructor.h>
+#include <Parsing/Language/OakAliasDeclarationConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -119,6 +121,7 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
 OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTagElement );
 OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * ConstElement );
+OilTypeAlias * OakTranslateTypeAliasToOil ( const ASTElement * AliasElement );
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS )
 {
@@ -410,6 +413,52 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				}
 				
 				GlobalNS.AddUnresolvedImplementBlock ( Block );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_TypeAlias:
+			{
+				
+				OilTypeAlias * Alias = OakTranslateTypeAliasToOil ( SubElement );
+				
+				if ( Alias == NULL )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				GlobalNS.SearchName ( Alias -> GetName (), SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					WriteError ( SubElement, "Alias name conflicts with previous namespace member" );
+					
+					return false;
+					
+				}
+				
+				GlobalNS.AddTypeAlias ( Alias );
 				
 			}
 			break;
@@ -778,6 +827,55 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				DefinedNamespaceDefinition -> AddUnresolvedImplementBlock ( Block );
 				
 			}
+			break;
+			
+			case OakASTTags :: kASTTag_TypeAlias:
+			{
+				
+				OilTypeAlias * Alias = OakTranslateTypeAliasToOil ( SubElement );
+				
+				if ( Alias == NULL )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				DefinedNamespaceDefinition -> SearchName ( Alias -> GetName (), SearchResult );
+				
+				if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					WriteError ( SubElement, "Alias name conflicts with previous namespace member" );
+					
+					return false;
+					
+				}
+				
+				DefinedNamespaceDefinition -> AddTypeAlias ( Alias );
+				
+			}
+			break;
+			
+			default:
 			break;
 			
 		}
@@ -4176,6 +4274,46 @@ OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTa
 	OilDecoratorTag * NewTag = new OilDecoratorTag ( Ref, DecoratorData -> ID );
 	
 	return NewTag;
+	
+}
+
+
+OilTypeAlias * OakTranslateTypeAliasToOil ( const ASTElement * AliasElement )
+{
+	
+	if ( ( AliasElement == NULL ) || ( AliasElement -> GetTag () != OakASTTags :: kASTTag_TypeAlias ) || ( AliasElement -> GetSubElementCount () == 0 ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	SourceRef Ref = AliasElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
+	const OakAliasDeclarationConstructor :: ElementData * AliasData = reinterpret_cast <const OakAliasDeclarationConstructor :: ElementData *> ( AliasElement -> GetData () );
+	
+	OilTemplateDefinition * Template = NULL;
+	
+	if ( AliasData -> Templated )
+	{
+		
+		Template = OakTranslateTemplateDefinitionToOil ( AliasElement -> GetSubElement ( 0 ) );
+		
+		if ( Template == NULL )
+			return NULL;
+		
+	}
+	
+	OilTypeRef * AliasedType = OakTranslateTypeRefToOil ( AliasElement -> GetSubElement ( AliasData -> Templated ? 1 : 0 ) );
+	
+	if ( AliasedType == NULL )
+		return NULL;
+	
+	OilTypeAlias * NewAlias = new OilTypeAlias ( Ref, AliasData -> NewName, AliasedType, Template );
+	
+	return NewAlias;
 	
 }
 

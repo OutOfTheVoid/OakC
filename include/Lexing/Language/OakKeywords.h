@@ -64,6 +64,8 @@ namespace OakKeywords
 		
 		std :: string Require;
 		
+		std :: string Alias;
+		
 	} KeywordLocalization;
 	
 	const KeywordLocalization kKeywordLocalization_EN
@@ -125,6 +127,8 @@ namespace OakKeywords
 		u8"const",
 		u8"require",
 		
+		u8"alias",
+		
 	};
 	
 	const KeywordLocalization kKeywordLocalization_FR
@@ -185,6 +189,8 @@ namespace OakKeywords
 		u8"lier", // bind
 		u8"const",
 		u8"faut", // require
+		
+		u8"alias",
 		
 	};
 	

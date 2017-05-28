@@ -29,6 +29,7 @@ bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS );
 bool AddUniversalTypes ( OilNamespaceDefinition & RootNS );
 
 void AddFunctionTypes ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint32_t PTRAlignment );
+void AddArrayType ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint32_t PTRAlignment );
 
 bool OakAddBuiltinTypes ( OilNamespaceDefinition & RootNS )
 {
@@ -111,6 +112,7 @@ bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS )
 	RootNS.AddTypeDefinition ( TraitPtrType );
 	
 	AddFunctionTypes ( RootNS, 4, 4 );
+	AddArrayType ( RootNS, 4, 4 );
 	
 	return true;
 	
@@ -165,8 +167,21 @@ bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS )
 	RootNS.AddTypeDefinition ( TraitPtrType );
 	
 	AddFunctionTypes ( RootNS, 8, 8 );
+	AddArrayType ( RootNS, 8, 8 );
 	
 	return true;
+	
+}
+
+void AddArrayType ( OilNamespaceDefinition & RootNS, uint32_t PTRSize, uint32_t PTRAlignment )
+{
+	
+	SourceRef NullRef { 0, 0, NULL };
+	
+	OilTypeDefinition * ArrayType = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"array", PTRSize * 2, PTRAlignment, OilBuiltinStructDefinition :: kTypeFlag_None, new OilTemplateDefinition ( NullRef ) ), true );
+	ArrayType -> GetBuiltinStructDefinition () -> GetTemplateDefinition () -> AddParameter ( new OilTemplateDefinitionParameter ( NullRef, U"T" ) );
+	
+	RootNS.AddTypeDefinition ( ArrayType );
 	
 }
 

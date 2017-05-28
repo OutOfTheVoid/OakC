@@ -22,6 +22,7 @@
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilMethodDefinition.h>
 #include <OIL/OilMethodParameterList.h>
+#include <OIL/OilTypeAlias.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -341,7 +342,7 @@ TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefiniti
 	
 }
 
-TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & CurrentNS )
+TypeResolutionResult OilTypeResolution_Constants ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -379,7 +380,7 @@ TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & Curren
 	for ( uint32_t I = 0; I < SubNamespaces; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_Constants ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		TypeResolutionResult ResolutionResult = OilTypeResolution_Constants ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
 			return ResolutionResult;
@@ -412,7 +413,7 @@ TypeResolutionResult OilResolveTypes_Constants ( OilNamespaceDefinition & Curren
 	
 }
 
-TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & CurrentNS )
+TypeResolutionResult OilTypeResolution_Bindings ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -450,7 +451,7 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 	for ( uint32_t I = 0; I < SubNamespaces; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_Bindings ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		TypeResolutionResult ResolutionResult = OilTypeResolution_Bindings ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -483,7 +484,7 @@ TypeResolutionResult OilResolveTypes_Bindings ( OilNamespaceDefinition & Current
 	
 }
 
-TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition & CurrentNS )
+TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -603,7 +604,7 @@ TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition 
 	for ( uint32_t I = 0; I < SubNSCount; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_StructDefinitions ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		TypeResolutionResult ResolutionResult = OilTypeResolution_StructDefinitions ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -635,7 +636,7 @@ TypeResolutionResult OilResolveTypes_StructDefinitions ( OilNamespaceDefinition 
 	
 }
 
-TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & CurrentNS )
+TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -695,7 +696,7 @@ TypeResolutionResult OilResolveTypes_Functions ( OilNamespaceDefinition & Curren
 	for ( uint32_t I = 0; I < SubNSCount; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_Functions ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		TypeResolutionResult ResolutionResult = OilTypeResolution_Functions ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -879,7 +880,95 @@ TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition
 	
 }
 
-TypeResolutionResult OilResolveTypes_ImplementMembers ( OilNamespaceDefinition & CurrentNS )
+TypeResolutionResult OilTypeResolution_TypeAlias ( OilNamespaceDefinition & CurrentNS, OilTypeAlias & Alias )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	TypeResolution_TemplateNameList TemplateNames;
+	
+	if ( Alias.IsTemplated () )
+	{
+		
+		OilTemplateDefinition * TemplateDef = Alias.GetTemplateDefinition ();
+		
+		uint32_t TemplateParamCount = TemplateDef -> GetTemplateParameterCount ();
+		
+		TemplateNames.Names = new std :: u32string [ TemplateParamCount ];
+		TemplateNames.Count = TemplateParamCount;
+		
+		for ( uint32_t I = 0; I < TemplateParamCount; I ++ )
+			TemplateNames.Names [ I ] = TemplateDef -> GetTemplateParameter ( I ) -> GetName ();
+		
+		TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * TemplateDef, & TemplateNames );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+		{
+			
+			if ( Alias.IsTemplated () )
+				delete [] TemplateNames.Names;
+			
+			return ResolutionResult;
+			
+		}
+		
+	}
+	
+	if ( ! Alias.GetAliasedType () -> IsResolved () )
+	{
+		
+		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * Alias.GetAliasedType (), Alias.IsTemplated () ? & TemplateNames : NULL );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+		{
+			
+			if ( Alias.IsTemplated () )
+				delete [] TemplateNames.Names;
+			
+			return ResolutionResult;
+			
+		}
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_ImplementMembers ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -992,7 +1081,73 @@ TypeResolutionResult OilResolveTypes_ImplementMembers ( OilNamespaceDefinition &
 	for ( uint32_t I = 0; I < SubNSCount; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilResolveTypes_ImplementMembers ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		TypeResolutionResult ResolutionResult = OilTypeResolution_ImplementMembers ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ResolutionResult;
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_TypeAliases ( OilNamespaceDefinition & CurrentNS )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	uint32_t AliasCount = CurrentNS.GetTypeAliasCount ();
+	
+	for ( uint32_t I = 0; I < AliasCount; I ++ )
+	{
+		
+		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeAlias ( CurrentNS, * CurrentNS.GetTypeAlias ( I ) );
+		
+		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return ResolutionResult;
+		
+	}
+	
+	uint32_t SubNSCount = CurrentNS.GetSubNamespaceDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < SubNSCount; I ++ )
+	{
+		
+		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeAliases ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;

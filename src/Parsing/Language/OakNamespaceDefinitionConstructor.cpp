@@ -12,6 +12,7 @@
 #include <Parsing/Language/OakLoneSemicolonConstructor.h>
 #include <Parsing/Language/OakFunctionDefinitionConstructor.h>
 #include <Parsing/Language/OakDecoratorTagConstructor.h>
+#include <Parsing/Language/OakAliasDeclarationConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -25,6 +26,7 @@ ASTConstructionGroup :: StaticInitEntry _OakNamespaceDefinitionConstructor_Names
 {
 	
 	{ & OakNamespaceDefinitionConstructor :: Instance, 0 },
+	{ & OakAliasDeclarationConstructor :: Instance, 0 },
 	{ & OakStructDefinitionConstructor :: Instance, 0 },
 	{ & OakTraitDefinitionConstructor :: Instance, 0 },
 	{ & OakBindingStatementConstructor :: Instance, 0 },
@@ -38,7 +40,7 @@ ASTConstructionGroup :: StaticInitEntry _OakNamespaceDefinitionConstructor_Names
 };
 
 OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
-	NamespaceChildrenGroup ( _OakNamespaceDefinitionConstructor_NamespaceChildrenGroupEntries, 9 )
+	NamespaceChildrenGroup ( _OakNamespaceDefinitionConstructor_NamespaceChildrenGroupEntries, 10 )
 {
 }
 

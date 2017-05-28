@@ -60,6 +60,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Const = 48;
 	const uint64_t kKeywordAuxTags_Require = 49;
 	const uint64_t kKeywordAuxTags_Where = 50;
+	const uint64_t kKeywordAuxTags_Alias = 51;
 	
 	const uint64_t kKeywordAuxTags_Mask_Meaning = 0xFFF;
 	
@@ -122,7 +123,9 @@ namespace OakKeywordTokenTags
 		"BREAK",
 		"LOOP",
 		"CONST",
-		"REQUIRE"
+		"REQUIRE",
+		"WHERE",
+		"ALIAS",
 		
 	};
 	

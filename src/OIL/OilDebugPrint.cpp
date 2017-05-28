@@ -40,6 +40,7 @@
 #include <OIL/OilMethodDefinition.h>
 #include <OIL/OilBuiltinStructDefinition.h>
 #include <OIL/OilConstStatement.h>
+#include <OIL/OilTypeAlias.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -72,6 +73,7 @@ void OilPrintImplementBlock ( const OilImplementBlock & Block, uint32_t Indent, 
 void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & StructDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintConstStatement ( const OilConstStatement & Constant, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintTypeAlias ( const OilTypeAlias & Alias, uint32_t Indent, const OilPrintOptions & PrintOptions );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS, const OilPrintOptions & PrintOptions )
 {
@@ -127,6 +129,18 @@ void OilPrintNamespaceMembers ( const OilNamespaceDefinition & Namespace, uint32
 		
 		if ( ( ! Definition -> IsBuiltin () ) || PrintOptions.PrintBuiltins )
 			OilPrintTrait ( * Definition, Indent, PrintOptions );
+		
+	}
+	
+	TempCount = Namespace.GetTypeAliasCount ();
+	
+	for ( uint64_t I = 0; I < TempCount; I ++ )
+	{
+		
+		const OilTypeAlias * Alias = Namespace.GetTypeAlias ( I );
+		
+		if ( ( ! Alias -> IsBuiltin () ) || PrintOptions.PrintBuiltins )
+			OilPrintTypeAlias ( * Alias, Indent, PrintOptions );
 		
 	}
 	
@@ -1122,6 +1136,34 @@ void OilPrintConstStatement ( const OilConstStatement & Constant, uint32_t Inden
 	
 	if ( Constant.IsPublic () )
 		PrintString += " ( public )";
+	
+	PrintString += "]";
+	
+	LOG_VERBOSE ( PrintString );
+	
+}
+
+void OilPrintTypeAlias ( const OilTypeAlias & Alias, uint32_t Indent, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[ALIAS ";
+	PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Alias.GetName () );
+	
+	if ( Alias.IsTemplated () )
+	{
+		
+		PrintString += " Template: ";
+		PrintString += OilStringTemplateDefinition ( * Alias.GetTemplateDefinition (), PrintOptions );
+		
+	}
+	
+	PrintString += ": ";
+	PrintString += OilStringTypeRef ( * Alias.GetAliasedType (), PrintOptions );
 	
 	PrintString += "]";
 	
