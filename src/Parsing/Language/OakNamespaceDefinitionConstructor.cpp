@@ -163,6 +163,8 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	if ( Error )
 	{
 		
+		delete NamespaceElement;
+		
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = ErrorString;
@@ -174,6 +176,8 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	if ( TokenCount == 0 )
 	{
+		
+		delete NamespaceElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -191,6 +195,8 @@ void OakNamespaceDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Close )
 	{
+		
+		delete NamespaceElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;

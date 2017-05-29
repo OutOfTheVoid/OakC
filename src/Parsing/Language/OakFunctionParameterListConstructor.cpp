@@ -40,6 +40,9 @@ void OakFunctionParameterListConstructor :: TryConstruct ( ASTConstructionInput 
 	{
 		
 		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorProvokingToken = CurrentToken;
+		Output.ErrorSuggestion = "Expected opening parenthesis in function parameter list";
 		
 		return;
 		
@@ -94,6 +97,20 @@ void OakFunctionParameterListConstructor :: TryConstruct ( ASTConstructionInput 
 		
 	}
 	
+	if ( TokenCount == 0 )
+	{
+		
+		delete FunctionParamsElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected closing parethesis at end of function parameter list";
+		Output.ErrorProvokingToken = CurrentToken;
+		
+		return;
+		
+	}
+	
 	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Parenthesis_Close )
@@ -104,7 +121,7 @@ void OakFunctionParameterListConstructor :: TryConstruct ( ASTConstructionInput 
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = "Expected closing parenthesis at end of function parameter list";
-		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;
 		

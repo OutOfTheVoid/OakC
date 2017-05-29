@@ -186,12 +186,26 @@ void OakFunctionDefinitionConstructor :: TryConstruct ( ASTConstructionInput & I
 	if ( ParameterListConstructionGroup.TryConstruction ( FunctionElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
+		if ( Error )
+		{
+			
+			delete FunctionElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
 		delete FunctionElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = ErrorString;
-		Output.ErrorProvokingToken = ErrorToken;
+		Output.ErrorSuggestion = "Expected function paremeter list or empty brackets";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		return;
 		

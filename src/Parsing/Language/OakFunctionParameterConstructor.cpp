@@ -23,17 +23,17 @@ ASTConstructionGroup :: StaticInitEntry _OakFunctionParameterConstructor_TypeGro
 	
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
+	{ & OakVoidTypeConstructor :: Instance, 0 },
+	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
 	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
 	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
-	
 };
 
 OakFunctionParameterConstructor :: OakFunctionParameterConstructor ():
-	TypeGroup (_OakFunctionParameterConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( _OakFunctionParameterConstructor_TypeGroupEntries, 6 )
 {
 }
 
@@ -85,6 +85,8 @@ void OakFunctionParameterConstructor :: TryConstruct ( ASTConstructionInput & In
 	{
 		
 		Output.Accepted = false;
+		Output.ErrorProvokingToken = CurrentToken;
+		Output.ErrorSuggestion = "Expected colon after parameter name";
 		
 		return;
 		

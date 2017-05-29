@@ -124,7 +124,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 				if ( ResolvedTrait == NULL )
 				{
 					
-					LOG_FATALERROR_NOFILE ( std :: string ( "Type not found: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) );
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Ref -> GetSourceRef () ) + "Type not found: " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref -> GetName () ) );
 					
 					return kTypeResolutionResult_Failure_NonExistantType;
 					

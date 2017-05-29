@@ -3,6 +3,7 @@
 #include <Encoding/CodeConversion.h>
 
 #include <Logging/Logging.h>
+#include <Logging/ErrorUtils.h>
 
 #include <Tokenization/Tokenizer.h>
 
@@ -178,7 +179,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 	{
 		
 		if ( ErrorToken != NULL )
-			LOG_FATALERROR_NOFILE ( SourceFile.GetName () + ", Line " + std :: to_string ( ErrorToken -> GetSourceRef ().GetLine () ) + ", Char " + std :: to_string ( ErrorToken -> GetSourceRef ().GetChar () ) + ": " + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
+			LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( ErrorToken -> GetSourceRef () ) + ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : ( "Unexpected token \"" + CodeConversion :: ConvertUTF32ToUTF8 ( ErrorToken -> GetSource () ) ) + "\"" ) );
 		else
 			LOG_FATALERROR_NOFILE ( ( ErrorSuggestion != "" ) ? ErrorSuggestion : std :: string ( "unkown error" ) );
 		

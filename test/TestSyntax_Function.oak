@@ -1,6 +1,31 @@
 
+namespace TestNS
+{
+	
+	struct MyStruct <A>
+	{
+		
+		bind a: A
+		
+	}
+	
+	implement MyStruct:<A> where <A>
+	{
+		
+		function my_func ( A: & Self ): void
+		{
+		}
+		
+	}
+	
+}
+
 public function Test ( count: i32 ): i32
 {
+	
+	bind a: TestNS::MyStruct:<i32>;
+	
+	TestNS::MyStruct:<i32>::my_func ();
 	
 	bind mut i:i32 = count;
 	

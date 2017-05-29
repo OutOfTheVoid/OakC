@@ -29,8 +29,8 @@ OakImplementDefinitionConstructor OakImplementDefinitionConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries [] =
 {
 	
-	{ & OakFunctionDefinitionConstructor :: Instance, 1 },
-	{ & OakMethodDefinitionConstructor :: Instance, 0 },
+	{ & OakMethodDefinitionConstructor :: Instance, 1 },
+	{ & OakFunctionDefinitionConstructor :: Instance, 0 },
 	
 };
 
@@ -118,6 +118,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		if ( Error )
 		{
 			
+			delete ImplementElement;
+			
 			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = ErrorString;
@@ -127,22 +129,21 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 			
 		}
 		
-		if ( TokenCount == 0 )
-		{
-			
-			Output.Accepted = false;
-			Output.Error = true;
-			Output.ErrorSuggestion = "Expected closing curly brace at end of implement definition";
-			Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - 1 ];
-			
-			return;
-			
-		}
+		delete ImplementElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected type to implement";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+		
+		return;
 		
 	}
 	
 	if ( Error )
 	{
+			
+		delete ImplementElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -165,6 +166,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		if ( TraitNameGroup.TryConstruction ( ImplementElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 		{
 			
+			delete ImplementElement;
+			
 			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = "Expected trait name after for keyword in implement definition";
@@ -177,6 +180,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		if ( Error )
 		{
 			
+			delete ImplementElement;
+			
 			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = ErrorString;
@@ -188,6 +193,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		if ( TokenCount == 0 )
 		{
+			
+			delete ImplementElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -208,6 +215,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		if ( Error )
 		{
 			
+			delete ImplementElement;
+			
 			Output.Accepted = false;
 			Output.Error = true;
 			Output.ErrorSuggestion = ErrorString;
@@ -219,6 +228,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 		if ( TokenCount == 0 )
 		{
+			
+			delete ImplementElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -238,6 +249,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Open )
 	{
 		
+		delete ImplementElement;
+		
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = "Expected opening curly bracket in implement definition";
@@ -252,6 +265,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	if ( Error )
 	{
 		
+		delete ImplementElement;
+		
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = ErrorString;
@@ -263,6 +278,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	if ( TokenCount == 0 )
 	{
+		
+		delete ImplementElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -277,6 +294,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Close )
 	{
+		
+		delete ImplementElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;

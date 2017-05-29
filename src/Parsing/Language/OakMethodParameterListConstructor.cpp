@@ -11,8 +11,6 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-#include <Logging/Logging.h>
-
 OakMethodParameterListConstructor OakMethodParameterListConstructor :: Instance;
 
 ASTConstructionGroup :: StaticInitEntry _OakMethodParameterListConstructor_SelfParameterConstructionGroupEntries [] =
@@ -70,9 +68,26 @@ void OakMethodParameterListConstructor :: TryConstruct ( ASTConstructionInput & 
 	if ( SelfParameterConstructionGroup.TryConstruction ( MethodParamsElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
+		if ( Error )
+		{
+			
+			delete MethodParamsElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
 		delete MethodParamsElement;
 		
 		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected self parameter in method";
+		Output.ErrorProvokingToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 		
 		return;
 		
