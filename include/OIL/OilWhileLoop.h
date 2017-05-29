@@ -24,8 +24,8 @@ public:
 	const OilExpression * GetConditionExpression () const;
 	OilExpression * GetConditionExpression ();
 	
-	const OilStatementBody * GetLoopBody () const;
-	OilStatementBody * GetLoopBody ();
+	const OilStatementBody * GetStatementBody () const;
+	OilStatementBody * GetStatementBody ();
 	
 	StatementType GetStatementType () const;
 	

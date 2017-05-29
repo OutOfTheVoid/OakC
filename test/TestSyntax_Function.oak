@@ -2,11 +2,12 @@
 public function Test ( count: i32 ): i32
 {
 	
-	bind i:i32 = count;
+	bind mut i:i32 = count;
 	
 	loop
 	`my_loop:
 	{
+		bind current: i32 = i;
 		
 		if ( i == 0 )
 			break `my_loop;

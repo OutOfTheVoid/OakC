@@ -492,7 +492,7 @@ void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPr
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
 	
-	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent, PrintOptions );
+	OilPrintStatementBody ( * Loop.GetStatementBody (), Indent, PrintOptions );
 	
 }
 
@@ -546,7 +546,7 @@ void OilPrintDoWhileLoop ( const OilDoWhileLoop & Loop, uint32_t Indent, const O
 	LOG_VERBOSE ( PrintString );
 	PrintString = "";
 	
-	OilPrintStatementBody ( * Loop.GetLoopBody (), Indent, PrintOptions );
+	OilPrintStatementBody ( * Loop.GetStatementBody (), Indent, PrintOptions );
 	
 	for ( uint32_t I = 0; I < Indent; I ++ )
 		PrintString += OIL_PRINT_INDENTSTRING;

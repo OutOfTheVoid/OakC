@@ -24,13 +24,12 @@ ASTConstructionGroup :: StaticInitEntry _OakBindingStatementConstructor_TypeGrou
 {
 	
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	{ & OakVoidTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
 	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
 	
 };
 

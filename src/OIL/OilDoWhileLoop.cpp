@@ -44,14 +44,14 @@ OilExpression * OilDoWhileLoop :: GetConditionExpression ()
 	
 }
 
-const OilStatementBody * OilDoWhileLoop :: GetLoopBody () const
+const OilStatementBody * OilDoWhileLoop :: GetStatementBody () const
 {
 	
 	return LoopBody;
 	
 }
 
-OilStatementBody * OilDoWhileLoop :: GetLoopBody ()
+OilStatementBody * OilDoWhileLoop :: GetStatementBody ()
 {
 	
 	return LoopBody;

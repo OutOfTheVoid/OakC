@@ -242,15 +242,10 @@ bool OilTypeRef :: IsResolved () const
 		return ResolvedTrait != NULL;
 	else if ( ResolvedAsTypeAlias )
 		return ResolvedTypeAlias != NULL;
-	else
-	{
+	else if ( ResolvedAsTemplateParam )
+		return true;
 		
-		if ( ResolvedAsTemplateParam )
-			return true;
-		
-		return ResolvedType != NULL;
-		
-	}
+	return ResolvedType != NULL;
 	
 }
 
