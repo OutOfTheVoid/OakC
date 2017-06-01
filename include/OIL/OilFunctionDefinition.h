@@ -23,7 +23,7 @@ public:
 	
 	const std :: u32string GetName () const;
 	
-	const OilFunctionParameterList * GetParameterList () const; // 1:15:09 West World
+	const OilFunctionParameterList * GetParameterList () const;
 	OilFunctionParameterList * GetParameterList ();
 	
 	bool IsNative () const;
