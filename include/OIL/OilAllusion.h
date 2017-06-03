@@ -9,6 +9,12 @@
 
 class OilTemplateSpecification;
 
+class OilFunctionParameter;
+class OilBindingStatement;
+class OilTypeRef;
+class OilFunctionDefinition;
+class OilConstStatement;
+
 class OilAllusion : public virtual IOilPrimary
 {
 public:
@@ -16,14 +22,24 @@ public:
 	typedef enum
 	{
 		
-		kAllusionTarget_Indeterminate,
-		kAllusionTarget_Indeterminate_Templated,
-		kAllusionTarget_Parameter,
+		
 		kAllusionTarget_Namespaced,
 		kAllusionTarget_Namespaced_Absolue,
 		kAllusionTarget_Namespaced_Templated,
 		kAllusionTarget_Namespaced_Absolue_Templated,
-		kAllusionTarget_Self
+		kAllusionTarget_Self_Unchecked,
+		
+		kAllusionTarget_Indeterminate,
+		kAllusionTarget_Indeterminate_Templated,
+		
+		kAllusionTarget_Parameter,
+		kAllusionTarget_Function,
+		kAllusionTarget_LocalBinding,
+		kAllusionTarget_Binding,
+		kAllusionTarget_Constant,
+		kAllusionTarget_Self,
+		
+		kAllusionTarget_Function_Templated,
 		
 	} AllusionTarget;
 	
@@ -43,7 +59,32 @@ public:
 	~OilAllusion ();
 	
 	AllusionTarget GetTarget () const;
-	void SetTarget ( AllusionTarget Target );
+	
+	bool IsResolved () const;
+	
+	void SetTargetAsSelf ();
+	void SetTargetAsParameter ( OilFunctionParameter * Parameter );
+	void SetTargetAsLocalBinding ( OilBindingStatement * Binding );
+	void SetTargetAsFunction ( OilFunctionDefinition * Function );
+	void SetTargetAsBinding ( OilBindingStatement * Binding );
+	void SetTargetAsConstant ( OilConstStatement * Constant );
+	
+	void SetTargetAsTemplatedFunction ( OilFunctionDefinition * Function );
+	
+	const OilFunctionParameter * GetFunctionParameterTarget () const;
+	OilFunctionParameter * GetFunctionParameterTarget ();
+	
+	const OilBindingStatement * GetLocalBindingTarget () const;
+	OilBindingStatement * GetLocalBindingTarget ();
+	
+	const OilFunctionDefinition * GetFunctionTarget () const;
+	OilFunctionDefinition * GetFunctionTarget ();
+	
+	const OilBindingStatement * GetBindingTarget () const;
+	OilBindingStatement * GetBindingTarget ();
+	
+	const OilConstStatement * GetConstTarget () const;
+	OilConstStatement * GetConstTarget ();
 	
 	const std :: u32string & GetName () const;
 	
@@ -74,6 +115,16 @@ private:
 	OilTemplateSpecification * IndirectTemplateSpecification;
 	
 	AllusionTarget Target;
+	
+	union
+	{
+		
+		OilFunctionParameter * ParameterTarget;
+		OilBindingStatement * BindingTarget;
+		OilFunctionDefinition * FunctionTarget;
+		OilConstStatement * ConstTarget;
+		
+	};
 	
 	SourceRef Ref;
 	

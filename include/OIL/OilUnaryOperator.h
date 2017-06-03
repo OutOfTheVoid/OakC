@@ -9,6 +9,7 @@
 
 class OilExpression;
 class IOilPrimary;
+class OilFunctionCallParameterList;
 
 class OilUnaryOperator : public virtual IOilOperator
 {
@@ -34,11 +35,19 @@ public:
 	
 	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * Term );
 	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * Term );
+	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, OilFunctionCallParameterList * ParameterList );
+	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, OilFunctionCallParameterList * ParameterList );
 	
 	~OilUnaryOperator ();
 	
-	IOilOperator * GetTermAsOperator () const;
-	IOilPrimary * GetTermAsPrimary () const;
+	const IOilOperator * GetTermAsOperator () const;
+	IOilOperator * GetTermAsOperator ();
+	
+	const IOilPrimary * GetTermAsPrimary () const;
+	IOilPrimary * GetTermAsPrimary ();
+	
+	const OilFunctionCallParameterList * GetFunctionCallParameterList () const;
+	OilFunctionCallParameterList * GetFunctionCallParameterList ();
 	
 	void SetTerm ( IOilOperator * Term );
 	void SetTerm ( IOilPrimary * Term );
@@ -73,6 +82,8 @@ private:
 		IOilOperator * OperatorTerm;
 		
 	};
+	
+	OilFunctionCallParameterList * ParameterList;
 	
 	SourceRef Ref;
 	

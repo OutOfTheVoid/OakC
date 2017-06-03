@@ -32,6 +32,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilO
 	Op ( Op ),
 	TermIsPrimary ( false ),
 	OperatorTerm ( Term ),
+	ParameterList ( NULL ),
 	Ref ( Ref )
 {
 }
@@ -40,6 +41,25 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilP
 	Op ( Op ),
 	TermIsPrimary ( true ),
 	PrimaryTerm ( Term ),
+	ParameterList ( NULL ),
+	Ref ( Ref )
+{
+}
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, OilFunctionCallParameterList * ParameterList ):
+	Op ( kOperator_FunctionCall ),
+	TermIsPrimary ( false ),
+	OperatorTerm ( Term ),
+	ParameterList ( ParameterList ),
+	Ref ( Ref )
+{
+}
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, OilFunctionCallParameterList * ParameterList ):
+	Op ( kOperator_FunctionCall ),
+	TermIsPrimary ( true ),
+	PrimaryTerm ( Term ),
+	ParameterList ( ParameterList ),
 	Ref ( Ref )
 {
 }
@@ -110,7 +130,7 @@ OilUnaryOperator :: ~OilUnaryOperator ()
 	
 }
 
-IOilOperator * OilUnaryOperator :: GetTermAsOperator () const
+const IOilOperator * OilUnaryOperator :: GetTermAsOperator () const
 {
 	
 	return TermIsPrimary ? NULL : OperatorTerm;
@@ -118,10 +138,39 @@ IOilOperator * OilUnaryOperator :: GetTermAsOperator () const
 }
 
 
-IOilPrimary * OilUnaryOperator :: GetTermAsPrimary () const
+const IOilPrimary * OilUnaryOperator :: GetTermAsPrimary () const
 {
 	
 	return TermIsPrimary ? PrimaryTerm : NULL;
+	
+}
+
+IOilOperator * OilUnaryOperator :: GetTermAsOperator ()
+{
+	
+	return TermIsPrimary ? NULL : OperatorTerm;
+	
+}
+
+
+IOilPrimary * OilUnaryOperator :: GetTermAsPrimary ()
+{
+	
+	return TermIsPrimary ? PrimaryTerm : NULL;
+	
+}
+
+const OilFunctionCallParameterList * OilUnaryOperator :: GetFunctionCallParameterList () const
+{
+	
+	return ParameterList;
+	
+}
+
+OilFunctionCallParameterList * OilUnaryOperator :: GetFunctionCallParameterList ()
+{
+	
+	return ParameterList;
 	
 }
 

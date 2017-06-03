@@ -1,5 +1,6 @@
 #include <EarlyAnalysis/OilImplementResolution.h>
 #include <EarlyAnalysis/OilTypeResolution.h>
+#include <EarlyAnalysis/OilAnalysisTools.h>
 
 #include <OIL/OilNamespaceDefinition.h>
 #include <OIL/OilImplementBlock.h>
@@ -27,7 +28,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 		OilImplementBlock * Block = CurrentNS.GetUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - UnresolvedOffset - 1 );
 		OilTypeRef * ImplementedTypeRef = Block -> GetImplementedType ();
 		
-		TypeResolution_TemplateNameList TemplateNames;
+		FlatNameList TemplateNames;
 		
 		bool UseWhere = Block -> HasWhereDefinition ();
 		
@@ -36,32 +37,34 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			
 			OilTemplateDefinition * WhereDefinition = Block -> GetWhereDefinition ();
 			
-			uint32_t NameCount = WhereDefinition -> GetTemplateParameterCount ();
-			
-			TemplateNames.Names = new std :: u32string [ NameCount ];
-			TemplateNames.Count = NameCount;
-			
-			for ( uint32_t I = 0; I < NameCount; I ++ )
-			{
-				
-				OilTemplateDefinitionParameter * Parameter = WhereDefinition -> GetTemplateParameter ( I );
-				
-				TemplateNames.Names [ I ] = Parameter -> GetName ();
-				
-			}
+			MakeNameList_TemplateDefinition ( * WhereDefinition, TemplateNames );
 			
 			TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * WhereDefinition, & TemplateNames );
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
+			{
+				
+				DestroyFlatNameList ( TemplateNames );
+				
 				return kResolveImplementsStatus_Failure_TemplateMismatch;
+				
+			}
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
+			{
+				
+				DestroyFlatNameList ( TemplateNames );
+				
 				return kResolveImplementsStatus_Failure_NonExistantType;
+				
+			}
 			
 			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 				Progress = true;
 			else if ( kTypeResolutionResult_Success_Progress )
 			{
+				
+				DestroyFlatNameList ( TemplateNames );
 				
 				Progress = true;
 				UnresolvedOffset ++;
@@ -71,6 +74,8 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			}
 			else
 			{
+				
+				DestroyFlatNameList ( TemplateNames );
 				
 				UnresolvedOffset ++;
 				
@@ -86,15 +91,29 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * ImplementedTypeRef, UseWhere ? ( & TemplateNames ) : NULL );
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
+			{
+				
+				DestroyFlatNameList ( TemplateNames );
+				
 				return kResolveImplementsStatus_Failure_TemplateMismatch;
+				
+			}
 			
 			if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
+			{
+				
+				DestroyFlatNameList ( TemplateNames );
+				
 				return kResolveImplementsStatus_Failure_NonExistantType;
+				
+			}
 			
 			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 				Progress = true;
 			else if ( kTypeResolutionResult_Success_Progress )
 			{
+				
+				DestroyFlatNameList ( TemplateNames );
 				
 				Progress = true;
 				UnresolvedOffset ++;
@@ -104,6 +123,8 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			}
 			else
 			{
+				
+				DestroyFlatNameList ( TemplateNames );
 				
 				UnresolvedOffset ++;
 				
@@ -144,15 +165,29 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TraitRef, UseWhere ? ( & TemplateNames ) : NULL );
 				
 				if ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch )
+				{
+					
+					DestroyFlatNameList ( TemplateNames );
+					
 					return kResolveImplementsStatus_Failure_TemplateMismatch;
+					
+				}
 				
 				if ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType )
+				{
+					
+					DestroyFlatNameList ( TemplateNames );
+					
 					return kResolveImplementsStatus_Failure_NonExistantType;
+					
+				}
 				
 				if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 					Progress = true;
 				else if ( kTypeResolutionResult_Success_Progress )
 				{
+					
+					DestroyFlatNameList ( TemplateNames );
 					
 					Progress = true;
 					UnresolvedOffset ++;
@@ -163,16 +198,22 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 				else
 				{
 					
+					DestroyFlatNameList ( TemplateNames );
+					
 					UnresolvedOffset ++;
 					
 					continue;
 					
 				}
+				
+				DestroyFlatNameList ( TemplateNames );
 					
 			}
 			
 			if ( ! TraitRef -> IsResolvedAsTrait () )
 			{
+				
+				DestroyFlatNameList ( TemplateNames );
 				
 				LOG_FATALERROR_NOFILE ( std :: string ( "Implement block attempts to implement type: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( ImplementedTypeRef -> GetName () ) + " for a non-trait type: " + CodeConversion :: ConvertUTF32ToUTF8 ( TraitRef -> GetName () ) );
 				
@@ -191,6 +232,8 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 			if ( NameConflict )
 			{
 				
+				DestroyFlatNameList ( TemplateNames );
+				
 				LOG_FATALERROR_NOFILE ( std :: string ( "Name of implemented trait: " ) + CodeConversion :: ConvertUTF32ToUTF8 ( TraitRef -> GetName () ) + " conflicts with namespace of the same name of previous implemented trait" );
 				
 				return kResolveImplementsStatus_Failure_Conflict_TraitImplementation_NamespaceCollision;
@@ -201,8 +244,7 @@ ResolveImplementsStatus OilResolveImplements ( OilNamespaceDefinition & CurrentN
 		else
 			ImplementedType -> AddPrincipalImplementBlock ( Block );
 		
-		if ( Block -> HasWhereDefinition () )
-				delete [] TemplateNames.Names;
+		DestroyFlatNameList ( TemplateNames );
 		
 		CurrentNS.RemoveUnresolvedImplementBlock ( CurrentNS.GetUnresolvedImplementBlockCount () - UnresolvedOffset - 1 );
 		

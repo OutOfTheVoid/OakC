@@ -46,6 +46,7 @@
 #include <OIL/OilDecoratorTag.h>
 #include <OIL/OilConstStatement.h>
 #include <OIL/OilTypeAlias.h>
+#include <OIL/OilFunctionCallParameterList.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -122,6 +123,8 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
 OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTagElement );
 OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * ConstElement );
 OilTypeAlias * OakTranslateTypeAliasToOil ( const ASTElement * AliasElement );
+
+OilFunctionCallParameterList * OakTranslateFunctionCallParameterListToOil ( const ASTElement * CallListElement );
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS )
 {
@@ -3815,7 +3818,30 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			if ( PrimaryTerm == NULL )
 				return NULL;
 			
-			return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
+			if ( UnaryIter -> second == OilUnaryOperator :: kOperator_FunctionCall )
+			{
+				
+				const ASTElement * ParameterListElement = OperatorElement -> GetSubElement ( 1 );
+				
+				if ( ParameterListElement == NULL )
+				{
+					
+					LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+					
+					return NULL;
+					
+				}
+				
+				OilFunctionCallParameterList * FunctionCallParameters = OakTranslateFunctionCallParameterListToOil ( ParameterListElement );
+				
+				if ( FunctionCallParameters == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( Ref, PrimaryTerm, FunctionCallParameters );
+				
+			}
+			else
+				return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
 			
 		}
 		
@@ -3824,6 +3850,28 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 		if ( OperatorTerm == NULL )
 			return NULL;
 		
+		if ( UnaryIter -> second == OilUnaryOperator :: kOperator_FunctionCall )
+		{
+			
+			const ASTElement * ParameterListElement = OperatorElement -> GetSubElement ( 1 );
+			
+			if ( ParameterListElement == NULL )
+			{
+				
+				LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+				
+				return NULL;
+				
+			}
+			
+			OilFunctionCallParameterList * FunctionCallParameters = OakTranslateFunctionCallParameterListToOil ( ParameterListElement );
+			
+			if ( FunctionCallParameters == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( Ref, OperatorTerm, FunctionCallParameters );
+			
+		}
 		return new OilUnaryOperator ( Ref, UnaryIter -> second, OperatorTerm );
 		
 	}
@@ -3924,6 +3972,35 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
 	
 	return NULL;
+	
+}
+
+OilFunctionCallParameterList * OakTranslateFunctionCallParameterListToOil ( const ASTElement * CallListElement )
+{
+	
+	OilFunctionCallParameterList * New = new OilFunctionCallParameterList ();
+	
+	uint64_t ExpressionCount = CallListElement -> GetSubElementCount ();
+	
+	for ( uint64_t I = 0; I < ExpressionCount; I ++ )
+	{
+		
+		OilExpression * ParameterExpression = OakTranslateExpressionToOil ( CallListElement -> GetSubElement ( I ) );
+		
+		if ( ParameterExpression == NULL )
+		{
+			
+			delete New;
+			
+			return NULL;
+			
+		}
+		
+		New -> AddParameter ( ParameterExpression );
+		
+	}
+	
+	return New;
 	
 }
 

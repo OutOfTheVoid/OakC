@@ -34,7 +34,7 @@
 #include <Logging/ErrorUtils.h>
 #include <Encoding/CodeConversion.h>
 
-TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, TypeResolution_TemplateNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
 	bool VoidType = false;
@@ -264,7 +264,7 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	
 }
 
-TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, TypeResolution_TemplateNameList * TemplateNames )
+TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, FlatNameList * TemplateNames )
 {
 	
 	bool Unresolved = false;
@@ -311,7 +311,7 @@ TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefin
 	
 }
 
-TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition, TypeResolution_TemplateNameList * TemplateNames )
+TypeResolutionResult OilTypeResolution_TemplateDefinition ( OilNamespaceDefinition & CurrentNS, OilTemplateDefinition & TemplateDefinition, FlatNameList * TemplateNames )
 {
 	
 	bool Unresolved = false;
@@ -565,7 +565,7 @@ TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinitio
 		if ( StructDef -> IsTemplated () )
 			TemplateDef = StructDef -> GetTemplateDefinition ();
 		
-		TypeResolution_TemplateNameList TemplateNames;
+		FlatNameList TemplateNames;
 		
 		if ( TemplateDef != NULL )
 		{
@@ -594,13 +594,7 @@ TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinitio
 			else
 				return ResolutionResult;
 			
-			uint32_t NameCount = TemplateDef -> GetTemplateParameterCount ();
-			
-			TemplateNames.Names = new std :: u32string [ NameCount ];
-			TemplateNames.Count = NameCount;
-			
-			for ( uint32_t J = 0; J < NameCount; J ++ )
-				TemplateNames.Names [ J ] = TemplateDef -> GetTemplateParameter ( J ) -> GetName ();
+			MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
 			
 		}
 		
@@ -631,8 +625,7 @@ TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinitio
 			else
 			{
 				
-				if ( TemplateDef != NULL )
-					delete [] TemplateNames.Names;
+				DestroyFlatNameList ( TemplateNames );
 				
 				return ResolutionResult;
 				
@@ -640,8 +633,7 @@ TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinitio
 			
 		}
 		
-		if ( TemplateDef != NULL )
-			delete [] TemplateNames.Names;
+		DestroyFlatNameList ( TemplateNames );
 		
 	}
 	
@@ -695,20 +687,14 @@ TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & Curr
 		
 		OilFunctionDefinition * Definition = CurrentNS.GetFunctionDefinition ( I );
 		
-		TypeResolution_TemplateNameList TemplateNames;
+		FlatNameList TemplateNames;
 		
 		if ( Definition -> IsTemplated () )
 		{
 			
 			OilTemplateDefinition * TemplateDef = Definition -> GetTemplateDefinition ();
 			
-			uint32_t TemplateParamCount = TemplateDef -> GetTemplateParameterCount ();
-			
-			TemplateNames.Names = new std :: u32string [ TemplateParamCount ];
-			TemplateNames.Count = TemplateParamCount;
-			
-			for ( uint32_t J = 0; J < TemplateParamCount; J ++ )
-				TemplateNames.Names [ J ] = TemplateDef -> GetTemplateParameter ( J ) -> GetName ();
+			MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
 			
 		}
 		
@@ -728,12 +714,13 @@ TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & Curr
 		else
 		{
 			
-			if ( Definition -> IsTemplated () )
-				delete [] TemplateNames.Names;
+			DestroyFlatNameList ( TemplateNames );
 			
 			return ResolutionResult;
 			
 		}
+		
+		DestroyFlatNameList ( TemplateNames );
 		
 	}
 	
@@ -774,7 +761,7 @@ TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & Curr
 	
 }
 
-TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Definition, TypeResolution_TemplateNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Definition, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
 	bool Progress = false;
@@ -866,7 +853,7 @@ TypeResolutionResult OilTypeResolution_FunctionDefinition ( OilNamespaceDefiniti
 	
 }
 
-TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Definition, OilTypeDefinition & SelfType, OilTemplateSpecification * SelfTemplateSpec, TypeResolution_TemplateNameList * TemplateNames )
+TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Definition, OilTypeDefinition & SelfType, OilTemplateSpecification * SelfTemplateSpec, FlatNameList * TemplateNames )
 {
 	
 	bool Progress = false;
@@ -964,20 +951,14 @@ TypeResolutionResult OilTypeResolution_TypeAlias ( OilNamespaceDefinition & Curr
 	bool Unresolved = false;
 	bool Progress = false;
 	
-	TypeResolution_TemplateNameList TemplateNames;
+	FlatNameList TemplateNames;
 	
 	if ( Alias.IsTemplated () )
 	{
 		
 		OilTemplateDefinition * TemplateDef = Alias.GetTemplateDefinition ();
 		
-		uint32_t TemplateParamCount = TemplateDef -> GetTemplateParameterCount ();
-		
-		TemplateNames.Names = new std :: u32string [ TemplateParamCount ];
-		TemplateNames.Count = TemplateParamCount;
-		
-		for ( uint32_t I = 0; I < TemplateParamCount; I ++ )
-			TemplateNames.Names [ I ] = TemplateDef -> GetTemplateParameter ( I ) -> GetName ();
+		MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
 		
 		TypeResolutionResult ResolutionResult = OilTypeResolution_TemplateDefinition ( CurrentNS, * TemplateDef, & TemplateNames );
 		
@@ -995,8 +976,7 @@ TypeResolutionResult OilTypeResolution_TypeAlias ( OilNamespaceDefinition & Curr
 		else
 		{
 			
-			if ( Alias.IsTemplated () )
-				delete [] TemplateNames.Names;
+			DestroyFlatNameList ( TemplateNames );
 			
 			return ResolutionResult;
 			
@@ -1023,14 +1003,15 @@ TypeResolutionResult OilTypeResolution_TypeAlias ( OilNamespaceDefinition & Curr
 		else
 		{
 			
-			if ( Alias.IsTemplated () )
-				delete [] TemplateNames.Names;
+			DestroyFlatNameList ( TemplateNames );
 			
 			return ResolutionResult;
 			
 		}
 		
 	}
+	
+	DestroyFlatNameList ( TemplateNames );
 	
 	if ( Unresolved )
 	{
@@ -1069,20 +1050,14 @@ TypeResolutionResult OilTypeResolution_ImplementMembers ( OilNamespaceDefinition
 			
 			OilImplementBlock * Block = ImplementBlocks [ J ];
 			
-			TypeResolution_TemplateNameList TemplateNames;
+			FlatNameList TemplateNames;
 		
 			if ( Block -> HasWhereDefinition () )
 			{
 				
 				OilTemplateDefinition * TemplateDef = Block -> GetWhereDefinition ();
 				
-				uint32_t TemplateParamCount = TemplateDef -> GetTemplateParameterCount ();
-				
-				TemplateNames.Names = new std :: u32string [ TemplateParamCount ];
-				TemplateNames.Count = TemplateParamCount;
-				
-				for ( uint32_t K = 0; K < TemplateParamCount; K ++ )
-					TemplateNames.Names [ K ] = TemplateDef -> GetTemplateParameter ( K ) -> GetName ();
+				MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
 				
 			}
 			
@@ -1109,8 +1084,7 @@ TypeResolutionResult OilTypeResolution_ImplementMembers ( OilNamespaceDefinition
 				else
 				{
 					
-					if ( Block -> HasWhereDefinition () )
-						delete [] TemplateNames.Names;
+					DestroyFlatNameList ( TemplateNames );
 					
 					return FunctionResolutionResult;
 					
@@ -1141,14 +1115,15 @@ TypeResolutionResult OilTypeResolution_ImplementMembers ( OilNamespaceDefinition
 				else
 				{
 					
-					if ( Block -> HasWhereDefinition () )
-						delete [] TemplateNames.Names;
+					DestroyFlatNameList ( TemplateNames );
 					
 					return MethodResolutionResult;
 					
 				}
 				
 			}
+			
+			DestroyFlatNameList ( TemplateNames );
 			
 		}
 		
@@ -1257,7 +1232,7 @@ TypeResolutionResult OilTypeResolution_TypeAliases ( OilNamespaceDefinition & Cu
 	
 }
 
-TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & CurrentNS, OilStatementBody & Body, TypeResolution_TemplateNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & CurrentNS, OilStatementBody & Body, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
 	bool Unresolved = false;

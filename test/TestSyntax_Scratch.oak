@@ -1,30 +1,14 @@
-struct MyType <T1, T2>
+
+function f1 <A> ( a: A, b: A ): A
 {
 	
-	bind SomeBinding:T1,
-	bind SomeOtherBinding:T2
-	
-}
-
-trait SomeTrait
-{
-}
-
-trait SomeOtherTrait <OTHER_T: SomeTrait>
-{
-}
-
-implement MyType:<A, B> where <A: SomeTrait, B: SomeOtherTrait:<A>>
-{
+	return a + b;
 	
 }
 
-implement i32 for SomeTrait
+function f2 ()
 {
+	
+	f1: <i32> ( 0, 1 );
+	
 }
-
-implement i32 for SomeOtherTrait:<i32>
-{
-}
-
-bind A: MyType:<i32, ::i32>;

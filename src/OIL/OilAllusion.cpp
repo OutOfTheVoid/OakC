@@ -9,7 +9,8 @@ OilAllusion :: OilAllusion ( const SourceRef & Ref, SelfType SELF_ALLUSION ):
 	Name ( U"" ),
 	DirectTemplateSpecification ( NULL ),
 	IndirectTemplateSpecification ( NULL ),
-	Target ( kAllusionTarget_Self ),
+	Target ( kAllusionTarget_Self_Unchecked ),
+	ParameterTarget ( NULL ),
 	Ref ( Ref )
 {
 	
@@ -23,6 +24,7 @@ OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string * Nam
 	DirectTemplateSpecification ( NULL ),
 	IndirectTemplateSpecification ( NULL ),
 	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue : kAllusionTarget_Namespaced ),
+	ParameterTarget ( NULL ),
 	Ref ( Ref )
 {
 	
@@ -39,6 +41,7 @@ OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string * Nam
 	DirectTemplateSpecification ( DirectTemplateSpecification ),
 	IndirectTemplateSpecification ( NULL ),
 	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue_Templated : kAllusionTarget_Namespaced_Templated ),
+	ParameterTarget ( NULL ),
 	Ref ( Ref )
 {
 	
@@ -55,6 +58,7 @@ OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string * Nam
 	DirectTemplateSpecification ( DirectTemplateSpecification ),
 	IndirectTemplateSpecification ( IndirectTemplateSpecification ),
 	Target ( Absolute ? kAllusionTarget_Namespaced_Absolue_Templated : kAllusionTarget_Namespaced_Templated ),
+	ParameterTarget ( NULL ),
 	Ref ( Ref )
 {
 	
@@ -72,6 +76,7 @@ OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string & Nam
 	DirectTemplateSpecification ( NULL ),
 	IndirectTemplateSpecification ( NULL ),
 	Target ( kAllusionTarget_Indeterminate ),
+	ParameterTarget ( NULL ),
 	Ref ( Ref )
 {
 }
@@ -83,6 +88,7 @@ OilAllusion :: OilAllusion ( const SourceRef & Ref, const std :: u32string & Nam
 	DirectTemplateSpecification ( TemplateSpecification ),
 	IndirectTemplateSpecification ( NULL ),
 	Target ( kAllusionTarget_Indeterminate_Templated ),
+	ParameterTarget ( NULL ),
 	Ref ( Ref )
 {
 }
@@ -105,10 +111,152 @@ OilAllusion :: AllusionTarget OilAllusion :: GetTarget () const
 	
 }
 
-void OilAllusion :: SetTarget ( AllusionTarget Target )
+bool OilAllusion :: IsResolved () const
 {
 	
-	this -> Target = Target;
+	switch ( Target )
+	{
+		
+		case kAllusionTarget_Namespaced:
+		case kAllusionTarget_Namespaced_Absolue:
+		case kAllusionTarget_Namespaced_Templated:
+		case kAllusionTarget_Namespaced_Absolue_Templated:
+		case kAllusionTarget_Indeterminate:
+		case kAllusionTarget_Indeterminate_Templated:
+		case kAllusionTarget_Self_Unchecked:
+		return false;
+			
+		default:
+		break;
+		
+	}
+	
+	return true;
+	
+}
+
+void OilAllusion :: SetTargetAsSelf ()
+{
+	
+	Target = kAllusionTarget_Self;
+	
+}
+
+void OilAllusion :: SetTargetAsParameter ( OilFunctionParameter * Parameter )
+{
+	
+	Target = kAllusionTarget_Parameter;
+	ParameterTarget = Parameter;
+	
+}
+
+const OilFunctionParameter * OilAllusion :: GetFunctionParameterTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Parameter ) ? ParameterTarget : NULL;
+	
+}
+
+OilFunctionParameter * OilAllusion :: GetFunctionParameterTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Parameter ) ? ParameterTarget : NULL;
+	
+}
+
+void OilAllusion :: SetTargetAsLocalBinding ( OilBindingStatement * Binding )
+{
+	
+	Target = kAllusionTarget_LocalBinding;
+	BindingTarget = Binding;
+	
+}
+
+const OilBindingStatement * OilAllusion :: GetLocalBindingTarget () const
+{
+	
+	return ( Target == kAllusionTarget_LocalBinding ) ? BindingTarget : NULL;
+	
+}
+
+OilBindingStatement * OilAllusion :: GetLocalBindingTarget ()
+{
+	
+	return ( Target == kAllusionTarget_LocalBinding ) ? BindingTarget : NULL;
+	
+}
+
+void OilAllusion :: SetTargetAsFunction ( OilFunctionDefinition * Function )
+{
+	
+	Target = kAllusionTarget_Function;
+	FunctionTarget = Function;
+	
+}
+
+void OilAllusion :: SetTargetAsTemplatedFunction ( OilFunctionDefinition * Function )
+{
+	
+	Target = kAllusionTarget_Function_Templated;
+	FunctionTarget = Function;
+	
+}
+
+const OilFunctionDefinition * OilAllusion :: GetFunctionTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Function ) ? FunctionTarget : NULL;
+	
+}
+
+OilFunctionDefinition * OilAllusion :: GetFunctionTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Function ) ? FunctionTarget : NULL;
+	
+}
+
+void OilAllusion :: SetTargetAsBinding ( OilBindingStatement * Binding )
+{
+	
+	Target = kAllusionTarget_Binding;
+	BindingTarget = Binding;
+	
+}
+
+const OilBindingStatement * OilAllusion :: GetBindingTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Binding ) ? BindingTarget : NULL;
+	
+}
+
+OilBindingStatement * OilAllusion :: GetBindingTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Binding ) ? BindingTarget : NULL;
+	
+}
+
+void OilAllusion :: SetTargetAsConstant ( OilConstStatement * Constant )
+{
+	
+	Target = kAllusionTarget_Constant;
+	ConstTarget = Constant;
+	
+}
+
+const OilConstStatement * OilAllusion :: GetConstTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Constant ) ? ConstTarget : NULL;
+	
+}
+
+OilConstStatement * OilAllusion :: GetConstTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Constant ) ? ConstTarget : NULL;
 	
 }
 

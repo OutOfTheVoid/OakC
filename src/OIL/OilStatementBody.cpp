@@ -2,6 +2,10 @@
 #include <OIL/OilBindingStatement.h>
 #include <OIL/OilConstStatement.h>
 #include <OIL/OilImplicitLocalInitialization.h>
+#include <OIL/OilLoop.h>
+#include <OIL/OilIfElse.h>
+#include <OIL/OilDoWhileLoop.h>
+#include <OIL/OilWhileLoop.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -107,13 +111,84 @@ void OilStatementBody :: TakeIgnoredParams ( OilStatementBody & SubBody )
 void OilStatementBody :: AddStatement ( IOilStatement * Statement )
 {
 	
-	if ( Statement -> GetStatementType () == kStatementType_Body )
+	switch ( Statement -> GetStatementType () )
 	{
 		
-		OilStatementBody * BodyStatement = dynamic_cast <OilStatementBody *> ( Statement );
+		case kStatementType_Body:
+		{
+			
+			OilStatementBody * BodyStatement = dynamic_cast <OilStatementBody *> ( Statement );
+			
+			BodyStatement -> ParentBody = this;
+			BodyStatement -> ParentSelfIndex = Statements.size ();
+				
+		}
+		break;
 		
-		BodyStatement -> ParentBody = this;
-		BodyStatement -> ParentSelfIndex = Statements.size ();
+		case kStatementType_IfElse:
+		{
+			
+			OilIfElse * IfElse = dynamic_cast <OilIfElse *> ( Statement );
+			
+			IfElse -> GetIfClauseStatementBody () -> ParentBody = this;
+			IfElse -> GetIfClauseStatementBody () -> ParentSelfIndex = Statements.size ();
+			
+			uint32_t ElseIfCount = IfElse -> HasElseIfClauses () ? IfElse -> GetElseIfClauseCount () : 0;
+			
+			for ( uint32_t I = 0; I < ElseIfCount; I ++ )
+			{
+				
+				IfElse -> GetElseIfClauseStatementBody ( I ) -> ParentBody = this;
+				IfElse -> GetElseIfClauseStatementBody ( I ) -> ParentSelfIndex = Statements.size ();
+				
+			}
+			
+			if ( IfElse -> HasElseClause () )
+			{
+				
+				IfElse -> GetElseClauseStatementBody () -> ParentBody = this;
+				IfElse -> GetElseClauseStatementBody () -> ParentSelfIndex = Statements.size ();
+				
+			}
+			
+		}
+		break;
+		
+		case kStatementType_WhileLoop:
+		{
+			
+			OilWhileLoop * WhileLoop = dynamic_cast <OilWhileLoop *> ( Statement );
+			
+			WhileLoop -> GetStatementBody () -> ParentBody = this;
+			WhileLoop -> GetStatementBody () -> ParentSelfIndex = Statements.size ();
+			
+		}
+		break;
+		
+		case kStatementType_DoWhileLoop:
+		{
+			
+			OilDoWhileLoop * DoWhileLoop = dynamic_cast <OilDoWhileLoop *> ( Statement );
+			
+			DoWhileLoop -> GetStatementBody () -> ParentBody = this;
+			DoWhileLoop -> GetStatementBody () -> ParentSelfIndex = Statements.size ();
+			
+		}
+		break;
+		
+		case kStatementType_Loop:
+		{
+			
+			OilLoop * Loop = dynamic_cast <OilLoop *> ( Statement );
+			
+			Loop -> GetStatementBody () -> ParentBody = this;
+			Loop -> GetStatementBody () -> ParentSelfIndex = Statements.size ();
+			
+		}
+		break;
+		
+		default:
+		break;
 		
 	}
 	

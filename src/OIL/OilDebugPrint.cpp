@@ -41,6 +41,7 @@
 #include <OIL/OilBuiltinStructDefinition.h>
 #include <OIL/OilConstStatement.h>
 #include <OIL/OilTypeAlias.h>
+#include <OIL/OilFunctionCallParameterList.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -64,6 +65,7 @@ std :: string OilStringTraitMethod ( const OilTraitMethod & Method, const OilPri
 std :: string OilStringExpression ( const OilExpression & Expression, const OilPrintOptions & PrintOptions );
 std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOptions & PrintOptions );
 std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintOptions & PrintOptions );
+std :: string OilStringFunctionCallParameterList ( const OilFunctionCallParameterList & List, const OilPrintOptions & PrintOptions );
 void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
@@ -879,6 +881,28 @@ std :: string OilStringTemplateDefinition ( const OilTemplateDefinition & Templa
 	
 }
 
+std :: string OilStringFunctionCallParameterList ( const OilFunctionCallParameterList & List, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string OutString = "(";
+	
+	for ( uint32_t I = 0; I < List.GetParameterCount (); I ++ )
+	{
+		
+		OutString += " ";
+		
+		OutString += OilStringExpression ( * List.GetParameter ( I ), PrintOptions );
+		
+		OutString += ( I != List.GetParameterCount () - 1 ) ? ", " : " ";
+		
+	}
+	
+	OutString += ")";
+	
+	return OutString;
+	
+}
+
 void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent, const OilPrintOptions & PrintOptions )
 {
 	
@@ -1428,21 +1452,18 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 			{
 				
 				case OilAllusion :: kAllusionTarget_Indeterminate:
-					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "]";
+					return std :: string ( PrintOptions.ShowResolution ? "[ALLUSION (unresolved) " : "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "]";
 					
 				case OilAllusion :: kAllusionTarget_Indeterminate_Templated:
-					return std :: string ( "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]";
+					return std :: string ( PrintOptions.ShowResolution ? "[ALLUSION (unresolved) " : "[ALLUSION " ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]";
 					
-				case OilAllusion :: kAllusionTarget_Parameter:
-					return std :: string ( "[ALLUSION Parameter: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
-					
-				case OilAllusion :: kAllusionTarget_Self:
-					return "[ALLUSION self]";
+				case OilAllusion :: kAllusionTarget_Self_Unchecked:
+					return PrintOptions.ShowResolution ? "[ALLUSION (unresolved) self]" : "[ALLUSION self]";
 					
 				case OilAllusion :: kAllusionTarget_Namespaced:
 				{
 					
-					std :: string PrintString = "[ALLUSION ?::";
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (unresolved) ?::" : "[ALLUSION ?::";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
 						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
@@ -1456,7 +1477,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 				case OilAllusion :: kAllusionTarget_Namespaced_Absolue:
 				{
 					
-					std :: string PrintString = "[ALLUSION ";
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (unresolved) " : "[ALLUSION ";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
 						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
@@ -1470,7 +1491,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 				case OilAllusion :: kAllusionTarget_Namespaced_Templated:
 				{
 					
-					std :: string PrintString = "[ALLUSION ?::";
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (unresolved) ?::" : "[ALLUSION ?::";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
 						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification (), PrintOptions ) + "::" ) : "::" );
@@ -1484,7 +1505,7 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 				case OilAllusion :: kAllusionTarget_Namespaced_Absolue_Templated:
 				{
 					
-					std :: string PrintString = "[ALLUSION ";
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (unresolved) " : "[ALLUSION ";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
 						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( I != Allusion.GetNamespaceNameCount () - 1 ) ? "::" : ( Allusion.GetIndirectTemplateSpecification () != NULL ) ? ( std :: string ( ":" ) + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification (), PrintOptions ) + "::" ) : "::" );
@@ -1494,6 +1515,27 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 					return PrintString;
 					
 				}
+				
+				case OilAllusion :: kAllusionTarget_Self:
+					return PrintOptions.ShowResolution ? "[ALLUSION (resolved) self]" : "[ALLUSION self]";
+					
+				case OilAllusion :: kAllusionTarget_Parameter:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Parameter: \"" : "[ALLUSION Parameter: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
+				
+				case OilAllusion :: kAllusionTarget_Function:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
+				
+				case OilAllusion :: kAllusionTarget_Function_Templated:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\" " + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]" );
+					
+				case OilAllusion :: kAllusionTarget_LocalBinding:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Local Binding: \"" : "[ALLUSION Local Binding: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
+					
+				case OilAllusion :: kAllusionTarget_Binding:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Binding: \"" : "[ALLUSION Binding: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
+				
+				case OilAllusion :: kAllusionTarget_Constant:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Constant: \"" : "[ALLUSION Constant: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
 				
 				default:
 					break;
@@ -1816,6 +1858,8 @@ std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintO
 		else
 			PrintString += OilStringOperator ( * UnOp.GetTermAsOperator (), PrintOptions );
 		
+		if ( UnOp.GetOp () == OilUnaryOperator :: kOperator_FunctionCall )
+			PrintString += " parameters: " + OilStringFunctionCallParameterList ( * UnOp.GetFunctionCallParameterList (), PrintOptions );
 		
 	}
 	else if ( Operator.GetOperatorType () == IOilOperator :: kOperatorType_Binary )

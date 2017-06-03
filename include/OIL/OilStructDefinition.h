@@ -9,7 +9,7 @@
 class OilStructBinding;
 class OilTemplateDefinition;
 
-class OilStructDefinition// public virtual IOilTypeDefinition
+class OilStructDefinition
 {
 public:
 		
