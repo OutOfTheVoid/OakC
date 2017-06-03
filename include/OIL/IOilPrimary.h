@@ -14,9 +14,9 @@ public:
 		kPrimaryType_StringLiteral,
 		kPrimaryType_CharLiteral,
 		kPrimaryType_ArrayLiteral,
+		kPrimaryType_NullPointerLiteral,
 		kPrimaryType_Expression,
-		kPrimaryType_Allusion,
-		kPrimaryType_NullPointerLiteral
+		kPrimaryType_Allusion
 		
 	} PrimaryType;
 	

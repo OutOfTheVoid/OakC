@@ -30,13 +30,8 @@
 #include <OIL/OilImplicitLocalInitialization.h>
 #include <OIL/OilImplicitBindingInitialization.h>
 
-AllusionResolutionResult OilResolveAllusions_Expression ( OilNamespaceDefinition & CurrentNS, OilExpression & Expression, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
+AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition & CurrentNS, OilAllusion & Allusion, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
-	
-	bool Progress = false;
-	bool Unresolved = false;
-	
-	// TODO: FINISH
 	
 	(void) CurrentNS;
 	(void) MethodContext;
@@ -44,7 +39,241 @@ AllusionResolutionResult OilResolveAllusions_Expression ( OilNamespaceDefinition
 	(void) TemplateNameList;
 	(void) SelfType;
 	(void) FirstUnresolvedAllusion;
-	(void) Expression;
+	(void) Allusion;
+	
+	//TODO: Write
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefinition & CurrentNS, OilBinaryOperator & BinaryOperator, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
+{
+	
+	bool Progress = false;
+	bool Unresolved = false;
+	
+	if ( BinaryOperator.IsLeftPrimary () )
+	{
+		
+		IOilPrimary * Primary = BinaryOperator.GetLeftTermAsPrimary ();
+		
+		switch ( Primary -> GetPrimaryType () )
+		{
+			
+			case IOilPrimary :: kPrimaryType_Expression:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilPrimary :: kPrimaryType_Allusion:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			
+			default:
+			break;
+			
+		}
+		
+	}
+	else
+	{
+		
+		IOilOperator * Operator = BinaryOperator.GetLeftTermAsOperator ();
+		
+		switch ( Operator -> GetOperatorType () )
+		{
+			
+			case IOilOperator :: kOperatorType_Unary:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			
+			case IOilOperator :: kOperatorType_Binary:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			
+		}
+		
+	}
+	
+	if ( BinaryOperator.IsRightPrimary () )
+	{
+		
+		IOilPrimary * Primary = BinaryOperator.GetRightTermAsPrimary ();
+		
+		switch ( Primary -> GetPrimaryType () )
+		{
+			
+			case IOilPrimary :: kPrimaryType_Expression:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilPrimary :: kPrimaryType_Allusion:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			
+			default:
+			break;
+			
+		}
+		
+	}
+	else
+	{
+		
+		IOilOperator * Operator = BinaryOperator.GetRightTermAsOperator ();
+		
+		switch ( Operator -> GetOperatorType () )
+		{
+			
+			case IOilOperator :: kOperatorType_Unary:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			
+			case IOilOperator :: kOperatorType_Binary:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			
+		}
+		
+	}
 	
 	if ( Unresolved )
 	{
@@ -53,6 +282,97 @@ AllusionResolutionResult OilResolveAllusions_Expression ( OilNamespaceDefinition
 			return kAllusionResolutionResult_Success_Progress;
 		else
 			return kAllusionResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+AllusionResolutionResult OilResolveAllusions_UnaryOperator ( OilNamespaceDefinition & CurrentNS, OilUnaryOperator & UnaryOperator, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
+{
+	
+	if ( UnaryOperator.IsTermPrimary () )
+	{
+		
+		IOilPrimary * Primary = UnaryOperator.GetTermAsPrimary ();
+		
+		switch ( Primary -> GetPrimaryType () )
+		{
+			
+			case IOilPrimary :: kPrimaryType_Expression:
+				return OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			case IOilPrimary :: kPrimaryType_Allusion:
+				return OilResolveAllusions_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			default:
+			break;
+			
+		}
+		
+	}
+	else
+	{
+		
+		IOilOperator * Operator = UnaryOperator.GetTermAsOperator ();
+		
+		switch ( Operator -> GetOperatorType () )
+		{
+			
+			case IOilOperator :: kOperatorType_Unary:
+				return OilResolveAllusions_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			case IOilOperator :: kOperatorType_Binary:
+				return OilResolveAllusions_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+		}
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+
+AllusionResolutionResult OilResolveAllusions_Expression ( OilNamespaceDefinition & CurrentNS, OilExpression & Expression, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
+{
+	
+	if ( Expression.IsPrimary () )
+	{
+		
+		IOilPrimary * Primary = Expression.GetTermAsPrimary ();
+		
+		switch ( Primary -> GetPrimaryType () )
+		{
+			
+			case IOilPrimary :: kPrimaryType_Expression:
+				return OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			case IOilPrimary :: kPrimaryType_Allusion:
+				return OilResolveAllusions_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			default:
+			break;
+			
+		}
+		
+	}
+	else
+	{
+		
+		IOilOperator * Operator = Expression.GetTermAsOperator ();
+		
+		switch ( Operator -> GetOperatorType () )
+		{
+			
+			case IOilOperator :: kOperatorType_Unary:
+				return OilResolveAllusions_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			case IOilOperator :: kOperatorType_Binary:
+				return OilResolveAllusions_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+		}
 		
 	}
 	
