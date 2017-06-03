@@ -25,6 +25,7 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OilImplementResolution.h>
 #include <EarlyAnalysis/OilTypeResolution.h>
+#include <EarlyAnalysis/OilAllusionResolution.h>
 
 #include <Builtins/OakBuiltinTypes.h>
 
@@ -424,6 +425,31 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 		
 		if ( Complete )
 			break;
+		
+	}
+	
+	Stop = false;
+	
+	while ( ! Stop )
+	{
+		
+		OilAllusion * FirstUnresolved = NULL;
+		
+		AllusionResolutionResult Result = OilResolveAllusions ( RootNS, FirstUnresolved );
+		
+		if ( Result == kAllusionResolutionResult_Success_Complete )
+			Stop = true;
+		else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+		{
+			
+			// TODO: improve this error
+			LOG_FATALERROR_NOFILE ( "FATAL ERROR: Unable to resolve allusion..." );
+			
+			return false;
+			
+		}
+		else if ( Result != kAllusionResolutionResult_Success_Progress )
+			return false;
 		
 	}
 	

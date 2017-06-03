@@ -18,86 +18,401 @@
 #include <OIL/OilFunctionParameterList.h>
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilTemplateDefinitionParameter.h>
+#include <OIL/OilBindingStatement.h>
+#include <OIL/OilReturn.h>
+#include <OIL/OilIfElse.h>
+#include <OIL/OilWhileLoop.h>
+#include <OIL/OilDoWhileLoop.h>
+#include <OIL/OilLoop.h>
+#include <OIL/OilTypeRef.h>
+#include <OIL/OilMethodDefinition.h>
+#include <OIL/OilMethodParameterList.h>
+#include <OIL/OilImplicitLocalInitialization.h>
+#include <OIL/OilImplicitBindingInitialization.h>
 
-AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinition & CurrentNS, OilStatementBody & Body, bool MethodContext, OilAllusionResolution_NameList * ParameterNameList, OilAllusionResolution_NameList * TemplateNameList )
-{
-	
-	(void) CurrentNS;
-	(void) Body;
-	(void) MethodContext;
-	(void) ParameterNameList;
-	(void) TemplateNameList;
-	
-	// TODO: Implement
-	
-	return kAllusionResolutionResult_Success_Complete;
-	
-}
-
-AllusionResolutionResult OilResolveAllusions_Function ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Function )
+AllusionResolutionResult OilResolveAllusions_Expression ( OilNamespaceDefinition & CurrentNS, OilExpression & Expression, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
 	
 	bool Progress = false;
 	bool Unresolved = false;
 	
-	if ( Function.IsNative () )
-		return kAllusionResolutionResult_Success_Complete;
+	// TODO: FINISH
 	
-	OilStatementBody * Body = Function.GetStatementBody ();
-	OilFunctionParameterList * ParamList = Function.GetParameterList ();
+	(void) CurrentNS;
+	(void) MethodContext;
+	(void) ParameterNameList;
+	(void) TemplateNameList;
+	(void) SelfType;
+	(void) FirstUnresolvedAllusion;
+	(void) Expression;
 	
-	OilAllusionResolution_NameList ParameterNames;
-	
-	uint32_t ParamCount = ParamList -> GetParameterCount ();
-	
-	if ( ParamCount != 0 )
+	if ( Unresolved )
 	{
 		
-		ParameterNames.Names = new std :: u32string [ ParamCount ];
-		ParameterNames.Count = ParamCount;
-		
-		for ( uint32_t I = 0; I < ParamCount; I ++ )
-			ParameterNames.Names [ I ] = ParamList -> GetFunctionParameter ( I ) -> GetName ();
+		if ( Progress )
+			return kAllusionResolutionResult_Success_Progress;
+		else
+			return kAllusionResolutionResult_Success_NoProgress;
 		
 	}
 	
-	OilTemplateDefinition * TemplateDef = Function.IsTemplated () ? Function.GetTemplateDefinition () : NULL;
+	return kAllusionResolutionResult_Success_Complete;
 	
-	OilAllusionResolution_NameList TemplateNames;
+}
+
+AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinition & CurrentNS, OilStatementBody & Body, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
+{
 	
-	if ( TemplateDef != NULL )
+	bool Progress = false;
+	bool Unresolved = false;
+	
+	(void) CurrentNS;
+	(void) MethodContext;
+	(void) ParameterNameList;
+	(void) TemplateNameList;
+	(void) FirstUnresolvedAllusion;
+	
+	uint32_t StatementCount = Body.GetStatementCount ();
+	
+	for ( uint32_t I = 0; I < StatementCount; I ++ )
 	{
 		
-		uint32_t TemplateNameCount = TemplateDef -> GetTemplateParameterCount ();
+		IOilStatement * Statement = Body.GetStatement ( I );
 		
-		TemplateNames.Names = new std :: u32string [ TemplateNameCount ];
-		TemplateNames.Count = TemplateNameCount;
-		
-		for ( uint32_t I = 0; I < TemplateNameCount; I ++ )
-			TemplateNames.Names [ I ] = TemplateDef -> GetTemplateParameter ( I ) -> GetName ();
-		
-	}
-	
-	AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * Body, false, ( ParamCount != 0 ) ? & ParameterNames : NULL, ( TemplateDef != NULL ) ? & TemplateNames : NULL );
-	
-	if ( Result == kAllusionResolutionResult_Success_Complete )
-		Progress = true;
-	else if ( Result == kAllusionResolutionResult_Success_Progress )
-	{
-		
-		Progress = true;
-		Unresolved = true;
-		
-	}
-	else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-		Unresolved = true;
-	else
-	{
-		
-		if ( ParamCount != 0 )
-			delete [] ParameterNames.Names;
-		
-		return Result;
+		switch ( Statement -> GetStatementType () )
+		{
+			
+			case IOilStatement :: kStatementType_Body:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * dynamic_cast <OilStatementBody *> ( Statement ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Const:
+			case IOilStatement :: kStatementType_Binding:
+			// This shouldn't ever occur, since local bindings and constants are added to a seperate list from the statement list
+			break;
+			
+			case IOilStatement :: kStatementType_Expression:
+			{
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Statement ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Return:
+			{
+				
+				OilReturn * Return = dynamic_cast <OilReturn *> ( Statement );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * Return -> GetReturnedExpression (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_IfElse:
+			{
+				
+				OilIfElse * IfElse = dynamic_cast <OilIfElse *> ( Statement );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * IfElse -> GetIfClauseConditionExpression (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+				Result = OilResolveAllusions_StatementBody ( CurrentNS, * IfElse -> GetIfClauseStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+				uint32_t ElseIfCount = IfElse -> GetElseIfClauseCount ();
+				
+				for ( uint32_t I = 0; I < ElseIfCount; I ++ )
+				{
+					
+					Result = OilResolveAllusions_Expression ( CurrentNS, * IfElse -> GetElseIfClauseConditionExpression ( I ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+					
+					if ( Result == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( Result == kAllusionResolutionResult_Success_Progress )
+					{
+				
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return Result;
+					
+					Result = OilResolveAllusions_StatementBody ( CurrentNS, * IfElse -> GetElseIfClauseStatementBody ( I ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+					
+					if ( Result == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( Result == kAllusionResolutionResult_Success_Progress )
+					{
+				
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return Result;
+					
+				}
+				
+				if ( IfElse -> HasElseClause () )
+				{
+					
+					Result = OilResolveAllusions_StatementBody ( CurrentNS, * IfElse -> GetElseClauseStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+					
+					if ( Result == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( Result == kAllusionResolutionResult_Success_Progress )
+					{
+				
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return Result;
+					
+				}
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_WhileLoop:
+			{
+				
+				OilWhileLoop * WhileLoop = dynamic_cast <OilWhileLoop *> ( Statement );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * WhileLoop -> GetConditionExpression (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+				Result = OilResolveAllusions_StatementBody ( CurrentNS, * WhileLoop -> GetStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_DoWhileLoop:
+			{
+				
+				OilDoWhileLoop * DoWhileLoop = dynamic_cast <OilDoWhileLoop *> ( Statement );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * DoWhileLoop -> GetConditionExpression (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+				Result = OilResolveAllusions_StatementBody ( CurrentNS, * DoWhileLoop -> GetStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Loop:
+			{
+				
+				OilLoop * Loop = dynamic_cast <OilLoop *> ( Statement );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * Loop -> GetStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Break:
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitLocalInitialization:
+			{
+				
+				OilImplicitLocalInitialization * Initialization = dynamic_cast <OilImplicitLocalInitialization *> ( Statement );
+				OilBindingStatement * Binding = Body.GetLocalBinding ( Initialization -> GetLocalIndex () );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * Binding -> GetInitializerValue (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitBindingInitialization:
+			{
+				
+				OilImplicitBindingInitialization * Initialization = dynamic_cast <OilImplicitBindingInitialization *> ( Statement );
+				OilBindingStatement * Binding = CurrentNS.FindBindingStatement ( Initialization -> GetBindingID () );
+				
+				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * Binding -> GetInitializerValue (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+				
+				if ( Result == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kAllusionResolutionResult_Success_Progress )
+				{
+			
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+		}
 		
 	}
 	
@@ -115,20 +430,143 @@ AllusionResolutionResult OilResolveAllusions_Function ( OilNamespaceDefinition &
 	
 }
 
-
-AllusionResolutionResult OilResolveAllusions_Type ( OilNamespaceDefinition & CurrentNS, OilTypeDefinition & Type )
+AllusionResolutionResult OilResolveAllusions_Function ( OilNamespaceDefinition & CurrentNS, OilFunctionDefinition & Function, OilAllusion *& FirstUnresolvedAllusion, OilTypeRef * SelfType )
 {
+	
+	if ( Function.IsNative () )
+		return kAllusionResolutionResult_Success_Complete;
+	
+	OilStatementBody * Body = Function.GetStatementBody ();
+	OilFunctionParameterList * Parameters = Function.GetParameterList ();
+	
+	FunctionParamList ParameterList;
+	bool UseParamNames = false;
+	
+	MakeNameList_FunctionParameters ( * Parameters, ParameterList, UseParamNames );
+	
+	OilTemplateDefinition * TemplateDef = Function.IsTemplated () ? Function.GetTemplateDefinition () : NULL;
+	
+	FlatNameList TemplateNames;
+	
+	if ( TemplateDef != NULL )
+		MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
+	
+	AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * Body, false, UseParamNames ? & ParameterList : NULL, ( TemplateDef != NULL ) ? & TemplateNames : NULL, SelfType, FirstUnresolvedAllusion );
+	
+	DestroyFunctionParamList ( ParameterList );
+	DestroyFlatNameList ( TemplateNames );
+	
+	return Result;
+	
+}
+
+AllusionResolutionResult OilResolveAllusions_Method ( OilNamespaceDefinition & CurrentNS, OilMethodDefinition & Method, OilAllusion *& FirstUnresolvedAllusion, OilTypeRef * SelfType )
+{
+	
+	// TODO: Uncomment when native methods are supported
+	
+	/*if ( Method.IsNative () )
+		return kAllusionResolutionResult_Success_Complete;*/
+	
+	OilStatementBody * Body = Method.GetStatementBody ();
+	OilMethodParameterList * Parameters = Method.GetParameterList ();
+	
+	FunctionParamList ParameterList;
+	bool UseParamNames = false;
+	
+	MakeNameList_MethodParameters ( * Parameters, ParameterList, UseParamNames );
+	
+	OilTemplateDefinition * TemplateDef = Method.IsTemplated () ? Method.GetTemplateDefinition () : NULL;
+	
+	FlatNameList TemplateNames;
+	
+	if ( TemplateDef != NULL )
+		MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
+	
+	AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * Body, true, UseParamNames ? & ParameterList : NULL, ( TemplateDef != NULL ) ? & TemplateNames : NULL, SelfType, FirstUnresolvedAllusion );
+	
+	DestroyFunctionParamList ( ParameterList );
+	DestroyFlatNameList ( TemplateNames );
+	
+	return Result;
+	
+}
+
+
+AllusionResolutionResult OilResolveAllusions_Type ( OilNamespaceDefinition & CurrentNS, OilTypeDefinition & Type, OilAllusion *& FirstUnresolvedAllusion )
+{
+	
+	bool Progress = false;
+	bool Unresolved = false;
 	
 	(void) CurrentNS;
 	(void) Type;
+	(void) FirstUnresolvedAllusion;
 	
 	// TODO: Implement
+	
+	std :: vector <OilImplementBlock *> Blocks;
+	
+	Type.GetAllImplementBlocks ( Blocks );
+	
+	for ( uint32_t I = 0; I < Blocks.size (); I ++ )
+	{
+		
+		OilImplementBlock * Block = Blocks [ I ];
+		
+		uint32_t FunctionCount = Block -> GetFunctionCount ();
+		
+		for ( uint32_t J = 0; J < FunctionCount; J ++ )
+		{
+			
+			AllusionResolutionResult Result = OilResolveAllusions_Function ( CurrentNS, * Block -> GetFunction ( J ), FirstUnresolvedAllusion, Block -> GetImplementedType () );
+			
+			if ( Result == kAllusionResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( Result == kAllusionResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return Result;
+			
+		}
+		
+		uint32_t MethodCount = Block -> GetMethodCount ();
+		
+		for ( uint32_t J = 0; J < MethodCount; J ++ )
+		{
+			
+			AllusionResolutionResult Result = OilResolveAllusions_Method ( CurrentNS, * Block -> GetMethod ( J ), FirstUnresolvedAllusion, Block -> GetImplementedType () );
+			
+			if ( Result == kAllusionResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( Result == kAllusionResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( Result == kAllusionResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return Result;
+			
+		}
+		
+	}
 	
 	return kAllusionResolutionResult_Success_Complete;
 	
 }
 
-AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentNS )
+AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentNS, OilAllusion *& FirstUnresolvedAllusion )
 {
 	
 	bool Unresolved = false;
@@ -141,7 +579,7 @@ AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentN
 		
 		OilFunctionDefinition * Function = CurrentNS.GetFunctionDefinition ( I );
 		
-		AllusionResolutionResult Result = OilResolveAllusions_Function ( CurrentNS, * Function );
+		AllusionResolutionResult Result = OilResolveAllusions_Function ( CurrentNS, * Function, FirstUnresolvedAllusion );
 		
 		if ( Result == kAllusionResolutionResult_Success_Complete )
 			Progress = true;
@@ -166,7 +604,7 @@ AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentN
 		
 		OilTypeDefinition * Type = CurrentNS.GetTypeDefinition ( I );
 		
-		AllusionResolutionResult Result = OilResolveAllusions_Type ( CurrentNS, * Type );
+		AllusionResolutionResult Result = OilResolveAllusions_Type ( CurrentNS, * Type, FirstUnresolvedAllusion );
 		
 		if ( Result == kAllusionResolutionResult_Success_Complete )
 			Progress = true;
@@ -188,7 +626,7 @@ AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentN
 	for ( uint32_t I = 0; I < NamespaceCount; I ++ )
 	{
 		
-		AllusionResolutionResult SubResult = OilResolveAllusions ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		AllusionResolutionResult SubResult = OilResolveAllusions ( * CurrentNS.GetNamespaceDefinition ( I ), FirstUnresolvedAllusion );
 		
 		if ( SubResult == kAllusionResolutionResult_Success_Complete )
 			Progress = true;

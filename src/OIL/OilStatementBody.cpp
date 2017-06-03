@@ -170,7 +170,7 @@ void OilStatementBody :: AddLocalBinding ( OilBindingStatement * LocalBinding )
 		
 	}
 	else
-		Data.InitializationStatementIndex = 0;
+		Data.InitializationStatementIndex = 0xFFFFFFFFFFFFFFFF;
 	
 	Locals.push_back ( Data );
 	
