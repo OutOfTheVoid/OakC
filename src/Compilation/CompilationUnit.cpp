@@ -428,8 +428,6 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 		
 	}
 	
-	Stop = false;
-	
 	OilAllusion * FirstUnresolved = NULL;
 	
 	AllusionResolutionResult Result = OilResolveAllusions ( RootNS, FirstUnresolved );

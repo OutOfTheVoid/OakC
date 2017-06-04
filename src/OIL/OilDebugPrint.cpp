@@ -1537,6 +1537,54 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 				case OilAllusion :: kAllusionTarget_Constant:
 					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Constant: \"" : "[ALLUSION Constant: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
 				
+				case OilAllusion :: kAllusionTarget_Function_Namespaced:
+				{
+					
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_Method_Namespaced:
+				{
+					
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Method: \"" : "[ALLUSION Method: \"";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_Binding_Namespaced:
+				{
+					
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Binding: \"" : "[ALLUSION Binding: \"";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_Constant_Namespaced:
+				{
+					
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Constant: \"" : "[ALLUSION Constant: \"";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				}
+				
 				default:
 					break;
 				

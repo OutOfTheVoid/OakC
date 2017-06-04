@@ -14,6 +14,7 @@ class OilBindingStatement;
 class OilTypeRef;
 class OilFunctionDefinition;
 class OilConstStatement;
+class OilMethodDefinition;
 
 class OilAllusion : public virtual IOilPrimary
 {
@@ -40,6 +41,11 @@ public:
 		kAllusionTarget_Self,
 		
 		kAllusionTarget_Function_Templated,
+		
+		kAllusionTarget_Function_Namespaced,
+		kAllusionTarget_Method_Namespaced,
+		kAllusionTarget_Binding_Namespaced,
+		kAllusionTarget_Constant_Namespaced,
 		
 	} AllusionTarget;
 	
@@ -71,6 +77,11 @@ public:
 	
 	void SetTargetAsTemplatedFunction ( OilFunctionDefinition * Function );
 	
+	void SetTargetAsNamespacedFunction ( OilFunctionDefinition * Function );
+	void SetTargetAsNamespacedMethod ( OilMethodDefinition * Method );
+	void SetTargetAsNamespacedBinding ( OilBindingStatement * Binding );
+	void SetTargetAsNamespacedConst ( OilConstStatement * Const );
+	
 	const OilFunctionParameter * GetFunctionParameterTarget () const;
 	OilFunctionParameter * GetFunctionParameterTarget ();
 	
@@ -79,6 +90,15 @@ public:
 	
 	const OilFunctionDefinition * GetFunctionTarget () const;
 	OilFunctionDefinition * GetFunctionTarget ();
+	
+	const OilFunctionDefinition * GetTemplatedFunctionTarget () const;
+	OilFunctionDefinition * GetTemplatedFunctionTarget ();
+	
+	const OilFunctionDefinition * GetNamespacedFunctionTarget () const;
+	OilFunctionDefinition * GetNamespacedFunctionTarget ();
+	
+	const OilMethodDefinition * GetNamespacedMethodTarget () const;
+	OilMethodDefinition * GetNamespacedMethodTarget ();
 	
 	const OilBindingStatement * GetBindingTarget () const;
 	OilBindingStatement * GetBindingTarget ();
@@ -123,6 +143,7 @@ private:
 		OilBindingStatement * BindingTarget;
 		OilFunctionDefinition * FunctionTarget;
 		OilConstStatement * ConstTarget;
+		OilMethodDefinition * MethodTarget;
 		
 	};
 	

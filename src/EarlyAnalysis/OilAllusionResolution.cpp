@@ -36,6 +36,7 @@
 #include <OIL/OilImplicitLocalInitialization.h>
 #include <OIL/OilImplicitBindingInitialization.h>
 #include <OIL/OilFunctionCallParameterList.h>
+#include <OIL/OilTypeAlias.h>
 
 AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition & CurrentNS, OilAllusion & Allusion, uint64_t StatementRootIndex, OilStatementBody & ContainerBody, bool MethodContext, FunctionParamList * ParameterList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
@@ -161,7 +162,6 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 				
 			}
 			
-			// Search namespaces upward for name...
 			OilNamespaceDefinition * LocalNS = & CurrentNS;
 			
 			OilNamespaceDefinition :: NameSearchResult SearchResult;
@@ -414,6 +414,327 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 			return kAllusionResolutionResult_Failure_AllusionNotFound;
 			
 		}
+		break;
+		
+		case OilAllusion :: kAllusionTarget_Namespaced:
+		{
+			
+			OilNamespaceDefinition * SearchRoot = & CurrentNS;
+			
+			OilNamespaceDefinition :: NameSearchResult SearchResult;
+			
+			while ( SearchRoot != NULL )
+			{
+				
+				OilNamespaceDefinition * EntryNS = SearchRoot -> FindNamespaceDefinition ( Allusion.GetNamespaceName ( 0 ) );
+				
+				if ( EntryNS != NULL )
+				{
+					
+					SearchRoot = EntryNS;
+					break;
+					
+				}
+				
+				SearchRoot = SearchRoot -> GetParent ();
+				
+			}
+			
+			bool PreNonNSSearch = false;
+			
+			if ( SearchRoot == NULL )
+			{
+				
+				if ( Allusion.GetNamespaceNameCount () != 1 )
+				{
+					
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "cannot find " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "." );
+					
+					return kAllusionResolutionResult_Failure_AllusionNotFound;
+					
+				}
+				else
+				{
+					
+					SearchRoot = & CurrentNS;
+					
+					while ( SearchRoot != NULL )
+					{
+						
+						SearchRoot -> SearchName ( Allusion.GetNamespaceName ( 0 ), SearchResult );
+						
+						if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
+						{
+							
+							PreNonNSSearch = true;
+							
+							break;
+							
+						}
+						
+					}
+					
+					if ( ! PreNonNSSearch )
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "cannot find " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "." );
+						
+						return kAllusionResolutionResult_Failure_AllusionNotFound;
+						
+					}
+					
+				}
+				
+			}
+			
+			uint32_t NSIndex = 1;
+			
+			while ( ( NSIndex < Allusion.GetNamespaceNameCount () ) && ( ! PreNonNSSearch ) )
+			{
+				
+				OilNamespaceDefinition * SubNS = SearchRoot -> FindNamespaceDefinition ( Allusion.GetNamespaceName ( NSIndex ) );
+				
+				if ( SubNS == NULL )
+				{
+					
+					if ( Allusion.GetNamespaceNameCount () <= NSIndex + 1 )
+						break;
+					
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "cannot find " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( NSIndex ) ) + "." );
+					
+					return kAllusionResolutionResult_Failure_AllusionNotFound;
+					
+				}
+				
+				SearchRoot = SubNS;
+				NSIndex ++;
+				
+			}
+			
+			// ...<NS>::<NS>::< SEARCH >
+			if ( NSIndex == Allusion.GetNamespaceNameCount () && ( ! PreNonNSSearch ) )
+			{
+				
+				SearchRoot -> SearchName ( Allusion.GetName (), SearchResult );
+				
+				switch ( SearchResult.Type )
+				{
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_None:
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "cannot find " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "." );
+						
+						return kAllusionResolutionResult_Failure_AllusionNotFound;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_SubNamespace:
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "namespace " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " is not an object or function." );
+						
+						return kAllusionResolutionResult_Failure_AllusionToNamespace;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_TypeDefinition:
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "type " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " is not an object or function." );
+						
+						return kAllusionResolutionResult_Failure_AllusionToType;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_FunctionDefinition:
+					{
+						
+						Allusion.SetTargetAsNamespacedFunction ( SearchResult.FunctionDefinition );
+						
+						return kAllusionResolutionResult_Success;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_BindingStatement:
+					{
+						
+						Allusion.SetTargetAsNamespacedBinding ( SearchResult.BindingStatement );
+						
+						return kAllusionResolutionResult_Success;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_ConstStatement:
+					{
+						
+						Allusion.SetTargetAsNamespacedConst ( SearchResult.ConstStatement );
+						
+						return kAllusionResolutionResult_Success;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_TraitDefinition:
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "trait " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " is not an object or function." );
+						
+						return kAllusionResolutionResult_Failure_AllusionToType;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_TypeAlias:
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "type " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " is not an object or function." );
+						
+						return kAllusionResolutionResult_Failure_AllusionToType;
+						
+					}
+					break;
+					
+				}
+				
+			}
+			else // ..<NS>::< SEARCH >::<?>
+			{
+				
+				if ( ! PreNonNSSearch )
+					SearchRoot -> SearchName ( Allusion.GetNamespaceName ( Allusion.GetNamespaceNameCount () - 1 ), SearchResult );
+				
+				switch ( SearchResult.Type )
+				{
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_TypeDefinition:
+					{
+						
+						OilTypeDefinition * Type = SearchResult.TypeDefinition;
+						
+						if ( Type -> IsTemplated () )
+						{
+							
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "type " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " requires template, but none was specified." );
+							
+							return kAllusionResolutionResult_Failure_TemplateMismatch;
+							
+						}
+						
+						std :: vector <OilImplementBlock *> Blocks;
+						
+						Type -> GetAllImplementBlocks ( Blocks );
+						
+						for ( uint32_t I = 0; I < Blocks.size (); I ++ )
+						{
+							
+							OilFunctionDefinition * Function = Blocks [ I ] -> FindFunction ( Allusion.GetName () );
+							
+							if ( Function != NULL )
+							{
+								
+								if ( Function -> IsTemplated () )
+								{
+									
+									LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "function " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " requires template, but none was specified." );
+									
+									return kAllusionResolutionResult_Failure_TemplateMismatch;
+									
+								}
+								
+								Allusion.SetTargetAsNamespacedFunction ( Function );
+								
+								return kAllusionResolutionResult_Success;
+								
+							}
+							
+							OilMethodDefinition * Method = Blocks [ I ] -> FindMethod ( Allusion.GetName () );
+							
+							if ( Method != NULL )
+							{
+								
+								if ( Method -> IsTemplated () )
+								{
+									
+									LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "function " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " requires template, but none was specified." );
+									
+									return kAllusionResolutionResult_Failure_TemplateMismatch;
+									
+								}
+								
+								Allusion.SetTargetAsNamespacedMethod ( Method );
+								
+								return kAllusionResolutionResult_Success;
+								
+							}
+							
+						}
+						
+						return kAllusionResolutionResult_Failure_AllusionNotFound;
+						
+					}
+					break;
+					
+					case OilNamespaceDefinition :: kNameSearchResultType_TypeAlias:
+					{
+						
+						OilTypeAlias * Alias = SearchResult.Alias;
+						
+						if ( Alias -> IsTemplated () )
+						{
+							
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "type " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " requires template, but none was specified." );
+							
+							return kAllusionResolutionResult_Failure_TemplateMismatch;
+							
+						}
+						
+						OilTypeRef * TypeRef = Alias -> GetAliasedType ();
+						
+						while ( TypeRef -> IsResolvedAsTypeAlias () )
+						{
+							
+							Alias = TypeRef -> GetResolvedTypeAlias ();
+							TypeRef = Alias -> GetAliasedType ();
+							
+						}
+						
+						// More work is required to complete this properly...
+						if ( ! TypeRef -> IsResolvedAsType () )
+						{
+							
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "type alias " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + " does not resolve to concrete type." );
+							
+							return kAllusionResolutionResult_Failure_TemplateMismatch;
+							
+						}
+						
+						// TODO: Resolve actual type, and then search functions/methods
+						// For now, just fail with allusion not found
+						
+						return kAllusionResolutionResult_Failure_AllusionNotFound;
+						
+					}
+					break;
+					
+					default:
+					break;
+					
+				}
+				
+				LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "cannot find " + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( Allusion.GetNamespaceNameCount () - 1 ) ) + "." );
+				
+				return kAllusionResolutionResult_Failure_AllusionNotFound;
+				
+			}
+			
+		}
+		break;
 		
 		// TODO: Implement all cases and get rid of this!
 		default:
@@ -571,8 +892,6 @@ AllusionResolutionResult OilResolveAllusions_UnaryOperator ( OilNamespaceDefinit
 	
 	if ( UnaryOperator.GetOp () == OilUnaryOperator :: kOperator_FunctionCall )
 	{
-		
-		// TODO: Resolve arguments.
 		
 		OilFunctionCallParameterList * Parameters = UnaryOperator.GetFunctionCallParameterList ();
 		
@@ -941,8 +1260,6 @@ AllusionResolutionResult OilResolveAllusions_Type ( OilNamespaceDefinition & Cur
 	(void) CurrentNS;
 	(void) Type;
 	(void) FirstUnresolvedAllusion;
-	
-	// TODO: Implement
 	
 	std :: vector <OilImplementBlock *> Blocks;
 	

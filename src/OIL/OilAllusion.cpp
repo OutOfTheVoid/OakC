@@ -102,6 +102,9 @@ OilAllusion :: ~OilAllusion ()
 	if ( IndirectTemplateSpecification != NULL )
 		delete IndirectTemplateSpecification;
 	
+	if ( NamespaceNameList != NULL )
+		delete [] NamespaceNameList;
+	
 }
 
 OilAllusion :: AllusionTarget OilAllusion :: GetTarget () const
@@ -202,6 +205,22 @@ void OilAllusion :: SetTargetAsTemplatedFunction ( OilFunctionDefinition * Funct
 	
 }
 
+void OilAllusion :: SetTargetAsNamespacedFunction ( OilFunctionDefinition * Function )
+{
+	
+	Target = kAllusionTarget_Function_Namespaced;
+	FunctionTarget = Function;
+	
+}
+
+void OilAllusion :: SetTargetAsNamespacedMethod ( OilMethodDefinition * Method )
+{
+	
+	Target = kAllusionTarget_Method_Namespaced;
+	MethodTarget = Method;
+	
+}
+
 const OilFunctionDefinition * OilAllusion :: GetFunctionTarget () const
 {
 	
@@ -216,10 +235,60 @@ OilFunctionDefinition * OilAllusion :: GetFunctionTarget ()
 	
 }
 
+const OilFunctionDefinition * OilAllusion :: GetTemplatedFunctionTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Function_Templated ) ? FunctionTarget : NULL;
+	
+}
+
+OilFunctionDefinition * OilAllusion :: GetTemplatedFunctionTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Function_Templated ) ? FunctionTarget : NULL;
+	
+}
+
+const OilFunctionDefinition * OilAllusion :: GetNamespacedFunctionTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Function_Namespaced ) ? FunctionTarget : NULL;
+	
+}
+
+OilFunctionDefinition * OilAllusion :: GetNamespacedFunctionTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Function_Namespaced ) ? FunctionTarget : NULL;
+	
+}
+
+const OilMethodDefinition * OilAllusion :: GetNamespacedMethodTarget () const
+{
+	
+	return ( Target == kAllusionTarget_Method_Namespaced ) ? MethodTarget : NULL;
+	
+}
+
+OilMethodDefinition * OilAllusion :: GetNamespacedMethodTarget ()
+{
+	
+	return ( Target == kAllusionTarget_Method_Namespaced ) ? MethodTarget : NULL;
+	
+}
+
 void OilAllusion :: SetTargetAsBinding ( OilBindingStatement * Binding )
 {
 	
 	Target = kAllusionTarget_Binding;
+	BindingTarget = Binding;
+	
+}
+
+void OilAllusion :: SetTargetAsNamespacedBinding ( OilBindingStatement * Binding )
+{
+	
+	Target = kAllusionTarget_Binding_Namespaced;
 	BindingTarget = Binding;
 	
 }
@@ -242,6 +311,14 @@ void OilAllusion :: SetTargetAsConstant ( OilConstStatement * Constant )
 {
 	
 	Target = kAllusionTarget_Constant;
+	ConstTarget = Constant;
+	
+}
+
+void OilAllusion :: SetTargetAsNamespacedConst ( OilConstStatement * Constant )
+{
+	
+	Target = kAllusionTarget_Constant_Namespaced;
 	ConstTarget = Constant;
 	
 }
