@@ -21,9 +21,7 @@ class IOilStatement;
 enum AllusionResolutionResult
 {
 	
-	kAllusionResolutionResult_Success_Complete,
-	kAllusionResolutionResult_Success_Progress,
-	kAllusionResolutionResult_Success_NoProgress,
+	kAllusionResolutionResult_Success,
 	kAllusionResolutionResult_Failure_AllusionNotFound,
 	kAllusionResolutionResult_Failure_AllusionToNamespace,
 	kAllusionResolutionResult_Failure_AllusionToType,

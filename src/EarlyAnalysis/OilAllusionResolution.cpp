@@ -35,6 +35,7 @@
 #include <OIL/OilMethodParameterList.h>
 #include <OIL/OilImplicitLocalInitialization.h>
 #include <OIL/OilImplicitBindingInitialization.h>
+#include <OIL/OilFunctionCallParameterList.h>
 
 AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition & CurrentNS, OilAllusion & Allusion, uint64_t StatementRootIndex, OilStatementBody & ContainerBody, bool MethodContext, FunctionParamList * ParameterList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
@@ -44,7 +45,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 	(void) SelfType;
 	
 	if ( Allusion.IsResolved () )
-		return kAllusionResolutionResult_Success_Complete;
+		return kAllusionResolutionResult_Success;
 	
 	//TODO: Write
 	
@@ -56,7 +57,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 		case OilAllusion :: kAllusionTarget_LocalBinding:
 		case OilAllusion :: kAllusionTarget_Binding:
 		case OilAllusion :: kAllusionTarget_Constant:
-		return kAllusionResolutionResult_Success_Complete;
+		return kAllusionResolutionResult_Success;
 		
 		case OilAllusion :: kAllusionTarget_Self_Unchecked:
 		{
@@ -72,7 +73,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 			
 			Allusion.SetTargetAsSelf ();
 			
-			return kAllusionResolutionResult_Success_Complete;
+			return kAllusionResolutionResult_Success;
 			
 		}
 		break;
@@ -132,7 +133,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 					
 					Allusion.SetTargetAsLocalBinding ( LatestScopedBinding );
 					
-					return kAllusionResolutionResult_Success_Complete;
+					return kAllusionResolutionResult_Success;
 					
 				}
 				
@@ -152,7 +153,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 						
 						Allusion.SetTargetAsParameter ( ParameterList -> Params [ I ] );
 						
-						return kAllusionResolutionResult_Success_Complete;
+						return kAllusionResolutionResult_Success;
 						
 					}
 					
@@ -211,7 +212,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 						
 						Allusion.SetTargetAsFunction ( SearchResult.FunctionDefinition );
 						
-						return kAllusionResolutionResult_Success_Complete;
+						return kAllusionResolutionResult_Success;
 						
 					}
 					break;
@@ -221,7 +222,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 						
 						Allusion.SetTargetAsBinding ( SearchResult.BindingStatement );
 						
-						return kAllusionResolutionResult_Success_Complete;
+						return kAllusionResolutionResult_Success;
 						
 					}
 					
@@ -230,7 +231,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 						
 						Allusion.SetTargetAsConstant ( SearchResult.ConstStatement );
 						
-						return kAllusionResolutionResult_Success_Complete;
+						return kAllusionResolutionResult_Success;
 						
 					}
 					
@@ -353,7 +354,7 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 						
 						Allusion.SetTargetAsTemplatedFunction ( SearchResult.FunctionDefinition );
 						
-						return kAllusionResolutionResult_Success_Complete;
+						return kAllusionResolutionResult_Success;
 						
 					}
 					break;
@@ -420,15 +421,12 @@ AllusionResolutionResult OilResolveAllusions_Allusion ( OilNamespaceDefinition &
 		
 	}
 	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
 
 AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefinition & CurrentNS, OilBinaryOperator & BinaryOperator, uint64_t StatementRootIndex, OilStatementBody & ContainerBody, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
-	
-	bool Progress = false;
-	bool Unresolved = false;
 	
 	if ( BinaryOperator.IsLeftPrimary () )
 	{
@@ -443,18 +441,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -465,18 +452,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -500,18 +476,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -521,18 +486,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -554,18 +508,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -576,18 +519,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -611,18 +543,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -632,18 +553,7 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 				
 				AllusionResolutionResult Result = OilResolveAllusions_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -652,22 +562,30 @@ AllusionResolutionResult OilResolveAllusions_BinaryOperator ( OilNamespaceDefini
 		
 	}
 	
-	if ( Unresolved )
-	{
-		
-		if ( Progress )
-			return kAllusionResolutionResult_Success_Progress;
-		else
-			return kAllusionResolutionResult_Success_NoProgress;
-		
-	}
-	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
 
 AllusionResolutionResult OilResolveAllusions_UnaryOperator ( OilNamespaceDefinition & CurrentNS, OilUnaryOperator & UnaryOperator, uint64_t StatementRootIndex, OilStatementBody & ContainerBody, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
+	
+	if ( UnaryOperator.GetOp () == OilUnaryOperator :: kOperator_FunctionCall )
+	{
+		
+		// TODO: Resolve arguments.
+		
+		OilFunctionCallParameterList * Parameters = UnaryOperator.GetFunctionCallParameterList ();
+		
+		uint32_t ParamCount = Parameters -> GetParameterCount ();
+		
+		for ( uint32_t I = 0; I < ParamCount; I ++ )
+		{
+			
+			
+			
+		}
+		
+	}
 	
 	if ( UnaryOperator.IsTermPrimary () )
 	{
@@ -707,7 +625,7 @@ AllusionResolutionResult OilResolveAllusions_UnaryOperator ( OilNamespaceDefinit
 		
 	}
 	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
 
@@ -753,15 +671,12 @@ AllusionResolutionResult OilResolveAllusions_Expression ( OilNamespaceDefinition
 		
 	}
 	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
 
 AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinition & CurrentNS, OilStatementBody & Body, bool MethodContext, FunctionParamList * ParameterNameList, FlatNameList * TemplateNameList, OilTypeRef * SelfType, OilAllusion *& FirstUnresolvedAllusion )
 {
-	
-	bool Progress = false;
-	bool Unresolved = false;
 	
 	(void) CurrentNS;
 	(void) MethodContext;
@@ -784,18 +699,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * dynamic_cast <OilStatementBody *> ( Statement ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -811,18 +715,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Statement ), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -835,18 +728,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * Return -> GetReturnedExpression (), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -859,34 +741,12 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * IfElse -> GetIfClauseConditionExpression (), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 				Result = OilResolveAllusions_StatementBody ( CurrentNS, * IfElse -> GetIfClauseStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 				uint32_t ElseIfCount = IfElse -> GetElseIfClauseCount ();
@@ -896,34 +756,12 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 					
 					Result = OilResolveAllusions_Expression ( CurrentNS, * IfElse -> GetElseIfClauseConditionExpression ( I ), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 					
-					if ( Result == kAllusionResolutionResult_Success_Complete )
-						Progress = true;
-					else if ( Result == kAllusionResolutionResult_Success_Progress )
-					{
-				
-						Progress = true;
-						Unresolved = true;
-						
-					}
-					else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-						Unresolved = true;
-					else
+					if ( Result != kAllusionResolutionResult_Success )
 						return Result;
 					
 					Result = OilResolveAllusions_StatementBody ( CurrentNS, * IfElse -> GetElseIfClauseStatementBody ( I ), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 					
-					if ( Result == kAllusionResolutionResult_Success_Complete )
-						Progress = true;
-					else if ( Result == kAllusionResolutionResult_Success_Progress )
-					{
-				
-						Progress = true;
-						Unresolved = true;
-						
-					}
-					else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-						Unresolved = true;
-					else
+					if ( Result != kAllusionResolutionResult_Success )
 						return Result;
 					
 				}
@@ -933,18 +771,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 					
 					Result = OilResolveAllusions_StatementBody ( CurrentNS, * IfElse -> GetElseClauseStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 					
-					if ( Result == kAllusionResolutionResult_Success_Complete )
-						Progress = true;
-					else if ( Result == kAllusionResolutionResult_Success_Progress )
-					{
-				
-						Progress = true;
-						Unresolved = true;
-						
-					}
-					else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-						Unresolved = true;
-					else
+					if ( Result != kAllusionResolutionResult_Success )
 						return Result;
 					
 				}
@@ -959,34 +786,12 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * WhileLoop -> GetConditionExpression (), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 				Result = OilResolveAllusions_StatementBody ( CurrentNS, * WhileLoop -> GetStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -999,34 +804,12 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * DoWhileLoop -> GetConditionExpression (), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 				Result = OilResolveAllusions_StatementBody ( CurrentNS, * DoWhileLoop -> GetStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -1039,18 +822,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_StatementBody ( CurrentNS, * Loop -> GetStatementBody (), MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -1067,18 +839,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * Binding -> GetInitializerValue (), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -1092,18 +853,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 				
 				AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * Binding -> GetInitializerValue (), I, Body, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
 				
-				if ( Result == kAllusionResolutionResult_Success_Complete )
-					Progress = true;
-				else if ( Result == kAllusionResolutionResult_Success_Progress )
-				{
-			
-					Progress = true;
-					Unresolved = true;
-					
-				}
-				else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-					Unresolved = true;
-				else
+				if ( Result != kAllusionResolutionResult_Success )
 					return Result;
 				
 			}
@@ -1113,17 +863,7 @@ AllusionResolutionResult OilResolveAllusions_StatementBody ( OilNamespaceDefinit
 		
 	}
 	
-	if ( Unresolved )
-	{
-		
-		if ( Progress )
-			return kAllusionResolutionResult_Success_Progress;
-		else
-			return kAllusionResolutionResult_Success_NoProgress;
-		
-	}
-	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
 
@@ -1131,7 +871,7 @@ AllusionResolutionResult OilResolveAllusions_Function ( OilNamespaceDefinition &
 {
 	
 	if ( Function.IsNative () )
-		return kAllusionResolutionResult_Success_Complete;
+		return kAllusionResolutionResult_Success;
 	
 	OilStatementBody * Body = Function.GetStatementBody ();
 	OilFunctionParameterList * Parameters = Function.GetParameterList ();
@@ -1163,7 +903,7 @@ AllusionResolutionResult OilResolveAllusions_Method ( OilNamespaceDefinition & C
 	// TODO: Uncomment when native methods are supported
 	
 	/*if ( Method.IsNative () )
-		return kAllusionResolutionResult_Success_Complete;*/
+		return kAllusionResolutionResult_Success;*/
 	
 	OilStatementBody * Body = Method.GetStatementBody ();
 	OilMethodParameterList * Parameters = Method.GetParameterList ();
@@ -1193,9 +933,6 @@ AllusionResolutionResult OilResolveAllusions_Method ( OilNamespaceDefinition & C
 AllusionResolutionResult OilResolveAllusions_Type ( OilNamespaceDefinition & CurrentNS, OilTypeDefinition & Type, OilAllusion *& FirstUnresolvedAllusion )
 {
 	
-	bool Progress = false;
-	bool Unresolved = false;
-	
 	(void) CurrentNS;
 	(void) Type;
 	(void) FirstUnresolvedAllusion;
@@ -1218,18 +955,7 @@ AllusionResolutionResult OilResolveAllusions_Type ( OilNamespaceDefinition & Cur
 			
 			AllusionResolutionResult Result = OilResolveAllusions_Function ( CurrentNS, * Block -> GetFunction ( J ), FirstUnresolvedAllusion, Block -> GetImplementedType () );
 			
-			if ( Result == kAllusionResolutionResult_Success_Complete )
-				Progress = true;
-			else if ( Result == kAllusionResolutionResult_Success_Progress )
-			{
-				
-				Progress = true;
-				Unresolved = true;
-				
-			}
-			else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-				Unresolved = true;
-			else
+			if ( Result != kAllusionResolutionResult_Success )
 				return Result;
 			
 		}
@@ -1241,33 +967,19 @@ AllusionResolutionResult OilResolveAllusions_Type ( OilNamespaceDefinition & Cur
 			
 			AllusionResolutionResult Result = OilResolveAllusions_Method ( CurrentNS, * Block -> GetMethod ( J ), FirstUnresolvedAllusion, Block -> GetImplementedType () );
 			
-			if ( Result == kAllusionResolutionResult_Success_Complete )
-				Progress = true;
-			else if ( Result == kAllusionResolutionResult_Success_Progress )
-			{
-				
-				Progress = true;
-				Unresolved = true;
-				
-			}
-			else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-				Unresolved = true;
-			else
+			if ( Result != kAllusionResolutionResult_Success )
 				return Result;
 			
 		}
 		
 	}
 	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
 
 AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentNS, OilAllusion *& FirstUnresolvedAllusion )
 {
-	
-	bool Unresolved = false;
-	bool Progress = false;
 	
 	uint32_t FunctionCount = CurrentNS.GetFunctionDefinitionCount ();
 	
@@ -1278,18 +990,7 @@ AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentN
 		
 		AllusionResolutionResult Result = OilResolveAllusions_Function ( CurrentNS, * Function, FirstUnresolvedAllusion );
 		
-		if ( Result == kAllusionResolutionResult_Success_Complete )
-			Progress = true;
-		else if ( Result == kAllusionResolutionResult_Success_Progress )
-		{
-			
-			Progress = true;
-			Unresolved = true;
-			
-		}
-		else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-			Unresolved = true;
-		else
+		if ( Result != kAllusionResolutionResult_Success )
 			return Result;
 		
 	}
@@ -1303,19 +1004,9 @@ AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentN
 		
 		AllusionResolutionResult Result = OilResolveAllusions_Type ( CurrentNS, * Type, FirstUnresolvedAllusion );
 		
-		if ( Result == kAllusionResolutionResult_Success_Complete )
-			Progress = true;
-		else if ( Result == kAllusionResolutionResult_Success_Progress )
-		{
-			
-			Progress = true;
-			Unresolved = true;
-			
-		}
-		else if ( Result == kAllusionResolutionResult_Success_NoProgress )
-			Unresolved = true;
-		else
+		if ( Result != kAllusionResolutionResult_Success )
 			return Result;
+		
 	}
 	
 	uint32_t NamespaceCount = CurrentNS.GetSubNamespaceDefinitionCount ();
@@ -1325,32 +1016,11 @@ AllusionResolutionResult OilResolveAllusions ( OilNamespaceDefinition & CurrentN
 		
 		AllusionResolutionResult SubResult = OilResolveAllusions ( * CurrentNS.GetNamespaceDefinition ( I ), FirstUnresolvedAllusion );
 		
-		if ( SubResult == kAllusionResolutionResult_Success_Complete )
-			Progress = true;
-		else if ( SubResult == kAllusionResolutionResult_Success_Progress )
-		{
-			
-			Progress = true;
-			Unresolved = true;
-			
-		}
-		else if ( SubResult == kAllusionResolutionResult_Success_NoProgress )
-			Unresolved = true;
-		else
+		if ( SubResult != kAllusionResolutionResult_Success )
 			return SubResult;
 		
 	}
 	
-	if ( Unresolved )
-	{
-		
-		if ( Progress )
-			return kAllusionResolutionResult_Success_Progress;
-		else
-			return kAllusionResolutionResult_Success_NoProgress;
-		
-	}
-	
-	return kAllusionResolutionResult_Success_Complete;
+	return kAllusionResolutionResult_Success;
 	
 }
