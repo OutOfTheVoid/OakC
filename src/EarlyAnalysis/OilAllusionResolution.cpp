@@ -581,7 +581,12 @@ AllusionResolutionResult OilResolveAllusions_UnaryOperator ( OilNamespaceDefinit
 		for ( uint32_t I = 0; I < ParamCount; I ++ )
 		{
 			
+			OilExpression * ParamExpression = Parameters -> GetParameter ( I );
 			
+			AllusionResolutionResult Result = OilResolveAllusions_Expression ( CurrentNS, * ParamExpression, StatementRootIndex, ContainerBody, MethodContext, ParameterNameList, TemplateNameList, SelfType, FirstUnresolvedAllusion );
+			
+			if ( Result != kAllusionResolutionResult_Success )
+				return Result;
 			
 		}
 		
