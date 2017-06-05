@@ -25,7 +25,6 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OilImplementResolution.h>
 #include <EarlyAnalysis/OilTypeResolution.h>
-#include <EarlyAnalysis/OilAllusionResolution.h>
 
 #include <Builtins/OakBuiltinTypes.h>
 
@@ -427,13 +426,6 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 			break;
 		
 	}
-	
-	OilAllusion * FirstUnresolved = NULL;
-	
-	AllusionResolutionResult Result = OilResolveAllusions ( RootNS, FirstUnresolved );
-	
-	if ( Result != kAllusionResolutionResult_Success )
-		return false;
 	
 	return true;
 	

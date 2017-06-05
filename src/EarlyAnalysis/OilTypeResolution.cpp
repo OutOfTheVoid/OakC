@@ -29,6 +29,10 @@
 #include <OIL/OilLoop.h>
 #include <OIL/OilWhileLoop.h>
 #include <OIL/OilDoWhileLoop.h>
+#include <OIL/OilExpression.h>
+#include <OIL/OilReturn.h>
+#include <OIL/OilImplicitLocalInitialization.h>
+#include <OIL/OilImplicitBindingInitialization.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -680,6 +684,22 @@ TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & Curr
 	bool Unresolved = false;
 	bool Progress = false;
 	
+	TypeResolutionResult ResolutionResult = OilTypeResolution_StatementBody ( CurrentNS, CurrentNS.GetImplicitInitializationBody (), NULL, NULL, NULL );
+	
+	if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+		return ResolutionResult;
+	
 	uint32_t FunctionCount = CurrentNS.GetFunctionDefinitionCount ();
 	
 	for ( uint32_t I = 0; I < FunctionCount; I ++ )
@@ -1274,24 +1294,189 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 		switch ( Statement -> GetStatementType () )
 		{
 			
-			case IOilStatement :: kStatementType_Body:
+			case IOilStatement :: kStatementType_Expression:
 			{
 				
-				TypeResolutionResult BodyResult = OilTypeResolution_StatementBody ( CurrentNS, * dynamic_cast <OilStatementBody *> ( Statement ), TemplateNames, SelfType, SelfTemplateSpec );
+				TypeResolutionResult TypeResult = OilTypeResolution_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Statement ), TemplateNames, SelfType, SelfTemplateSpec );
 				
-				if ( BodyResult == kTypeResolutionResult_Success_Complete )
+				if ( TypeResult == kTypeResolutionResult_Success_Complete )
 					Progress = true;
-				else if ( BodyResult == kTypeResolutionResult_Success_Progress )
+				else if ( TypeResult == kTypeResolutionResult_Success_Progress )
 				{
 					
 					Progress = true;
 					Unresolved = true;
 					
 				}
-				else if ( BodyResult == kTypeResolutionResult_Success_NoProgress )
+				else if ( TypeResult == kTypeResolutionResult_Success_NoProgress )
 					Unresolved = true;
 				else
-					return BodyResult;
+					return TypeResult;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Return:
+			{
+				
+				OilReturn * Return = dynamic_cast <OilReturn *> ( Statement );
+				
+				if ( Return -> HasExpression () )
+				{
+					
+					TypeResolutionResult TypeResult = OilTypeResolution_Expression ( CurrentNS, * Return -> GetReturnedExpression (), TemplateNames, SelfType, SelfTemplateSpec );
+					
+					if ( TypeResult == kTypeResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( TypeResult == kTypeResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+					
+					}
+					else if ( TypeResult == kTypeResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return TypeResult;
+					
+				}
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitLocalInitialization:
+			{
+				
+				OilImplicitLocalInitialization * Initialization = dynamic_cast <OilImplicitLocalInitialization *> ( Statement );
+				OilBindingStatement * Local = Body.GetLocalBinding ( Initialization -> GetLocalIndex () );
+				
+				TypeResolutionResult Result = OilTypeResolution_Expression ( CurrentNS, * Local -> GetInitializerValue (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( Result == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitBindingInitialization:
+			{
+				
+				OilImplicitBindingInitialization * Initialization = dynamic_cast <OilImplicitBindingInitialization *> ( Statement );
+				OilBindingStatement * Binding = CurrentNS.FindBindingStatement ( Initialization -> GetBindingID () );
+				
+				TypeResolutionResult Result = OilTypeResolution_Expression ( CurrentNS, * Binding -> GetInitializerValue (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( Result == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Binding:
+			{
+				
+				OilBindingStatement * Binding = dynamic_cast <OilBindingStatement *> ( Statement );
+				
+				TypeResolutionResult TypeResult = OilTypeResolution_TypeRef ( CurrentNS, * Binding -> GetType (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( TypeResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( TypeResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( TypeResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return TypeResult;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Const:
+			{
+				
+				OilConstStatement * Constant = dynamic_cast <OilConstStatement *> ( Statement );
+				
+				TypeResolutionResult Result = OilTypeResolution_TypeRef ( CurrentNS, * Constant -> GetType (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( Result == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+				Result = OilTypeResolution_Expression ( CurrentNS, * Constant -> GetInitializerValue (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( Result == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Body:
+			{
+				
+				TypeResolutionResult Result = OilTypeResolution_StatementBody ( CurrentNS, * dynamic_cast <OilStatementBody *> ( Statement ), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( Result == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( Result == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( Result == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return Result;
 				
 			}
 			break;
@@ -1317,6 +1502,22 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 				else
 					return BodyResult;
 				
+				TypeResolutionResult ConditionResult = OilTypeResolution_Expression ( CurrentNS, * IfElse -> GetIfClauseConditionExpression (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( ConditionResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( ConditionResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( ConditionResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return ConditionResult;
+				
 				uint32_t ElseIfCount = IfElse -> HasElseIfClauses () ? IfElse -> GetElseIfClauseCount () : 0;
 				
 				for ( uint32_t K = 0; K < ElseIfCount; K ++ )
@@ -1337,6 +1538,22 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 						Unresolved = true;
 					else
 						return BodyResult;
+					
+					ConditionResult = OilTypeResolution_Expression ( CurrentNS, * IfElse -> GetElseIfClauseConditionExpression ( K ), TemplateNames, SelfType, SelfTemplateSpec );
+					
+					if ( ConditionResult == kTypeResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( ConditionResult == kTypeResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( ConditionResult == kTypeResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return ConditionResult;
 					
 				}
 				
@@ -1409,6 +1626,22 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 				else
 					return BodyResult;
 				
+				TypeResolutionResult ConditionResult = OilTypeResolution_Expression ( CurrentNS, * WhileLoop -> GetConditionExpression (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( ConditionResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( ConditionResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( ConditionResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return ConditionResult;
+				
 			}
 			break;
 			
@@ -1433,8 +1666,26 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 				else
 					return BodyResult;
 				
+				TypeResolutionResult ConditionResult = OilTypeResolution_Expression ( CurrentNS, * DoWhileLoop -> GetConditionExpression (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( ConditionResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( ConditionResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( ConditionResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return ConditionResult;
+				
 			}
 			break;
+			
+			
 			
 			default:
 			break;
@@ -1452,6 +1703,19 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 			return kTypeResolutionResult_Success_NoProgress;
 		
 	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_Expression ( OilNamespaceDefinition & CurrentNS, OilExpression & Expression, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+{
+	
+	(void) CurrentNS;
+	(void) Expression;
+	(void) TemplateNames;
+	(void) SelfType;
+	(void) SelfTemplateSpec;
 	
 	return kTypeResolutionResult_Success_Complete;
 	
