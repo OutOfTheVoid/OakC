@@ -85,6 +85,29 @@ const std :: string & CompilationUnit :: GetFileName () const
 	
 }
 
+void PrintTokens ( const std :: vector <const Token *> & Tokens )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint64_t I = 0; I < Tokens.size (); I ++ )
+	{
+		
+		PrintString += "[ ";
+		
+		if ( Tokens [ I ] -> GetTag () == OakTokenTags :: kTokenTag_Identifier )
+			PrintString += OakKeywordTokenTags :: KeywordAuxTagNames [ Tokens [ I ] -> GetAuxTag () ];
+		else
+			PrintString += OakTokenTags :: TagNames [ Tokens [ I ] -> GetTag () ];
+		
+		PrintString += " ]";
+		
+	}
+	
+	LOG_VERBOSE ( PrintString );
+	
+}
+
 bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 {
 	
@@ -157,6 +180,8 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 		delete Tokens [ I ];
 	
 	Tokens.clear ();
+	
+	PrintTokens ( PostLexTokens );
 	
 	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: Parsing." );
 	

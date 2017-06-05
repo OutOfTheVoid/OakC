@@ -1,24 +1,10 @@
-
-namespace M
-{
-	
-	function A ( a: i32 ) : i32
-	{
-		
-		return a;
-		
-	}
-	
-}
-
-
-
+/*
 namespace Do
 {
 	
-	struct Qo {}
+	struct Qo <A> {}
 	
-	implement Qo
+	implement Qo:<A> where <A>
 	{
 		
 		function Ra ( & self, i: i32 ): i32
@@ -28,17 +14,12 @@ namespace Do
 	}
 		
 }
-
+*/
 function f2 () : void
 {
 	
-	bind i:i32 = 4;
+	1.to_string ();
 	
-	bind o: Do::Qo = null;
-	
-	M :: A ( 0 );
-	Do :: Qo :: Ra ( o, 2 );
-	
-	o.Ra ( 1 );
+	//Do::Qo:<i32>::Ra ();
 	
 }

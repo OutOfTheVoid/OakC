@@ -19,6 +19,6 @@ function TestFunc (): void
 	
 	bind foo: Bar;
 	
-	foo.baz.boo ;;
+	foo.baz.boo;
 	
 }

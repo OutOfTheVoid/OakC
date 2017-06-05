@@ -37,12 +37,12 @@ ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_Imple
 ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries [] =
 {
 	
+	{ & OakVoidTypeConstructor :: Instance, 0 },
+	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
 	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
 	
 };
 
@@ -65,7 +65,7 @@ ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_Where
 
 OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
 	ImplementChildrenConstructionGroup ( _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries, 2 ),
-	TypeNameGroup ( _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries, 4 ),
+	TypeNameGroup ( _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries, 5 ),
 	TraitNameGroup ( _OakImplementDefinitionConstructor_ImplementedTraitConstructionGroupEntries, 4 ),
 	WhereClauseGroup ( _OakImplementDefinitionConstructor_WhereClauseGroupEntries, 1 )
 {
@@ -246,6 +246,20 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		
 	}
 	
+	if ( Error )
+	{
+		
+		delete ImplementElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = ErrorString;
+		Output.ErrorProvokingToken = ErrorToken;
+		
+		return;
+		
+	}
+	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_CurlyBracket_Open )
 	{
 		
@@ -255,6 +269,8 @@ void OakImplementDefinitionConstructor :: TryConstruct ( ASTConstructionInput & 
 		Output.Error = true;
 		Output.ErrorSuggestion = "Expected opening curly bracket in implement definition";
 		Output.ErrorProvokingToken = CurrentToken;
+		
+		return;
 		
 	}
 	
