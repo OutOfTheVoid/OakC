@@ -67,8 +67,6 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_BindingAllusion = 39;
 	
-	const uint64_t kASTTag_Operator_Meta_EnumBoundsMin = 40;
-	
 	const uint64_t kASTTag_Operator_PostfixIncrement = 40;
 	const uint64_t kASTTag_Operator_PostfixDecrement = 41;
 	
@@ -127,8 +125,6 @@ namespace OakASTTags
 	const uint64_t kASTTag_MemberAccessName = 85;
 	const uint64_t kASTTag_Operator_ArrayAccess = 86;
 	const uint64_t kASTTag_Operator_FunctionCall = 87;
-	
-	const uint64_t kASTTag_Operator_Meta_EnumBoundsMax = 87;
 	
 	const uint64_t kASTTag_OperatorExpressionContainer = 88;
 	

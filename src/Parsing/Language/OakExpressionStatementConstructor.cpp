@@ -92,6 +92,7 @@ void OakExpressionStatementConstructor :: TryConstruct ( ASTConstructionInput & 
 	{
 		
 		delete StatementElement;
+		
 		Output.Accepted = false;
 		Output.Error = true;
 		Output.ErrorSuggestion = "Expected semicolon at end of statement";

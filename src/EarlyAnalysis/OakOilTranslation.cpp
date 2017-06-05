@@ -91,6 +91,7 @@
 #include <Encoding/CodeConversion.h>
 
 #include <Logging/Logging.h>
+#include <Logging/ErrorUtils.h>
 
 #include <Compilation/CompilationUnit.h>
 
@@ -3803,15 +3804,6 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 	
 	uint64_t Tag = OperatorElement -> GetTag ();
 	
-	if ( ( Tag < OakASTTags :: kASTTag_Operator_Meta_EnumBoundsMin ) || ( Tag > OakASTTags :: kASTTag_Operator_Meta_EnumBoundsMax ) )
-	{
-		
-		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
-		
-		return NULL;
-		
-	}
-	
 	SourceRef Ref = OperatorElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
 	
 	std :: map <uint64_t, OilUnaryOperator :: Operator> :: const_iterator UnaryIter = _OakOilTranslation_OperatorTypeMap_Unary.find ( Tag );
@@ -3861,14 +3853,14 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				return new OilUnaryOperator ( Ref, PrimaryTerm, FunctionCallParameters );
 				
 			}
-		else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_MemberAccess )
-		{
-			
-			const ASTElement * MemberNameElement = OperatorElement -> GetSubElement ( 1 );
-			
-			return new OilUnaryOperator ( Ref, PrimaryTerm, MemberNameElement -> GetToken ( 0, 0 ) -> GetSource () );
-			
-		}
+			else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_MemberAccess )
+			{
+				
+				const ASTElement * MemberNameElement = OperatorElement -> GetSubElement ( 1 );
+				
+				return new OilUnaryOperator ( Ref, PrimaryTerm, MemberNameElement -> GetToken ( 0, 0 ) -> GetSource () );
+				
+			}
 			else
 				return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
 			

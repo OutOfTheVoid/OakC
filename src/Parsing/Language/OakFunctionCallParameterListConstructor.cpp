@@ -18,6 +18,8 @@ OakFunctionCallParameterListConstructor :: ~OakFunctionCallParameterListConstruc
 {
 }
 
+#include <Logging/Logging.h>
+
 void OakFunctionCallParameterListConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	

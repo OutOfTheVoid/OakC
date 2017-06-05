@@ -9,8 +9,6 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-#include <Logging/Logging.h>
-
 #ifndef NULL
 	#define NULL nullptr
 #endif
@@ -21,25 +19,26 @@ typedef enum
 {
 	
 	kOperatorAssociativity_Left_Unary = 0, // Operator sits right of term
-	kOperatorAssociativity_Right_Unary = 1, // Operator sits left of term
-	kOperatorAssociativity_Left_Binary = 2, // Left-associative binary
-	kOperatorAssociativity_Right_Binary = 3, // Right-associative binary
-	kOperatorAssociativity_Left_Bracket = 4, // Left-associative bracketed
-	kOperatorAssociativity_Right_Bracket = 5, // Right-associative bracketed ( NOT USED )
+	kOperatorAssociativity_Left_Unary_AsPrimary = 1, // Operator sits right of term, becomes a primary
+	kOperatorAssociativity_Right_Unary = 2, // Operator sits left of term
+	kOperatorAssociativity_Left_Binary = 3, // Left-associative binary
+	kOperatorAssociativity_Right_Binary = 4, // Right-associative binary
+	kOperatorAssociativity_Left_Bracket = 5, // Left-associative bracketed
+	kOperatorAssociativity_Right_Bracket = 6, // Right-associative bracketed ( NOT USED )
 	
-	kOperatorAssociativity_Left_Double = 6, // Groups three terms together with 1st and 2nd op tokens, left associative ( NOT DONE )
-	kOperatorAssociativity_Right_Double = 7, // Groups three terms together with 1st and 2nd op tokens, right associative ( NOT DONE )
+	kOperatorAssociativity_Left_Double = 7, // Groups three terms together with 1st and 2nd op tokens, left associative ( NOT DONE )
+	kOperatorAssociativity_Right_Double = 8, // Groups three terms together with 1st and 2nd op tokens, right associative ( NOT DONE )
 	
 	 // NOT ACTUAL OPERATOR TYPES! EXIST FOR ALGORITHM ONLY
-	kOperatorAssociativity_PrimaryExpression = 8,
-	kOperatorAssociativity_Initial = 9
+	kOperatorAssociativity_PrimaryExpression = 9,
+	kOperatorAssociativity_Initial = 10
 	
 } OperatorAssociativity;
 
 inline bool _OakOperatorExpressionConstructor_AssociativityIsLeft ( OperatorAssociativity Associativity )
 {
 	
-	return ( Associativity == kOperatorAssociativity_Left_Unary ) || ( Associativity == kOperatorAssociativity_Left_Binary ) || ( Associativity == kOperatorAssociativity_Left_Bracket ) || ( Associativity == kOperatorAssociativity_Left_Double ); 
+	return ( Associativity == kOperatorAssociativity_Left_Unary ) || ( Associativity == kOperatorAssociativity_Left_Unary_AsPrimary ) || ( Associativity == kOperatorAssociativity_Left_Binary ) || ( Associativity == kOperatorAssociativity_Left_Bracket ) || ( Associativity == kOperatorAssociativity_Left_Double ); 
 	
 }
 
@@ -82,11 +81,11 @@ ASTConstructionGroup _OakOperatorExpressionConstructor_MemberAccessNameGroup ( _
 _OperatorEntry_t _OakOperatorExpressionConstructor_OperatorList [] =
 {
 	// 0
-	{ OakTokenTags :: kTokenTag_Dot, 0, 1, OakASTTags :: kASTTag_Operator_MemberAccess, kOperatorAssociativity_Left_Unary, NULL, & _OakOperatorExpressionConstructor_MemberAccessNameGroup, true },
 	{ OakTokenTags :: kTokenTag_SquareBracket_Open, OakTokenTags :: kTokenTag_SquareBracket_Close, 1, OakASTTags :: kASTTag_Operator_ArrayAccess, kOperatorAssociativity_Left_Bracket, NULL, NULL, true },
 	{ OakTokenTags :: kTokenTag_Parenthesis_Open, OakTokenTags :: kTokenTag_Parenthesis_Close, 1, OakASTTags :: kASTTag_Operator_FunctionCall, kOperatorAssociativity_Left_Bracket, NULL, & _OakOperatorExpressionConstructor_FunctionCallParamListGroup, true },
 	{ OakTokenTags :: kTokenTag_DoublePlus, 0, 1, OakASTTags :: kASTTag_Operator_PostfixIncrement, kOperatorAssociativity_Left_Unary, & _OakOperatorExpressionConstructor_OperatorList [ 5 ], NULL, true },
 	{ OakTokenTags :: kTokenTag_DoubleMinus, 0, 1, OakASTTags :: kASTTag_Operator_PostfixDecrement, kOperatorAssociativity_Left_Unary, & _OakOperatorExpressionConstructor_OperatorList [ 6 ], NULL, true },
+	{ OakTokenTags :: kTokenTag_Dot, 0, 1, OakASTTags :: kASTTag_Operator_MemberAccess, kOperatorAssociativity_Left_Unary_AsPrimary, NULL, & _OakOperatorExpressionConstructor_MemberAccessNameGroup, true },
 	// 5
 	{ OakTokenTags :: kTokenTag_DoublePlus, 0, 2, OakASTTags :: kASTTag_Operator_PrefixIncrement, kOperatorAssociativity_Right_Unary, NULL, NULL, true },
 	{ OakTokenTags :: kTokenTag_DoubleMinus, 0, 2, OakASTTags :: kASTTag_Operator_PrefixDecrement, kOperatorAssociativity_Right_Unary, NULL, NULL, true },
@@ -141,20 +140,23 @@ _OperatorEntry_t _OakOperatorExpressionConstructor_OperatorList [] =
 	
 };
 
-bool _OakOperatorExpressionConstructor_FollowingOperatorRules [ 10 ][ 9 ] = 
+bool _OakOperatorExpressionConstructor_FollowingOperatorRules [ 11 ][ 10 ] = 
 {
 	
-	// U-L		U-R		B-L		B-R		BR-L	BR-R	D-L		D-R		Primary
-	{ true,		false,	true,	true,	false,	true,	true,	true,	false	}, // U-L
-	{ false,	true,	false,	false,	false,	false,	false,	false,	true	}, // U-R
-	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-L
-	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-R
-	{ false,	false,	true,	true,	true,	false,	true,	true,	false	}, // BR-L
-	{ false,	true,	true,	false,	false,	true,	false,	false,	true	}, // BR-R
-	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // D-L
-	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // D-R
-	{ true,		false,	true,	true,	true,	false,	true,	true,	false	}, // Primary
-	{ false,	true,	false,	false,	false,	true,	false,	false,	true	} // Initial
+	// <Following>                                                                         | <Previous>
+	//-------------------------------------------------------------------------------------------------
+	// U-L		U-L(P)	U-R		B-L		B-R		BR-L	BR-R	D-L		D-R		Primary    |
+	{ true,		true,	false,	true,	true,	false,	true,	true,	true,	false	}, // U-L
+	{ true,		true,	false,	true,	true,	true,	false,	true,	true,	false	}, // U-L(P)
+	{ false,	false,	true,	false,	false,	false,	false,	false,	false,	true	}, // U-R
+	{ false,	true,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-L
+	{ false,	true,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-R
+	{ false,	true,	false,	true,	true,	true,	false,	true,	true,	false	}, // BR-L
+	{ false,	false,	true,	true,	false,	false,	true,	false,	false,	true	}, // BR-R
+	{ false,	true,	true,	false,	false,	false,	true,	false,	false,	true	}, // D-L
+	{ false,	true,	true,	false,	false,	false,	true,	false,	false,	true	}, // D-R
+	{ true,		true,	false,	true,	true,	true,	false,	true,	true,	false	}, // Primary
+	{ false,	false,	true,	false,	false,	false,	true,	false,	false,	true	} //  Initial
 	
 };
 
@@ -288,7 +290,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				
 				if ( ExpressionElements.size () == 0 )
 					Discard = true;
-				else if ( ExpressionElements [ ExpressionElements.size () - 1 ].Operator )
+				else if ( ExpressionElements [ ExpressionElements.size () - 1 ].Operator && ( ExpressionElements [ ExpressionElements.size () - 1 ].Element.OperatorInfo.Operator -> Associativity != kOperatorAssociativity_Left_Unary_AsPrimary ) )
 					Discard = true;
 				
 				if ( ! Discard )
@@ -444,8 +446,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				{
 					
 					SpecialExpressionElement = OperatorEntry -> SpecialGroup -> TryConstructSingleNoParent ( OakASTTags :: kASTTag_OperatorExpressionContainer, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
-					
-					LOG_VERBOSE ( "NON-BRACKET SPECIAL" );
 					
 					if ( Error )
 					{
@@ -617,6 +617,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 		switch ( LowestPrecedenceOperator -> Associativity )
 		{
 			
+			case kOperatorAssociativity_Left_Unary_AsPrimary:
 			case kOperatorAssociativity_Left_Unary:
 			{
 				
@@ -630,13 +631,17 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 					
 						Output.Error = true;
 						Output.Accepted = false;
-						Output.ErrorSuggestion = "Unexpexted unary left-associative operator after ooperator in expression";
+						Output.ErrorSuggestion = "Unexpexted unary left-associative operator after operator in expression";
 						Output.ErrorProvokingToken = Input.Tokens [ Current.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
+					if ( Current.Element.OperatorInfo.SpecialExpression != NULL )
+						delete Current.Element.OperatorInfo.SpecialExpression;
+					
+					Current.Element.OperatorInfo.SpecialExpression = NULL;
 					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
@@ -655,13 +660,17 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 					
 						Output.Error = true;
 						Output.Accepted = false;
-						Output.ErrorSuggestion = "Unexpexted unary left-associative operator after ooperator in expression";
+						Output.ErrorSuggestion = "Unexpexted unary left-associative operator after operator in expression";
 						Output.ErrorProvokingToken = Input.Tokens [ Previous.Element.OperatorInfo.SourceTokenIndex ];
 						
 						return;
 						
 					}
 					
+					if ( Current.Element.OperatorInfo.SpecialExpression != NULL )
+						delete Current.Element.OperatorInfo.SpecialExpression;
+					
+					Current.Element.OperatorInfo.SpecialExpression = NULL;
 					Current.Element.OperatorInfo.Operator = LowestPrecedenceOperator -> FailureMutation;
 					
 					break;
@@ -675,6 +684,7 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 				OperationElement -> AddSubElement ( Previous.Element.Primary );
 				OperationElement -> AddSubElement ( Current.Element.OperatorInfo.SpecialExpression );
 				
+				ExpressionElements [ LowestPrecedenceIndex - 1 ].Operator = false;
 				ExpressionElements [ LowestPrecedenceIndex - 1 ].Element.Primary = OperationElement;
 				ExpressionElements.erase ( ExpressionElements.begin () + LowestPrecedenceIndex );
 				
@@ -778,8 +788,6 @@ void OakOperatorExpressionConstructor :: TryConstruct ( ASTConstructionInput & I
 			
 			case kOperatorAssociativity_Left_Binary:
 			{
-				
-				//LOG_VERBOSE ( std :: string ( "LEFT_BINARY_OP: " ) + OakASTTags :: TagNames [ LowestPrecedenceOperator -> ASTTag ] );
 				
 				if ( LowestPrecedenceIndex == ExpressionElements.size () - 1 )
 				{
