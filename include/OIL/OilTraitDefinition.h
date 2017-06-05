@@ -43,7 +43,8 @@ public:
 	
 	bool IsBuiltin () const;
 	
-	const OilNamespaceDefinition * GetParent () const;
+	const OilNamespaceDefinition * GetParentNamespace () const;
+	OilNamespaceDefinition * GetParentNamespace ();
 	
 	const SourceRef & GetSourceRef () const;
 	
@@ -66,7 +67,7 @@ private:
 	
 	bool Builtin;
 	
-	const OilNamespaceDefinition * Parent;
+	OilNamespaceDefinition * ParentNamespace;
 	
 	SourceRef Ref;
 	

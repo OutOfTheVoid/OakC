@@ -13,7 +13,8 @@ OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilStructDefinit
 	StructDefinition ( Structure ),
 	PrincipalImplementBlocks (),
 	TraitMap ( NULL ),
-	Ref ( Ref )
+	Ref ( Ref ),
+	ParentNamespace ( NULL )
 {
 }
 
@@ -24,7 +25,8 @@ OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilBuiltinStruct
 	BuiltinStructDefinition ( Structure ),
 	PrincipalImplementBlocks (),
 	TraitMap ( NULL ),
-	Ref ( Ref )
+	Ref ( Ref ),
+	ParentNamespace ( NULL )
 {
 }
 
@@ -43,6 +45,21 @@ OilTypeDefinition :: ~OilTypeDefinition ()
 		DeleteTraitMap ( TraitMap );
 	
 }
+
+const OilNamespaceDefinition * OilTypeDefinition :: GetParentNamespace () const
+{
+	
+	return ParentNamespace;
+	
+}
+
+OilNamespaceDefinition * OilTypeDefinition :: GetParentNamespace ()
+{
+	
+	return ParentNamespace;
+	
+}
+
 
 const std :: u32string & OilTypeDefinition :: GetName () const
 {

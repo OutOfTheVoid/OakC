@@ -1060,36 +1060,98 @@ std :: string OilStringTypeRef ( const OilTypeRef & Ref, const OilPrintOptions &
 	{
 		
 		if ( Ref.IsVoid () )
-			return std :: string ( "void" );
+			return std :: string ( "(void)" );
 		else
-			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions );
+			return std :: string ( "&" ) + OilStringTypeRef ( * Ref.GetSubType (), PrintOptions ) + ")";
 			
 	}
 	
-	std :: string OutString;
+	std :: string OutString = "(";
 	
 	if ( PrintOptions.ShowResolution )
-		OutString += Ref.IsResolved () ? "(resolved) " : "(unresolved) ";
+		OutString += Ref.IsResolved () ? "resolved " : "unresolved ";
 	
-	if ( Ref.IsNamespaced () )
+	if ( ! Ref.IsResolved () )
 	{
 		
-		for ( uint32_t I = 0; I < Ref.GetNamespaceNameCount (); I ++ )
+		if ( Ref.IsNamespaced () )
 		{
 			
-			OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetNamespaceName ( I ) );
-			OutString += "::";
+			for ( uint32_t I = 0; I < Ref.GetNamespaceNameCount (); I ++ )
+			{
+				
+				OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetNamespaceName ( I ) );
+				OutString += "::";
+				
+			}
 			
 		}
 		
+		OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetName () );
+		
+		if ( Ref.IsTemplated () )
+			OutString += ":" + OilStringTemplateSpecification ( * Ref.GetTemplateSpecification (), PrintOptions );
+		
+	}
+	else
+	{
+		
+		if ( Ref.IsResolvedAsType () )
+		{
+			
+			const OilTypeDefinition * Type = Ref.GetResolvedTypeDefinition ();
+			
+			std :: string PathString = CodeConversion :: ConvertUTF32ToUTF8 ( Type -> GetName () );
+			
+			if ( Ref.IsTemplated () )
+				PathString += ":" + OilStringTemplateSpecification ( * Ref.GetTemplateSpecification (), PrintOptions );
+			
+			const OilNamespaceDefinition * ParentDef = Type -> GetParentNamespace ();
+			const OilNamespaceDefinition * ParentParent = ParentDef -> GetParent ();
+			
+			while ( ParentParent != NULL )
+			{
+				
+				PathString = CodeConversion :: ConvertUTF32ToUTF8 ( ParentDef -> GetID () ) + "::" + PathString;
+				ParentDef = ParentParent;
+				ParentParent = ParentDef -> GetParent ();
+				
+			}
+			
+			OutString += PathString;
+			
+		}
+		else if ( Ref.IsResolvedAsTrait () )
+		{
+			
+			const OilTraitDefinition * Trait = Ref.GetResolvedTraitDefinition ();
+			
+			std :: string PathString = CodeConversion :: ConvertUTF32ToUTF8 ( Trait -> GetName () );
+			
+			if ( Ref.IsTemplated () )
+				PathString += ":" + OilStringTemplateSpecification ( * Ref.GetTemplateSpecification (), PrintOptions );
+			
+			const OilNamespaceDefinition * ParentDef = Trait -> GetParentNamespace ();
+			const OilNamespaceDefinition * ParentParent = ParentDef -> GetParent ();
+			
+			while ( ParentParent != NULL )
+			{
+				
+				PathString = CodeConversion :: ConvertUTF32ToUTF8 ( ParentDef -> GetID () ) + "::" + PathString;
+				ParentDef = ParentParent;
+				ParentParent = ParentDef -> GetParent ();
+				
+			}
+			
+			OutString += "::" + PathString;
+			
+		}
+		else
+			OutString += "template_param: " + CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetName () );
+		
 	}
 	
-	OutString += CodeConversion :: ConvertUTF32ToUTF8 ( Ref.GetName () );
-	
-	if ( Ref.IsTemplated () )
-		OutString += OilStringTemplateSpecification ( * Ref.GetTemplateSpecification (), PrintOptions );
-	
-	return OutString;
+	return OutString + ")";
 	
 }
 

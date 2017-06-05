@@ -34,6 +34,8 @@ public:
 	static const RefFlag kRefFlag_Trait = 1;
 	static const RefFlag kRefFlag_Absolute = 2;
 	
+	
+	OilTypeRef ( const SourceRef & Ref, const OilTypeRef & CopyFrom );
 	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, RefFlag Flags = kRefFlag_None );
 	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags = kRefFlag_None );
 	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, OilTemplateSpecification * OilTemplateSpecification, RefFlag Flags = kRefFlag_None );
@@ -67,11 +69,10 @@ public:
 	bool IsResolvedAsType () const;
 	bool IsResolvedAsTrait () const;
 	bool IsResolvedAsTemplateParam () const;
-	bool IsResolvedAsTypeAlias () const;
 	
 	void SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinition );
 	void SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefinition );
-	void SetResolvedTypeAlias ( OilTypeAlias * TypeAlias );
+	void SetResolvedTypeWithTemplateSpec ( OilTypeDefinition * Type, OilTemplateSpecification * Spec );
 	void SetResolvedTemplateParamName ();
 	void SetResolvedVoid ();
 	
@@ -83,8 +84,6 @@ public:
 	
 	const OilTypeAlias * GetResolvedTypeAlias () const;
 	OilTypeAlias * GetResolvedTypeAlias ();
-	
-	const std :: u32string & GetResolvedTemplateParamName () const;
 	
 	const SourceRef & GetSourceRef () const;
 	
@@ -114,14 +113,12 @@ private:
 	
 	bool ResolvedAsTrait;
 	bool ResolvedAsTemplateParam;
-	bool ResolvedAsTypeAlias;
 	
 	union
 	{
 		
 		OilTypeDefinition * ResolvedType;
 		OilTraitDefinition * ResolvedTrait;
-		OilTypeAlias * ResolvedTypeAlias;
 		
 	};
 	

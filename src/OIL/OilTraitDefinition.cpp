@@ -18,7 +18,7 @@ OilTraitDefinition :: OilTraitDefinition ( const SourceRef & Ref, const std :: u
 	MethodCount ( MethodCount ),
 	TemplateDefinition ( NULL ),
 	Builtin ( IsBuiltin ),
-	Parent ( NULL ),
+	ParentNamespace ( NULL ),
 	Ref ( Ref )
 {
 	
@@ -43,7 +43,7 @@ OilTraitDefinition :: OilTraitDefinition ( const SourceRef & Ref, const std :: u
 	MethodCount ( MethodCount ),
 	TemplateDefinition ( TemplateDefinition ),
 	Builtin ( IsBuiltin ),
-	Parent ( NULL ),
+	ParentNamespace ( NULL ),
 	Ref ( Ref )
 {
 	
@@ -195,10 +195,17 @@ const std :: u32string & OilTraitDefinition :: GetName () const
 	
 }
 
-const OilNamespaceDefinition * OilTraitDefinition :: GetParent () const
+const OilNamespaceDefinition * OilTraitDefinition :: GetParentNamespace () const
 {
 	
-	return Parent;
+	return ParentNamespace;
+	
+}
+
+OilNamespaceDefinition * OilTraitDefinition :: GetParentNamespace ()
+{
+	
+	return ParentNamespace;
 	
 }
 

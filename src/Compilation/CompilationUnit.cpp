@@ -422,10 +422,23 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	if ( ! Progress )
-		Error = true;
-	else if ( ! Unresolved )
-		Complete = true;
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return;
+		else
+		{
+			
+			Error = true;
+			
+			return;
+			
+		}
+		
+	}
+	
+	Complete = true;
 	
 }
 

@@ -721,7 +721,7 @@ const OilNamespaceDefinition * OilFindParentallyContainedNamespace ( const OilNa
 void BuildAbsoluteNamePath_Trait ( std :: vector <std :: u32string> & AbsolutePath, const OilTraitDefinition & Trait )
 {
 	
-	const OilNamespaceDefinition * Parent = Trait.GetParent ();
+	const OilNamespaceDefinition * Parent = Trait.GetParentNamespace ();
 	
 	while ( Parent -> GetParent () != NULL )
 	{

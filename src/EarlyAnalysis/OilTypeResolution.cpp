@@ -47,6 +47,9 @@
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
+	if ( TypeRef.IsResolved () )
+		return kTypeResolutionResult_Success_Complete;
+	
 	bool VoidType = false;
 	
 	OilTypeRef * Ref = & TypeRef;
@@ -111,7 +114,73 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 			if ( ResolvedAlias != NULL )
 			{
 				
-				Ref -> SetResolvedTypeAlias ( ResolvedAlias );
+				OilTypeRef * ResolvedType = ResolvedAlias -> GetAliasedType ();
+				
+				if ( ! ResolvedType -> IsResolved () )
+					return kTypeResolutionResult_Success_NoProgress;
+				
+				OilTemplateSpecification * NewSpecification = NULL;
+				
+				if ( ResolvedType -> IsTemplated () )
+				{
+					
+					OilTemplateDefinition * OldDefinition = ResolvedAlias -> GetTemplateDefinition ();
+					OilTemplateSpecification * OldSpecification = ResolvedType -> GetTemplateSpecification ();
+					
+					std :: vector <OilTypeRef *> SpecificationTypes;
+					
+					for ( uint32_t I = 0; I < OldSpecification -> GetTypeRefCount (); I ++ )
+					{
+						
+						OilTypeRef * OldTemplateParam = OldSpecification -> GetTypeRef ( I );
+						
+						if ( ! OldTemplateParam -> IsResolved () )
+						{
+							
+							for ( uint32_t J = 0; J < SpecificationTypes.size (); J ++ )
+								delete SpecificationTypes [ J ];
+							
+							return kTypeResolutionResult_Success_NoProgress;
+							
+						}
+						
+						if ( OldTemplateParam -> IsResolvedAsTemplateParam () )
+						{
+							
+							uint32_t Index;
+							uint32_t ParamCount = OldDefinition -> GetTemplateParameterCount ();
+							
+							for ( Index = 0; Index < ParamCount; Index ++ )
+							{
+								
+								OilTemplateDefinitionParameter * DefinitionParam = OldDefinition -> GetTemplateParameter ( Index );
+								
+								if ( OldTemplateParam -> GetName () == DefinitionParam -> GetName () )
+								{
+									
+									SpecificationTypes.push_back ( new OilTypeRef ( OldTemplateParam -> GetSourceRef (), * OldSpecification -> GetTypeRef ( Index ) ) );
+									
+									break;
+									
+								}
+								
+							}
+								
+						}
+						else
+						{
+							
+							SpecificationTypes.push_back ( new OilTypeRef ( OldTemplateParam -> GetSourceRef (), * OldTemplateParam ) );
+							
+						}
+						
+					}
+					
+					NewSpecification = new OilTemplateSpecification ( Ref -> GetSourceRef (), & SpecificationTypes [ 0 ], SpecificationTypes.size () );
+					
+				}
+				
+				Ref -> SetResolvedTypeWithTemplateSpec ( ResolvedType -> GetResolvedTypeDefinition (), NewSpecification );
 				
 				return kTypeResolutionResult_Success_Complete;
 				
@@ -188,7 +257,44 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 	if ( ResolvedAlias != NULL )
 	{
 		
-		Ref -> SetResolvedTypeAlias ( ResolvedAlias );
+		OilTypeRef * ResolvedType = ResolvedAlias -> GetAliasedType ();
+		
+		if ( ! ResolvedType -> IsResolved () )
+			return kTypeResolutionResult_Success_NoProgress;
+		
+		OilTemplateSpecification * NewSpecification = NULL;
+		
+		if ( ResolvedType -> IsTemplated () )
+		{
+			
+			OilTemplateSpecification * OldSpecification = ResolvedType -> GetTemplateSpecification ();
+			
+			std :: vector <OilTypeRef *> SpecificationTypes;
+			
+			for ( uint32_t I = 0; I < OldSpecification -> GetTypeRefCount (); I ++ )
+			{
+				
+				OilTypeRef * OldTemplateParam = OldSpecification -> GetTypeRef ( I );
+				
+				if ( ! OldTemplateParam -> IsResolved () )
+				{
+					
+					for ( uint32_t J = 0; J < SpecificationTypes.size (); J ++ )
+						delete SpecificationTypes [ J ];
+						
+					return kTypeResolutionResult_Success_NoProgress;
+					
+				}
+				
+				SpecificationTypes.push_back ( new OilTypeRef ( OldTemplateParam -> GetSourceRef (), * OldTemplateParam ) );
+				
+			}
+			
+			NewSpecification = new OilTemplateSpecification ( Ref -> GetSourceRef (), & SpecificationTypes [ 0 ], SpecificationTypes.size () );
+			
+		}
+		
+		Ref -> SetResolvedTypeWithTemplateSpec ( ResolvedType -> GetResolvedTypeDefinition (), NewSpecification );
 		
 		return kTypeResolutionResult_Success_Complete;
 		
@@ -238,7 +344,6 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 			if ( SelfType != NULL )
 			{
 				
-				// TODO: Localize Self
 				if ( ( Ref -> GetName () == U"Self" ) && ( ! Ref -> IsNamespaced () ) )
 				{
 					
@@ -484,10 +589,6 @@ TypeResolutionResult OilTypeResolution_Bindings ( OilNamespaceDefinition & Curre
 		OilTypeRef * TypeRef = Statement -> GetType ();
 		
 		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * TypeRef );
-		
-		if ( ( ResolutionResult == kTypeResolutionResult_Failure_TemplateMismatch ) || ( ResolutionResult == kTypeResolutionResult_Failure_NonExistantType ) )
-			return ResolutionResult;
-		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
 		else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
@@ -497,8 +598,10 @@ TypeResolutionResult OilTypeResolution_Bindings ( OilNamespaceDefinition & Curre
 			Unresolved = true;
 			
 		}
-		else
+		else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
 			Unresolved = true;
+		else
+			return ResolutionResult;
 		
 	}
 	
@@ -2159,12 +2262,6 @@ TypeResolutionResult OilTypeResolution_Allusion ( OilNamespaceDefinition & Curre
 	
 	bool Unresolved = false;
 	bool Progress = false;
-	
-	(void) CurrentNS;
-	(void) Allusion;
-	(void) TemplateNames;
-	(void) SelfType;
-	(void) SelfTemplateSpec;
 	
 	if ( Allusion.IsDirectlyTemplated () )
 	{

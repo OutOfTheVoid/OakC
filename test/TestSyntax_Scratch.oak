@@ -18,8 +18,7 @@ namespace Do
 function f2 () : void
 {
 	
-	1.to_string ();
-	
-	//Do::Qo:<i32>::Ra ();
+	1.0.to_string ();
+	1u32.to_string ();
 	
 }

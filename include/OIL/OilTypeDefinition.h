@@ -12,6 +12,7 @@ class OilTraitDefinition;
 class OilStructDefinition;
 class OilBuiltinStructDefinition;
 class OilTemplateDefinition;
+class OilNamespaceDefinition;
 
 class OilTypeDefinition
 {
@@ -57,7 +58,12 @@ public:
 	
 	const SourceRef & GetSourceRef () const;
 	
+	const OilNamespaceDefinition * GetParentNamespace () const;
+	OilNamespaceDefinition * GetParentNamespace ();
+	
 private:
+	
+	friend class OilNamespaceDefinition;
 	
 	static const std :: u32string NullString;
 	
@@ -105,6 +111,8 @@ private:
 	TraitMapElement * TraitMap;
 	
 	SourceRef Ref;
+	
+	OilNamespaceDefinition * ParentNamespace;
 	
 };
 

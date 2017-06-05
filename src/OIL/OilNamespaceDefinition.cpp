@@ -369,6 +369,7 @@ void OilNamespaceDefinition :: AddTypeDefinition ( OilTypeDefinition * TypeDef )
 {
 	
 	TypeDefs [ TypeDef -> GetName () ] = TypeDef;
+	TypeDef -> ParentNamespace = this;
 	
 }
 
@@ -644,7 +645,7 @@ void OilNamespaceDefinition :: AddTraitDefinition ( OilTraitDefinition * TraitDe
 {
 	
 	TraitDefs [ TraitDef -> GetName () ] = TraitDef;
-	TraitDef -> Parent = this;
+	TraitDef -> ParentNamespace = this;
 	
 }
 
