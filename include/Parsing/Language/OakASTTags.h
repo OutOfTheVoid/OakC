@@ -123,8 +123,8 @@ namespace OakASTTags
 	const uint64_t kASTTag_Operator_CompoundLogicalAnd = 82;
 	const uint64_t kASTTag_Operator_CompoundLogicalOr = 83;
 	
-	const uint64_t kASTTag_Operator_DirectMemberAccess = 84;
-	const uint64_t kASTTag_Operator_IndirectMemberAccess = 85;
+	const uint64_t kASTTag_Operator_MemberAccess = 84;
+	const uint64_t kASTTag_MemberAccessName = 85;
 	const uint64_t kASTTag_Operator_ArrayAccess = 86;
 	const uint64_t kASTTag_Operator_FunctionCall = 87;
 	
@@ -246,8 +246,8 @@ namespace OakASTTags
 		"OPERATOR_COMPOUND_LOGICAL_SHIFT_RIGHT",
 		"OPERATOR_COMPOUND_LOGICAL_AND",
 		"OPERATOR_COMPOUND_LOGICAL_OR",
-		"DIRECT_MEMBER_ACCESS",
-		"INDIRECT_MEMBER_ACCESS",
+		"MEMBER_ACCESS",
+		"MEMBER_ACCESS_NAME",
 		"ARRAY_ACCESS",
 		"FUNCTION_CALL",
 		"OPERATOR_EXPRESSION_CONTAINER",

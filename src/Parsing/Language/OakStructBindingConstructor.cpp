@@ -21,14 +21,13 @@ OakStructBindingConstructor OakStructBindingConstructor :: Instance;
 ASTConstructionGroup :: StaticInitEntry _OakStructBindingConstructor_TypeGroupEntries [] =
 {
 	
+	{ & OakVoidTypeConstructor :: Instance, 0 },
 	{ & OakReferenceTypeConstructor :: Instance, 0 },
 	
 	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
 	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
 	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
 	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
 	
 };
 

@@ -1,12 +1,26 @@
-namespace SomeNS
+struct Box
 {
 	
-	struct TestStruct <A: SomeTrait, B>
-	{
-		
-		bind Member1:A,
-		bind Member2:B
-		
-	}
+	bind boo:u32,
+	bind bat: i32
+	
+}
+
+struct Bar
+{
+	
+	bind bat:i32,
+	bind yorbza:i32
+	
+}
+
+function TestFunc (): void
+{
+	
+	//bind foo: Bar;
+	
+	bind foo: Box;
+	
+	//foo.baz.boo;
 	
 }

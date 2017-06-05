@@ -33,6 +33,11 @@
 #include <OIL/OilReturn.h>
 #include <OIL/OilImplicitLocalInitialization.h>
 #include <OIL/OilImplicitBindingInitialization.h>
+#include <OIL/OilUnaryOperator.h>
+#include <OIL/OilBinaryOperator.h>
+#include <OIL/IOilPrimary.h>
+#include <OIL/OilAllusion.h>
+#include <OIL/OilArrayLiteral.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -1711,8 +1716,183 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 TypeResolutionResult OilTypeResolution_Expression ( OilNamespaceDefinition & CurrentNS, OilExpression & Expression, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
 {
 	
+	if ( Expression.IsPrimary () )
+	{
+		
+		IOilPrimary * Primary = Expression.GetTermAsPrimary ();
+		
+		return OilTypeResolution_Primary ( CurrentNS, Primary, TemplateNames, SelfType, SelfTemplateSpec );
+		
+	}
+	
+	IOilOperator * Operator = Expression.GetTermAsOperator ();
+	
+	switch ( Operator -> GetOperatorType () )
+	{
+		
+		case IOilOperator :: kOperatorType_Unary:
+			return OilTypeResolution_UnaryOperator ( CurrentNS, * dynamic_cast <OilUnaryOperator *> ( Operator ), TemplateNames, SelfType, SelfTemplateSpec );
+			
+		case IOilOperator :: kOperatorType_Binary:
+			return OilTypeResolution_BinaryOperator ( CurrentNS, * dynamic_cast <OilBinaryOperator *> ( Operator ), TemplateNames, SelfType, SelfTemplateSpec );
+		
+	}
+	
+	// Unreachable
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_UnaryOperator ( OilNamespaceDefinition & CurrentNS, OilUnaryOperator & Operator, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+{
+	
 	(void) CurrentNS;
-	(void) Expression;
+	(void) Operator;
+	(void) TemplateNames;
+	(void) SelfType;
+	(void) SelfTemplateSpec;
+	
+	if ( Operator.IsTermPrimary () )
+	{
+		
+		
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_BinaryOperator ( OilNamespaceDefinition & CurrentNS, OilBinaryOperator & Operator, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+{
+	
+	(void) CurrentNS;
+	(void) Operator;
+	(void) TemplateNames;
+	(void) SelfType;
+	(void) SelfTemplateSpec;
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_Primary ( OilNamespaceDefinition & CurrentNS, IOilPrimary * Primary, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	switch ( Primary -> GetPrimaryType () )
+	{
+		
+		case IOilPrimary :: kPrimaryType_Expression:
+			return OilTypeResolution_Expression ( CurrentNS, * dynamic_cast <OilExpression *> ( Primary ), TemplateNames, SelfType, SelfTemplateSpec );
+			
+		case IOilPrimary :: kPrimaryType_ArrayLiteral:
+		{
+			
+			OilArrayLiteral * Array = dynamic_cast <OilArrayLiteral *> ( Primary );
+			
+			if ( Array -> HasTypeSpecifier () )
+			{
+				
+				TypeResolutionResult TypeSpecifierResult = OilTypeResolution_TypeRef ( CurrentNS, * Array -> GetTypeSpecifier (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( TypeSpecifierResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( TypeSpecifierResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( TypeSpecifierResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return TypeSpecifierResult;
+				
+			}
+			
+			if ( Array -> HasSpecificCount () )
+			{
+				
+				TypeResolutionResult CountResult = OilTypeResolution_Primary ( CurrentNS, Array -> GetCountExpression (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( CountResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( CountResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( CountResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return CountResult;
+				
+			}
+			
+			if ( Array -> HasMemberInitiailizers () )
+			{
+				
+				uint32_t InitializerCount = Array -> GetMemberInitializerCount ();
+				
+				for ( uint32_t I = 0; I < InitializerCount; I ++ )
+				{
+					
+					TypeResolutionResult InitializerResult = OilTypeResolution_Primary ( CurrentNS, Array -> GetMemberInitializer ( I ), TemplateNames, SelfType, SelfTemplateSpec );
+					
+					if ( InitializerResult == kTypeResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( InitializerResult == kTypeResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( InitializerResult == kTypeResolutionResult_Success_NoProgress )
+							Unresolved = true;
+					else
+						return InitializerResult;
+					
+				}
+				
+			}
+			
+		}
+		break;
+		
+		case IOilPrimary :: kPrimaryType_Allusion:
+			return OilTypeResolution_Allusion ( CurrentNS, * dynamic_cast <OilAllusion *> ( Primary ), TemplateNames, SelfType, SelfTemplateSpec );
+		
+		default:
+		break;
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_Allusion ( OilNamespaceDefinition & CurrentNS, OilAllusion & Allusion, FlatNameList * TemplateNames, OilTypeDefinition * SelfType, OilTemplateSpecification * SelfTemplateSpec )
+{
+	
+	(void) CurrentNS;
+	(void) Allusion;
 	(void) TemplateNames;
 	(void) SelfType;
 	(void) SelfTemplateSpec;

@@ -153,12 +153,40 @@ void OakStructDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	
 	TokenCount --;
 	
+	if ( TokenCount == 0 )
+	{
+		
+		delete StructElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected closing curly bracket at end of struct body";
+		Output.ErrorProvokingToken = CurrentToken;
+		
+		return;
+		
+	}
+	
 	Error = false;
 	ErrorString = "";
 	ErrorToken = NULL;
 	
 	while ( StructBodyConstructionGroup.TryConstruction ( StructElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
 	{
+		
+		if ( Error )
+		{
+			
+			delete StructElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
 		
 		if ( TokenCount == 0 )
 		{
@@ -180,6 +208,20 @@ void OakStructDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 			break;
 			
 		TokenCount --;
+		
+		if ( TokenCount == 0 )
+		{
+			
+			delete StructElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = "Expected closing curly bracket at end of struct body";
+			Output.ErrorProvokingToken = CurrentToken;
+			
+			return;
+			
+		}
 		
 	}
 	

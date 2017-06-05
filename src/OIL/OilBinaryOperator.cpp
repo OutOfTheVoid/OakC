@@ -9,8 +9,8 @@
 const std :: string OilBinaryOperator :: OperatorStrings [] =
 {
 	
-	"member_access_direct",
-	"member_access_indirect",
+	"RESERVED_0",
+	"RESERVED_1",
 	"multiply",
 	"divide",
 	"modulo",

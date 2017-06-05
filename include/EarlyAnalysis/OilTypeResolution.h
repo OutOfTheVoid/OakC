@@ -29,6 +29,10 @@ class OilTypeDefinition;
 class OilTypeAlias;
 class OilStatementBody;
 class OilExpression;
+class OilUnaryOperator;
+class OilBinaryOperator;
+class IOilPrimary;
+class OilAllusion;
 
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, FlatNameList * TemplateNames = NULL );
@@ -38,6 +42,10 @@ TypeResolutionResult OilTypeResolution_MethodDefinition ( OilNamespaceDefinition
 TypeResolutionResult OilTypeResolution_TypeAlias ( OilNamespaceDefinition & CurrentNS, OilTypeAlias & Alias );
 TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & CurrentNS, OilStatementBody & Body, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
 TypeResolutionResult OilTypeResolution_Expression ( OilNamespaceDefinition & CurrentNS, OilExpression & Expression, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
+TypeResolutionResult OilTypeResolution_UnaryOperator ( OilNamespaceDefinition & CurrentNS, OilUnaryOperator & Operator, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
+TypeResolutionResult OilTypeResolution_BinaryOperator ( OilNamespaceDefinition & CurrentNS, OilBinaryOperator & Operator, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
+TypeResolutionResult OilTypeResolution_Primary ( OilNamespaceDefinition & CurrentNS, IOilPrimary * Primary, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
+TypeResolutionResult OilTypeResolution_Allusion ( OilNamespaceDefinition & CurrentNS, OilAllusion & Allusion, FlatNameList * TemplateNames = NULL, OilTypeDefinition * SelfType = NULL, OilTemplateSpecification * SelfTemplateSpec = NULL );
 
 TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilTypeResolution_Constants ( OilNamespaceDefinition & RootNS );

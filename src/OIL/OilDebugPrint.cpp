@@ -1908,6 +1908,8 @@ std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintO
 		
 		if ( UnOp.GetOp () == OilUnaryOperator :: kOperator_FunctionCall )
 			PrintString += " parameters: " + OilStringFunctionCallParameterList ( * UnOp.GetFunctionCallParameterList (), PrintOptions );
+		if ( UnOp.GetOp () == OilUnaryOperator :: kOperator_MemberAccess )
+			PrintString += " member: " + CodeConversion :: ConvertUTF32ToUTF8 ( UnOp.GetNameForMemberAccess () );
 		
 	}
 	else if ( Operator.GetOperatorType () == IOilOperator :: kOperatorType_Binary )

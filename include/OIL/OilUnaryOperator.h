@@ -30,6 +30,7 @@ public:
 		kOperator_Dereference,
 		kOperator_ArrayAccess,
 		kOperator_FunctionCall,
+		kOperator_MemberAccess,
 		
 	} Operator;
 	
@@ -37,6 +38,10 @@ public:
 	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * Term );
 	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, OilFunctionCallParameterList * ParameterList );
 	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, OilFunctionCallParameterList * ParameterList );
+	
+	// Member access
+	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, const std :: u32string & MemberName );
+	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName );
 	
 	~OilUnaryOperator ();
 	
@@ -65,6 +70,8 @@ public:
 	
 	const SourceRef & GetSourceRef () const;
 	
+	const std :: u32string & GetNameForMemberAccess () const;
+	
 private:
 	
 	static const std :: string OperatorStrings [];
@@ -84,6 +91,8 @@ private:
 	};
 	
 	OilFunctionCallParameterList * ParameterList;
+	
+	const std :: u32string MemberAccessName;
 	
 	SourceRef Ref;
 	

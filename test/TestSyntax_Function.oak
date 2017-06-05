@@ -27,6 +27,8 @@ public function Test ( count: i32 ): i32
 	
 	TestNS::MyStruct:<i32>::my_func ();
 	
+	bind b: TestNS::MyStruct: <i32>;
+	
 	bind mut i:i32 = count;
 	
 	loop

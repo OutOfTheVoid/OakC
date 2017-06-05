@@ -16,8 +16,8 @@ public:
 	typedef enum
 	{
 		
-		kOperator_DirectMemberAccess = 0,
-		kOperator_IndirectMemberAccess = 1,
+		kOperator_RESERVED_0 = 0,
+		kOperator_RESERVED_1 = 1,
 		kOperator_Multiply = 2,
 		kOperator_Divide = 3,
 		kOperator_Modulus = 4,

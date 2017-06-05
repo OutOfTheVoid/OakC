@@ -3722,6 +3722,7 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 const std :: map <uint64_t, OilUnaryOperator :: Operator> _OakOilTranslation_OperatorTypeMap_Unary =
 {
 	
+	{ OakASTTags :: kASTTag_Operator_MemberAccess, OilUnaryOperator :: kOperator_MemberAccess },
 	{ OakASTTags :: kASTTag_Operator_PostfixIncrement, OilUnaryOperator :: kOperator_PostfixIncrement },
 	{ OakASTTags :: kASTTag_Operator_PostfixDecrement, OilUnaryOperator :: kOperator_PostfixDecrement },
 	{ OakASTTags :: kASTTag_Operator_PrefixIncrement, OilUnaryOperator :: kOperator_PrefixIncrement },
@@ -3739,8 +3740,6 @@ const std :: map <uint64_t, OilUnaryOperator :: Operator> _OakOilTranslation_Ope
 const std :: map <uint64_t, OilBinaryOperator :: Operator> _OakOilTranslation_OperatorTypeMap_Binary =
 {
 	
-	{ OakASTTags :: kASTTag_Operator_DirectMemberAccess, OilBinaryOperator :: kOperator_DirectMemberAccess },
-	{ OakASTTags :: kASTTag_Operator_IndirectMemberAccess, OilBinaryOperator :: kOperator_IndirectMemberAccess },
 	{ OakASTTags :: kASTTag_Operator_Multiply, OilBinaryOperator :: kOperator_Multiply },
 	{ OakASTTags :: kASTTag_Operator_Divide, OilBinaryOperator :: kOperator_Divide },
 	{ OakASTTags :: kASTTag_Operator_Modulo, OilBinaryOperator :: kOperator_Modulus },
@@ -3840,6 +3839,14 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				return new OilUnaryOperator ( Ref, PrimaryTerm, FunctionCallParameters );
 				
 			}
+		else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_MemberAccess )
+		{
+			
+			const ASTElement * MemberNameElement = OperatorElement -> GetSubElement ( 1 );
+			
+			return new OilUnaryOperator ( Ref, PrimaryTerm, MemberNameElement -> GetToken ( 0, 0 ) -> GetSource () );
+			
+		}
 			else
 				return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
 			
@@ -3870,6 +3877,14 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				return NULL;
 			
 			return new OilUnaryOperator ( Ref, OperatorTerm, FunctionCallParameters );
+			
+		}
+		else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_MemberAccess )
+		{
+			
+			const ASTElement * MemberNameElement = OperatorElement -> GetSubElement ( 1 );
+			
+			return new OilUnaryOperator ( Ref, OperatorTerm, MemberNameElement -> GetToken ( 0, 0 ) -> GetSource () );
 			
 		}
 		return new OilUnaryOperator ( Ref, UnaryIter -> second, OperatorTerm );

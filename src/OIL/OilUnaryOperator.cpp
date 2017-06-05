@@ -21,10 +21,11 @@ const std :: string OilUnaryOperator :: OperatorStrings [] =
 	"dereference",
 	"array_access",
 	"function_call",
+	"member_access",
 	
 };
 
-const uint32_t OilUnaryOperator :: MaxOpString = 11;
+const uint32_t OilUnaryOperator :: MaxOpString = 12;
 
 const std :: string OilUnaryOperator :: UnknownOpString = "UNKOWN_OP";
 
@@ -33,6 +34,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilO
 	TermIsPrimary ( false ),
 	OperatorTerm ( Term ),
 	ParameterList ( NULL ),
+	MemberAccessName (),
 	Ref ( Ref )
 {
 }
@@ -42,6 +44,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilP
 	TermIsPrimary ( true ),
 	PrimaryTerm ( Term ),
 	ParameterList ( NULL ),
+	MemberAccessName (),
 	Ref ( Ref )
 {
 }
@@ -51,6 +54,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Ter
 	TermIsPrimary ( false ),
 	OperatorTerm ( Term ),
 	ParameterList ( ParameterList ),
+	MemberAccessName (),
 	Ref ( Ref )
 {
 }
@@ -60,6 +64,27 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term
 	TermIsPrimary ( true ),
 	PrimaryTerm ( Term ),
 	ParameterList ( ParameterList ),
+	MemberAccessName (),
+	Ref ( Ref )
+{
+}
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, const std :: u32string & MemberName ):
+	Op ( kOperator_MemberAccess ),
+	TermIsPrimary ( false ),
+	OperatorTerm ( Term ),
+	ParameterList ( NULL ),
+	MemberAccessName ( MemberName ),
+	Ref ( Ref )
+{
+}
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName ):
+	Op ( kOperator_MemberAccess ),
+	TermIsPrimary ( true ),
+	PrimaryTerm ( Term ),
+	ParameterList ( NULL ),
+	MemberAccessName ( MemberName ),
 	Ref ( Ref )
 {
 }
@@ -227,5 +252,12 @@ const SourceRef & OilUnaryOperator :: GetSourceRef () const
 {
 	
 	return Ref;
+	
+}
+
+const std :: u32string & OilUnaryOperator :: GetNameForMemberAccess () const
+{
+	
+	return MemberAccessName;
 	
 }
