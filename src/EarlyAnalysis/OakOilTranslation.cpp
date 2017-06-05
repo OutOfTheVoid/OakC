@@ -964,6 +964,17 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 				
 			}
 			
+			if ( StructDef -> GetBinding ( Binding -> GetName () ) != NULL )
+			{
+				
+				delete Binding;
+				
+				WriteError ( BindingElement, "Struct binding name conflicts with previous binding." );
+				
+				return false;
+				
+			}
+			
 			StructDef -> AddBinding ( Binding );
 			
 		}
@@ -987,6 +998,17 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 			{
 				
 				delete StructDef;
+				
+				return false;
+				
+			}
+			
+			if ( StructDef -> GetBinding ( Binding -> GetName () ) != NULL )
+			{
+				
+				delete Binding;
+				
+				WriteError ( BindingElement, "Struct binding name conflicts with previous binding." );
 				
 				return false;
 				

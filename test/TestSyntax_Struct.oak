@@ -10,7 +10,7 @@ struct Bar
 {
 	
 	bind bat:i32,
-	bind baz:Box
+	bind baz:Box,
 	
 }
 
