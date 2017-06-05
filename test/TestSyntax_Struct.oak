@@ -10,17 +10,15 @@ struct Bar
 {
 	
 	bind bat:i32,
-	bind yorbza:i32
+	bind baz:Box
 	
 }
 
 function TestFunc (): void
 {
 	
-	//bind foo: Bar;
+	bind foo: Bar;
 	
-	bind foo: Box;
-	
-	//foo.baz.boo;
+	foo.baz.boo ;;
 	
 }

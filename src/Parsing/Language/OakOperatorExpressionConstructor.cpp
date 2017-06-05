@@ -145,7 +145,7 @@ bool _OakOperatorExpressionConstructor_FollowingOperatorRules [ 10 ][ 9 ] =
 {
 	
 	// U-L		U-R		B-L		B-R		BR-L	BR-R	D-L		D-R		Primary
-	{ false,	false,	true,	true,	false,	true,	true,	true,	false	}, // U-L
+	{ true,		false,	true,	true,	false,	true,	true,	true,	false	}, // U-L
 	{ false,	true,	false,	false,	false,	false,	false,	false,	true	}, // U-R
 	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-L
 	{ false,	true,	false,	false,	false,	true,	false,	false,	true	}, // B-R
