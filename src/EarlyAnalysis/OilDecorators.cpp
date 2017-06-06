@@ -29,6 +29,11 @@ bool IsConditionalCompilationDecorator ( const OilDecoratorTag * Decorator )
 bool TestConditionalCompilationDecorators ( const OilDecoratorTag ** Decorators, uint32_t DecoratorCount, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
+	if ( DecoratorCount == 0 )
+		return true;
+	
+	bool Exclusive = false;
+	
 	for ( uint32_t I = 0; I < DecoratorCount; I ++ )
 	{
 		
@@ -43,12 +48,14 @@ bool TestConditionalCompilationDecorators ( const OilDecoratorTag ** Decorators,
 				if ( Condition == CompilationConditions [ J ] )
 					return true;
 				
+				Exclusive = true;
+				
 			}
 			
 		}
 		
 	}
 	
-	return false;
+	return ! Exclusive;
 	
 }

@@ -393,7 +393,7 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPr
 		
 		CompilationUnit * Unit = Files.GetUnit ( I );
 		
-		if ( ! Unit -> ApplyToOil ( OilRoot ) )
+		if ( ! Unit -> ApplyToOil ( OilRoot, & CompilationConditions [ 0 ], CompilationConditions.size () ) )
 			return 1;
 		
 	}

@@ -58,7 +58,7 @@ public:
 	 * 
 	 * @return Whether or not the AST was semantically valid ( including name collisions with previously added definitions ) ( false represents a compilation failure ).
 	 */
-	bool ApplyToOil ( OilNamespaceDefinition & RootObject );
+	bool ApplyToOil ( OilNamespaceDefinition & RootObject, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
 	
 	/*
 	* @brief Runs global object semantic analysis on non-builtin program definitions.

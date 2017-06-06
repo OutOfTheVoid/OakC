@@ -245,7 +245,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable, con
 	
 }
 
-bool CompilationUnit :: ApplyToOil ( OilNamespaceDefinition & RootNS )
+bool CompilationUnit :: ApplyToOil ( OilNamespaceDefinition & RootNS, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
 	LOG_VERBOSE ( "[" + SourceFile.GetName () + "]: compilation step: OIL Translation." );
@@ -253,7 +253,7 @@ bool CompilationUnit :: ApplyToOil ( OilNamespaceDefinition & RootNS )
 	if ( CompilationState != kCompilationStep_OILTranslation )
 		return false;
 	
-	if ( ! OakTranslateFileTreeToOil ( ASTRoot, RootNS ) )
+	if ( ! OakTranslateFileTreeToOil ( ASTRoot, RootNS, CompilationConditions, CompilationConditionCount ) )
 		return false;
 	
 	return true;

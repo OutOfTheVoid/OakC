@@ -1,5 +1,16 @@
-#[ keep_if ( target_arch_x86_64 ) ]
-import "test/TestSyntax_Const.oak";
 
 #[ keep_if ( target_arch_x86 ) ]
-import "test/TestSyntax_Binding.oak";
+namespace NSX86
+{
+}
+
+#[ keep_if ( target_arch_x86_64 ) ]
+namespace NSX86_64
+{
+}
+
+#[ keep_if ( target_os_macosx ) ]
+bind macosx:void;
+
+#[ keep_if ( target_os_gnulinux ) ]
+bind gnu_linux:void;
