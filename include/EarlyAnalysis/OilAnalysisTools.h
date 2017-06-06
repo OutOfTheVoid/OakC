@@ -36,7 +36,7 @@ typedef struct FunctionParamList_Struct
 	
 } FunctionParamList;
 
-void MakeNameList_TemplateDefinition ( OilTemplateDefinition & Template, FlatNameList & NameList );
+void MakeNameList_TemplateDefinition ( OilTemplateDefinition & Template, FlatNameList & NameList, FlatNameList * BaseList = NULL );
 void MakeNameList_FunctionParameters ( OilFunctionParameterList & ParamList, FunctionParamList & List, bool & NotEmpty );
 void MakeNameList_MethodParameters ( OilMethodParameterList & ParamList, FunctionParamList & List, bool & NotEmpty );
 

@@ -69,12 +69,14 @@ public:
 	bool IsResolvedAsType () const;
 	bool IsResolvedAsTrait () const;
 	bool IsResolvedAsTemplateParam () const;
+	bool IsResolvedAsSelf () const;
 	
 	void SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinition );
 	void SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefinition );
 	void SetResolvedTypeWithTemplateSpec ( OilTypeDefinition * Type, OilTemplateSpecification * Spec );
 	void SetResolvedTemplateParamName ();
 	void SetResolvedVoid ();
+	void SetResolvedAsSelf ();
 	
 	const OilTypeDefinition * GetResolvedTypeDefinition () const;
 	OilTypeDefinition * GetResolvedTypeDefinition ();
@@ -113,6 +115,7 @@ private:
 	
 	bool ResolvedAsTrait;
 	bool ResolvedAsTemplateParam;
+	bool ResolvedAsSelf;
 	
 	union
 	{

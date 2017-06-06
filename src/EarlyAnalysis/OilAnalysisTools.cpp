@@ -6,16 +6,24 @@
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilMethodParameterList.h>
 
-void MakeNameList_TemplateDefinition ( OilTemplateDefinition & Template, FlatNameList & List )
+void MakeNameList_TemplateDefinition ( OilTemplateDefinition & Template, FlatNameList & List, FlatNameList * BaseList )
 {
 	
-	uint32_t Count = Template.GetTemplateParameterCount ();
+	uint32_t Count = Template.GetTemplateParameterCount () + ( ( BaseList != NULL ) ? BaseList -> Count : 0 );
 	
 	List.Count = Count;
 	List.Names = new std :: u32string [ Count ];
 	
-	for ( uint32_t I = 0; I < Count; I ++ )
-		List.Names [ I ] = Template.GetTemplateParameter ( I ) -> GetName ();
+	if ( BaseList != NULL )
+	{
+		
+		for ( uint32_t I = 0; I < BaseList -> Count; I ++ )
+			List.Names [ I ] = BaseList -> Names [ I ];
+		
+	}
+	
+	for ( uint32_t I = ( BaseList != NULL ) ? BaseList -> Count : 0; I < Count; I ++ )
+		List.Names [ I ] = Template.GetTemplateParameter ( I - ( ( BaseList != NULL ) ? BaseList -> Count : 0 ) ) -> GetName ();
 	
 }
 

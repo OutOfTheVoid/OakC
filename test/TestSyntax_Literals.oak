@@ -9,6 +9,8 @@ struct MyStruct
 function Test ()
 {
 	
+	MyStruct:{ a: 3, b: 4 };
+	
 	'a';
 	'\t';
 	'\x{AB78F000}';
@@ -53,7 +55,5 @@ function Test ()
 	[ 200; 0 ];
 	[ :u64; 0, 1, 2 ];
 	[ 2 * 2 * 2 :u32; 1 + 2 ];
-	
-	MyStruct:{ a: 3, b: 4 };
 	
 }

@@ -422,6 +422,28 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
+	TypeResolutionResult ResolveResult_Traits = OilTypeResolution_Traits ( RootNS );
+	
+	if ( ResolveResult_Traits == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( ResolveResult_Traits == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( ResolveResult_Traits == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+	{
+		
+		Error = true;
+		
+		return;
+		
+	}
+	
 	if ( Unresolved )
 	{
 		
