@@ -69,7 +69,7 @@ bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string
 				
 			}
 			
-			if ( TestConditionalCompilationDecorators ( & ConditionalTags [ 0 ], ConditionalTags.size (), CompilationConditions, CompilationConditionCount ) )
+			if ( ( ConditionalTags.size () == 0 ) || TestConditionalCompilationDecorators ( & ConditionalTags [ 0 ], ConditionalTags.size (), CompilationConditions, CompilationConditionCount ) )
 			{
 				
 				std :: string UTF8FileName = CodeConversion :: ConvertUTF32ToUTF8 ( FileName );
