@@ -1,6 +1,7 @@
 #include <Logging/Logging.h>
 
 #include <Compilation/CompilationUnit.h>
+#include <Compilation/Targets.h>
 
 #include <UI/ConsoleUtils.h>
 #include <UI/FileLogOutput.h>
@@ -22,7 +23,6 @@
 
 #include <EarlyAnalysis/OakLiteralParsing.h>
 
-#include <Compilation/Targets.h>
 
 #define VERSION_STRING "0.0.2b"
 
@@ -37,6 +37,7 @@ void PrintVerboseHelp ();
 void PrintLogHelp ();
 void PrintBuiltinHelp ();
 void PrintResolutionHelp ();
+void BuildCompilationConditions ( std :: vector <std :: u32string> & Conditions );
 
 typedef enum
 {
@@ -80,56 +81,61 @@ int main ( int argc, const char * argv [] )
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "h", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "help", 0, true ) )
 		{
 			
-			if ( ( std :: string ( argv [ I + 1 ] ) == "l" ) || ( std :: string ( argv [ I + 1 ] ) == "log" ) )
+			Action = kMainAction_Help;
+			
+			if ( I < argc - 1 )
 			{
 				
-				I ++;
-				
-				Action = kMainAction_Help_Log;
+				if ( ( std :: string ( argv [ I + 1 ] ) == "l" ) || ( std :: string ( argv [ I + 1 ] ) == "log" ) )
+				{
+					
+					I ++;
+					
+					Action = kMainAction_Help_Log;
+					
+				}
+				else if ( std :: string ( argv [ I + 1 ] ) == "os" )
+				{
+					
+					I ++;
+					
+					Action = kMainAction_ListOperatingSystems;
+					
+				}
+				else if ( ( std :: string ( argv [ I + 1 ] ) == "a" ) || ( std :: string ( argv [ I + 1 ] ) == "arch" ) )
+				{
+					
+					I ++;
+					
+					Action = kMainAction_ListArchitechtures;
+					
+				}
+				else if ( ( std :: string ( argv [ I + 1 ] ) == "v" ) || ( std :: string ( argv [ I + 1 ] ) == "verbose" ) )
+				{
+					
+					I ++;
+					
+					Action = kMainAction_Help_Verbose;
+					
+				}
+				else if ( ( std :: string ( argv [ I + 1 ] ) == "sh_b" ) || ( std :: string ( argv [ I + 1 ] ) == "show_builtins" ) )
+				{
+					
+					I ++;
+					
+					Action = kMainAction_Help_Builtins;
+					
+				}
+				else if ( ( std :: string ( argv [ I + 1 ] ) == "sh_r" ) || ( std :: string ( argv [ I + 1 ] ) == "show_resolution" ) )
+				{
+					
+					I ++;
+					
+					Action = kMainAction_Help_Resolution;
+					
+				}
 				
 			}
-			else if ( std :: string ( argv [ I + 1 ] ) == "os" )
-			{
-				
-				I ++;
-				
-				Action = kMainAction_ListOperatingSystems;
-				
-			}
-			else if ( ( std :: string ( argv [ I + 1 ] ) == "a" ) || ( std :: string ( argv [ I + 1 ] ) == "arch" ) )
-			{
-				
-				I ++;
-				
-				Action = kMainAction_ListArchitechtures;
-				
-			}
-			else if ( ( std :: string ( argv [ I + 1 ] ) == "v" ) || ( std :: string ( argv [ I + 1 ] ) == "verbose" ) )
-			{
-				
-				I ++;
-				
-				Action = kMainAction_Help_Verbose;
-				
-			}
-			else if ( ( std :: string ( argv [ I + 1 ] ) == "sh_b" ) || ( std :: string ( argv [ I + 1 ] ) == "show_builtins" ) )
-			{
-				
-				I ++;
-				
-				Action = kMainAction_Help_Builtins;
-				
-			}
-			else if ( ( std :: string ( argv [ I + 1 ] ) == "sh_r" ) || ( std :: string ( argv [ I + 1 ] ) == "show_resolution" ) )
-			{
-				
-				I ++;
-				
-				Action = kMainAction_Help_Resolution;
-				
-			}
-			else 
-				Action = kMainAction_Help;
 			
 			continue;
 			
@@ -345,6 +351,8 @@ int main ( int argc, const char * argv [] )
 	
 }
 
+
+
 int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPrintOptions & PrintOptions )
 {
 	
@@ -357,6 +365,10 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPr
 		
 	}
 	
+	std :: vector <std :: u32string> CompilationConditions;
+	
+	BuildCompilationConditions ( CompilationConditions );
+	
 	FileTable Files;
 	
 	for ( uint32_t I = 0; I < SourceFileNames.size (); I ++ )
@@ -364,7 +376,7 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPr
 		
 		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ] );
 		
-		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files ) )
+		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files, & CompilationConditions [ 0 ], CompilationConditions.size () ) )
 			return 1;
 		
 	}
@@ -396,6 +408,51 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPr
 	Files.DestroyAll ();
 	
 	return 0;
+	
+}
+
+void BuildCompilationConditions ( std :: vector <std :: u32string> & Conditions )
+{
+	
+	switch ( TargetOS )
+	{
+		
+		case kTargetOS_None:
+			Conditions.push_back ( U"target_os_none" );
+			break;
+			
+		case kTargetOS_GNULinux:
+			Conditions.push_back ( U"target_os_gnulinux" );
+			break;
+			
+		case kTargetOS_Win32:
+			Conditions.push_back ( U"target_os_win32" );
+			break;
+			
+		case kTargetOS_MacOSX:
+			Conditions.push_back ( U"target_os_macosx" );
+			break;
+			
+		default:
+			break;
+		
+	}
+	
+	switch ( TargetArch )
+	{
+		
+		case kTargetArch_X86_32:
+			Conditions.push_back ( U"target_arch_x86" );
+			break;
+			
+		case kTargetArch_X86_64:
+			Conditions.push_back ( U"target_arch_x86_64" );
+			break;
+			
+		default:
+			break;
+		
+	}
 	
 }
 

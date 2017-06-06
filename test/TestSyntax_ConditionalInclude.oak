@@ -1,0 +1,5 @@
+#[ keep_if ( target_arch_x86_64 ) ]
+import "test/TestSyntax_Const.oak";
+
+#[ keep_if ( target_arch_x86 ) ]
+import "test/TestSyntax_Binding.oak";

@@ -49,7 +49,7 @@ public:
 	 * 
 	 * @return Whether or not the compilation succeeded ( false represents a compilation failure ).
 	 */
-	bool RunIndependantCompilationSteps ( FileTable & FTable );
+	bool RunIndependantCompilationSteps ( FileTable & FTable, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
 	
 	/**
 	 * @brief Runs per-file semantic analysis on the AST previously generated, adding to the global object definition.

@@ -1,6 +1,6 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OakLiteralParsing.h>
-#include <EarlyAnalysis/OakDecorators.h>
+#include <EarlyAnalysis/OilDecorators.h>
 
 #include <Math/BigFloat.h>
 #include <Math/BigInteger.h>
@@ -160,6 +160,18 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 		{
 			
 			case OakASTTags :: kASTTag_ImportStatement:
+			{
+				
+				while ( Decorators.size () != 0 )
+				{
+					
+					delete Decorators [ Decorators.size () - 1 ];
+					
+					Decorators.pop_back ();
+					
+				}
+				
+			}
 			break;
 			
 			case OakASTTags :: kASTTag_DecoratorTag:
@@ -4447,9 +4459,16 @@ OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTa
 	
 	const OakDecoratorTagConstructor :: ElementData * DecoratorData = reinterpret_cast <const OakDecoratorTagConstructor :: ElementData *> ( DecoratorTagElement -> GetData () );
 	
-	OilDecoratorTag * NewTag = new OilDecoratorTag ( Ref, DecoratorData -> ID );
-	
-	return NewTag;
+	switch ( DecoratorData -> Kind )
+	{
+		
+		case OakDecoratorTagConstructor :: kTagKind_Simple:
+			return new OilDecoratorTag ( Ref, DecoratorData -> ID );
+			
+		case OakDecoratorTagConstructor :: kTagKind_Parametric_1:
+			return new OilDecoratorTag ( Ref, DecoratorData -> ID, DecoratorData -> Param1 );
+		
+	}
 	
 }
 

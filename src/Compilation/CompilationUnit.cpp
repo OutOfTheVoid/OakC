@@ -1,4 +1,5 @@
 #include <Compilation/CompilationUnit.h>
+#include <Compilation/Targets.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -108,7 +109,7 @@ void PrintTokens ( const std :: vector <const Token *> & Tokens )
 	
 }
 
-bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
+bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
 	if ( CompilationState != kCompilationStep_FileLoad )
@@ -235,7 +236,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable )
 	
 	std :: vector <CompilationUnit *> ImportedUnits;
 	
-	if ( ! OakResolveImports ( ASTRoot, SourceFile.GetName (), FTable, ImportedUnits ) )
+	if ( ! OakResolveImports ( ASTRoot, SourceFile.GetName (), FTable, ImportedUnits, CompilationConditions, CompilationConditionCount ) )
 		return false;
 	
 	CompilationState = kCompilationStep_OILTranslation;

@@ -8,6 +8,6 @@
 
 class ASTElement;
 
-bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut );
+bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
 
 #endif

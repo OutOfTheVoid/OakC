@@ -1,5 +1,9 @@
 #include <EarlyAnalysis/OakImportResolution.h>
 #include <EarlyAnalysis/OakLiteralParsing.h>
+#include <EarlyAnalysis/OakOilTranslation.h>
+#include <EarlyAnalysis/OilDecorators.h>
+
+#include <OIL/OilDecoratorTag.h>
 
 #include <Compilation/CompilationUnit.h>
 
@@ -13,18 +17,38 @@
 
 bool GetImportName ( const ASTElement * ImportStatementElement, std :: u32string & FileName, std :: string & ParseError );
 
-bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut )
+bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
 	uint64_t SubElementCount = FileRootElement -> GetSubElementCount ();
 	uint64_t I = 0;
+	
+	std :: vector <const OilDecoratorTag *> ConditionalTags;
 	
 	while ( I < SubElementCount )
 	{
 		
 		const ASTElement * SubElement = FileRootElement -> GetSubElement ( I );
 		
-		if ( SubElement -> GetTag () == OakASTTags :: kASTTag_ImportStatement )
+		if ( SubElement -> GetTag () == OakASTTags :: kASTTag_DecoratorTag )
+		{
+			
+			OilDecoratorTag * Tag = OakTranslateDecoratorTagToOil ( SubElement );
+			
+			if ( Tag == NULL )
+			{
+				
+				for ( uint32_t I = 0; I < ConditionalTags.size (); I ++ )
+					delete ConditionalTags [ I ];
+				
+				return false;
+				
+			}
+			
+			ConditionalTags.push_back ( Tag );
+			
+		}
+		else if ( SubElement -> GetTag () == OakASTTags :: kASTTag_ImportStatement )
 		{
 			
 			std :: u32string FileName;
@@ -45,21 +69,40 @@ bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string
 				
 			}
 			
-			std :: string UTF8FileName = CodeConversion :: ConvertUTF32ToUTF8 ( FileName );
-			
-			CompilationUnit * FileUnit = GlobalFileTable.GetUnit ( UTF8FileName );
-			
-			if ( FileUnit == NULL )
+			if ( TestConditionalCompilationDecorators ( & ConditionalTags [ 0 ], ConditionalTags.size (), CompilationConditions, CompilationConditionCount ) )
 			{
 				
-				FileUnit = new CompilationUnit ( UTF8FileName );
+				std :: string UTF8FileName = CodeConversion :: ConvertUTF32ToUTF8 ( FileName );
 				
-				if ( ! FileUnit -> RunIndependantCompilationSteps ( GlobalFileTable ) )
-					return false;
+				CompilationUnit * FileUnit = GlobalFileTable.GetUnit ( UTF8FileName );
+				
+				if ( FileUnit == NULL )
+				{
 					
+					FileUnit = new CompilationUnit ( UTF8FileName );
+					
+					if ( ! FileUnit -> RunIndependantCompilationSteps ( GlobalFileTable, CompilationConditions, CompilationConditionCount ) )
+						return false;
+						
+				}
+				
+				UnitsOut.push_back ( FileUnit );
+				
 			}
 			
-			UnitsOut.push_back ( FileUnit );
+			for ( uint32_t I = 0; I < ConditionalTags.size (); I ++ )
+				delete ConditionalTags [ I ];
+			
+			ConditionalTags.clear ();
+			
+		}
+		else
+		{
+			
+			for ( uint32_t I = 0; I < ConditionalTags.size (); I ++ )
+				delete ConditionalTags [ I ];
+			
+			ConditionalTags.clear ();
 			
 		}
 		

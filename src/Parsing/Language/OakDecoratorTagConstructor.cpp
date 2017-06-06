@@ -70,25 +70,89 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	
 	CurrentToken = Input.Tokens [ 2 ];
 	
-	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_SquareBracket_Close )
+	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_SquareBracket_Close )
 	{
 		
-		delete DecoratorData;
+		DecoratorData -> Kind = kTagKind_Simple;
+		DecoratorElement -> AddTokenSection ( & Input.Tokens [ 2 ], 1 );
 		
-		Output.Accepted = false;
-		Output.Error = true;
-		Output.ErrorProvokingToken = CurrentToken;
-		Output.ErrorSuggestion = "Expected closing bracket for decorator tag!";
+		Output.Accepted = true;
+		Output.ConstructedElement = DecoratorElement;
+		Output.TokensConsumed = 3;
 		
 		return;
+			
+	}
+	
+	CurrentToken = Input.Tokens [ 2 ];
+	
+	if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_Parenthesis_Open )
+	{
+		
+		CurrentToken = Input.Tokens [ 3 ];
+		
+		if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
+		{
+			
+			delete DecoratorData;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorProvokingToken = CurrentToken;
+			Output.ErrorSuggestion = "Expected identifier param in parameteric decorator tag!";
+			
+			return;
+			
+		}
+		
+		DecoratorData -> Param1 = CurrentToken -> GetSource ();
+		
+		CurrentToken = Input.Tokens [ 4 ];
+		
+		if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_Parenthesis_Close )
+		{
+			
+			CurrentToken = Input.Tokens [ 5 ];
+			
+			if ( CurrentToken -> GetTag () == OakTokenTags :: kTokenTag_SquareBracket_Close )
+			{
+				
+				DecoratorData -> Kind = kTagKind_Parametric_1;
+				DecoratorElement -> AddTokenSection ( & Input.Tokens [ 2 ], 4 );
+				
+				Output.Accepted = true;
+				Output.ConstructedElement = DecoratorElement;
+				Output.TokensConsumed = 6;
+				
+				return;
+				
+			}
+			
+		}
+		else
+		{
+			
+			delete DecoratorData;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorProvokingToken = CurrentToken;
+			Output.ErrorSuggestion = "Expected closing parenthesis in parameteric decorator tag!";
+			
+			return;
+			
+		}
 		
 	}
 	
-	DecoratorElement -> AddTokenSection ( & Input.Tokens [ 2 ], 1 );
+	delete DecoratorData;
 	
-	Output.Accepted = true;
-	Output.ConstructedElement = DecoratorElement;
-	Output.TokensConsumed = 3;
+	Output.Accepted = false;
+	Output.Error = true;
+	Output.ErrorProvokingToken = CurrentToken;
+	Output.ErrorSuggestion = "Expected closing bracket for decorator tag!";
+	
+	return;
 	
 }
 
