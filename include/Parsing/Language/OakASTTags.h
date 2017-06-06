@@ -155,6 +155,9 @@ namespace OakASTTags
 	
 	const uint64_t kASTTag_WhereClause = 104;
 	
+	const uint64_t kASTTag_StructLiteral = 105;
+	const uint64_t kASTTag_StructLiteralMemberValue = 106;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -263,6 +266,8 @@ namespace OakASTTags
 		"TRAIT_REQUIREMENT",
 		"DECORATOR_TAG",
 		"WHERE_CLAUSE",
+		"STRUCT_LITERAL",
+		"STRUCT_LITERAL_MEMBER_VALUE",
 		
 	};
 	

@@ -39,6 +39,8 @@
 #include <OIL/OilAllusion.h>
 #include <OIL/OilArrayLiteral.h>
 #include <OIL/OilFunctionCallParameterList.h>
+#include <OIL/OilStructLiteral.h>
+#include <OIL/OilStructInitializerValue.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -2224,11 +2226,60 @@ TypeResolutionResult OilTypeResolution_Primary ( OilNamespaceDefinition & Curren
 						
 					}
 					else if ( InitializerResult == kTypeResolutionResult_Success_NoProgress )
-							Unresolved = true;
+						Unresolved = true;
 					else
 						return InitializerResult;
 					
 				}
+				
+			}
+			
+		}
+		break;
+		
+		case IOilPrimary :: kPrimaryType_StructLiteral:
+		{
+			
+			OilStructLiteral * StructLiteral = dynamic_cast <OilStructLiteral *> ( Primary );
+			
+			TypeResolutionResult StructTypeResult = OilTypeResolution_TypeRef ( CurrentNS, * StructLiteral -> GetLiteralType (), TemplateNames, SelfType, SelfTemplateSpec );
+			
+			if ( StructTypeResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( StructTypeResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( StructTypeResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return StructTypeResult;
+			
+			uint32_t MemberValueCount = StructLiteral -> GetMemberValueCount ();
+			
+			for ( uint32_t I = 0; I < MemberValueCount; I ++ )
+			{
+				
+				OilStructInitializerValue * MemberValue = StructLiteral -> GetInitializerValue ( I );
+				
+				TypeResolutionResult MemberValueResult = OilTypeResolution_Expression ( CurrentNS, * MemberValue -> GetValueExpression (), TemplateNames, SelfType, SelfTemplateSpec );
+				
+				if ( MemberValueResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( MemberValueResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( MemberValueResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return MemberValueResult;
 				
 			}
 			

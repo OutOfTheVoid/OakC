@@ -8,6 +8,7 @@
 #include <Parsing/Language/OakBindingAllusionConstructor.h>
 #include <Parsing/Language/OakSelfAllusionConstructor.h>
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
+#include <Parsing/Language/OakStructLiteralConstructor.h>
 
 OakPrimaryExpressionConstructor OakPrimaryExpressionConstructor :: Instance;
 
@@ -17,13 +18,14 @@ ASTConstructionGroup :: StaticInitEntry _OakPrimaryExpressionConstructor_Primary
 	{ & OakParenthesizedExpressionConstructor :: Instance, 0 },
 	{ & OakLiteralExpressionConstructor :: Instance, 1 },
 	{ & OakArrayLiteralConstructor :: Instance, 1 },
+	{ & OakStructLiteralConstructor :: Instance, 1 },
 	{ & OakSelfAllusionConstructor :: Instance, 2 },
 	{ & OakBindingAllusionConstructor :: Instance, 2 },
 	
 };
 
 OakPrimaryExpressionConstructor :: OakPrimaryExpressionConstructor ():
-	PrimaryGroup ( _OakPrimaryExpressionConstructor_PrimaryGroupEntries, 5 )
+	PrimaryGroup ( _OakPrimaryExpressionConstructor_PrimaryGroupEntries, 6 )
 {
 }
 

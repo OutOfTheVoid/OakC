@@ -1,3 +1,11 @@
+struct MyStruct
+{
+	
+	bind a: i32,
+	bind b: u64
+	
+}
+
 function Test ()
 {
 	
@@ -45,5 +53,7 @@ function Test ()
 	[ 200; 0 ];
 	[ :u64; 0, 1, 2 ];
 	[ 2 * 2 * 2 :u32; 1 + 2 ];
+	
+	MyStruct:{ a: 3, b: 4 };
 	
 }

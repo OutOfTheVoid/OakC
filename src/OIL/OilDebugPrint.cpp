@@ -42,6 +42,8 @@
 #include <OIL/OilConstStatement.h>
 #include <OIL/OilTypeAlias.h>
 #include <OIL/OilFunctionCallParameterList.h>
+#include <OIL/OilStructLiteral.h>
+#include <OIL/OilStructInitializerValue.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -1734,6 +1736,39 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 		
 		case IOilPrimary :: kPrimaryType_NullPointerLiteral:
 			return "[NULL_POINTER]";
+			
+		case IOilPrimary :: kPrimaryType_StructLiteral:
+		{
+			
+			const OilStructLiteral & Literal = dynamic_cast <const OilStructLiteral &> ( Primary );
+			
+			std :: string PrintString = "[STRUCT_LIT ";
+			
+			PrintString += OilStringTypeRef ( * Literal.GetLiteralType (), PrintOptions );
+			
+			PrintString += " members: {";
+			
+			uint32_t ValueCount = Literal.GetMemberValueCount ();
+			
+			for ( uint32_t I = 0; I < ValueCount; I ++ )
+			{
+				
+				const OilStructInitializerValue * Value = Literal.GetInitializerValue ( I );
+				
+				PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Value -> GetMemberName () );
+				PrintString += ": ";
+				PrintString += OilStringExpression ( * Value -> GetValueExpression (), PrintOptions );
+				
+				if ( I != ValueCount - 1 )
+					PrintString += ", ";
+				
+			}
+			
+			PrintString += "}]";
+			
+			return PrintString;
+			
+		}
 			
 		case IOilPrimary :: kPrimaryType_ArrayLiteral:
 		{

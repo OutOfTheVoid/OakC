@@ -47,6 +47,8 @@
 #include <OIL/OilConstStatement.h>
 #include <OIL/OilTypeAlias.h>
 #include <OIL/OilFunctionCallParameterList.h>
+#include <OIL/OilStructLiteral.h>
+#include <OIL/OilStructInitializerValue.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -83,6 +85,7 @@
 #include <Parsing/Language/OakMethodDefinitionConstructor.h>
 #include <Parsing/Language/OakDecoratorTagConstructor.h>
 #include <Parsing/Language/OakAliasDeclarationConstructor.h>
+#include <Parsing/Language/OakStructLiteralMemberValueConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -111,6 +114,7 @@ OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement );
 OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * StatementElement );
 OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement );
+OilStructLiteral * OakTranslateStructLiteral ( const ASTElement * LiteralElement );
 IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement );
 OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement, OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
 OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionElement );
@@ -2943,6 +2947,9 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 		
 		case OakASTTags :: kASTTag_ArrayLiteral:
 			return OakTranslateArrayLiteral ( SubElement );
+			
+		case OakASTTags :: kASTTag_StructLiteral:
+			return OakTranslateStructLiteral ( SubElement );
 		
 		case OakASTTags :: kASTTag_SelfAllusion:
 			return new OilAllusion ( Ref, OilAllusion :: SELF_ALLUSION );
@@ -3739,6 +3746,69 @@ IOilPrimary * OakTranslateLiteralToOil ( const ASTElement * LiteralElement )
 	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
 	
 	return NULL;
+	
+}
+
+OilStructLiteral * OakTranslateStructLiteral ( const ASTElement * LiteralElement )
+{
+	
+	if ( ( LiteralElement == NULL ) || ( LiteralElement -> GetTag () != OakASTTags :: kASTTag_StructLiteral ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return NULL;
+		
+	}
+	
+	OilTypeRef * StructType = OakTranslateTypeRefToOil ( LiteralElement -> GetSubElement ( 0 ) );
+	
+	if ( StructType == NULL )
+		return NULL;
+	
+	std :: vector <OilStructInitializerValue *> Values;
+	
+	uint64_t ElementOffset = 1;
+	
+	const ASTElement * SubElement = LiteralElement -> GetSubElement ( ElementOffset );
+	
+	while ( SubElement != NULL )
+	{
+		
+		if ( SubElement -> GetTag () != OakASTTags :: kASTTag_StructLiteralMemberValue )
+		{
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			for ( uint64_t I = 0; I < Values.size (); I ++ )
+				delete Values [ I ];
+			
+			return NULL;
+			
+		}
+		
+		const OakStructLiteralMemberValueConstructor :: ElementData * MemberValueData = reinterpret_cast <const OakStructLiteralMemberValueConstructor :: ElementData *> ( SubElement -> GetData () );
+		
+		OilExpression * LiteralExpression = OakTranslateExpressionToOil ( SubElement -> GetSubElement ( 0 ) );
+		
+		if ( LiteralExpression == NULL )
+		{
+			
+			for ( uint64_t I = 0; I < Values.size (); I ++ )
+				delete Values [ I ];
+			
+			return NULL;
+			
+		}
+		
+		Values.push_back ( new OilStructInitializerValue ( SubElement -> GetToken ( 0, 0 ) -> GetSourceRef (), MemberValueData -> MemberName, LiteralExpression ) );
+		
+		ElementOffset ++;
+		SubElement = LiteralElement -> GetSubElement ( ElementOffset );
+		
+	}
+	
+	return new OilStructLiteral ( LiteralElement -> GetToken ( 0, 0 ) -> GetSourceRef (), StructType, & Values [ 0 ], Values.size () );
 	
 }
 
