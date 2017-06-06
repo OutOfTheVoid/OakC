@@ -5,4 +5,6 @@ A reference compiler for the oak programming language, a practical, low level pr
 
 The compiler is written in C++, and should eventually be fully documented.
 
+You can also read about it on the [Oak Blog](https://oakcompiler.wordpress.com/)
+
 See TODO.txt for an overview of the current state of the project, and please shoot me an email if you have any questions!
