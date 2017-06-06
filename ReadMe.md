@@ -1,5 +1,5 @@
-![Oak Logo](https://raw.githubusercontent.com/OutOfTheVoid/OakC/master/OakLogoSmall.png) Oak Compiler
-============
+![Oak Logo](https://raw.githubusercontent.com/OutOfTheVoid/OakC/master/OakLogoSmall.png) Oak Programming Language Compiler
+==========================================================================================================================
 
 A reference compiler for the oak programming language, a practical, low level programming language inspired by C, C++, Rust, and HaXe.
 
