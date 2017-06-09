@@ -1,8 +1,3 @@
-/*
-* Bultin universal types - All those defined by the language itself
-* 
-* - Traits for ops
-*/
 
 #[builtin]
 trait AddOp <RHS_T, RESULT_T>

@@ -120,8 +120,8 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement, c
 OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionElement );
 OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement );
 OilMethodParameterList * OakTranslateMethodParameterListToOil ( const ASTElement * ParameterListElement );
-OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement );
-OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
+OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
+OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
 OilExpression * OakTranslateExpressionToOil ( const ASTElement * ExpressionElement );
 IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryElement );
 IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
@@ -478,7 +478,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 			case OakASTTags :: kASTTag_ImplementDefinition:
 			{
 				
-				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, & Decorators [ 0 ], Decorators.size (), CompilationConditions, CompilationConditionCount );
 				
 				if ( Block == NULL )
 				{
@@ -920,7 +920,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			case OakASTTags :: kASTTag_ImplementDefinition:
 			{
 				
-				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, & Decorators [ 0 ], Decorators.size (), CompilationConditions, CompilationConditionCount );
 				
 				if ( Block == NULL )
 				{
@@ -1445,7 +1445,7 @@ OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingEl
 	
 }
 
-OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount )
+OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * ImplementElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
 	(void) Decorators;
@@ -1678,17 +1678,41 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 	const ASTElement * ChildElement = ImplementElement -> GetSubElement ( ElementOffset );
 	ElementOffset ++;
 	
+	std :: vector <const OilDecoratorTag *> Tags;
+	
 	while ( ChildElement != NULL )
 	{
 		
 		if ( ChildElement -> GetTag () == OakASTTags :: kASTTag_FunctionDefinition )
 		{
 			
+			if ( ! TestConditionalCompilationDecorators ( & Tags [ 0 ], Tags.size (), CompilationConditions, CompilationConditionCount ) )
+			{
+				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
+				
+				Tags.clear ();
+				
+				ElementOffset ++;
+				
+				continue;
+				
+			}
+			
+			for ( uint32_t I = 0; I < Tags.size (); I ++ )
+				delete Tags [ I ];
+			
+			Tags.clear ();
+			
 			// TODO: Implement decorators in implement blocks. For now, just pass none
-			OilFunctionDefinition * Function = OakTranslateFunctionDefinitionToOil ( ChildElement, NULL, 0 );
+			OilFunctionDefinition * Function = OakTranslateFunctionDefinitionToOil ( ChildElement, & Tags [ 0 ], Tags.size () );
 			
 			if ( Function == NULL )
 			{
+				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
 				
 				delete Block;
 				
@@ -1701,6 +1725,9 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 				
 				WriteError ( ChildElement, "Duplicate function, function definition of same name already exists in implement block" );
 				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
+				
 				delete Function;
 				delete Block;
 				
@@ -1711,13 +1738,55 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 			Block -> AddFunction ( Function );
 			
 		}
+		else if ( ChildElement -> GetTag () == OakASTTags :: kASTTag_DecoratorTag )
+		{
+			
+			OilDecoratorTag * Tag = OakTranslateDecoratorTagToOil ( ChildElement );
+			
+			if ( Tag == NULL )
+			{
+				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
+				
+				delete Block;
+				
+				return NULL;
+				
+			}
+			
+			Tags.push_back ( Tag );
+			
+		}
 		else
 		{
 			
-			OilMethodDefinition * Method = OakTranslateMethodDefinitionToOil ( ChildElement );
+			if ( ! TestConditionalCompilationDecorators ( & Tags [ 0 ], Tags.size (), CompilationConditions, CompilationConditionCount ) )
+			{
+				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
+				
+				Tags.clear ();
+				
+				ElementOffset ++;
+				
+				continue;
+				
+			}
+			
+			for ( uint32_t I = 0; I < Tags.size (); I ++ )
+				delete Tags [ I ];
+			
+			Tags.clear ();
+			
+			OilMethodDefinition * Method = OakTranslateMethodDefinitionToOil ( ChildElement, & Tags [ 0 ], Tags.size () );
 			
 			if ( Method == NULL )
 			{
+				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
 				
 				delete Block;
 				
@@ -1729,6 +1798,9 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 			{
 				
 				WriteError ( ChildElement, "Duplicate method, method definition of same name already exists in implement block" );
+				
+				for ( uint32_t I = 0; I < Tags.size (); I ++ )
+					delete Tags [ I ];
 				
 				delete Method;
 				delete Block;
@@ -1919,8 +1991,11 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 }
 
 
-OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement )
+OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * MethodDefElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount )
 {
+	
+	(void) Decorators;
+	(void) DecoratorCount;
 	
 	if ( ( MethodDefElement == NULL ) || ( MethodDefElement -> GetTag () != OakASTTags :: kASTTag_MethodDefinition ) )
 	{

@@ -12,6 +12,7 @@ namespace TestNS
 	implement MyStruct:<A> where <A>
 	{
 		
+		#[ keep_if ( target_os_macosx ) ]
 		function my_func ( A: & Self ): void
 		{
 		}

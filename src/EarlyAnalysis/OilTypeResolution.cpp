@@ -1200,7 +1200,7 @@ TypeResolutionResult OilTypeResolution_ImplementMembers ( OilNamespaceDefinition
 				
 				OilFunctionDefinition * FunctionDefinition = Block -> GetFunction ( K );
 				
-				TypeResolutionResult FunctionResolutionResult = OilTypeResolution_FunctionDefinition ( CurrentNS, * FunctionDefinition, Block -> HasWhereDefinition () ? & TemplateNames : NULL );
+				TypeResolutionResult FunctionResolutionResult = OilTypeResolution_FunctionDefinition ( CurrentNS, * FunctionDefinition, Block -> HasWhereDefinition () ? & TemplateNames : NULL, true );
 				
 				if ( FunctionResolutionResult == kTypeResolutionResult_Success_Complete )
 					Progress = true;

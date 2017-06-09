@@ -1,24 +1,12 @@
-/*
-namespace Do
-{
-	
-	struct Qo <A> {}
-	
-	implement Qo:<A> where <A>
-	{
-		
-		function Ra ( & self, i: i32 ): i32
-		{
-		}
-		
-	}
-		
+struct ST
+{	
 }
-*/
-function f2 () : void
+
+implement ST
 {
 	
-	1.0.to_string ();
-	1u32.to_string ();
+	function FC ( A: & Self )
+	{
+	}
 	
 }

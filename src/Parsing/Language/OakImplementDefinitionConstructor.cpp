@@ -6,6 +6,7 @@
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 #include <Parsing/Language/OakFunctionDefinitionConstructor.h>
 #include <Parsing/Language/OakMethodDefinitionConstructor.h>
+#include <Parsing/Language/OakDecoratorTagConstructor.h>
 
 #include <Parsing/Language/OakNamespacedTemplatedTypeNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTypeNameConstructor.h>
@@ -31,6 +32,7 @@ ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_Imple
 	
 	{ & OakMethodDefinitionConstructor :: Instance, 1 },
 	{ & OakFunctionDefinitionConstructor :: Instance, 0 },
+	{ & OakDecoratorTagConstructor :: Instance, 0 },
 	
 };
 
@@ -64,7 +66,7 @@ ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_Where
 };
 
 OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
-	ImplementChildrenConstructionGroup ( _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries, 2 ),
+	ImplementChildrenConstructionGroup ( _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries, 3 ),
 	TypeNameGroup ( _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries, 5 ),
 	TraitNameGroup ( _OakImplementDefinitionConstructor_ImplementedTraitConstructionGroupEntries, 4 ),
 	WhereClauseGroup ( _OakImplementDefinitionConstructor_WhereClauseGroupEntries, 1 )

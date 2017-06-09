@@ -53,7 +53,7 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
 		
-		delete DecoratorData;
+		delete DecoratorElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -94,7 +94,7 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 		{
 			
-			delete DecoratorData;
+			delete DecoratorElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -132,7 +132,7 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		else
 		{
 			
-			delete DecoratorData;
+			delete DecoratorElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -145,7 +145,7 @@ void OakDecoratorTagConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 		
 	}
 	
-	delete DecoratorData;
+	delete DecoratorElement;
 	
 	Output.Accepted = false;
 	Output.Error = true;
