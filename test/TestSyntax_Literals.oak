@@ -1,8 +1,8 @@
 struct MyStruct
 {
 	
-	bind a: i32,
-	bind b: u64
+	a: i32,
+	b: u64
 	
 }
 

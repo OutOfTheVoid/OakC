@@ -1,6 +1,8 @@
 #include <OIL/OilUnaryOperator.h>
 #include <OIL/IOilPrimary.h>
 #include <OIL/OilExpression.h>
+#include <OIL/OilTemplateSpecification.h>
+#include <OIL/OilFunctionCallParameterList.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -33,7 +35,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilO
 	Op ( Op ),
 	TermIsPrimary ( false ),
 	OperatorTerm ( Term ),
-	ParameterList ( NULL ),
+	MemberTemplateSpec ( NULL ),
 	MemberAccessName (),
 	Ref ( Ref )
 {
@@ -43,7 +45,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilP
 	Op ( Op ),
 	TermIsPrimary ( true ),
 	PrimaryTerm ( Term ),
-	ParameterList ( NULL ),
+	MemberTemplateSpec ( NULL ),
 	MemberAccessName (),
 	Ref ( Ref )
 {
@@ -73,7 +75,7 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Ter
 	Op ( kOperator_MemberAccess ),
 	TermIsPrimary ( false ),
 	OperatorTerm ( Term ),
-	ParameterList ( NULL ),
+	MemberTemplateSpec ( NULL ),
 	MemberAccessName ( MemberName ),
 	Ref ( Ref )
 {
@@ -83,11 +85,32 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term
 	Op ( kOperator_MemberAccess ),
 	TermIsPrimary ( true ),
 	PrimaryTerm ( Term ),
-	ParameterList ( NULL ),
+	MemberTemplateSpec ( NULL ),
 	MemberAccessName ( MemberName ),
 	Ref ( Ref )
 {
 }
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, const std :: u32string & MemberName, OilTemplateSpecification * MemberTemplateSpec ):
+	Op ( kOperator_MemberAccess ),
+	TermIsPrimary ( true ),
+	OperatorTerm ( Term ),
+	MemberTemplateSpec ( MemberTemplateSpec ),
+	MemberAccessName ( MemberName ),
+	Ref ( Ref )
+{
+}
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName, OilTemplateSpecification * MemberTemplateSpec ):
+	Op ( kOperator_MemberAccess ),
+	TermIsPrimary ( true ),
+	PrimaryTerm ( Term ),
+	MemberTemplateSpec ( MemberTemplateSpec ),
+	MemberAccessName ( MemberName ),
+	Ref ( Ref )
+{
+}
+
 
 void OilUnaryOperator :: SetTerm ( IOilOperator * Term )
 {
@@ -137,6 +160,16 @@ void OilUnaryOperator :: SetTerm ( IOilPrimary * Term )
 
 OilUnaryOperator :: ~OilUnaryOperator ()
 {
+	
+	if ( Op == kOperator_MemberAccess )
+	{
+		
+		if ( MemberTemplateSpec != NULL )
+			delete MemberTemplateSpec;
+		
+	}
+	else if ( Op == kOperator_FunctionCall )
+		delete ParameterList;
 	
 	if ( TermIsPrimary )
 	{
@@ -259,5 +292,26 @@ const std :: u32string & OilUnaryOperator :: GetNameForMemberAccess () const
 {
 	
 	return MemberAccessName;
+	
+}
+
+const OilTemplateSpecification * OilUnaryOperator :: GetTemplateSpecificationForMemberAccess () const
+{
+	
+	return ( Op == kOperator_MemberAccess ) ? MemberTemplateSpec : NULL;
+	
+}
+
+OilTemplateSpecification * OilUnaryOperator :: GetTemplateSpecificationForMemberAccess ()
+{
+	
+	return ( Op == kOperator_MemberAccess ) ? MemberTemplateSpec : NULL;
+	
+}
+
+bool OilUnaryOperator :: IsMemberAccessTempalted () const
+{
+	
+	return ( Op == kOperator_MemberAccess ) ? MemberTemplateSpec != NULL : false;
 	
 }

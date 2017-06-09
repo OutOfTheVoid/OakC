@@ -3,6 +3,7 @@
 #include <OIL/OilImplementBlock.h>
 #include <OIL/OilTraitDefinition.h>
 #include <OIL/OilBuiltinStructDefinition.h>
+#include <OIL/OilEnum.h>
 
 #include <iterator>
 
@@ -10,6 +11,7 @@ OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilStructDefinit
 	Name ( Structure -> GetID () ),
 	IsBuiltin ( IsBuiltin ),
 	IsStructBuiltin ( false ),
+	IsEnum ( false ),
 	StructDefinition ( Structure ),
 	PrincipalImplementBlocks (),
 	TraitMap ( NULL ),
@@ -22,7 +24,21 @@ OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilBuiltinStruct
 	Name ( Structure -> GetName () ),
 	IsBuiltin ( IsBuiltin ),
 	IsStructBuiltin ( true ),
+	IsEnum ( false ),
 	BuiltinStructDefinition ( Structure ),
+	PrincipalImplementBlocks (),
+	TraitMap ( NULL ),
+	Ref ( Ref ),
+	ParentNamespace ( NULL )
+{
+}
+
+OilTypeDefinition :: OilTypeDefinition ( const SourceRef & Ref, OilEnum * Enum, bool IsBuiltin ):
+	Name ( Enum -> GetName () ),
+	IsBuiltin ( IsBuiltin ),
+	IsStructBuiltin ( false ),
+	IsEnum ( true ),
+	Enum ( Enum ),
 	PrincipalImplementBlocks (),
 	TraitMap ( NULL ),
 	Ref ( Ref ),
@@ -35,6 +51,8 @@ OilTypeDefinition :: ~OilTypeDefinition ()
 	
 	if ( IsBuiltin )
 		delete BuiltinStructDefinition;
+	else if ( IsEnum )
+		delete Enum;
 	else
 		delete StructDefinition;
 	
@@ -109,6 +127,13 @@ bool OilTypeDefinition :: IsBuiltinType () const
 	
 }
 
+bool OilTypeDefinition :: IsEnumType () const
+{
+	
+	return IsEnum;
+	
+}
+
 bool OilTypeDefinition :: IsBuiltinStructure () const
 {
 	
@@ -141,6 +166,20 @@ OilStructDefinition * OilTypeDefinition :: GetStructDefinition ()
 {
 	
 	return StructDefinition;
+	
+}
+
+const OilEnum * OilTypeDefinition :: GetEnum () const
+{
+	
+	return Enum;
+	
+}
+
+OilEnum * OilTypeDefinition :: GetEnum ()
+{
+	
+	return Enum;
 	
 }
 
@@ -426,9 +465,6 @@ const SourceRef & OilTypeDefinition :: GetSourceRef () const
 	
 }
 
-// TEMPORARY
-#include <Logging/Logging.h>
-#include <Encoding/CodeConversion.h>
 
 void OilTypeDefinition :: GetAllImplementBlocks ( std :: vector <OilImplementBlock *> & Out )
 {

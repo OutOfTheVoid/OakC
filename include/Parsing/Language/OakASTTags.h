@@ -158,6 +158,9 @@ namespace OakASTTags
 	const uint64_t kASTTag_StructLiteral = 105;
 	const uint64_t kASTTag_StructLiteralMemberValue = 106;
 	
+	const uint64_t kASTTag_Enum = 107;
+	const uint64_t kASTTag_EnumBranch = 108;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -268,6 +271,8 @@ namespace OakASTTags
 		"WHERE_CLAUSE",
 		"STRUCT_LITERAL",
 		"STRUCT_LITERAL_MEMBER_VALUE",
+		"ENUM",
+		"ENUM_BRANCH",
 		
 	};
 	

@@ -98,6 +98,12 @@ bool AddTypesX86_32 ( OilNamespaceDefinition & RootNS )
 	OilTypeDefinition * UInt64Type = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"u64", 8, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UInt64Type );
 	
+	OilTypeDefinition * Float32Type = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"f32", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
+	RootNS.AddTypeDefinition ( Float32Type );
+	
+	OilTypeDefinition * Float64Type = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"f64", 8, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
+	RootNS.AddTypeDefinition ( Float64Type );
+	
 	OilTypeDefinition * UIntPtrType = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"uptr", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UIntPtrType );
 	
@@ -152,6 +158,12 @@ bool AddTypesX86_64 ( OilNamespaceDefinition & RootNS )
 	
 	OilTypeDefinition * UInt64Type = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"u64", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UInt64Type );
+	
+	OilTypeDefinition * Float32Type = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"f32", 4, 4, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
+	RootNS.AddTypeDefinition ( Float32Type );
+	
+	OilTypeDefinition * Float64Type = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"f64", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
+	RootNS.AddTypeDefinition ( Float64Type );
 	
 	OilTypeDefinition * UIntPtrType = new OilTypeDefinition ( NullRef, new OilBuiltinStructDefinition ( U"uptr", 8, 8, OilBuiltinStructDefinition :: kTypeFlag_None ), true );
 	RootNS.AddTypeDefinition ( UIntPtrType );

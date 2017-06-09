@@ -365,10 +365,19 @@ trait LogicalAndOp <RHS_T, RESULT_T>
 	
 }
 
+
 #[builtin]
 trait Cast <TO_T>
 {
 	
-	function cast (): TO_T,
+	function cast ( x: & Self ): TO_T
+	
+}
+
+#[builtin]
+trait Into <TO_T>
+{
+	
+	function into ( x: Self ): TO_T
 	
 }

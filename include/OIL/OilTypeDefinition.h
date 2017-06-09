@@ -13,12 +13,14 @@ class OilStructDefinition;
 class OilBuiltinStructDefinition;
 class OilTemplateDefinition;
 class OilNamespaceDefinition;
+class OilEnum;
 
 class OilTypeDefinition
 {
 public:
 	
 	OilTypeDefinition ( const SourceRef & Ref, OilStructDefinition * Structure, bool IsBuiltin = false );
+	OilTypeDefinition ( const SourceRef & Ref, OilEnum * Enum, bool IsBuiltin = false );
 	OilTypeDefinition ( const SourceRef & Ref, OilBuiltinStructDefinition * BuiltinStructure, bool IsBuiltin = false );
 	
 	~OilTypeDefinition ();
@@ -26,6 +28,7 @@ public:
 	const std :: u32string & GetName () const;
 	
 	bool IsBuiltinType () const;
+	bool IsEnumType () const;
 	
 	bool IsBuiltinStructure () const;
 	
@@ -39,6 +42,9 @@ public:
 	
 	const OilStructDefinition * GetStructDefinition () const;
 	OilStructDefinition * GetStructDefinition ();
+	
+	const OilEnum * GetEnum () const;
+	OilEnum * GetEnum ();
 	
 	void AddPrincipalImplementBlock ( OilImplementBlock * Implement );
 	
@@ -72,12 +78,14 @@ private:
 	bool IsBuiltin;
 	
 	bool IsStructBuiltin;
+	bool IsEnum;
 	
 	union
 	{
 		
 		OilStructDefinition * StructDefinition;
 		OilBuiltinStructDefinition * BuiltinStructDefinition;
+		OilEnum * Enum;
 		
 	};
 		

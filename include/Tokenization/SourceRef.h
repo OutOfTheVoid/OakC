@@ -3,11 +3,22 @@
 
 #include <stdint.h>
 
+#ifndef NULL
+	#define NULL nullptr
+#endif
+
 class CompilationUnit;
 
 class SourceRef
 {
 public:
+	
+	inline SourceRef ():
+		Char ( 0 ),
+		Line ( 0 ),
+		SourceUnit ( NULL )
+	{
+	}
 	
 	inline SourceRef ( uint64_t Char, uint64_t Line, CompilationUnit * SourceUnit ):
 		Char ( Char ),

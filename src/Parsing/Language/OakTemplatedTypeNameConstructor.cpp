@@ -101,7 +101,7 @@ void OakTemplatedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & In
 	if ( TemplateGroup.TryConstruction ( TypeNameElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		delete TypeNameData;
+		delete TypeNameElement;
 		
 		Output.Accepted = false;
 		
@@ -112,7 +112,7 @@ void OakTemplatedTypeNameConstructor :: TryConstruct ( ASTConstructionInput & In
 	if ( ConstructionError )
 	{
 		
-		delete TypeNameData;
+		delete TypeNameElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;

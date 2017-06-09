@@ -10,6 +10,7 @@
 class OilExpression;
 class IOilPrimary;
 class OilFunctionCallParameterList;
+class OilTemplateSpecification;
 
 class OilUnaryOperator : public virtual IOilOperator
 {
@@ -42,6 +43,8 @@ public:
 	// Member access
 	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, const std :: u32string & MemberName );
 	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName );
+	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, const std :: u32string & MemberName, OilTemplateSpecification * MemberTemplateSpec );
+	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName, OilTemplateSpecification * MemberTemplateSpec );
 	
 	~OilUnaryOperator ();
 	
@@ -53,6 +56,8 @@ public:
 	
 	const OilFunctionCallParameterList * GetFunctionCallParameterList () const;
 	OilFunctionCallParameterList * GetFunctionCallParameterList ();
+	
+	
 	
 	void SetTerm ( IOilOperator * Term );
 	void SetTerm ( IOilPrimary * Term );
@@ -72,6 +77,11 @@ public:
 	
 	const std :: u32string & GetNameForMemberAccess () const;
 	
+	const OilTemplateSpecification * GetTemplateSpecificationForMemberAccess () const;
+	OilTemplateSpecification * GetTemplateSpecificationForMemberAccess ();
+	
+	bool IsMemberAccessTempalted () const;
+	
 private:
 	
 	static const std :: string OperatorStrings [];
@@ -90,7 +100,13 @@ private:
 		
 	};
 	
-	OilFunctionCallParameterList * ParameterList;
+	union
+	{
+		
+		OilFunctionCallParameterList * ParameterList;
+		OilTemplateSpecification * MemberTemplateSpec;
+		
+	};
 	
 	const std :: u32string MemberAccessName;
 	

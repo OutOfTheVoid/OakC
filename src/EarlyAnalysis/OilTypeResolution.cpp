@@ -43,6 +43,7 @@
 #include <OIL/OilStructInitializerValue.h>
 #include <OIL/OilTraitFunction.h>
 #include <OIL/OilTraitMethod.h>
+#include <OIL/OilEnum.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -646,7 +647,7 @@ TypeResolutionResult OilTypeResolution_Bindings ( OilNamespaceDefinition & Curre
 	
 }
 
-TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinition & CurrentNS )
+TypeResolutionResult OilTypeResolution_TypeDefinitions ( OilNamespaceDefinition & CurrentNS )
 {
 	
 	bool Unresolved = false;
@@ -673,6 +674,28 @@ TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinitio
 			
 			if ( BuiltinStructDef -> IsTemplated () )
 				TemplateDef = BuiltinStructDef -> GetTemplateDefinition ();
+			
+		}
+		else if ( TypeDef -> IsEnumType () )
+		{
+			
+			TypeResolutionResult ResolutionResult = OilTypeResolution_Enum ( CurrentNS, * TypeDef -> GetEnum () );
+			
+			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return ResolutionResult;
+			
+			continue;
 			
 		}
 		else
@@ -758,7 +781,7 @@ TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinitio
 	for ( uint32_t I = 0; I < SubNSCount; I ++ )
 	{
 		
-		TypeResolutionResult ResolutionResult = OilTypeResolution_StructDefinitions ( * CurrentNS.GetNamespaceDefinition ( I ) );
+		TypeResolutionResult ResolutionResult = OilTypeResolution_TypeDefinitions ( * CurrentNS.GetNamespaceDefinition ( I ) );
 		
 		if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
 			Progress = true;
@@ -1885,6 +1908,31 @@ TypeResolutionResult OilTypeResolution_UnaryOperator ( OilNamespaceDefinition & 
 		}
 		
 	}
+	else if ( Operator.GetOp () == OilUnaryOperator :: kOperator_MemberAccess )
+	{
+		
+		if ( Operator.IsMemberAccessTempalted () )
+		{
+			
+			TypeResolutionResult ParamResult = OilTypeResolution_TemplateSpecification ( CurrentNS, * Operator.GetTemplateSpecificationForMemberAccess (), TemplateNames, AllowSelfType );
+			
+			if ( ParamResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ParamResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+					
+			}
+			else if ( ParamResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return ParamResult;
+			
+		}
+		
+	}
 	
 	if ( Operator.IsTermPrimary () )
 	{
@@ -2685,6 +2733,65 @@ TypeResolutionResult OilTypeResolution_TraitMethod ( OilNamespaceDefinition & Cu
 	}
 	
 	DestroyFlatNameList ( AllTemplateNames );
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_Enum ( OilNamespaceDefinition & CurrentNS, OilEnum & Enum )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	OilTemplateDefinition * TemplateDef = Enum.IsTemplated () ? Enum.GetTemplateDefinition () : NULL;
+	
+	FlatNameList TemplateNames;
+	
+	if ( TemplateDef != NULL )
+		MakeNameList_TemplateDefinition ( * TemplateDef, TemplateNames );
+	
+	uint32_t BranchCount = Enum.GetBranchCount ();
+	
+	for ( uint32_t I = 0; I < BranchCount; I ++ )
+	{
+		
+		OilTypeRef * BranchType = Enum.BranchHasData ( I ) ? Enum.GetBranchDataType ( I ) : NULL;
+		
+		if ( BranchType )
+		{
+			
+			TypeResolutionResult ResolutionResult = OilTypeResolution_TypeRef ( CurrentNS, * BranchType, ( TemplateDef != NULL ) ? & TemplateNames : NULL, true );
+			
+			if ( ResolutionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ResolutionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ResolutionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return ResolutionResult;
+			
+		}
+		
+	}
+	
+	DestroyFlatNameList ( TemplateNames );
 	
 	if ( Unresolved )
 	{

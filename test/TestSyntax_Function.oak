@@ -5,7 +5,7 @@ namespace TestNS
 	struct MyStruct <A>
 	{
 		
-		bind a: A
+		a: A
 		
 	}
 	

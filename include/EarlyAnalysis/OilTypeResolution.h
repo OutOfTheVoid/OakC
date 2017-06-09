@@ -36,7 +36,7 @@ class OilAllusion;
 class OilTraitDefinition;
 class OilTraitFunction;
 class OilTraitMethod;
-
+class OilEnum;
 
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, FlatNameList * TemplateNames = NULL, bool AllowSelfType = false );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, FlatNameList * TemplateNames = NULL, bool AllowSelfType = false );
@@ -53,8 +53,9 @@ TypeResolutionResult OilTypeResolution_Allusion ( OilNamespaceDefinition & Curre
 TypeResolutionResult OilTypeResolution_Trait ( OilNamespaceDefinition & CurrentNS, OilTraitDefinition & Trait );
 TypeResolutionResult OilTypeResolution_TraitFunction ( OilNamespaceDefinition & CurrentNS, OilTraitFunction & Function, FlatNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TraitMethod ( OilNamespaceDefinition & CurrentNS, OilTraitMethod & Method, FlatNameList * TemplateNames = NULL );
+TypeResolutionResult OilTypeResolution_Enum ( OilNamespaceDefinition & CurrentNS, OilEnum & Enum );
 
-TypeResolutionResult OilTypeResolution_StructDefinitions ( OilNamespaceDefinition & RootNS );
+TypeResolutionResult OilTypeResolution_TypeDefinitions ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilTypeResolution_Constants ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilTypeResolution_Bindings ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilTypeResolution_Functions ( OilNamespaceDefinition & RootNS );

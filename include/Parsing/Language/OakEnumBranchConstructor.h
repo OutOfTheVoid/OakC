@@ -1,12 +1,12 @@
-#ifndef PARSING_LANGUAGE_OAKENUMCONSTRUCTOR
-#define PARSING_LANGUAGE_OAKENUMCONSTRUCTOR
+#ifndef PARSING_LANGUAGE_OAKENUMBRANCHCONSTRUCTOR
+#define PARSING_LANGUAGE_OAKENUMBRANCHCONSTRUCTOR
 
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
 #include <string>
 
-class OakEnumConstructor : public virtual IASTConstructor
+class OakEnumBranchConstructor : public virtual IASTConstructor
 {
 public:
 	
@@ -14,23 +14,22 @@ public:
 	{
 		
 		std :: u32string Name;
-		bool Templated;
+		bool HasData;
 		
 	} ElementData;
 	
-	OakEnumConstructor ();
-	~OakEnumConstructor ();
+	OakEnumBranchConstructor ();
+	~OakEnumBranchConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakEnumConstructor Instance;
+	static OakEnumBranchConstructor Instance;
 	
 private:
 	
 	static void ElementDataDestructor ( void * Data );
 	
-	ASTConstructionGroup TemplateGroup;
-	ASTConstructionGroup EnumBodyGroup;
+	ASTConstructionGroup TypeGroup;
 	
 };
 

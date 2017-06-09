@@ -30,7 +30,7 @@ namespace NS
 	struct T
 	{
 		
-		bind o:bool
+		o:bool
 		
 	}
 	

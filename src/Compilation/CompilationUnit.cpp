@@ -335,7 +335,7 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 		
 	}
 	
-	TypeResolutionResult ResolveResult_Structs = OilTypeResolution_StructDefinitions ( RootNS );
+	TypeResolutionResult ResolveResult_Structs = OilTypeResolution_TypeDefinitions ( RootNS );
 	
 	if ( ResolveResult_Structs == kTypeResolutionResult_Success_Complete )
 		Progress = true;

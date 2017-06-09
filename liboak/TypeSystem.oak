@@ -1,0 +1,18 @@
+import "liboak/LangTraits.oak";
+
+// these makes casting/converting prettier
+// ex: my_var::Cast<i32>.cast (); vs cast <my_var_type, i32> ( my_var );
+
+function cast <FROM_T: Cast:<TO_T>, TO_T> ( x: & FROM_T ): TO_T
+{
+	
+	return x::Cast:<TO_T>.cast ();
+	
+}
+
+function convert <FROM_T: Into:<TO_T>, TO_T> ( x: FROM_T ): TO_T
+{
+	
+	return x::Into:<TO_T>.into ();
+	
+}

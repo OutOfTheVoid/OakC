@@ -1,0 +1,10 @@
+enum Number32
+{
+	
+	Float: f32,
+	Integer: i32,
+	Nan,
+	
+}
+
+bind x:f32;

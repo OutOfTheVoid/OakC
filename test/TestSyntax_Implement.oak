@@ -19,7 +19,7 @@ namespace MyNS
 	struct Test
 	{
 		
-		bind A:i32
+		A:i32
 		
 	}
 	

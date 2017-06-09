@@ -49,6 +49,7 @@
 #include <OIL/OilFunctionCallParameterList.h>
 #include <OIL/OilStructLiteral.h>
 #include <OIL/OilStructInitializerValue.h>
+#include <OIL/OilEnum.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -86,6 +87,9 @@
 #include <Parsing/Language/OakDecoratorTagConstructor.h>
 #include <Parsing/Language/OakAliasDeclarationConstructor.h>
 #include <Parsing/Language/OakStructLiteralMemberValueConstructor.h>
+#include <Parsing/Language/OakEnumConstructor.h>
+#include <Parsing/Language/OakEnumBranchConstructor.h>
+#include <Parsing/Language/OakMemberAccessNameConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -102,6 +106,7 @@ void WriteError ( const ASTElement * SourceRef, std :: string Error );
 
 bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNamespaceDefinition & Container, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
 bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespaceDefinition & Container, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
+bool OakTranslateEnumToOil ( const ASTElement * EnumElement, OilNamespaceDefinition & Container, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
 OilTemplateDefinition * OakTranslateTemplateDefinitionToOil ( const ASTElement * TemplateDefinitionElement );
 OilTemplateDefinition * OakTranslateWhereClauseToOil ( const ASTElement * WhereDefinitionElement );
 OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTElement * TemplateSpecificationElement );
@@ -219,6 +224,37 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 				}
 				
 				Decorators.push_back ( Decorator );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_Enum:
+			{
+				
+				if ( ! OakTranslateEnumToOil ( SubElement, GlobalNS, & Decorators [ 0 ], Decorators.size () ) )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				while ( Decorators.size () != 0 )
+				{
+					
+					delete Decorators [ Decorators.size () - 1 ];
+					
+					Decorators.pop_back ();
+					
+				}
 				
 			}
 			break;
@@ -455,6 +491,8 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					
 				}
 				
+				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				
 				while ( Decorators.size () != 0 )
 				{
 					
@@ -463,9 +501,6 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					Decorators.pop_back ();
 					
 				}
-				
-				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
-				Decorators.clear ();
 				
 				if ( TraitDefinition == NULL )
 					return false;
@@ -680,6 +715,37 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 				}
 				
 				Decorators.push_back ( Decorator );
+				
+			}
+			break;
+			
+			case OakASTTags :: kASTTag_Enum:
+			{
+				
+				if ( ! OakTranslateEnumToOil ( SubElement, * DefinedNamespaceDefinition, & Decorators [ 0 ], Decorators.size () ) )
+				{
+					
+					while ( Decorators.size () != 0 )
+					{
+						
+						delete Decorators [ Decorators.size () - 1 ];
+						
+						Decorators.pop_back ();
+						
+					}
+					
+					return false;
+					
+				}
+				
+				while ( Decorators.size () != 0 )
+				{
+					
+					delete Decorators [ Decorators.size () - 1 ];
+					
+					Decorators.pop_back ();
+					
+				}
 				
 			}
 			break;
@@ -1135,6 +1201,108 @@ bool OakTranslateStructTreeToOil ( const ASTElement * StructElement, OilNamespac
 		Container.AddTypeDefinition ( new OilTypeDefinition ( Ref, StructDef ) );
 		
 	}
+	
+	return true;
+	
+}
+
+bool OakTranslateEnumToOil ( const ASTElement * EnumElement, OilNamespaceDefinition & Container, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount )
+{
+	
+	(void) Decorators;
+	(void) DecoratorCount;
+	
+	if ( ( EnumElement == NULL ) || ( EnumElement -> GetTag () != OakASTTags :: kASTTag_Enum ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+		
+		return false;
+		
+	}
+	
+	const OakEnumConstructor :: ElementData * EnumData = reinterpret_cast <const OakEnumConstructor :: ElementData *> ( EnumElement -> GetData () );
+	
+	OilNamespaceDefinition :: NameSearchResult SearchResult;
+	
+	Container.SearchName ( EnumData -> Name, SearchResult );
+	
+	if ( SearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_None )
+	{
+		
+		WriteError ( EnumElement, "Name of enum conflicts with previous definition in namespace" );
+		
+		return false;
+		
+	}
+	
+	OilEnum * Enum;
+	uint32_t BranchIndex;
+	
+	if ( EnumData -> Templated )
+	{
+		
+		OilTemplateDefinition * Template = OakTranslateTemplateDefinitionToOil ( EnumElement -> GetSubElement ( 0 ) );
+		
+		if ( Template == NULL )
+			return false;
+		
+		Enum = new OilEnum ( EnumElement -> GetToken ( 0, 0 ) -> GetSourceRef (), EnumData -> Name, Template );
+		BranchIndex = 1;
+		
+	}
+	else
+	{
+		
+		Enum = new OilEnum ( EnumElement -> GetToken ( 0, 0 ) -> GetSourceRef (), EnumData -> Name );
+		BranchIndex = 0;
+		
+	}
+	
+	const ASTElement * BranchElement = EnumElement -> GetSubElement ( BranchIndex );
+	
+	while ( BranchElement != NULL )
+	{
+		
+		if ( BranchElement -> GetTag () != OakASTTags :: kASTTag_EnumBranch )
+		{
+			
+			delete Enum;
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+			
+			return false;
+			
+		}
+		
+		const OakEnumBranchConstructor :: ElementData * BranchData = reinterpret_cast <const OakEnumBranchConstructor :: ElementData *> ( BranchElement -> GetData () );
+		
+		if ( BranchData -> HasData )
+		{
+			
+			OilTypeRef * EnumBranchType = OakTranslateTypeRefToOil ( BranchElement -> GetSubElement ( 0 ) );
+			
+			if ( EnumBranchType == NULL )
+			{
+				
+				delete Enum;
+				
+				return false;
+				
+			}
+			
+			Enum -> AddDataBranch ( BranchElement -> GetToken ( 0, 0 ) -> GetSourceRef (), BranchData -> Name, EnumBranchType );
+			
+		}
+		else
+			Enum -> AddBranch ( BranchElement -> GetToken ( 0, 0 ) -> GetSourceRef (), BranchData -> Name );
+		
+		BranchIndex ++;
+		BranchElement = EnumElement -> GetSubElement ( BranchIndex );
+		
+	}
+	
+	Container.AddTypeDefinition ( new OilTypeDefinition ( EnumElement -> GetToken ( 0, 0 ) -> GetSourceRef (), Enum ) );
 	
 	return true;
 	
@@ -4121,9 +4289,23 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 			else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_MemberAccess )
 			{
 				
-				const ASTElement * MemberNameElement = OperatorElement -> GetSubElement ( 1 );
+				const ASTElement * MemberAccessElement = OperatorElement -> GetSubElement ( 1 );
 				
-				return new OilUnaryOperator ( Ref, PrimaryTerm, MemberNameElement -> GetToken ( 0, 0 ) -> GetSource () );
+				const OakMemberAccessNameConstructor :: ElementData * MemberAccessData = reinterpret_cast <const OakMemberAccessNameConstructor :: ElementData *> ( MemberAccessElement -> GetData () );
+				
+				if ( MemberAccessData -> Templated )
+				{
+					
+					OilTemplateSpecification * MemberAccessTemplate = OakTranslateTemplateSpecificationToOil ( MemberAccessElement -> GetSubElement ( 0 ) );
+					
+					if ( MemberAccessTemplate == NULL )
+						return NULL;
+					
+					return new OilUnaryOperator ( Ref, PrimaryTerm, MemberAccessData -> Name, MemberAccessTemplate );
+					
+				}
+				
+				return new OilUnaryOperator ( Ref, PrimaryTerm, MemberAccessData -> Name );
 				
 			}
 			else
@@ -4468,9 +4650,6 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement, c
 	}
 	
 	OilTraitDefinition * TraitDef = new OilTraitDefinition ( Ref, TraitData -> Name, & RequiredTraitRefs [ 0 ], RequiredTraitRefs.size (), & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition, Builtin );
-	
-	if ( TraitDef -> IsBuiltin () && ( ! Builtin ) )
-		LOG_FATALERROR ( "BUILTIN FAILURE" );
 	
 	return TraitDef;
 	

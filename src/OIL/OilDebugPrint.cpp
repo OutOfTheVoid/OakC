@@ -44,6 +44,7 @@
 #include <OIL/OilFunctionCallParameterList.h>
 #include <OIL/OilStructLiteral.h>
 #include <OIL/OilStructInitializerValue.h>
+#include <OIL/OilEnum.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -78,6 +79,7 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & StructDefinition, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintConstStatement ( const OilConstStatement & Constant, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintTypeAlias ( const OilTypeAlias & Alias, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintEnum ( const OilEnum & Enum, uint32_t Indent, const OilPrintOptions & PrintOptions );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS, const OilPrintOptions & PrintOptions )
 {
@@ -642,18 +644,24 @@ void OilPrintTypeDefinition ( const OilTypeDefinition & TypeDefinition, uint32_t
 	
 	LOG_VERBOSE ( PrintString );
 	
-	if ( ! TypeDefinition.IsBuiltinStructure () )
-	{
-		
-		if ( TypeDefinition.GetStructDefinition () != NULL )
-			OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1, PrintOptions );
-		
-	}
-	else
+	if ( TypeDefinition.IsBuiltinStructure () )
 	{
 		
 		if ( TypeDefinition.GetBuiltinStructDefinition () != NULL )
 			OilPrintBuiltinStruct ( * TypeDefinition.GetBuiltinStructDefinition (), Indent + 1, PrintOptions );
+		
+	}
+	else if ( TypeDefinition.IsEnumType () )
+	{
+		
+		if ( TypeDefinition.GetEnum () != NULL )
+			OilPrintEnum ( * TypeDefinition.GetEnum (), Indent + 1, PrintOptions );
+	}
+	else
+	{
+		
+		if ( TypeDefinition.GetStructDefinition () != NULL )
+			OilPrintStruct ( * TypeDefinition.GetStructDefinition (), Indent + 1, PrintOptions );
 		
 	}
 	
@@ -2006,7 +2014,14 @@ std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintO
 		if ( UnOp.GetOp () == OilUnaryOperator :: kOperator_FunctionCall )
 			PrintString += " parameters: " + OilStringFunctionCallParameterList ( * UnOp.GetFunctionCallParameterList (), PrintOptions );
 		if ( UnOp.GetOp () == OilUnaryOperator :: kOperator_MemberAccess )
-			PrintString += " member: " + CodeConversion :: ConvertUTF32ToUTF8 ( UnOp.GetNameForMemberAccess () );
+		{
+			
+			if ( UnOp.IsMemberAccessTempalted () )
+				PrintString += " member: " + CodeConversion :: ConvertUTF32ToUTF8 ( UnOp.GetNameForMemberAccess () ) + " Template: " + OilStringTemplateSpecification ( * UnOp.GetTemplateSpecificationForMemberAccess (), PrintOptions );
+			else
+				PrintString += " member: " + CodeConversion :: ConvertUTF32ToUTF8 ( UnOp.GetNameForMemberAccess () );
+			
+		}
 		
 	}
 	else if ( Operator.GetOperatorType () == IOilOperator :: kOperatorType_Binary )
@@ -2036,5 +2051,68 @@ std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintO
 	PrintString += " )";
 	
 	return PrintString;
+	
+}
+
+void OilPrintEnum ( const OilEnum & Enum, uint32_t Indent, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	if ( Enum.IsTemplated () )
+	{
+		
+		PrintString += "[ENUM Template: ";
+		PrintString += OilStringTemplateDefinition ( * Enum.GetTemplateDefinition (), PrintOptions );
+		
+	}
+	else
+		PrintString += "[ENUM]";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	uint32_t BranchCount = Enum.GetBranchCount ();
+	
+	for ( uint32_t I = 0; I < BranchCount; I ++ )
+	{
+		
+		PrintString = "";
+		
+		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "[BRANCH ";
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Enum.GetBranchName ( I ) );
+		
+		if ( Enum.BranchHasData ( I ) )
+			PrintString += " DataType: " + OilStringTypeRef ( * Enum.GetBranchDataType ( I ), PrintOptions );
+			
+		
+		PrintString += "]";
+		
+		LOG_VERBOSE ( PrintString );
+		
+	}
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
 	
 }

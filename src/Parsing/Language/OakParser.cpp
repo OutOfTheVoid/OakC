@@ -15,6 +15,7 @@
 #include <Parsing/Language/OakConstStatementConstructor.h>
 #include <Parsing/Language/OakDecoratorTagConstructor.h>
 #include <Parsing/Language/OakAliasDeclarationConstructor.h>
+#include <Parsing/Language/OakEnumConstructor.h>
 
 const ASTConstructionGroup * OakParser :: Instance = NULL;
 
@@ -36,6 +37,7 @@ const ASTConstructionGroup & OakParser :: GetOakParser ()
 	NewParser -> AddConstructorCantidate ( & OakConstStatementConstructor :: Instance, 0 );
 	NewParser -> AddConstructorCantidate ( & OakDecoratorTagConstructor :: Instance, 0 );
 	NewParser -> AddConstructorCantidate ( & OakAliasDeclarationConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & OakEnumConstructor :: Instance, 0 );
 	
 	// Just in case
 	NewParser -> AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 1 );

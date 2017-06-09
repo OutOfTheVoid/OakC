@@ -1,4 +1,4 @@
-#include <Parsing/Language/OakStructBindingConstructor.h>
+#include <Parsing/Language/OakEnumBranchConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/ASTElement.h>
@@ -16,9 +16,9 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakStructBindingConstructor OakStructBindingConstructor :: Instance;
+OakEnumBranchConstructor OakEnumBranchConstructor :: Instance;
 
-ASTConstructionGroup :: StaticInitEntry _OakStructBindingConstructor_TypeGroupEntries [] =
+ASTConstructionGroup :: StaticInitEntry _OakEnumBranchConstructor_TypeGroupEntries [] =
 {
 	
 	{ & OakVoidTypeConstructor :: Instance, 0 },
@@ -31,19 +31,19 @@ ASTConstructionGroup :: StaticInitEntry _OakStructBindingConstructor_TypeGroupEn
 	
 };
 
-OakStructBindingConstructor :: OakStructBindingConstructor ():
-	TypeGroup ( _OakStructBindingConstructor_TypeGroupEntries, 6 )
+OakEnumBranchConstructor :: OakEnumBranchConstructor ():
+	TypeGroup ( _OakEnumBranchConstructor_TypeGroupEntries, 6 )
 {
 }
 
-OakStructBindingConstructor :: ~OakStructBindingConstructor ()
+OakEnumBranchConstructor :: ~OakEnumBranchConstructor ()
 {
 }
 
-void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakEnumBranchConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
-	if ( Input.AvailableTokenCount < 4 )
+	if ( Input.AvailableTokenCount < 1 )
 	{
 		
 		Output.Accepted = false;
@@ -63,41 +63,63 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
-	CurrentToken = Input.Tokens [ 1 ];
+	ElementData * EnumBranchData = new ElementData ();
 	
-	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
+	EnumBranchData -> Name = Input.Tokens [ 0 ] -> GetSource ();
+	EnumBranchData -> HasData = false;
+	
+	ASTElement * EnumBranchElement = new ASTElement ();
+	
+	EnumBranchElement -> SetTag ( OakASTTags :: kASTTag_EnumBranch );
+	EnumBranchElement -> SetData ( EnumBranchData, & ElementDataDestructor );
+	
+	if ( Input.AvailableTokenCount < 3 )
 	{
 		
-		Output.Accepted = false;
+		EnumBranchElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+		
+		Output.Accepted = true;
+		Output.TokensConsumed = 1;
+		Output.ConstructedElement = EnumBranchElement;
 		
 		return;
 		
 	}
 	
-	ElementData * StructBindingData = new ElementData ();
+	CurrentToken = Input.Tokens [ 1 ];
 	
-	StructBindingData -> Name = Input.Tokens [ 0 ] -> GetSource ();
+	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
+	{
+		
+		
+		EnumBranchElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+		
+		Output.Accepted = true;
+		Output.TokensConsumed = 1;
+		Output.ConstructedElement = EnumBranchElement;
+		
+		return;
+		
+	}
 	
-	ASTElement * StructBindingElement = new ASTElement ();
+	EnumBranchData -> HasData = true;
 	
-	StructBindingElement -> SetTag ( OakASTTags :: kASTTag_StructBinding );
-	StructBindingElement -> AddTokenSection ( & Input.Tokens [ 0 ], 2 );
-	StructBindingElement -> SetData ( StructBindingData, & ElementDataDestructor );
+	EnumBranchElement -> AddTokenSection ( & Input.Tokens [ 0 ], 2 );
 	
 	bool ConstructionError = false;
 	uint64_t TokenCount = Input.AvailableTokenCount - 2;
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	if ( TypeGroup.TryConstruction ( StructBindingElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
+	if ( TypeGroup.TryConstruction ( EnumBranchElement, 1, ConstructionError, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
-		delete StructBindingElement;
+		delete EnumBranchElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected type name after colon in struct binding";
-		Output.ErrorProvokingToken = Input.Tokens [ 3 ];
+		Output.ErrorSuggestion = "Expected type name after colon in enum branch";
+		Output.ErrorProvokingToken = Input.Tokens [ 2 ];
 		
 		return;
 		
@@ -106,7 +128,7 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	if ( ConstructionError )
 	{
 		
-		delete StructBindingElement;
+		delete EnumBranchElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -119,7 +141,7 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	
 	bool TemplateError = false;
 	
-	ASTElement * TypeElement = StructBindingElement -> GetSubElement ( StructBindingElement -> GetSubElementCount () - 1 );
+	ASTElement * TypeElement = EnumBranchElement -> GetSubElement ( EnumBranchElement -> GetSubElementCount () - 1 );
 	
 	if ( TypeElement -> GetTag () == OakASTTags :: kASTTag_ReferenceType )
 	{
@@ -154,7 +176,7 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	if ( TemplateError )
 	{
 		
-		delete StructBindingElement;
+		delete EnumBranchElement;
 		
 		Output.Accepted = false;
 		Output.Error = true;
@@ -167,11 +189,11 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	
 	Output.Accepted = true;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
-	Output.ConstructedElement = StructBindingElement;
+	Output.ConstructedElement = EnumBranchElement;
 	
 }
 
-void OakStructBindingConstructor :: ElementDataDestructor ( void * Data )
+void OakEnumBranchConstructor :: ElementDataDestructor ( void * Data )
 {
 	
 	delete reinterpret_cast <ElementData *> ( Data );

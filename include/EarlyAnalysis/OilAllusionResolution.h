@@ -1,6 +1,8 @@
 #ifndef EARLYANALYSIS_OILALLUSIONRESOLUTION_H
 #define EARLYANALYSIS_OILALLUSIONRESOLUTION_H
 
+class OilNamespaceDefinition;
+
 enum AllusionResolutionResult
 {
 	
@@ -8,7 +10,7 @@ enum AllusionResolutionResult
 	kAllusionResolutionResult_Success_Progress,
 	kAllusionResolutionResult_Success_NoProgress
 	
-}
+};
 
 AllusionResolutionResult OilAllusionResolution_Namespace ( OilNamespaceDefinition & NS );
 

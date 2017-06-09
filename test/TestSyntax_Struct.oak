@@ -1,23 +1,23 @@
 struct Box
 {
 	
-	bind boo:u32,
-	bind bat: i32
+	boo:u32,
+	bat: i32
 	
 }
 
 struct Bar
 {
 	
-	bind bat:i32,
-	bind baz:Box,
+	bat:i32,
+	baz:Box,
 	
 }
 
 function TestFunc (): void
 {
 	
-	bind foo: Bar;
+	foo:: Bar;
 	
 	foo.baz.boo;
 	
