@@ -5,7 +5,7 @@
 
 #include <Parsing/Language/OakLiteralExpressionConstructor.h>
 #include <Parsing/Language/OakParenthesizedExpressionConstructor.h>
-#include <Parsing/Language/OakBindingAllusionConstructor.h>
+#include <Parsing/Language/OakAllusionConstructor.h>
 #include <Parsing/Language/OakSelfAllusionConstructor.h>
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
 #include <Parsing/Language/OakStructLiteralConstructor.h>
@@ -20,7 +20,7 @@ ASTConstructionGroup :: StaticInitEntry _OakPrimaryExpressionConstructor_Primary
 	{ & OakArrayLiteralConstructor :: Instance, 1 },
 	{ & OakStructLiteralConstructor :: Instance, 1 },
 	{ & OakSelfAllusionConstructor :: Instance, 2 },
-	{ & OakBindingAllusionConstructor :: Instance, 2 },
+	{ & OakAllusionConstructor :: Instance, 2 },
 	
 };
 

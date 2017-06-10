@@ -65,7 +65,7 @@ namespace OakASTTags
 	const uint64_t kASTTag_LiteralExpression = 37;
 	const uint64_t kASTTag_ParenthesizedExpression = 38;
 	
-	const uint64_t kASTTag_BindingAllusion = 39;
+	const uint64_t kASTTag_Allusion = 39;
 	
 	const uint64_t kASTTag_Operator_PostfixIncrement = 40;
 	const uint64_t kASTTag_Operator_PostfixDecrement = 41;
@@ -161,8 +161,11 @@ namespace OakASTTags
 	const uint64_t kASTTag_Enum = 107;
 	const uint64_t kASTTag_EnumBranch = 108;
 	
-	
 	const uint64_t kASTTag_Match = 109;
+	const uint64_t kASTTag_MatchBranch = 110;
+	
+	const uint64_t kASTTag_StructDestructure = 111;
+	const uint64_t kASTTag_MemberDestructure = 112;
 	
 	const char * const TagNames [] =
 	{
@@ -206,7 +209,7 @@ namespace OakASTTags
 		"PRIMARY_EXPRESSION",
 		"LITERAL_EXPRESSION",
 		"PARENTHESIZED_EXPRESSION",
-		"BINDING_ALLUSION",
+		"ALLUSION",
 		"OPERATOR_POSTFIX_INCREMENT",
 		"OPERATOR_POSTFIX_DECREMENT",
 		"OPERATOR_PREFIX_INCREMENT",
@@ -277,6 +280,9 @@ namespace OakASTTags
 		"ENUM",
 		"ENUM_BRANCH",
 		"MATCH",
+		"MATCH_BRANCH",
+		"DESTRUCTURE_STRUCT",
+		"DESTRUCTURE_MEMBER",
 		
 	};
 	

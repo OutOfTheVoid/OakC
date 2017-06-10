@@ -1,4 +1,4 @@
-#include <Parsing/Language/OakBindingAllusionConstructor.h>
+#include <Parsing/Language/OakAllusionConstructor.h>
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
@@ -14,25 +14,25 @@
 	#define NULL nullptr
 #endif
 
-OakBindingAllusionConstructor OakBindingAllusionConstructor :: Instance;
+OakAllusionConstructor OakAllusionConstructor :: Instance;
 
-ASTConstructionGroup :: StaticInitEntry _OakBindingAllusionConstructor_TemplateSpecificationGroupEntries [] =
+ASTConstructionGroup :: StaticInitEntry _OakAllusionConstructor_TemplateSpecificationGroupEntries [] =
 {
 	
 	{ & OakTemplateSpecificationConstructor :: Instance, 0 }
 	
 };
 
-OakBindingAllusionConstructor :: OakBindingAllusionConstructor ():
-	TemplateSpecificationGroup ( _OakBindingAllusionConstructor_TemplateSpecificationGroupEntries, 1 )
+OakAllusionConstructor :: OakAllusionConstructor ():
+	TemplateSpecificationGroup ( _OakAllusionConstructor_TemplateSpecificationGroupEntries, 1 )
 {
 }
 
-OakBindingAllusionConstructor :: ~OakBindingAllusionConstructor ()
+OakAllusionConstructor :: ~OakAllusionConstructor ()
 {
 }
 
-void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
+void OakAllusionConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
 	uint64_t Offset = 0;
@@ -78,7 +78,7 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	Offset ++;
 	
 	ASTElement * AllusionElement = new ASTElement ();
-	AllusionElement -> SetTag ( OakASTTags :: kASTTag_BindingAllusion );
+	AllusionElement -> SetTag ( OakASTTags :: kASTTag_Allusion );
 	AllusionElement -> AddTokenSection ( & Input.Tokens [ 0 ], Offset );
 	
 	bool Error = false;
@@ -86,7 +86,7 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
-	ASTElement * TemplateElement = TemplateSpecificationGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_BindingAllusion, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
+	ASTElement * TemplateElement = TemplateSpecificationGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_Allusion, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 	
 	if ( Error )
 	{
@@ -169,7 +169,7 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 		
 		NamespaceChain.push_back ( CurrentToken -> GetSource () );
 		
-		TemplateElement = TemplateSpecificationGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_BindingAllusion, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
+		TemplateElement = TemplateSpecificationGroup.TryConstructSingleNoParent ( OakASTTags :: kASTTag_Allusion, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 		
 		if ( Error )
 		{
@@ -244,7 +244,7 @@ void OakBindingAllusionConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	
 }
 
-void OakBindingAllusionConstructor :: ElementDataDestructor ( void * Data )
+void OakAllusionConstructor :: ElementDataDestructor ( void * Data )
 {
 	
 	ElementData * EData = reinterpret_cast <ElementData *> ( Data );

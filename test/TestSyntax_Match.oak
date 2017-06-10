@@ -1,8 +1,17 @@
+struct some_struct
+{
+	
+	X: i32,
+	Y: i32,
+	
+}
+
 enum E
 {
 	
-	A,
-	B
+	A: i32,
+	B: some_struct,
+	C,
 	
 }
 
@@ -14,7 +23,26 @@ function Test ()
 	match ( e )
 	{
 		
+		E::A ( x ):
+		{
+			
+			
+			
+		}
 		
+		E::B { X: x, Y: y }:
+		{
+			
+			
+			
+		}
+		
+		E::C:
+		{
+			
+			
+			
+		}
 		
 	}
 	

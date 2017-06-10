@@ -72,7 +72,7 @@
 #include <Parsing/Language/OakIgnoreStatementConstructor.h>
 #include <Parsing/Language/OakBindingStatementConstructor.h>
 #include <Parsing/Language/OakConstStatementConstructor.h>
-#include <Parsing/Language/OakBindingAllusionConstructor.h>
+#include <Parsing/Language/OakAllusionConstructor.h>
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
 #include <Parsing/Language/OakTraitDefinitionConstructor.h>
 #include <Parsing/Language/OakTraitFunctionConstructor.h>
@@ -3317,10 +3317,10 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 		case OakASTTags :: kASTTag_SelfAllusion:
 			return new OilAllusion ( Ref, OilAllusion :: SELF_ALLUSION );
 		
-		case OakASTTags :: kASTTag_BindingAllusion:
+		case OakASTTags :: kASTTag_Allusion:
 		{
 			
-			const OakBindingAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakBindingAllusionConstructor :: ElementData *> ( SubElement -> GetData () );
+			const OakAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakAllusionConstructor :: ElementData *> ( SubElement -> GetData () );
 			
 			if ( AllusionData -> IdentListLength > 1 )
 			{

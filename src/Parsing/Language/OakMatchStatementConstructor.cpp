@@ -1,4 +1,5 @@
 #include <Parsing/Language/OakMatchStatementConstructor.h>
+#include <Parsing/Language/OakMatchBranchConstructor.h>
 #include <Parsing/Language/OakExpressionConstructor.h>
 #include <Parsing/Language/OakParsingUtils.h>
 #include <Parsing/Language/OakASTTags.h>
@@ -9,8 +10,6 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-#include <Logging/Logging.h>
-
 OakMatchStatementConstructor OakMatchStatementConstructor :: Instance;
 
 ASTConstructionGroup :: StaticInitEntry _OakMatchStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
@@ -18,13 +17,13 @@ ASTConstructionGroup :: StaticInitEntry _OakMatchStatementConstructor_Expression
 ASTConstructionGroup :: StaticInitEntry _OakMatchStatementConstructor_MatchesGroupEntries [] =
 {
 	
-	{ NULL, 0 }
+	{ & OakMatchBranchConstructor :: Instance, 0 }
 	
 };
 
 OakMatchStatementConstructor :: OakMatchStatementConstructor ():
 	ExpressionGroup ( _OakMatchStatementConstructor_ExpressionGroupEntries, 1 ),
-	MatchesGroup ( _OakMatchStatementConstructor_MatchesGroupEntries, 0 )
+	MatchesGroup ( _OakMatchStatementConstructor_MatchesGroupEntries, 1 )
 {	
 }
 
@@ -66,8 +65,6 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		
 	}
 	
-	LOG ( "A" );
-	
 	ASTElement * MatchElement = new ASTElement ();
 	
 	MatchElement -> SetTag ( OakASTTags :: kASTTag_Match );
@@ -91,8 +88,6 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		return;
 		
 	}
-	
-	LOG ( "B" );
 	
 	if ( Error )
 	{
@@ -122,8 +117,6 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		
 	}
 	
-	LOG ( "C" );
-	
 	CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Parenthesis_Close )
@@ -139,8 +132,6 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		return;
 		
 	}
-	
-	LOG ( "D" );
 	
 	TokenCount --;
 	
@@ -174,15 +165,41 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		
 	}
 	
-	LOG ( "E" );
+	TokenCount --;
 	
 	MatchElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount - 1 ], 2 );
 	
 	TokenCount --;
 	
-	// TODO: parse match body
+	if ( TokenCount == 0 )
+	{
+		
+		delete MatchElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = "Expected closing curly bracket at end of match statement";
+		Output.ErrorProvokingToken = CurrentToken;
+		
+		return;
+		
+	}
 	
+	MatchesGroup.TryConstruction ( MatchElement, 0xFFFFFFFF, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount );
 	
+	if ( Error )
+	{
+		
+		delete MatchElement;
+		
+		Output.Accepted = false;
+		Output.Error = true;
+		Output.ErrorSuggestion = ErrorString;
+		Output.ErrorProvokingToken = ErrorToken;
+		
+		return;
+		
+	}
 	
 	if ( TokenCount == 0 )
 	{
@@ -207,7 +224,7 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected opening curly bracket after matchee expression in match statement";
+		Output.ErrorSuggestion = "Expected closing curly bracket after matchee expression in match statement";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;

@@ -1,10 +1,10 @@
-#ifndef PARSING_LANGUAGE_OAKBINDINGALLUSIONCONSTRUCTOR_H
-#define PARSING_LANGUAGE_OAKBINDINGALLUSIONCONSTRUCTOR_H
+#ifndef PARSING_LANGUAGE_OAKALLUSIONCONSTRUCTOR_H
+#define PARSING_LANGUAGE_OAKALLUSIONCONSTRUCTOR_H
 
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
-class OakBindingAllusionConstructor : public virtual IASTConstructor
+class OakAllusionConstructor : public virtual IASTConstructor
 {
 public:
 	
@@ -28,12 +28,12 @@ public:
 		
 	} ElementData;
 	
-	OakBindingAllusionConstructor ();
-	~OakBindingAllusionConstructor ();
+	OakAllusionConstructor ();
+	~OakAllusionConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakBindingAllusionConstructor Instance;
+	static OakAllusionConstructor Instance;
 	
 private:
 	
