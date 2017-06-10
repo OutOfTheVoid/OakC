@@ -15,6 +15,7 @@
 #include <Parsing/Language/OakBreakStatementConstructor.h>
 #include <Parsing/Language/OakBindingStatementConstructor.h>
 #include <Parsing/Language/OakConstStatementConstructor.h>
+#include <Parsing/Language/OakMatchStatementConstructor.h>
 
 #include <Tokenization/Language/OakTokenTags.h>
 
@@ -35,6 +36,7 @@ ASTConstructionGroup :: StaticInitEntry _OakStatementBlockConstructor_StatementG
 	{ & OakLoopStatementConstructor :: Instance, 0 },
 	{ & OakConstStatementConstructor :: Instance, 0 },
 	{ & OakBindingStatementConstructor :: Instance, 0 },
+	{ & OakMatchStatementConstructor :: Instance, 0 },
 	{ & OakExpressionStatementConstructor :: Instance, 1 },
 	
 	{ & OakStatementBlockConstructor :: Instance, 1 },
@@ -42,7 +44,7 @@ ASTConstructionGroup :: StaticInitEntry _OakStatementBlockConstructor_StatementG
 };
 
 OakStatementBlockConstructor :: OakStatementBlockConstructor ():
-	StatementGroup ( _OakStatementBlockConstructor_StatementGroupEntries, 13 )
+	StatementGroup ( _OakStatementBlockConstructor_StatementGroupEntries, 14 )
 {
 }
 

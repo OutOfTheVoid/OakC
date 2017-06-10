@@ -61,6 +61,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Require = 49;
 	const uint64_t kKeywordAuxTags_Where = 50;
 	const uint64_t kKeywordAuxTags_Alias = 51;
+	const uint64_t kKeywordAuxTags_Other = 52;
 	
 	const uint64_t kKeywordAuxTags_Mask_Meaning = 0xFFF;
 	
@@ -70,7 +71,7 @@ namespace OakKeywordTokenTags
 	const uint64_t kKeywordAuxTags_Localization_EN = 0x00000;
 	const uint64_t kKeywordAuxTags_Localization_FR = 0x00001;
 	
-	/// A list of the human-readable forms of kewords.
+	/// A list of the human-readable forms of keywords.
 	const char * const KeywordAuxTagNames [] =
 	{
 		
@@ -126,6 +127,7 @@ namespace OakKeywordTokenTags
 		"REQUIRE",
 		"WHERE",
 		"ALIAS",
+		"OTHER",
 		
 	};
 	

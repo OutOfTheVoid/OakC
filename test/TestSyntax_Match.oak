@@ -1,0 +1,21 @@
+enum E
+{
+	
+	A,
+	B
+	
+}
+
+function Test ()
+{
+	
+	bind e:E = E::A ();
+	
+	match ( e )
+	{
+		
+		
+		
+	}
+	
+}
