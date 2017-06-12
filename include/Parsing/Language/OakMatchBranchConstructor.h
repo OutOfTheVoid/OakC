@@ -27,7 +27,10 @@ public:
 		
 	} ElementData;
 	
-	OakMatchBranchConstructor ();
+	OakMatchBranchConstructor ( OilLiteralExpression * LiteralMatch, OilStatementBlock * Block );
+	OakMatchBranchConstructor ( OilArrayLiteral * LiteralMatch, OilStatementBlock * Block );
+	OakMatchBranchConstructor ( OilStructLiteral * StructLiteralMatch, OilStatementBlock * Block );
+	
 	~OakMatchBranchConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;

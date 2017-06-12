@@ -14,6 +14,7 @@ public:
 		kStatementType_Expression,
 		kStatementType_Return,
 		kStatementType_IfElse,
+		kStatementType_Match,
 		kStatementType_WhileLoop,
 		kStatementType_DoWhileLoop,
 		kStatementType_Loop,
