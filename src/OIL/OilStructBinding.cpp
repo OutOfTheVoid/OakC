@@ -1,10 +1,11 @@
 #include <OIL/OilStructBinding.h>
 #include <OIL/OilTypeRef.h>
 
-OilStructBinding :: OilStructBinding ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef * TypeRef ):
+OilStructBinding :: OilStructBinding ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef * TypeRef, bool Public ):
 	Name ( Name ),
 	TypeRef ( TypeRef ),
-	Ref ( Ref )
+	Ref ( Ref ),
+	Public ( Public )
 {
 }
 
@@ -40,5 +41,12 @@ const SourceRef & OilStructBinding :: GetSourceRef () const
 {
 	
 	return Ref;
+	
+}
+
+bool OilStructBinding :: IsPublic () const
+{
+	
+	return Public;
 	
 }

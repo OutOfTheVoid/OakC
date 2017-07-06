@@ -1609,7 +1609,7 @@ OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingEl
 	
 	const OakStructBindingConstructor :: ElementData * BindingData = reinterpret_cast <const OakStructBindingConstructor :: ElementData *> ( BindingElement -> GetData () );
 	
-	return new OilStructBinding ( Ref, BindingData -> Name, BindingType );
+	return new OilStructBinding ( Ref, BindingData -> Name, BindingType, BindingData -> Public );
 	
 }
 

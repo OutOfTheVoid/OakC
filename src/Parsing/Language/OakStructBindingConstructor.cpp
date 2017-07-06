@@ -43,7 +43,7 @@ OakStructBindingConstructor :: ~OakStructBindingConstructor ()
 void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {
 	
-	if ( Input.AvailableTokenCount < 4 )
+	if ( Input.AvailableTokenCount < 3 )
 	{
 		
 		Output.Accepted = false;
@@ -54,6 +54,17 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	
 	const Token * CurrentToken = Input.Tokens [ 0 ];
 	
+	bool Public = false;
+	
+	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Public ) )
+	{
+		
+		Public = true;
+		
+		CurrentToken = Input.Tokens [ 1 ];
+		
+	}
+	
 	if ( ! OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Ident ) )
 	{
 		
@@ -63,7 +74,7 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 		
 	}
 	
-	CurrentToken = Input.Tokens [ 1 ];
+	CurrentToken = Input.Tokens [ Public ? 2 : 1 ];
 	
 	if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
 	{
@@ -76,16 +87,17 @@ void OakStructBindingConstructor :: TryConstruct ( ASTConstructionInput & Input,
 	
 	ElementData * StructBindingData = new ElementData ();
 	
-	StructBindingData -> Name = Input.Tokens [ 0 ] -> GetSource ();
+	StructBindingData -> Name = Input.Tokens [ Public ? 1 : 0 ] -> GetSource ();
+	StructBindingData -> Public = Public;
 	
 	ASTElement * StructBindingElement = new ASTElement ();
 	
 	StructBindingElement -> SetTag ( OakASTTags :: kASTTag_StructBinding );
-	StructBindingElement -> AddTokenSection ( & Input.Tokens [ 0 ], 2 );
+	StructBindingElement -> AddTokenSection ( & Input.Tokens [ 0 ], Public ? 3 : 2 );
 	StructBindingElement -> SetData ( StructBindingData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;
-	uint64_t TokenCount = Input.AvailableTokenCount - 2;
+	uint64_t TokenCount = Input.AvailableTokenCount - ( Public ? 3 : 2 );
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	

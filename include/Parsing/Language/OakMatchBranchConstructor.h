@@ -4,6 +4,11 @@
 #include <Parsing/IASTConstructor.h>
 #include <Parsing/ASTConstructionGroup.h>
 
+class OilLiteralExpression;
+class OilArrayLiteral;
+class OilStructLiteral;
+class OilStatementBlock;
+
 class OakMatchBranchConstructor : public virtual IASTConstructor
 {
 public:
@@ -27,10 +32,7 @@ public:
 		
 	} ElementData;
 	
-	OakMatchBranchConstructor ( OilLiteralExpression * LiteralMatch, OilStatementBlock * Block );
-	OakMatchBranchConstructor ( OilArrayLiteral * LiteralMatch, OilStatementBlock * Block );
-	OakMatchBranchConstructor ( OilStructLiteral * StructLiteralMatch, OilStatementBlock * Block );
-	
+	OakMatchBranchConstructor ();
 	~OakMatchBranchConstructor ();
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
@@ -44,7 +46,7 @@ private:
 	ASTConstructionGroup LiteralGroup;
 	ASTConstructionGroup DestructureGroup;
 	ASTConstructionGroup AllusionGroup;
-	ASTConstructionGroup StatementBlockGroup;
+	ASTConstructionGroup StatementBlockGroup; // macpeers
 	
 };
 

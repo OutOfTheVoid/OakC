@@ -11,7 +11,7 @@ class OilStructBinding
 {
 public:
 	
-	OilStructBinding ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef * TypeRef );
+	OilStructBinding ( const SourceRef & Ref, const std :: u32string & Name, OilTypeRef * TypeRef, bool Public );
 	~OilStructBinding ();
 	
 	const std :: u32string & GetName () const;
@@ -21,12 +21,16 @@ public:
 	
 	const SourceRef & GetSourceRef () const;
 	
+	bool IsPublic () const;
+	
 private:
 	
 	const std :: u32string Name;
 	OilTypeRef * TypeRef;
 	
 	SourceRef Ref;
+	
+	bool Public;
 	
 };
 

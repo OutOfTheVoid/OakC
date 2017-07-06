@@ -13,6 +13,8 @@ public:
 		
 		std :: u32string Name;
 		
+		bool Public;
+		
 	} ElementData;
 	
 	OakStructBindingConstructor ();
