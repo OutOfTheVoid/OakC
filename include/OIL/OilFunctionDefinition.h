@@ -15,10 +15,10 @@ class OilFunctionDefinition
 {
 public:
 	
-	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType );
-	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
-	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType );
-	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
+	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, bool ReturnTypeMutable );
+	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, bool ReturnTypeMutable, OilTemplateDefinition * TemplateDefinition );
+	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType, bool ReturnTypeMutable );
+	OilFunctionDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilFunctionParameterList * ParameterList, void * NativeFunctionData, uint64_t NativeFunctionTag, OilTypeRef * ReturnType, bool ReturnTypeMutable, OilTemplateDefinition * TemplateDefinition );
 	~OilFunctionDefinition ();
 	
 	const std :: u32string GetName () const;
@@ -35,8 +35,9 @@ public:
 	OilTemplateDefinition * GetTemplateDefinition ();
 	
 	const OilTypeRef * GetReturnType () const;
-	
 	OilTypeRef * GetReturnType ();
+	
+	bool GetReturnTypeMutable () const;
 	
 	void * GetNativeFunctionData ();
 	const void * GetNativeFunctionData () const;
@@ -63,6 +64,7 @@ private:
 	OilTemplateDefinition * TemplateDefinition;
 	OilFunctionParameterList * ParameterList;
 	OilTypeRef * ReturnType;
+	bool ReturnTypeMutable;
 	
 	bool NativeFunction;
 	

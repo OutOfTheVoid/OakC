@@ -13,8 +13,8 @@ class OilTraitMethod
 {
 public:
 	
-	OilTraitMethod ( const SourceRef & Ref, const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType );
-	OilTraitMethod ( const SourceRef & Ref, const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
+	OilTraitMethod ( const SourceRef & Ref, const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType, bool ReturnTypeMutable );
+	OilTraitMethod ( const SourceRef & Ref, const std :: u32string & Name, OilMethodParameterList * ParameterList, OilTypeRef * ReturnType, bool ReturnTypeMutable, OilTemplateDefinition * TemplateDefinition );
 	~OilTraitMethod ();
 	
 	const std :: u32string & GetName () const;
@@ -30,6 +30,8 @@ public:
 	const OilTypeRef * GetReturnType () const;
 	OilTypeRef * GetReturnType ();
 	
+	bool GetReturnTypeMutable () const;
+	
 	bool HasReturnType () const;
 	
 	const SourceRef & GetSourceRef () const;
@@ -40,6 +42,7 @@ private:
 	
 	OilMethodParameterList * ParameterList;
 	OilTypeRef * ReturnType;
+	bool ReturnTypeMutable;
 	OilTemplateDefinition * TemplateDefinition;
 	
 	SourceRef Ref;

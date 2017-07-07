@@ -3,25 +3,27 @@
 #include <OIL/OilMethodParameterList.h>
 #include <OIL/OilStatementBody.h>
 
-OilMethodDefinition :: OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType ):
+OilMethodDefinition :: OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType, bool ReturnTypeMutable ):
 	Name ( Name ),
 	Public ( Public ),
 	Inline ( Inline ),
 	TemplateDefinition ( NULL ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
+	ReturnTypeMutable ( ReturnTypeMutable ),
 	StatementBody ( StatementBody ),
 	Ref ( Ref )
 {
 }
 	
-OilMethodDefinition :: OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition ):
+OilMethodDefinition :: OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * StatementBody, OilTypeRef * ReturnType, bool ReturnTypeMutable, OilTemplateDefinition * TemplateDefinition ):
 	Name ( Name ),
 	Public ( Public ),
 	Inline ( Inline ),
 	TemplateDefinition ( TemplateDefinition ),
 	ParameterList ( ParameterList ),
 	ReturnType ( ReturnType ),
+	ReturnTypeMutable ( ReturnTypeMutable ),
 	StatementBody ( StatementBody ),
 	Ref ( Ref )
 {
@@ -98,6 +100,13 @@ OilTypeRef * OilMethodDefinition :: GetReturnType ()
 {
 	
 	return ReturnType;
+	
+}
+
+bool OilMethodDefinition :: GetReturnTypeMutable () const
+{
+	
+	return ReturnTypeMutable;
 	
 }
 

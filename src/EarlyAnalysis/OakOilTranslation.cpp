@@ -90,6 +90,7 @@
 #include <Parsing/Language/OakEnumConstructor.h>
 #include <Parsing/Language/OakEnumBranchConstructor.h>
 #include <Parsing/Language/OakMemberAccessNameConstructor.h>
+#include <Parsing/Language/OakReturnTypeConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -115,7 +116,7 @@ OilTypeRef * OakTranslateTypeRefToOil ( const ASTElement * TypeElement );
 OilStructBinding * OakTranslateStructBindingToOil ( const ASTElement * BindingElement );
 OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement * FunctionDefElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
 OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTElement * ParameterListElement );
-OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement );
+OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement, bool & Mutable );
 OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyElement );
 OilBindingStatement * OakTranslateBindingStatementToOil ( const ASTElement * StatementElement, const OilDecoratorTag ** Decorators, uint32_t DecoratorCount );
 OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement );
@@ -2051,7 +2052,9 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		if ( FunctionDefData -> ReturnTyped )
 		{
 			
-			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( FunctionDefElement -> GetSubElement ( 2 ) );
+			bool MutableReturn = false;
+			
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( FunctionDefElement -> GetSubElement ( 2 ), MutableReturn );
 			
 			if ( ReturnType == NULL )
 			{
@@ -2076,7 +2079,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType, TemplateDefinition );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType, MutableReturn, TemplateDefinition );
 			
 		}
 		else
@@ -2094,7 +2097,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), TemplateDefinition );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), false, TemplateDefinition );
 			
 		}
 		
@@ -2110,7 +2113,9 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 		if ( FunctionDefData -> ReturnTyped )
 		{
 			
-			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( FunctionDefElement -> GetSubElement ( 1 ) );
+			bool MutableReturn = false;
+			
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( FunctionDefElement -> GetSubElement ( 1 ), MutableReturn );
 			
 			if ( ReturnType == NULL )
 			{
@@ -2133,7 +2138,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, ReturnType, MutableReturn );
 			
 		}
 		else
@@ -2150,7 +2155,7 @@ OilFunctionDefinition * OakTranslateFunctionDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ) );
+			return new OilFunctionDefinition ( Ref, FunctionDefData -> Name, FunctionDefData -> Public, FunctionDefData -> Inline, FunctionParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), false );
 			
 		}
 		
@@ -2200,7 +2205,9 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 		if ( MethodDefData -> ReturnTyped )
 		{
 			
-			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( MethodDefElement -> GetSubElement ( 2 ) );
+			bool MutableReturn = false;
+			
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( MethodDefElement -> GetSubElement ( 2 ), MutableReturn );
 			
 			if ( ReturnType == NULL )
 			{
@@ -2225,7 +2232,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType, TemplateDefinition );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType, MutableReturn, TemplateDefinition );
 			
 		}
 		else
@@ -2243,7 +2250,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), TemplateDefinition );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), false, TemplateDefinition );
 			
 		}
 		
@@ -2259,7 +2266,9 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 		if ( MethodDefData -> ReturnTyped )
 		{
 			
-			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( MethodDefElement -> GetSubElement ( 1 ) );
+			bool MutableReturn = false;
+			
+			OilTypeRef * ReturnType = OakTranslateReturnTypeToOil ( MethodDefElement -> GetSubElement ( 1 ), MutableReturn );
 			
 			if ( ReturnType == NULL )
 			{
@@ -2282,7 +2291,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, ReturnType, MutableReturn );
 			
 		}
 		else
@@ -2299,7 +2308,7 @@ OilMethodDefinition * OakTranslateMethodDefinitionToOil ( const ASTElement * Met
 				
 			}
 			
-			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ) );
+			return new OilMethodDefinition ( Ref, MethodDefData -> Name, MethodDefData -> Public, MethodDefData -> Inline, MethodParamList, StatementBody, new OilTypeRef ( Ref, OilTypeRef :: kVoid ), false );
 			
 		}
 		
@@ -2471,7 +2480,7 @@ OilFunctionParameterList * OakTranslateFunctionParameterListToOil ( const ASTEle
 	
 }
 
-OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement )
+OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement, bool & Mutable )
 {
 	
 	if ( ( ReturnElement == NULL ) || ( ReturnElement -> GetTag () != OakASTTags :: kASTTag_ReturnType ) )
@@ -2483,6 +2492,10 @@ OilTypeRef * OakTranslateReturnTypeToOil ( const ASTElement * ReturnElement )
 		
 	}
 	
+	const OakReturnTypeConstructor :: ElementData * ReturnTypeData = reinterpret_cast <const OakReturnTypeConstructor :: ElementData *> ( ReturnElement -> GetData () );
+	
+	Mutable = ReturnTypeData -> Mutable;
+		
 	const ASTElement * TypeElement = ReturnElement -> GetSubElement ( 0 );
 	
 	return OakTranslateTypeRefToOil ( TypeElement );
@@ -4706,12 +4719,14 @@ OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement
 	
 	OilTypeRef * ReturnType = NULL;
 	
+	bool MutableReturn = false;
+	
 	if ( TraitMethodData -> ReturnTyped )
 	{
 		
 		const ASTElement * ReturnTypeElement = MethodElement -> GetSubElement ( ElementOffset );
 		
-		ReturnType = OakTranslateReturnTypeToOil ( ReturnTypeElement );
+		ReturnType = OakTranslateReturnTypeToOil ( ReturnTypeElement, MutableReturn );
 		
 		if ( ReturnType == NULL )
 		{
@@ -4725,7 +4740,7 @@ OilTraitMethod * OakTranslateTraitMethodToOil ( const ASTElement * MethodElement
 		
 	}
 	
-	return new OilTraitMethod ( Ref, TraitMethodData -> Name, ParameterList, ReturnType, TemplateDefinition );
+	return new OilTraitMethod ( Ref, TraitMethodData -> Name, ParameterList, ReturnType, MutableReturn, TemplateDefinition );
 	
 }
 
@@ -4780,12 +4795,14 @@ OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionE
 	
 	OilTypeRef * ReturnType = NULL;
 	
+	bool MutableReturn = false;
+	
 	if ( TraitFunctionData -> ReturnTyped )
 	{
 		
 		const ASTElement * ReturnTypeElement = FunctionElement -> GetSubElement ( ElementOffset );
 		
-		ReturnType = OakTranslateReturnTypeToOil ( ReturnTypeElement );
+		ReturnType = OakTranslateReturnTypeToOil ( ReturnTypeElement, MutableReturn );
 		
 		if ( ReturnType == NULL )
 		{
@@ -4799,7 +4816,7 @@ OilTraitFunction * OakTranslateTraitFunctionToOil ( const ASTElement * FunctionE
 		
 	}
 	
-	return new OilTraitFunction ( Ref, TraitFunctionData -> Name, ParameterList, ReturnType, TemplateDefinition );
+	return new OilTraitFunction ( Ref, TraitFunctionData -> Name, ParameterList, ReturnType, MutableReturn, TemplateDefinition );
 	
 }
 

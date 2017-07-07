@@ -14,6 +14,8 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
+#include <Lexing/Language/OakKeywordTokenTags.h>
+
 OakReturnTypeConstructor OakReturnTypeConstructor :: Instance;
 
 ASTConstructionGroup :: StaticInitEntry _OakReturnTypeConstructor_TypeGroupEntries [] =
@@ -59,13 +61,23 @@ void OakReturnTypeConstructor :: TryConstruct ( ASTConstructionInput & Input, AS
 		
 	}
 	
+	bool Mutable = false;
+	
+	if ( OakParsingUtils :: KeywordCheck ( Input.Tokens [ 1 ], OakKeywordTokenTags :: kKeywordAuxTags_Mut ) )
+		Mutable = true;
+	
+	ElementData * ReturnTypeData = new ElementData ();
+	
+	ReturnTypeData -> Mutable = Mutable;
+	
 	ASTElement * ReturnTypeElement = new ASTElement ();
 	
 	ReturnTypeElement -> SetTag ( OakASTTags :: kASTTag_ReturnType );
-	ReturnTypeElement -> AddTokenSection ( & Input.Tokens [ 0 ], 1 );
+	ReturnTypeElement -> AddTokenSection ( & Input.Tokens [ 0 ], Mutable ? 2 : 1 );
+	ReturnTypeElement -> SetData ( ReturnTypeData, & ElementDataDestructor );
 	
 	bool ConstructionError = false;
-	uint64_t TokenCount = Input.AvailableTokenCount - 1;
+	uint64_t TokenCount = Input.AvailableTokenCount - ( Mutable ? 2 : 1 );
 	const Token * ErrorToken = NULL;
 	std :: string ErrorString;
 	
@@ -162,5 +174,12 @@ void OakReturnTypeConstructor :: TryConstruct ( ASTConstructionInput & Input, AS
 	Output.Accepted = true;
 	Output.ConstructedElement = ReturnTypeElement;
 	Output.TokensConsumed = Input.AvailableTokenCount - TokenCount;
+	
+}
+
+void OakReturnTypeConstructor :: ElementDataDestructor ( void * Data )
+{
+	
+	delete reinterpret_cast <ElementData *> ( Data );
 	
 }

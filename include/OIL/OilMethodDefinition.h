@@ -15,8 +15,8 @@ class OilMethodDefinition
 {
 public:
 	
-	OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType );
-	OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, OilTemplateDefinition * TemplateDefinition );
+	OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, bool ReturnTypeMutable );
+	OilMethodDefinition ( const SourceRef & Ref, const std :: u32string & Name, bool Public, bool Inline, OilMethodParameterList * ParameterList, OilStatementBody * Body, OilTypeRef * ReturnType, bool ReturnTypeMutable, OilTemplateDefinition * TemplateDefinition );
 	~OilMethodDefinition ();
 	
 	const std :: u32string GetName () const;
@@ -32,6 +32,8 @@ public:
 	
 	const OilTypeRef * GetReturnType () const;
 	OilTypeRef * GetReturnType ();
+	
+	bool GetReturnTypeMutable () const;
 	
 	bool IsTemplated () const;
 	bool ConstantTerms () const;
@@ -53,6 +55,7 @@ private:
 	OilTemplateDefinition * TemplateDefinition;
 	OilMethodParameterList * ParameterList;
 	OilTypeRef * ReturnType;
+	bool ReturnTypeMutable;
 	OilStatementBody * StatementBody;
 	
 	SourceRef Ref;

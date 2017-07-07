@@ -381,3 +381,41 @@ trait Into <TO_T>
 	function into ( x: Self ): TO_T
 	
 }
+
+#[builtin]
+trait IndexOp <ELEMENT_T, INDEX_T>
+{
+	
+	function op_index ( base: & Self, index: INDEX_T ): & ELEMENT_T
+	
+}
+
+#[builtin]
+trait MutIndexOp <ELEMENT_T, INDEX_T>
+{
+	
+	function op_index_mut ( base: & Self, index: INDEX_T ): mut & ELEMENT_T
+	
+}
+
+#[builtin]
+trait List <ELEMENT_T>
+{
+	
+	require IndexOp:<ELEMENT_T, uptr>,
+	
+	function get_length ( & self ): uptr
+	
+}
+
+#[builtin]
+trait MutList <ELEMENT_T>
+{
+	
+	require List:<ELEMENT_T>,
+	
+	require MutIndexOp:<ELEMENT_T, uptr>
+	
+}
+
+

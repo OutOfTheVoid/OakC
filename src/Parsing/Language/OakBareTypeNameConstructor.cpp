@@ -61,6 +61,7 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	
 	uint32_t Offset = 0;
 	bool Absolute = false;
+	bool Mutable = false;
 	
 	const Token * CurrentToken = Input.Tokens [ Offset ];
 	

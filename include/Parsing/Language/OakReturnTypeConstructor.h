@@ -8,6 +8,13 @@ class OakReturnTypeConstructor : public virtual IASTConstructor
 {
 public:
 	
+	typedef struct
+	{
+		
+		bool Mutable;
+		
+	} ElementData;
+	
 	OakReturnTypeConstructor ();
 	~OakReturnTypeConstructor ();
 	
@@ -16,6 +23,8 @@ public:
 	static OakReturnTypeConstructor Instance;
 	
 public:
+	
+	static void ElementDataDestructor ( void * Data );
 	
 	ASTConstructionGroup TypeGroup;
 	
