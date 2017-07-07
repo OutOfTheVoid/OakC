@@ -363,6 +363,10 @@ std :: string OilStringTraitMethod ( const OilTraitMethod & Method, const OilPri
 	{
 		
 		PrintString += " Return: ";
+		
+		if ( Method.GetReturnTypeMutable () )
+			PrintString += "mut ";
+		
 		PrintString += OilStringTypeRef ( * Method.GetReturnType (), PrintOptions );
 		
 	}
@@ -413,6 +417,10 @@ std :: string OilStringTraitFunction ( const OilTraitFunction & Function, const 
 	{
 		
 		PrintString += " Return: ";
+		
+		if ( Function.GetReturnTypeMutable () )
+			PrintString += "mut ";
+		
 		PrintString += OilStringTypeRef ( * Function.GetReturnType (), PrintOptions );
 		
 	}
@@ -978,6 +986,10 @@ void OilPrintFunction ( const OilFunctionDefinition & Function, uint32_t Indent,
 	{
 		
 		PrintString += " Return Type: ";
+		
+		if ( Function.GetReturnTypeMutable () )
+			PrintString += "mut ";
+		
 		PrintString += OilStringTypeRef ( * Function.GetReturnType (), PrintOptions );
 		
 	}
@@ -1054,6 +1066,18 @@ void OilPrintMethod ( const OilMethodDefinition & Method, uint32_t Indent, const
 	}
 	else
 		PrintString += ParamList -> IsSelfReference () ? " Parameters: ( &self )" : " Parameters: ( self )";
+	
+	if ( Method.HasReturnType () )
+	{
+		
+		PrintString += " Return Type: ";
+		
+		if ( Method.GetReturnTypeMutable () )
+			PrintString += "mut ";
+		
+		PrintString += OilStringTypeRef ( * Method.GetReturnType (), PrintOptions );
+		
+	}
 	
 	PrintString += "]";
 	
