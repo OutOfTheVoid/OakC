@@ -45,6 +45,8 @@
 #include <OIL/OilStructLiteral.h>
 #include <OIL/OilStructInitializerValue.h>
 #include <OIL/OilEnum.h>
+#include <OIL/OilMatch.h>
+#include <OIL/OilMatchBranch.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -80,6 +82,7 @@ void OilPrintBuiltinStruct ( const OilBuiltinStructDefinition & StructDefinition
 void OilPrintConstStatement ( const OilConstStatement & Constant, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintTypeAlias ( const OilTypeAlias & Alias, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintEnum ( const OilEnum & Enum, uint32_t Indent, const OilPrintOptions & PrintOptions );
+void OilPrintMatch ( const OilMatch & Match, uint32_t Indent, const OilPrintOptions & PrintOptions );
 
 void OilPrint ( const OilNamespaceDefinition & RootNS, const OilPrintOptions & PrintOptions )
 {
@@ -1411,6 +1414,10 @@ void OilPrintStatementBody ( const OilStatementBody & Body, uint32_t Indent, con
 			case IOilStatement :: kStatementType_Loop:
 				OilPrintLoop ( * dynamic_cast <const OilLoop *> ( Statement ), Indent + 1, PrintOptions );
 				break;
+				
+			case IOilStatement :: kStatementType_Match:
+				OilPrintMatch ( * dynamic_cast <const OilMatch *> ( Statement ), Indent + 1, PrintOptions );
+				break;
 			
 			case IOilStatement :: kStatementType_Return:
 			{
@@ -1619,11 +1626,11 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Parameter: \"" : "[ALLUSION Parameter: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
 				
 				case OilAllusion :: kAllusionTarget_Function:
-					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( Allusion.IsDirectlyTemplated () ? ( ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) ) : "" ) + "\"]" );
 				
-				case OilAllusion :: kAllusionTarget_Function_Templated:
-					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\" " + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) + "]" );
-					
+				case OilAllusion :: kAllusionTarget_Method:
+					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Method: \"" : "[ALLUSION Method: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( Allusion.IsDirectlyTemplated () ? ( ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) ) : "" ) + "\"]" );
+				
 				case OilAllusion :: kAllusionTarget_LocalBinding:
 					return std :: string ( ( PrintOptions.ShowResolution ? "[ALLUSION (resolved) Local Binding: \"" : "[ALLUSION Local Binding: \"" ) + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]" );
 					
@@ -1639,9 +1646,9 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Function: \"" : "[ALLUSION Function: \"";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
-						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( ( ( I + 1 ) == Allusion.GetNamespaceNameCount () ) && ( Allusion.IsIndirectlyTemplated () ) ) ? ( ":" + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification (), PrintOptions ) ) : "" ) + "::";
 					
-					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( Allusion.IsDirectlyTemplated () ? ( ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) ) : "" ) + "\"]";
 					
 				}
 				
@@ -1651,9 +1658,9 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Method: \"" : "[ALLUSION Method: \"";
 					
 					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
-						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + ( ( ( ( I + 1 ) == Allusion.GetNamespaceNameCount () ) && ( Allusion.IsIndirectlyTemplated () ) ) ? ( "template spec: " + OilStringTemplateSpecification ( * Allusion.GetIndirectTemplateSpecification (), PrintOptions ) ) : "" ) + "::";
 					
-					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + ( Allusion.IsDirectlyTemplated () ? ( ":" + OilStringTemplateSpecification ( * Allusion.GetDirectTemplateSpecification (), PrintOptions ) ) : "" ) + "\"]";
 					
 				}
 				
@@ -1681,8 +1688,21 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 					
 				}
 				
-				default:
-					break;
+				case OilAllusion :: kAllusionTarget_EnumBranch:
+				{
+					
+					// TODO: Implement
+					return "";
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_EnumBranch_Namespaced:
+				{
+					
+					// TODO: Implement
+					return "";
+					
+				}
 				
 			}
 			
@@ -2138,5 +2158,104 @@ void OilPrintEnum ( const OilEnum & Enum, uint32_t Indent, const OilPrintOptions
 	PrintString += "}";
 	
 	LOG_VERBOSE ( PrintString );
+	
+}
+
+void OilPrintMatch ( const OilMatch & Match, uint32_t Indent, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string PrintString;
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "[MATCH on: " + OilStringExpression ( * Match.GetMatcheeExpression (), PrintOptions ) + "];\n";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "{";
+	
+	LOG_VERBOSE ( PrintString );
+	
+	for ( uint32_t I = 0; I < Match.GetBranchCount (); I ++ )
+	{
+		
+		const OilMatchBranch * Branch = Match.GetBranch ( I );
+		
+		PrintString = "";
+		
+		for ( uint32_t I = 0; I < Indent + 1; I ++ )
+			PrintString += OIL_PRINT_INDENTSTRING;
+		
+		PrintString += "[BRANCH ";
+		
+		switch ( Branch -> GetMatchType () )
+		{
+			
+			case OilMatchBranch :: kMatchType_Constant:
+			{
+				
+				PrintString += "constant ";
+				PrintString += OilStringPrimary ( * Branch -> GetConstantPrimary (), PrintOptions );
+				
+			}
+			break;
+			
+			case OilMatchBranch :: kMatchType_Allusion:
+			{
+				
+				PrintString += "allusion ";
+				PrintString += OilStringPrimary ( * Branch -> GetMatchAllusion (), PrintOptions );
+				
+			}
+			break;
+			
+			case OilMatchBranch :: kMatchType_AllusionValue:
+			{
+				
+				PrintString += "allusion ";
+				PrintString += OilStringPrimary ( * Branch -> GetMatchAllusion (), PrintOptions );
+				PrintString += " value out: \"" + CodeConversion :: ConvertUTF32ToUTF8 ( Branch -> GetAllusionValueName () ) + "\"";
+				
+			}
+			break;
+			
+			case OilMatchBranch :: kMatchType_Destructure:
+			{
+				
+				// TODO
+				PrintString += "destructure";
+				
+			}
+			break;
+			
+			case OilMatchBranch :: kMatchType_Other:
+			{
+				
+				PrintString += "other";
+				
+			}
+			break;
+			
+		}
+		
+		PrintString += "]";
+		
+		LOG_VERBOSE ( PrintString );
+		
+		OilPrintStatementBody ( * Branch -> GetStatementBody (), Indent + 1, PrintOptions );
+		
+	}
+	
+	PrintString = "";
+	
+	for ( uint32_t I = 0; I < Indent; I ++ )
+		PrintString += OIL_PRINT_INDENTSTRING;
+	
+	PrintString += "}";
+	
+	LOG_VERBOSE ( PrintString );
+	
 	
 }

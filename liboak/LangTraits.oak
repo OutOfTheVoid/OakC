@@ -399,9 +399,18 @@ trait MutIndexOp <ELEMENT_T, INDEX_T>
 }
 
 #[builtin]
+trait Contains <ELEMENT_T>
+{
+	
+	function contains ( & self, x: ELEMENT_T ): bool;
+	
+}
+
+#[builtin]
 trait List <ELEMENT_T>
 {
 	
+	require Contains:<ELEMENT_T>,
 	require IndexOp:<ELEMENT_T, uptr>,
 	
 	function get_length ( & self ): uptr
@@ -418,4 +427,8 @@ trait MutList <ELEMENT_T>
 	
 }
 
+#[builtin]
+trait Copy
+{
+}
 

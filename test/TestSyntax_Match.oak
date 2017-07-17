@@ -15,6 +15,13 @@ enum E
 	
 }
 
+function some_func ( a: i32 )
+{
+	
+	ignore a;
+	
+}
+
 function Test ()
 {
 	
@@ -43,6 +50,22 @@ function Test ()
 			
 			
 		}
+		
+	}
+	
+	bind a: i32 = 0;
+	
+	match ( a )
+	{
+		
+		0:
+			some_func ( 100 );
+		
+		1:
+			some_func ( 200 );
+			
+		other:
+			return;
 		
 	}
 	

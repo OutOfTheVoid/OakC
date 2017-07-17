@@ -17,7 +17,7 @@
 
 bool GetImportName ( const ASTElement * ImportStatementElement, std :: u32string & FileName, std :: string & ParseError );
 
-bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
+bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, const std :: vector <std :: string> & SearchPaths, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
 	uint64_t SubElementCount = FileRootElement -> GetSubElementCount ();
@@ -79,9 +79,9 @@ bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string
 				if ( FileUnit == NULL )
 				{
 					
-					FileUnit = new CompilationUnit ( UTF8FileName );
+					FileUnit = new CompilationUnit ( UTF8FileName, SearchPaths );
 					
-					if ( ! FileUnit -> RunIndependantCompilationSteps ( GlobalFileTable, CompilationConditions, CompilationConditionCount ) )
+					if ( ! FileUnit -> RunIndependantCompilationSteps ( GlobalFileTable, SearchPaths, CompilationConditions, CompilationConditionCount ) )
 						return false;
 						
 				}

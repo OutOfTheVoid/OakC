@@ -72,14 +72,43 @@ void OakMatchBranchConstructor :: TryConstruct ( ASTConstructionInput & Input, A
 	MatchElement -> SetTag ( OakASTTags :: kASTTag_MatchBranch );
 	MatchElement -> SetData ( MatchData, & ElementDataDestructor );
 	
-	const Token * CurrentToken = NULL;
-	
 	bool Error = false;
 	std :: string ErrorString;
 	const Token * ErrorToken = NULL;
 	uint64_t TokenCount = Input.AvailableTokenCount;
 	
 	bool Solved = false;
+	
+	const Token * CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+	
+	if ( OakParsingUtils :: KeywordCheck ( CurrentToken, OakKeywordTokenTags :: kKeywordAuxTags_Other ) )
+	{
+		
+		TokenCount --;
+		
+		CurrentToken = Input.Tokens [ Input.AvailableTokenCount - TokenCount ];
+		
+		if ( CurrentToken -> GetTag () != OakTokenTags :: kTokenTag_Colon )
+		{
+			
+			delete MatchElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = "Expected colon after other match branch";
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
+		Solved = true;
+		
+		MatchData -> Type = kBranchType_Other;
+		
+		TokenCount --;
+		
+	}
 	
 	if ( ( ! Solved ) && ( AllusionGroup.TryConstruction ( MatchElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 ) )
 	{
@@ -233,13 +262,17 @@ void OakMatchBranchConstructor :: TryConstruct ( ASTConstructionInput & Input, A
 		
 	}
 	
-	if ( ( ! Solved ) && ( LiteralGroup.TryConstruction ( MatchElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 ) )
+	ASTElement * PrimaryExpressionContainerElement = new ASTElement ();
+	PrimaryExpressionContainerElement -> SetTag ( OakASTTags :: kASTTag_PrimaryExpression );
+	
+	if ( ( ! Solved ) && ( LiteralGroup.TryConstruction ( PrimaryExpressionContainerElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 ) )
 	{
 		
 		if ( Error )
 		{
 			
 			delete MatchElement;
+			delete PrimaryExpressionContainerElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -256,6 +289,7 @@ void OakMatchBranchConstructor :: TryConstruct ( ASTConstructionInput & Input, A
 		{
 			
 			delete MatchElement;
+			delete PrimaryExpressionContainerElement;
 			
 			Output.Accepted = false;
 			Output.Error = true;
@@ -267,6 +301,8 @@ void OakMatchBranchConstructor :: TryConstruct ( ASTConstructionInput & Input, A
 		}
 		
 		Solved = true;
+		
+		MatchElement -> AddSubElement ( PrimaryExpressionContainerElement );
 		
 		MatchData -> Type = kBranchType_LiteralMatch;
 		

@@ -6,6 +6,7 @@
 	#include <windows.h>
 #else
 	#include <stdlib.h>
+	#include <unistd.h>
 #endif
 
 #ifndef NULL
@@ -32,18 +33,17 @@ std :: string CanonicalizePath ( const std :: string & Path )
 		
 		wchar_t * Temporary = new wchar_t [ WResult + 1 ];
 		
-		GetFullPathNameW ( WidePath.c_str (), WResult + 1, Temporary, NULL );
+		WResult = GetFullPathNameW ( WidePath.c_str (), WResult + 1, Temporary, NULL );
 		
 		AbsPathUTF16.assign ( reinterpret_cast <const char16_t *> ( Temporary ) );
 		
 		delete [] Temporary;
 		
 	}
-	
-	if ( WResult == 0 )
+	else if ( WResult == 0 )
 		return "";
-	
-	AbsPathUTF16.assign ( OutBuff );
+	else
+		AbsPathUTF16.assign ( OutBuff );
 	
 	return CodeConversion :: ConvertUTF16ToUTF8 ( AbsPathUTF16 );
 	
@@ -52,6 +52,52 @@ std :: string CanonicalizePath ( const std :: string & Path )
 	char OutBuff [ OAKC_MAX_PATH ];
 	
 	char * Result = realpath ( Path.c_str (), OutBuff );
+	
+	if ( Result == NULL )
+		return "";
+	
+	return std :: string ( OutBuff );
+	
+#endif
+	
+}
+
+
+std :: string GetCurrentWorkingDirectory ()
+{
+	
+#ifdef _WIN32
+	
+	wchar_t OutBuff [ OAKC_MAX_PATH ];
+	
+	uint32_t WResult = GetCurrentDirectoryW ( OutBuff, OAKC_MAX_PATH );
+	
+	std :: u16string OutStr16;
+	
+	if ( WResult > OAKC_MAX_PATH )
+	{
+		
+		wchar_t * Temporary = new wchar_t [ WResult + 1 ];
+		
+		WResult = GetCurrentDirectoryW ( Temporary, WResult + 1 );
+		
+		OutStr16.assign ( reinterpret_cast <const char16_t *> ( Temporary ) );
+		
+		delete [] Temporary;
+		
+	}
+	else if ( WResult == 0 )
+		return "";
+	else 
+		OutStr16.assign ( OutBuff );
+	
+	return CodeConversion :: ConvertUTF16ToUTF8 ( OutStr16 );
+	
+#else
+	
+	char OutBuff [ OAKC_MAX_PATH ];
+	
+	char * Result = getcwd ( OutBuff, OAKC_MAX_PATH );
 	
 	if ( Result == NULL )
 		return "";

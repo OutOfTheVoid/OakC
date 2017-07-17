@@ -21,6 +21,13 @@ IOilStatement :: StatementType OilMatch :: GetStatementType () const
 	return IOilStatement :: kStatementType_Match;
 	
 }
+	
+void OilMatch :: AddBranch ( OilMatchBranch * Branch )
+{
+	
+	Branches.push_back ( Branch );
+	
+}
 
 uint32_t OilMatch :: GetBranchCount () const
 {

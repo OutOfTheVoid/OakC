@@ -165,8 +165,6 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		
 	}
 	
-	TokenCount --;
-	
 	MatchElement -> AddTokenSection ( & Input.Tokens [ Input.AvailableTokenCount - TokenCount - 1 ], 2 );
 	
 	TokenCount --;
@@ -224,7 +222,7 @@ void OakMatchStatementConstructor :: TryConstruct ( ASTConstructionInput & Input
 		
 		Output.Accepted = false;
 		Output.Error = true;
-		Output.ErrorSuggestion = "Expected closing curly bracket after matchee expression in match statement";
+		Output.ErrorSuggestion = "Expected closing curly bracket after match body in match statement";
 		Output.ErrorProvokingToken = CurrentToken;
 		
 		return;

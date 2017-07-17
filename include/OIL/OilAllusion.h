@@ -15,6 +15,7 @@ class OilTypeRef;
 class OilFunctionDefinition;
 class OilConstStatement;
 class OilMethodDefinition;
+class OilEnum;
 
 class OilAllusion : public virtual IOilPrimary
 {
@@ -35,17 +36,18 @@ public:
 		
 		kAllusionTarget_Parameter,
 		kAllusionTarget_Function,
+		kAllusionTarget_Method,
 		kAllusionTarget_LocalBinding,
 		kAllusionTarget_Binding,
 		kAllusionTarget_Constant,
 		kAllusionTarget_Self,
-		
-		kAllusionTarget_Function_Templated,
+		kAllusionTarget_EnumBranch,
 		
 		kAllusionTarget_Function_Namespaced,
 		kAllusionTarget_Method_Namespaced,
 		kAllusionTarget_Binding_Namespaced,
 		kAllusionTarget_Constant_Namespaced,
+		kAllusionTarget_EnumBranch_Namespaced,
 		
 	} AllusionTarget;
 	
@@ -72,15 +74,16 @@ public:
 	void SetTargetAsParameter ( OilFunctionParameter * Parameter );
 	void SetTargetAsLocalBinding ( OilBindingStatement * Binding );
 	void SetTargetAsFunction ( OilFunctionDefinition * Function );
+	void SetTargetAsMethod ( OilMethodDefinition * Method );
 	void SetTargetAsBinding ( OilBindingStatement * Binding );
 	void SetTargetAsConstant ( OilConstStatement * Constant );
-	
-	void SetTargetAsTemplatedFunction ( OilFunctionDefinition * Function );
+	void SetTargetAsEnumBranch ( OilEnum * Enum );
 	
 	void SetTargetAsNamespacedFunction ( OilFunctionDefinition * Function );
 	void SetTargetAsNamespacedMethod ( OilMethodDefinition * Method );
 	void SetTargetAsNamespacedBinding ( OilBindingStatement * Binding );
 	void SetTargetAsNamespacedConst ( OilConstStatement * Const );
+	void SetTargetAsNamespacedEnumBranch ( OilEnum * Enum );
 	
 	const OilFunctionParameter * GetFunctionParameterTarget () const;
 	OilFunctionParameter * GetFunctionParameterTarget ();
@@ -94,11 +97,8 @@ public:
 	const OilFunctionDefinition * GetTemplatedFunctionTarget () const;
 	OilFunctionDefinition * GetTemplatedFunctionTarget ();
 	
-	const OilFunctionDefinition * GetNamespacedFunctionTarget () const;
-	OilFunctionDefinition * GetNamespacedFunctionTarget ();
-	
-	const OilMethodDefinition * GetNamespacedMethodTarget () const;
-	OilMethodDefinition * GetNamespacedMethodTarget ();
+	const OilMethodDefinition * GetMethodTarget () const;
+	OilMethodDefinition * GetMethodTarget ();
 	
 	const OilBindingStatement * GetBindingTarget () const;
 	OilBindingStatement * GetBindingTarget ();
@@ -106,13 +106,16 @@ public:
 	const OilConstStatement * GetConstTarget () const;
 	OilConstStatement * GetConstTarget ();
 	
+	const OilEnum * GetEnumTarget () const;
+	OilEnum * GetEnumTarget ();
+	
 	const std :: u32string & GetName () const;
 	
 	uint32_t GetNamespaceNameCount () const;
 	const std :: u32string & GetNamespaceName ( uint32_t Index ) const;
 	
-	bool IsDirectlyTemplated ();
-	bool IsIndirectlyTemplated ();
+	bool IsDirectlyTemplated () const;
+	bool IsIndirectlyTemplated () const;
 	
 	const OilTemplateSpecification * GetIndirectTemplateSpecification () const;
 	OilTemplateSpecification * GetIndirectTemplateSpecification ();
@@ -144,6 +147,7 @@ private:
 		OilFunctionDefinition * FunctionTarget;
 		OilConstStatement * ConstTarget;
 		OilMethodDefinition * MethodTarget;
+		OilEnum * EnumTarget;
 		
 	};
 	

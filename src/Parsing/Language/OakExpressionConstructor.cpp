@@ -16,7 +16,7 @@ ASTConstructionGroup :: StaticInitEntry _OakExpressionConstructor_SubExpressionG
 };
 
 OakExpressionConstructor :: OakExpressionConstructor ():
-	SubExpressionGroup (_OakExpressionConstructor_SubExpressionGroup, 2 )
+	SubExpressionGroup ( _OakExpressionConstructor_SubExpressionGroup, 2 )
 {
 }
 

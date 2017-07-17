@@ -3,22 +3,62 @@
 
 #include <Tokenization/SourceRef.h>
 
-class OilExpression;
+#include <string>
+
+class IOilPrimary;
+class OilStatementBody;
+class OilAllusion;
 
 class OilMatchBranch
 {
 public:
 	
-	OilMatchBranch ( const SourceRef & Ref, OilExpression * MatcheeExpression );
+	typedef enum
+	{
+		
+		kMatchType_Constant,
+		kMatchType_Allusion,
+		kMatchType_AllusionValue,
+		kMatchType_Destructure,
+		kMatchType_Other
+		
+	} MatchType;
+	
+	OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body );
+	OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body, IOilPrimary * MatchConstantPrimary );
+	OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body, OilAllusion * MatchAllusion );
+	OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body, OilAllusion * MatchAllusion, const std :: u32string & AllusionValueName );
+	//OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body, OilStructDestructure * Destructure );
 	~OilMatchBranch ();
 	
-	const OilExpression * GetMatcheeExpression () const;
-	OilExpression * GetMatcheeExpression ();
+	MatchType GetMatchType () const;
 	
+	const OilStatementBody * GetStatementBody () const;
+	OilStatementBody * GetStatementBody ();
+	
+	const IOilPrimary * GetConstantPrimary () const;
+	IOilPrimary * GetConstantPrimary ();
+	
+	const OilAllusion * GetMatchAllusion () const;
+	OilAllusion * GetMatchAllusion ();
+	
+	const std :: u32string & GetAllusionValueName () const;
 	
 private:
 	
-	OilExpression * MatcheeExpression;
+	MatchType Type;
+	
+	union
+	{
+		
+		IOilPrimary * MatchConstantPrimary;
+		OilAllusion * MatchAllusion;
+		
+	};
+	
+	const std :: u32string AllusionValueName;
+	
+	OilStatementBody * Body;
 	
 	const SourceRef Ref;
 	

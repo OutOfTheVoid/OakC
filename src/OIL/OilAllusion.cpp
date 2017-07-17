@@ -197,22 +197,6 @@ void OilAllusion :: SetTargetAsFunction ( OilFunctionDefinition * Function )
 	
 }
 
-void OilAllusion :: SetTargetAsTemplatedFunction ( OilFunctionDefinition * Function )
-{
-	
-	Target = kAllusionTarget_Function_Templated;
-	FunctionTarget = Function;
-	
-}
-
-void OilAllusion :: SetTargetAsNamespacedFunction ( OilFunctionDefinition * Function )
-{
-	
-	Target = kAllusionTarget_Function_Namespaced;
-	FunctionTarget = Function;
-	
-}
-
 void OilAllusion :: SetTargetAsNamespacedMethod ( OilMethodDefinition * Method )
 {
 	
@@ -224,56 +208,28 @@ void OilAllusion :: SetTargetAsNamespacedMethod ( OilMethodDefinition * Method )
 const OilFunctionDefinition * OilAllusion :: GetFunctionTarget () const
 {
 	
-	return ( Target == kAllusionTarget_Function ) ? FunctionTarget : NULL;
+	return ( ( Target == kAllusionTarget_Function ) || ( Target == kAllusionTarget_Function_Namespaced ) ) ? FunctionTarget : NULL;
 	
 }
 
 OilFunctionDefinition * OilAllusion :: GetFunctionTarget ()
 {
 	
-	return ( Target == kAllusionTarget_Function ) ? FunctionTarget : NULL;
+	return ( ( Target == kAllusionTarget_Function ) || ( Target == kAllusionTarget_Function_Namespaced ) ) ? FunctionTarget : NULL;
 	
 }
 
-const OilFunctionDefinition * OilAllusion :: GetTemplatedFunctionTarget () const
+const OilMethodDefinition * OilAllusion :: GetMethodTarget () const
 {
 	
-	return ( Target == kAllusionTarget_Function_Templated ) ? FunctionTarget : NULL;
+	return ( ( Target == kAllusionTarget_Method ) || ( Target == kAllusionTarget_Method_Namespaced ) ) ? MethodTarget : NULL;
 	
 }
 
-OilFunctionDefinition * OilAllusion :: GetTemplatedFunctionTarget ()
+OilMethodDefinition * OilAllusion :: GetMethodTarget ()
 {
 	
-	return ( Target == kAllusionTarget_Function_Templated ) ? FunctionTarget : NULL;
-	
-}
-
-const OilFunctionDefinition * OilAllusion :: GetNamespacedFunctionTarget () const
-{
-	
-	return ( Target == kAllusionTarget_Function_Namespaced ) ? FunctionTarget : NULL;
-	
-}
-
-OilFunctionDefinition * OilAllusion :: GetNamespacedFunctionTarget ()
-{
-	
-	return ( Target == kAllusionTarget_Function_Namespaced ) ? FunctionTarget : NULL;
-	
-}
-
-const OilMethodDefinition * OilAllusion :: GetNamespacedMethodTarget () const
-{
-	
-	return ( Target == kAllusionTarget_Method_Namespaced ) ? MethodTarget : NULL;
-	
-}
-
-OilMethodDefinition * OilAllusion :: GetNamespacedMethodTarget ()
-{
-	
-	return ( Target == kAllusionTarget_Method_Namespaced ) ? MethodTarget : NULL;
+	return ( ( Target == kAllusionTarget_Method ) || ( Target == kAllusionTarget_Method_Namespaced ) ) ? MethodTarget : NULL;
 	
 }
 
@@ -296,14 +252,14 @@ void OilAllusion :: SetTargetAsNamespacedBinding ( OilBindingStatement * Binding
 const OilBindingStatement * OilAllusion :: GetBindingTarget () const
 {
 	
-	return ( Target == kAllusionTarget_Binding ) ? BindingTarget : NULL;
+	return ( ( Target == kAllusionTarget_Binding ) || ( Target == kAllusionTarget_Binding_Namespaced ) ) ? BindingTarget : NULL;
 	
 }
 
 OilBindingStatement * OilAllusion :: GetBindingTarget ()
 {
 	
-	return ( Target == kAllusionTarget_Binding ) ? BindingTarget : NULL;
+	return ( ( Target == kAllusionTarget_Binding ) || ( Target == kAllusionTarget_Binding_Namespaced ) ) ? BindingTarget : NULL;
 	
 }
 
@@ -326,14 +282,44 @@ void OilAllusion :: SetTargetAsNamespacedConst ( OilConstStatement * Constant )
 const OilConstStatement * OilAllusion :: GetConstTarget () const
 {
 	
-	return ( Target == kAllusionTarget_Constant ) ? ConstTarget : NULL;
+	return ( ( Target == kAllusionTarget_Constant ) || ( Target == kAllusionTarget_Constant_Namespaced ) ) ? ConstTarget : NULL;
 	
 }
 
 OilConstStatement * OilAllusion :: GetConstTarget ()
 {
 	
-	return ( Target == kAllusionTarget_Constant ) ? ConstTarget : NULL;
+	return ( ( Target == kAllusionTarget_Constant ) || ( Target == kAllusionTarget_Constant_Namespaced ) ) ? ConstTarget : NULL;
+	
+}
+
+void OilAllusion :: SetTargetAsEnumBranch ( OilEnum * Enum )
+{
+	
+	Target = kAllusionTarget_EnumBranch;
+	EnumTarget = Enum;
+	
+}
+
+void OilAllusion :: SetTargetAsNamespacedEnumBranch ( OilEnum * Enum )
+{
+	
+	Target = kAllusionTarget_EnumBranch_Namespaced;
+	EnumTarget = Enum;
+	
+}
+
+const OilEnum * OilAllusion :: GetEnumTarget () const
+{
+	
+	return ( ( Target == kAllusionTarget_EnumBranch ) || ( Target == kAllusionTarget_EnumBranch_Namespaced ) ) ? EnumTarget : NULL;
+	
+}
+
+OilEnum * OilAllusion :: GetEnumTarget ()
+{
+	
+	return ( ( Target == kAllusionTarget_EnumBranch ) || ( Target == kAllusionTarget_EnumBranch_Namespaced ) ) ? EnumTarget : NULL;
 	
 }
 
@@ -363,14 +349,14 @@ const std :: u32string & OilAllusion :: GetNamespaceName ( uint32_t Index ) cons
 	
 }
 
-bool OilAllusion :: IsDirectlyTemplated ()
+bool OilAllusion :: IsDirectlyTemplated () const
 {
 	
 	return DirectTemplateSpecification != NULL;
 	
 }
 
-bool OilAllusion :: IsIndirectlyTemplated ()
+bool OilAllusion :: IsIndirectlyTemplated () const
 {
 	
 	return IndirectTemplateSpecification != NULL;

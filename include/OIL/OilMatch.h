@@ -3,13 +3,15 @@
 
 #include <OIL/IOilStatement.h>
 
+#include <Tokenization/SourceRef.h>
+
 #include <vector>
 
 class OilExpression;
 
 class OilMatchBranch;
 
-class OilMatch
+class OilMatch : public virtual IOilStatement
 {
 public:
 	
@@ -22,6 +24,8 @@ public:
 	OilExpression * GetMatcheeExpression ();
 	
 	uint32_t GetBranchCount () const;
+	
+	void AddBranch ( OilMatchBranch * Branch );
 	
 	const OilMatchBranch * GetBranch ( uint32_t Index ) const;
 	OilMatchBranch * GetBranch ( uint32_t Index );
@@ -36,6 +40,6 @@ private:
 	
 	const SourceRef & Ref;
 	
-}
+};
 
 #endif

@@ -23,12 +23,13 @@
 
 #include <EarlyAnalysis/OakLiteralParsing.h>
 
+#include <Filesystem/Path.h>
 
 #define VERSION_STRING "0.0.2b"
 
 int Test ();
 
-int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPrintOptions & PrintOptions );
+int Compile ( const std :: vector <std :: string> & SourceFileNames, const std :: vector <std :: string> & SearchPaths, const OilPrintOptions & PrintOptions );
 
 void PrintHelp ();
 void ListArchitechtures ();
@@ -74,6 +75,9 @@ int main ( int argc, const char * argv [] )
 	MainAction Action = kMainAction_None;
 	
 	std :: vector <std :: string> SourceFileNames;
+	std :: vector <std :: string> SearchPaths;
+	
+	SearchPaths.push_back ( GetCurrentWorkingDirectory () );
 	
 	for ( int32_t I = 1; I < argc; I ++ )
 	{
@@ -141,11 +145,30 @@ int main ( int argc, const char * argv [] )
 			
 		}
 		
+		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "s", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "search", 0, true ) )
+		{
+			
+			if ( I == ( argc - 1 ) )
+			{
+				
+				LOG_FATALERROR_NOFILE ( "expected search path after search flag" );
+				
+				return 1;
+				
+			}
+			
+			SearchPaths.push_back ( argv [ I + 1 ] );
+			
+			I ++;
+			
+			continue;
+			
+		}
+		
 		if ( ConsoleUtils :: TestArgumentFlag ( argv [ I ], "t", 0, true ) || ConsoleUtils :: TestArgumentFlag ( argv [ I ], "test", 0, true ) )
 		{
 			
-			if ( Action == kMainAction_Compile )
-				Action = kMainAction_Test;
+			Action = kMainAction_Test;
 			
 			continue;
 			
@@ -275,7 +298,7 @@ int main ( int argc, const char * argv [] )
 			PrintOptions.PrintBuiltins = Builtins;
 			PrintOptions.HighlightBuiltins = true;
 			
-			return Compile ( SourceFileNames, PrintOptions );
+			return Compile ( SourceFileNames, SearchPaths, PrintOptions );
 			
 		}
 			
@@ -353,7 +376,7 @@ int main ( int argc, const char * argv [] )
 
 
 
-int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPrintOptions & PrintOptions )
+int Compile ( const std :: vector <std :: string> & SourceFileNames, const std :: vector <std :: string> & SearchPaths, const OilPrintOptions & PrintOptions )
 {
 	
 	if ( SourceFileNames.size () == 0 )
@@ -374,9 +397,9 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const OilPr
 	for ( uint32_t I = 0; I < SourceFileNames.size (); I ++ )
 	{
 		
-		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ] );
+		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ], SearchPaths );
 		
-		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files, & CompilationConditions [ 0 ], CompilationConditions.size () ) )
+		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files, SearchPaths, & CompilationConditions [ 0 ], CompilationConditions.size () ) )
 			return 1;
 		
 	}

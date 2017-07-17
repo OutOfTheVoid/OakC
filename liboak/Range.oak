@@ -1,0 +1,33 @@
+struct Range <T>
+{
+	
+	low: T,
+	high: T
+	
+}
+
+implement Range:<T> where <T>
+{
+	
+	function new ( low: T, high: T ): Range:<T>
+	{
+		
+		return Range:<T>: { low: low, high: high };
+		
+	}
+	
+}
+
+implement Range:<T> for Contains:<T> where <T: CompareGTorEqOp + CompareLTOp>
+{
+	
+	function contains ( & self, x: T ): bool
+	{
+		
+		return ( x >= self.low ) && ( x < self.high );
+		
+	}
+	
+}
+
+

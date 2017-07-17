@@ -19,7 +19,8 @@ public:
 		kBranchType_LiteralMatch,
 		kBranchType_BasicAllusionMatch,
 		kBranchType_ValueAllusionMatch,
-		kBranchType_DestructureMatch
+		kBranchType_DestructureMatch,
+		kBranchType_Other
 		
 	};
 	

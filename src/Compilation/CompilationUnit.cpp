@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-CompilationUnit :: CompilationUnit ( const std :: string & FilePath ):
+CompilationUnit :: CompilationUnit ( const std :: string & FilePath, const std :: vector <std :: string> & SearchPaths ):
 	CompilationState ( kCompilationStep_FileLoad ),
 	SourceFile ( FilePath, false ),
 	SourceString (),
@@ -109,7 +109,7 @@ void PrintTokens ( const std :: vector <const Token *> & Tokens )
 	
 }
 
-bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
+bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable, const std :: vector <std :: string> & SearchPaths, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
 	
 	if ( CompilationState != kCompilationStep_FileLoad )
@@ -236,7 +236,7 @@ bool CompilationUnit :: RunIndependantCompilationSteps ( FileTable & FTable, con
 	
 	std :: vector <CompilationUnit *> ImportedUnits;
 	
-	if ( ! OakResolveImports ( ASTRoot, SourceFile.GetName (), FTable, ImportedUnits, CompilationConditions, CompilationConditionCount ) )
+	if ( ! OakResolveImports ( ASTRoot, SourceFile.GetName (), SearchPaths, FTable, ImportedUnits, CompilationConditions, CompilationConditionCount ) )
 		return false;
 	
 	CompilationState = kCompilationStep_OILTranslation;

@@ -50,6 +50,8 @@
 #include <OIL/OilStructLiteral.h>
 #include <OIL/OilStructInitializerValue.h>
 #include <OIL/OilEnum.h>
+#include <OIL/OilMatch.h>
+#include <OIL/OilMatchBranch.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -91,6 +93,8 @@
 #include <Parsing/Language/OakEnumBranchConstructor.h>
 #include <Parsing/Language/OakMemberAccessNameConstructor.h>
 #include <Parsing/Language/OakReturnTypeConstructor.h>
+#include <Parsing/Language/OakMatchStatementConstructor.h>
+#include <Parsing/Language/OakMatchBranchConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -134,8 +138,28 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement );
 OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTagElement );
 OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * ConstElement );
 OilTypeAlias * OakTranslateTypeAliasToOil ( const ASTElement * AliasElement );
+OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement );
 
 OilFunctionCallParameterList * OakTranslateFunctionCallParameterListToOil ( const ASTElement * CallListElement );
+
+SourceRef FindEarliestSourceRef ( const ASTElement * RootElement );
+
+SourceRef FindEarliestSourceRef ( const ASTElement * RootElement )
+{
+	
+	if ( RootElement -> GetTokenSectionCount () == 0 )
+	{
+		
+		if ( RootElement -> GetSubElementCount () != 0 )
+			return FindEarliestSourceRef ( RootElement -> GetSubElement ( 0 ) );
+		
+		return SourceRef ();
+		
+	}
+	
+	return RootElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
+}
 
 bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefinition & GlobalNS, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
 {
@@ -1874,7 +1898,6 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 			
 			Tags.clear ();
 			
-			// TODO: Implement decorators in implement blocks. For now, just pass none
 			OilFunctionDefinition * Function = OakTranslateFunctionDefinitionToOil ( ChildElement, & Tags [ 0 ], Tags.size () );
 			
 			if ( Function == NULL )
@@ -2864,6 +2887,174 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 			}
 			break;
 			
+			case OakASTTags :: kASTTag_Match:
+			{
+				
+				if ( StatementElement == NULL )
+				{
+					
+					LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				uint32_t SubElementCount = StatementElement -> GetSubElementCount ();
+				
+				if ( ( StatementElement -> GetTag () != OakASTTags :: kASTTag_Match ) || ( SubElementCount == 0 ) )
+				{
+					
+					LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				OilExpression * MatcheeExpression = OakTranslateExpressionToOil ( StatementElement -> GetSubElement ( 0 ) );
+				
+				if ( MatcheeExpression == NULL )
+				{
+					
+					delete Body;
+					
+					return NULL;
+					
+				}
+				
+				OilMatch * NewMatch = new OilMatch ( StatementElement -> GetToken ( 0, 0 ) -> GetSourceRef (), MatcheeExpression );
+				
+				uint32_t ElementOffset = 1;
+				
+				while ( ElementOffset < SubElementCount )
+				{
+					
+					const ASTElement * BranchElement = StatementElement -> GetSubElement ( ElementOffset );
+					const OakMatchBranchConstructor :: ElementData * BranchData = reinterpret_cast <const OakMatchBranchConstructor :: ElementData *> ( BranchElement -> GetData () );
+					
+					switch ( BranchData -> Type )
+					{
+						
+						case OakMatchBranchConstructor :: kBranchType_Other:
+						{
+							
+							const ASTElement * StatementBodyElement = BranchElement -> GetSubElement ( 0 );
+							
+							OilStatementBody * BranchBody = OakTranslateStatementBodyToOil ( StatementBodyElement );
+							
+							if ( BranchBody == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								
+								return NULL;
+								
+							}
+							
+							NewMatch -> AddBranch ( new OilMatchBranch ( FindEarliestSourceRef ( BranchElement ), BranchBody ) );
+							
+						}
+						break;
+						
+						case OakMatchBranchConstructor :: kBranchType_LiteralMatch:
+						{
+							
+							const ASTElement * LiteralExpressionElement = BranchElement -> GetSubElement ( 0 );
+							
+							IOilPrimary * LiteralPrimary = OakTranslatePrimaryExpressionToOil ( LiteralExpressionElement );
+							
+							if ( LiteralPrimary == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								
+								return NULL;
+								
+							}
+							
+							const ASTElement * StatementBodyElement = BranchElement -> GetSubElement ( 1 );
+							
+							OilStatementBody * BranchBody = OakTranslateStatementBodyToOil ( StatementBodyElement );
+							
+							if ( BranchBody == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								delete LiteralPrimary;
+								
+								return NULL;
+								
+							}
+							
+							NewMatch -> AddBranch ( new OilMatchBranch ( FindEarliestSourceRef ( LiteralExpressionElement ), BranchBody, LiteralPrimary ) );
+							
+						}
+						break;
+						
+						case OakMatchBranchConstructor :: kBranchType_BasicAllusionMatch:
+						case OakMatchBranchConstructor :: kBranchType_ValueAllusionMatch:
+						{
+							
+							const ASTElement * AllusionElement = BranchElement -> GetSubElement ( 0 );
+							
+							OilAllusion * Allusion = OakTranslateAllusionToOil ( AllusionElement );
+							
+							if ( Allusion == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								
+								return NULL;
+								
+							}
+							
+							const ASTElement * StatementBodyElement = BranchElement -> GetSubElement ( 1 );
+							
+							OilStatementBody * BranchBody = OakTranslateStatementBodyToOil ( StatementBodyElement );
+							
+							if ( BranchBody == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								delete Allusion;
+								
+								return NULL;
+								
+							}
+							
+							if ( BranchData -> Type == OakMatchBranchConstructor :: kBranchType_ValueAllusionMatch )
+								NewMatch -> AddBranch ( new OilMatchBranch ( FindEarliestSourceRef ( AllusionElement ), BranchBody, Allusion, BranchData -> BindingName ) );
+							else
+								NewMatch -> AddBranch ( new OilMatchBranch ( FindEarliestSourceRef ( AllusionElement ), BranchBody, Allusion ) );
+							
+						}
+						break;
+						
+						// TODO: Implement destructure matches
+						// case OakMatchBranchConstructor :: kBranchType_DestructureMatch
+						
+						default:
+						break;
+						
+					}
+					
+					ElementOffset ++;
+					
+				}
+				
+				Body -> AddStatement ( NewMatch );
+				
+			}
+			break;
+			
 			case OakASTTags :: kASTTag_BreakStatement:
 			{
 				
@@ -3331,171 +3522,177 @@ IOilPrimary * OakTranslatePrimaryExpressionToOil ( const ASTElement * PrimaryEle
 			return new OilAllusion ( Ref, OilAllusion :: SELF_ALLUSION );
 		
 		case OakASTTags :: kASTTag_Allusion:
+			return OakTranslateAllusionToOil ( SubElement );
+		
+	}
+	
+	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+	
+	return NULL;
+	
+}
+
+OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement )
+{
+	
+	SourceRef Ref = AllusionElement -> GetToken ( 0, 0 ) -> GetSourceRef ();
+	
+	const OakAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakAllusionConstructor :: ElementData *> ( AllusionElement -> GetData () );
+	
+	if ( AllusionData -> IdentListLength > 1 )
+	{
+		
+		if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Templated )
 		{
 			
-			const OakAllusionConstructor :: ElementData * AllusionData = reinterpret_cast <const OakAllusionConstructor :: ElementData *> ( SubElement -> GetData () );
-			
-			if ( AllusionData -> IdentListLength > 1 )
+			if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Templated )
 			{
 				
-				if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Templated )
+				std :: vector <std :: u32string> NSNames;
+				
+				for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 2; I ++ )
 				{
 					
-					if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Templated )
+					if ( AllusionData -> IdentList [ I ].Templated )
 					{
 						
-						std :: vector <std :: u32string> NSNames;
+						WriteError ( AllusionElement, "Namespaces cannot have template specifications" );
 						
-						for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 2; I ++ )
-						{
-							
-							if ( AllusionData -> IdentList [ I ].Templated )
-							{
-								
-								WriteError ( SubElement, "Namespaces cannot have template specifications" );
-								
-								return NULL;
-								
-							}
-							
-							NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
-							
-						}
-						
-						NSNames.push_back ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Name );
-						
-						OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].TemplateSpecificationElement );
-						
-						if ( DirectTemplateSpec == NULL )
-							return NULL;
-						
-						OilTemplateSpecification * IndirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].TemplateSpecificationElement );
-						
-						if ( DirectTemplateSpec == NULL )
-						{
-							
-							delete IndirectTemplateSpec;
-							
-							return NULL;
-							
-						}
-						
-						return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
-						
-					}
-					else
-					{
-						
-						std :: vector <std :: u32string> NSNames;
-						
-						for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 1; I ++ )
-						{
-							
-							if ( AllusionData -> IdentList [ I ].Templated )
-							{
-								
-								WriteError ( SubElement, "Namespaces cannot have template specifications" );
-								
-								return NULL;
-								
-							}
-							
-							NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
-							
-						}
-						
-						OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].TemplateSpecificationElement );
-						
-						if ( DirectTemplateSpec == NULL )
-							return NULL;
-						
-						return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
-						
-					}
-					
-				}
-				else if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Templated )
-				{
-					
-					std :: vector <std :: u32string> NSNames;
-					
-					for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 2; I ++ )
-					{
-						
-						if ( AllusionData -> IdentList [ I ].Templated )
-						{
-								
-							WriteError ( SubElement, "Namespaces cannot have template specifications" );
-							
-							return NULL;
-							
-						}
-						
-						NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
-						
-					}
-					
-					NSNames.push_back ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Name );
-					
-					OilTemplateSpecification * IndirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].TemplateSpecificationElement );
-					
-					if ( IndirectTemplateSpec == NULL )
 						return NULL;
-					
-					return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
-					
-				}
-				else
-				{
-					
-					std :: vector <std :: u32string> NSNames;
-					
-					for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 1; I ++ )
-					{
-						
-						if ( AllusionData -> IdentList [ I ].Templated )
-						{
-								
-							WriteError ( SubElement, "Namespaces cannot have template specifications" );
-							
-							return NULL;
-							
-						}
-						
-						NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
 						
 					}
 					
-					return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
+					NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
 					
 				}
+				
+				NSNames.push_back ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Name );
+				
+				OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].TemplateSpecificationElement );
+				
+				if ( DirectTemplateSpec == NULL )
+					return NULL;
+				
+				OilTemplateSpecification * IndirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].TemplateSpecificationElement );
+				
+				if ( DirectTemplateSpec == NULL )
+				{
+					
+					delete IndirectTemplateSpec;
+					
+					return NULL;
+					
+				}
+				
+				return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
 				
 			}
 			else
 			{
 				
-				if ( AllusionData -> IdentList [ 0 ].Templated )
+				std :: vector <std :: u32string> NSNames;
+				
+				for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 1; I ++ )
 				{
 					
-					OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ 0 ].TemplateSpecificationElement );
-					
-					if ( DirectTemplateSpec == NULL )
+					if ( AllusionData -> IdentList [ I ].Templated )
+					{
+						
+						WriteError ( AllusionElement, "Namespaces cannot have template specifications" );
+						
 						return NULL;
+						
+					}
 					
-					return new OilAllusion ( Ref, AllusionData -> IdentList [ 0 ].Name, DirectTemplateSpec );
+					NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
 					
 				}
-				else
-					return new OilAllusion ( Ref, AllusionData -> IdentList [ 0 ].Name );
+				
+				OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].TemplateSpecificationElement );
+				
+				if ( DirectTemplateSpec == NULL )
+					return NULL;
+				
+				return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
 				
 			}
 			
 		}
-		break;
+		else if ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Templated )
+		{
+			
+			std :: vector <std :: u32string> NSNames;
+			
+			for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 2; I ++ )
+			{
+				
+				if ( AllusionData -> IdentList [ I ].Templated )
+				{
+						
+					WriteError ( AllusionElement, "Namespaces cannot have template specifications" );
+					
+					return NULL;
+					
+				}
+				
+				NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
+				
+			}
+			
+			NSNames.push_back ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].Name );
+			
+			OilTemplateSpecification * IndirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ AllusionData -> IdentListLength - 2 ].TemplateSpecificationElement );
+			
+			if ( IndirectTemplateSpec == NULL )
+				return NULL;
+			
+			return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
+			
+		}
+		else
+		{
+			
+			std :: vector <std :: u32string> NSNames;
+			
+			for ( uint32_t I = 0; I < AllusionData -> IdentListLength - 1; I ++ )
+			{
+				
+				if ( AllusionData -> IdentList [ I ].Templated )
+				{
+						
+					WriteError ( AllusionElement, "Namespaces cannot have template specifications" );
+					
+					return NULL;
+					
+				}
+				
+				NSNames.push_back ( AllusionData -> IdentList [ I ].Name );
+				
+			}
+			
+			return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
+			
+		}
 		
 	}
-	
-	LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser with NULL element" );
+	else
+	{
+		
+		if ( AllusionData -> IdentList [ 0 ].Templated )
+		{
+			
+			OilTemplateSpecification * DirectTemplateSpec = OakTranslateTemplateSpecificationToOil ( AllusionData -> IdentList [ 0 ].TemplateSpecificationElement );
+			
+			if ( DirectTemplateSpec == NULL )
+				return NULL;
+			
+			return new OilAllusion ( Ref, AllusionData -> IdentList [ 0 ].Name, DirectTemplateSpec );
+			
+		}
+		else
+			return new OilAllusion ( Ref, AllusionData -> IdentList [ 0 ].Name );
+		
+	}
 	
 	return NULL;
 	

@@ -35,7 +35,7 @@ public:
 	 * 
 	 * @param FilePath Path to the source file
 	 */
-	CompilationUnit ( const std :: string & FilePath );
+	CompilationUnit ( const std :: string & FilePath, const std :: vector <std :: string> & SearchPaths );
 	
 	//CompilationUnit ( const std :: u32string & SourceText );
 	
@@ -49,7 +49,7 @@ public:
 	 * 
 	 * @return Whether or not the compilation succeeded ( false represents a compilation failure ).
 	 */
-	bool RunIndependantCompilationSteps ( FileTable & FTable, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
+	bool RunIndependantCompilationSteps ( FileTable & FTable, const std :: vector <std :: string> & SearchPaths, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount );
 	
 	/**
 	 * @brief Runs per-file semantic analysis on the AST previously generated, adding to the global object definition.
