@@ -25,7 +25,7 @@ public:
 	/// Copy constructor.
 	TextFile ( const TextFile & CopyFrom );
 	
-	// Destructor.
+	/// Destructor.
 	~TextFile ();
 	
 	/**

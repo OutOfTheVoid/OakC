@@ -77,8 +77,6 @@ int main ( int argc, const char * argv [] )
 	std :: vector <std :: string> SourceFileNames;
 	std :: vector <std :: string> SearchPaths;
 	
-	SearchPaths.push_back ( GetCurrentWorkingDirectory () );
-	
 	for ( int32_t I = 1; I < argc; I ++ )
 	{
 		
@@ -374,8 +372,6 @@ int main ( int argc, const char * argv [] )
 	
 }
 
-
-
 int Compile ( const std :: vector <std :: string> & SourceFileNames, const std :: vector <std :: string> & SearchPaths, const OilPrintOptions & PrintOptions )
 {
 	
@@ -397,7 +393,23 @@ int Compile ( const std :: vector <std :: string> & SourceFileNames, const std :
 	for ( uint32_t I = 0; I < SourceFileNames.size (); I ++ )
 	{
 		
-		CompilationUnit * FileUnit = new CompilationUnit ( SourceFileNames [ I ], SearchPaths );
+		std :: string OutPath;
+		
+		if ( ! FindFirstMatchingFileInDirectories ( SourceFileNames [ I ], SearchPaths, OutPath ) )
+		{
+			
+			LOG_FATALERROR_NOFILE ( "File not found: " + SourceFileNames [ I ] );
+			
+			Files.DestroyAll ();
+			
+			return 1;
+			
+		}
+		
+		CompilationUnit * FileUnit = Files.GetUnit ( OutPath );
+		
+		if ( FileUnit == NULL )
+			FileUnit = new CompilationUnit ( OutPath );
 		
 		if ( ! FileUnit -> RunIndependantCompilationSteps ( Files, SearchPaths, & CompilationConditions [ 0 ], CompilationConditions.size () ) )
 			return 1;

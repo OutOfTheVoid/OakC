@@ -59,6 +59,9 @@ public:
 	/// Destructor.
 	~File ();
 	
+	/// Sets the path.
+	void SetName ( const std :: string & Name );
+	
 	/// Whether the file exists.
 	bool Exists () const;
 	
@@ -171,7 +174,7 @@ public:
 	
 private:
 	
-	const std :: string Name;
+	std :: string Name;
 	
 	bool Writable;
 	bool Opened;

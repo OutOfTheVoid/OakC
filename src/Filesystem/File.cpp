@@ -38,6 +38,18 @@ File :: ~File ()
 	
 }
 
+void File :: SetName ( const std :: string & Name )
+{
+	
+	uint32_t DummyStatus = 0;
+	
+	if ( Opened )
+		Close ( & DummyStatus );
+	
+	this -> Name.assign ( Name );
+	
+}
+
 bool File :: IsOpen () const
 {
 	

@@ -15,6 +15,8 @@
 
 #include <Logging/Logging.h>
 
+#include <Filesystem/Path.h>
+
 bool GetImportName ( const ASTElement * ImportStatementElement, std :: u32string & FileName, std :: string & ParseError );
 
 bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string & SourceFileName, const std :: vector <std :: string> & SearchPaths, FileTable & GlobalFileTable, std :: vector <CompilationUnit *> & UnitsOut, const std :: u32string * CompilationConditions, uint32_t CompilationConditionCount )
@@ -74,12 +76,23 @@ bool OakResolveImports ( const ASTElement * FileRootElement, const std :: string
 				
 				std :: string UTF8FileName = CodeConversion :: ConvertUTF32ToUTF8 ( FileName );
 				
-				CompilationUnit * FileUnit = GlobalFileTable.GetUnit ( UTF8FileName );
+				std :: string OutPath;
+				
+				if ( ! FindFirstMatchingFileInDirectories ( UTF8FileName, SearchPaths, OutPath ) )
+				{
+					
+					LOG_FATALERROR_NOFILE ( "File not found: " + UTF8FileName );
+					
+					return false;
+					
+				}
+				
+				CompilationUnit * FileUnit = GlobalFileTable.GetUnit ( OutPath );
 				
 				if ( FileUnit == NULL )
 				{
 					
-					FileUnit = new CompilationUnit ( UTF8FileName, SearchPaths );
+					FileUnit = new CompilationUnit ( OutPath );
 					
 					if ( ! FileUnit -> RunIndependantCompilationSteps ( GlobalFileTable, SearchPaths, CompilationConditions, CompilationConditionCount ) )
 						return false;

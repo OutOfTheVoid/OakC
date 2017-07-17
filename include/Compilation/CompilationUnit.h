@@ -35,7 +35,7 @@ public:
 	 * 
 	 * @param FilePath Path to the source file
 	 */
-	CompilationUnit ( const std :: string & FilePath, const std :: vector <std :: string> & SearchPaths );
+	CompilationUnit ( const std :: string & FilePath );
 	
 	//CompilationUnit ( const std :: u32string & SourceText );
 	
@@ -93,6 +93,8 @@ private:
 	
 	// Current state of compilation. Used to track failure and represent compilation progress.
 	CompilationStep CompilationState;
+	
+	const std :: string FilePath;
 	
 	// File loading
 	TextFile SourceFile;

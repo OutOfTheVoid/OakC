@@ -7,6 +7,8 @@
 #else
 	#include <stdlib.h>
 	#include <unistd.h>
+	#include <sys/stat.h>
+	#include <sys/types.h>
 #endif
 
 #ifndef NULL
@@ -105,5 +107,150 @@ std :: string GetCurrentWorkingDirectory ()
 	return std :: string ( OutBuff );
 	
 #endif
+	
+}
+
+bool CheckFileExists ( const std :: string & Path )
+{
+	
+	#if defined ( __APPLE__ )
+	
+	struct stat FStatData;
+	
+#elif defined ( _WIN32 )
+	
+	struct __stat64 FStatData;
+	
+#else
+	
+	struct stat64 FStatData;
+	
+#endif
+	
+	int ReturnCode;
+		
+#if defined ( __APPLE__ )
+	
+	ReturnCode = stat ( Path.c_str (), & FStatData );
+	
+#elif defined ( _WIN32 )
+	
+	ReturnCode = _stat64 ( Path.c_str (), & FStatData );
+	
+#else
+	
+	ReturnCode = stat64 ( Path.c_str (), & FStatData );
+	
+#endif
+	
+	if ( ReturnCode == - 1 )
+		return false;
+	
+	return true;
+	
+}
+
+bool IsAbsolutePath ( const std :: string & Path )
+{
+	
+	if ( Path.size () == 0 )
+		return false;
+	
+	char C0 = Path.at ( 0 );
+	
+	if ( C0 == '/' )
+		return true;
+	
+#ifdef _WIN32
+	
+	if ( C0 == '\\' )
+		return true;
+	
+	if ( Path.size () < 3 )
+		return false;
+	
+	char C1 = Path.at ( 1 );
+	char C2 = Path.at ( 2 );
+	
+	if ( ( ( C0 >= 'a' ) && ( C0 <= 'z' ) ) || ( ( C0 >= 'A' ) && ( C0 <= 'Z' ) ) )
+	{
+		
+		if ( ( C1 == ':' ) && ( C2 == '\\' ) )
+			return true;
+		
+	}
+	
+#endif
+	
+	return false;
+	
+}
+
+bool EndsInSeperator ( const std :: string & Path )
+{
+	
+	if ( Path.size () == 0 )
+		return false;
+	
+	char C = Path.at ( Path.size () - 1 );
+	
+	if ( C == '/' )
+		return true;
+	
+	#ifdef _WIN32
+	
+	if ( C == '\\' )
+		return true;
+	
+	#endif
+	
+	return false;
+	
+}
+
+bool FindFirstMatchingFileInDirectories ( const std :: string & Path, const std :: vector <std :: string> & Directories, std :: string & OutPath )
+{
+	
+	if ( IsAbsolutePath ( Path ) )
+	{
+		
+		OutPath = Path;
+		
+		return CheckFileExists ( Path );
+		
+	}
+	
+	std :: string Temp;
+	
+	Temp = CanonicalizePath ( Path );
+	
+	if ( CheckFileExists ( Temp ) )
+	{
+		
+		OutPath = Temp;
+		
+		return true;
+		
+	}
+	
+	for ( uint32_t I = 0; I < Directories.size (); I ++ )
+	{
+		
+		Temp = EndsInSeperator ( Directories [ I ] ) ? Directories [ I ] : ( Directories [ I ] + "/" );
+		Temp += Path;
+		Temp = CanonicalizePath ( Temp );
+		
+		if ( CheckFileExists ( Temp ) )
+		{
+			
+			OutPath = Temp;
+			
+			return true;
+			
+		}
+		
+	}
+	
+	return false;
 	
 }

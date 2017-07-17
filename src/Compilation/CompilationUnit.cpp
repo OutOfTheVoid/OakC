@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-CompilationUnit :: CompilationUnit ( const std :: string & FilePath, const std :: vector <std :: string> & SearchPaths ):
+CompilationUnit :: CompilationUnit ( const std :: string & FilePath ):
 	CompilationState ( kCompilationStep_FileLoad ),
 	SourceFile ( FilePath, false ),
 	SourceString (),
