@@ -1,0 +1,11 @@
+bin/*
+bin
+obj/*
+obj
+.make
+log.txt
+Makefile
+*.make
+*.sln
+*.vcxproj
+*.vcxproj.*
