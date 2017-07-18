@@ -16,7 +16,7 @@ project "Compiler"
 		buildoptions { "-std=c++11 -Wall -Wextra -pedantic-errors" }
 		
 	filter { "action:vs*" }
-		buildoptions { "/std:c++11" }
+		disablewarnings { "4244" }
 		
 	filter {}
 		

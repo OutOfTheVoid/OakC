@@ -44,7 +44,6 @@ const TargetArchID kTargetArch_ARM_V7;
 
 	#if defined __x86_64 || defined __x86_64__ || defined __amd64 || defined __amd64__ || defined _M_X64 || defined _M_AMD64
 		#define TARGET_HOST_ARCH kTargetArch_X86_64
-	#endif
 	
 	#elif defined __i386__ || defined __i386 || defined i386 || defined __IA32__ || defined _M_IX86 || defined __X86__ || defined _X86_ || defined __386
 		#define TARGET_HOST_ARCH kTargetArch_X86_32
@@ -74,6 +73,8 @@ const TargetArchID kTargetArch_ARM_V7;
 	
 	#elif defined __APPLE__ && defined __MACH__
 		#define TARGET_HOST_OS kTargetOS_MacOSX
+
+	#endif
 
 	#ifndef TARGET_HOST_OS
 		#define TARGET_HOST_OS kTargetOS_None

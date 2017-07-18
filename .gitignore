@@ -9,3 +9,6 @@ Makefile
 *.sln
 *.vcxproj
 *.vcxproj.*
+.suo
+.vs
+.vs*
