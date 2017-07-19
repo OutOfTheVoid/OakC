@@ -4,12 +4,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakExpressionStatementConstructor OakExpressionStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakExpressionStatementConstructor_RValueGroupGroup [] = { { & OakExpressionConstructor :: Instance, 0 } };
+OakExpressionStatementConstructor & OakExpressionStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakExpressionStatementConstructor> ();
+	
+}
 
 OakExpressionStatementConstructor :: OakExpressionStatementConstructor ():
-	RValueGroup ( _OakExpressionStatementConstructor_RValueGroupGroup, 1 )
+	RValueGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 	

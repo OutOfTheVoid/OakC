@@ -10,7 +10,14 @@
 
 #include <Utils/TestSet.h>
 
-OakLiteralExpressionConstructor OakLiteralExpressionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakLiteralExpressionConstructor & OakLiteralExpressionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakLiteralExpressionConstructor> ();
+	
+}
 
 const uint64_t _OakLiteralExpressionConstructor_ValidLiteralTags [] =
 {

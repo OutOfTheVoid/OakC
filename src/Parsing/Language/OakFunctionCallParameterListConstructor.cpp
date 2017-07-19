@@ -5,20 +5,23 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakFunctionCallParameterListConstructor OakFunctionCallParameterListConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakFunctionCallParameterListConstructor_ParameterGroup [] = { { & OakExpressionConstructor :: Instance, 0 } };
+OakFunctionCallParameterListConstructor & OakFunctionCallParameterListConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakFunctionCallParameterListConstructor> ();
+	
+}
 
 OakFunctionCallParameterListConstructor :: OakFunctionCallParameterListConstructor ():
-	ParameterGroup ( _OakFunctionCallParameterListConstructor_ParameterGroup, 1 )
+	ParameterGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 
 OakFunctionCallParameterListConstructor :: ~OakFunctionCallParameterListConstructor ()
 {
 }
-
-#include <Logging/Logging.h>
 
 void OakFunctionCallParameterListConstructor :: TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const
 {

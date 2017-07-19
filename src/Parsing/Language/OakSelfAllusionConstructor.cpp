@@ -5,7 +5,14 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakSelfAllusionConstructor OakSelfAllusionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakSelfAllusionConstructor & OakSelfAllusionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakSelfAllusionConstructor> ();
+	
+}
 
 OakSelfAllusionConstructor :: OakSelfAllusionConstructor ()
 {

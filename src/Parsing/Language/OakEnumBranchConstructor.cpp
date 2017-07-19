@@ -16,23 +16,28 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakEnumBranchConstructor OakEnumBranchConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakEnumBranchConstructor_TypeGroupEntries [] =
+OakEnumBranchConstructor & OakEnumBranchConstructor :: Instance ()
 {
 	
-	{ & OakVoidTypeConstructor :: Instance, 0 },
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakEnumBranchConstructor> ();
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-};
+}
 
 OakEnumBranchConstructor :: OakEnumBranchConstructor ():
-	TypeGroup ( _OakEnumBranchConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( 
+	{
+		
+		{ & ( OakVoidTypeConstructor :: Instance () ), 0 },
+		{ & ( OakReferenceTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

@@ -11,16 +11,19 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakWhileStatementConstructor OakWhileStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakWhileStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakWhileStatementConstructor_StatementBodyGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakWhileStatementConstructor_LoopLabelGroupEntries [] = { { & OakLoopLabelConstructor :: Instance, 0 } };
+OakWhileStatementConstructor & OakWhileStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakWhileStatementConstructor> ();
+	
+}
 
 OakWhileStatementConstructor :: OakWhileStatementConstructor ():
-	ExpressionGroup ( _OakWhileStatementConstructor_ExpressionGroupEntries, 1 ),
-	LoopLabelGroup ( _OakWhileStatementConstructor_LoopLabelGroupEntries, 1 ),
-	StatementBodyGroup ( _OakWhileStatementConstructor_StatementBodyGroupEntries, 1 )
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } ),
+	LoopLabelGroup ( { { & ( OakLoopLabelConstructor :: Instance () ), 0 } } ),
+	StatementBodyGroup ( { { & ( OakStatementBlockConstructor :: Instance () ), 0 } } )
 {
 }
 

@@ -9,18 +9,23 @@
 
 #include <Logging/Logging.h>
 
-OakTemplateDefinitionConstructor OakTemplateDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakTemplateDefinitionConstructor_ParameterGroupEntries [] =
+OakTemplateDefinitionConstructor & OakTemplateDefinitionConstructor :: Instance ()
 {
 	
-	{ & OakRestrictedTemplateParameterConstructor :: Instance, 0 },
-	{ & OakUnrestrictedTemplateParameterConstructor :: Instance, 1 }
+	return GetGlobalSingleton <OakTemplateDefinitionConstructor> ();
 	
-};
+}
 
 OakTemplateDefinitionConstructor :: OakTemplateDefinitionConstructor ():
-	ParameterGroup ( _OakTemplateDefinitionConstructor_ParameterGroupEntries, 2 )
+	ParameterGroup ( 
+	{
+		
+		{ & ( OakRestrictedTemplateParameterConstructor :: Instance () ), 0 },
+		{ & ( OakUnrestrictedTemplateParameterConstructor :: Instance () ), 1 }
+		
+	} )
 {
 }
 

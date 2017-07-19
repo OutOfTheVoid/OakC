@@ -21,7 +21,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakIfElseStatementConstructor Instance;
+	static OakIfElseStatementConstructor & Instance ();
 	
 private:
 	

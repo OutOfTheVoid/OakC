@@ -14,14 +14,20 @@
 	#define NULL nullptr
 #endif
 
-OakStructDefinitionConstructor OakStructDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakStructDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakStructDefinitionConstructor_StructBodyConstructionGroupEntries [] = { { & OakStructBindingConstructor :: Instance, 0 } };
+#include <iostream>
+
+OakStructDefinitionConstructor & OakStructDefinitionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakStructDefinitionConstructor> ();
+	
+}
 
 OakStructDefinitionConstructor :: OakStructDefinitionConstructor ():
-	TemplateConstructionGroup ( _OakStructDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
-	StructBodyConstructionGroup ( _OakStructDefinitionConstructor_StructBodyConstructionGroupEntries, 1 )
+	TemplateConstructionGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	StructBodyConstructionGroup ( { { & ( OakStructBindingConstructor :: Instance () ), 0 } } )
 {
 }
 
@@ -81,7 +87,7 @@ void OakStructDefinitionConstructor :: TryConstruct ( ASTConstructionInput & Inp
 	const Token * ErrorToken = NULL;
 	uint64_t TokenCount = Input.AvailableTokenCount - 2;
 	
-	if ( TemplateConstructionGroup.TryConstruction ( StructElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ 2 ], TokenCount ) != 0 )
+	if ( TemplateConstructionGroup.TryConstruction ( StructElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) != 0 )
 	{
 		
 		StructData -> Templated = true;

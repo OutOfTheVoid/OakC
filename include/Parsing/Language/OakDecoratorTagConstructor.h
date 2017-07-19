@@ -32,7 +32,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakDecoratorTagConstructor Instance;
+	static OakDecoratorTagConstructor & Instance ();
 	
 private:
 	

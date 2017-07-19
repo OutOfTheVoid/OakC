@@ -13,16 +13,19 @@
 
 #include <Logging/Logging.h>
 
-OakTraitFunctionConstructor OakTraitFunctionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakTraitFunctionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakTraitFunctionConstructor_ParameterListConstructionGroupEntries [] = { { & OakFunctionParameterListConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakTraitFunctionConstructor_ReturnTypeConstructionGroupEntries [] = { { & OakReturnTypeConstructor :: Instance, 0 } };
+OakTraitFunctionConstructor & OakTraitFunctionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakTraitFunctionConstructor> ();
+	
+}
 
 OakTraitFunctionConstructor :: OakTraitFunctionConstructor ():
-	TemplateConstructionGroup ( _OakTraitFunctionConstructor_TemplateConstructionGroupEntries, 1 ),
-	ParameterListConstructionGroup ( _OakTraitFunctionConstructor_ParameterListConstructionGroupEntries, 1 ),
-	ReturnTypeConstructionGroup ( _OakTraitFunctionConstructor_ReturnTypeConstructionGroupEntries, 1 )
+	TemplateConstructionGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	ParameterListConstructionGroup ( { { & ( OakFunctionParameterListConstructor :: Instance () ), 0 } } ),
+	ReturnTypeConstructionGroup ( { { & ( OakReturnTypeConstructor :: Instance () ), 0 } } )
 {
 }
 

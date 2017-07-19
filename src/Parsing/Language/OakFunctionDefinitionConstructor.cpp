@@ -12,18 +12,20 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakFunctionDefinitionConstructor OakFunctionDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_ParameterListConstructionGroupGroupEntries [] = { { & OakFunctionParameterListConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_ReturnTypeConstructionGroupEntries [] = { { & OakReturnTypeConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakFunctionDefinitionConstructor_BodyConstructionGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+OakFunctionDefinitionConstructor & OakFunctionDefinitionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakFunctionDefinitionConstructor> ();
+	
+}
 
 OakFunctionDefinitionConstructor :: OakFunctionDefinitionConstructor ():
-	TemplateConstructionGroup ( _OakFunctionDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
-	ParameterListConstructionGroup ( _OakFunctionDefinitionConstructor_ParameterListConstructionGroupGroupEntries, 1 ),
-	ReturnTypeConstructionGroup ( _OakFunctionDefinitionConstructor_ReturnTypeConstructionGroupEntries, 1 ),
-	BodyConstructionGroup ( _OakFunctionDefinitionConstructor_BodyConstructionGroupEntries, 1 )
+	TemplateConstructionGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	ParameterListConstructionGroup ( { { & ( OakFunctionParameterListConstructor :: Instance () ), 0 } } ),
+	ReturnTypeConstructionGroup ( { { & ( OakReturnTypeConstructor :: Instance () ), 0 } } ),
+	BodyConstructionGroup ( { { & ( OakStatementBlockConstructor :: Instance () ), 0 } } )
 {
 }
 

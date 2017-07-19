@@ -13,7 +13,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakWhereClauseConstructor Instance;
+	static OakWhereClauseConstructor & Instance ();
 	
 private:
 	

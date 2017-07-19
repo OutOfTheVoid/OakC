@@ -19,7 +19,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakLoopLabelConstructor Instance;
+	static OakLoopLabelConstructor & Instance ();
 	
 private:
 	

@@ -27,20 +27,20 @@ const ASTConstructionGroup & OakParser :: GetOakParser ()
 	
 	ASTConstructionGroup * NewParser = new ASTConstructionGroup ();
 	
-	NewParser -> AddConstructorCantidate ( & OakImportStatementConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakStructDefinitionConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakTraitDefinitionConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakNamespaceDefinitionConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakImplementDefinitionConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakFunctionDefinitionConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakBindingStatementConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakConstStatementConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakDecoratorTagConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakAliasDeclarationConstructor :: Instance, 0 );
-	NewParser -> AddConstructorCantidate ( & OakEnumConstructor :: Instance, 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakImportStatementConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakStructDefinitionConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakTraitDefinitionConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakNamespaceDefinitionConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakImplementDefinitionConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakFunctionDefinitionConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakBindingStatementConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakConstStatementConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakDecoratorTagConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakAliasDeclarationConstructor :: Instance () ), 0 );
+	NewParser -> AddConstructorCantidate ( & ( OakEnumConstructor :: Instance () ), 0 );
 	
 	// Just in case
-	NewParser -> AddConstructorCantidate ( & OakLoneSemicolonConstructor :: Instance, 1 );
+	NewParser -> AddConstructorCantidate ( & ( OakLoneSemicolonConstructor :: Instance () ), 1 );
 	
 	Instance = NewParser;
 	return * NewParser;

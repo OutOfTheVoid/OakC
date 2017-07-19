@@ -14,14 +14,18 @@
 	#define NULL nullptr
 #endif
 
-OakEnumConstructor OakEnumConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakEnumConstructor_TemplateGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakEnumConstructor_EnumBodyGroupEntries [] = { { & OakEnumBranchConstructor :: Instance, 0 } };
+OakEnumConstructor & OakEnumConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakEnumConstructor> ();
+	
+}
 
 OakEnumConstructor :: OakEnumConstructor ():
-	TemplateGroup ( _OakEnumConstructor_TemplateGroupEntries, 1 ),
-	EnumBodyGroup ( _OakEnumConstructor_EnumBodyGroupEntries, 1 )
+	TemplateGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	EnumBodyGroup ( { { & ( OakEnumBranchConstructor :: Instance () ), 0 } } )
 {
 }
 

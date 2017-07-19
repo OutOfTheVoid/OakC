@@ -11,21 +11,24 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakMethodParameterListConstructor OakMethodParameterListConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakMethodParameterListConstructor_SelfParameterConstructionGroupEntries [] =
+OakMethodParameterListConstructor & OakMethodParameterListConstructor :: Instance ()
 {
 	
-	{ & OakSelfParameterConstructor :: Instance, 0 },
-	{ & OakSelfParameterReferenceConstructor :: Instance, 1 }
+	return GetGlobalSingleton <OakMethodParameterListConstructor> ();
 	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakMethodParameterListConstructor_ParameterConstructionGroupEntries [] = { { & OakFunctionParameterConstructor :: Instance, 0 } };
+}
 
 OakMethodParameterListConstructor :: OakMethodParameterListConstructor ():
-	SelfParameterConstructionGroup ( _OakMethodParameterListConstructor_SelfParameterConstructionGroupEntries, 2 ),
-	ParameterConstructionGroup ( _OakMethodParameterListConstructor_ParameterConstructionGroupEntries, 1 )
+	SelfParameterConstructionGroup ( 
+	{
+		
+		{ & ( OakSelfParameterConstructor :: Instance () ), 0 },
+		{ & ( OakSelfParameterReferenceConstructor :: Instance () ), 1 }
+			
+	} ),
+	ParameterConstructionGroup ( { { & ( OakFunctionParameterConstructor :: Instance () ), 0 } } )
 {
 }
 

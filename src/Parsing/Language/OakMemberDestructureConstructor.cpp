@@ -9,17 +9,17 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakMemberDestructureConstructor OakMemberDestructureConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakMemberDestructureConstructor_DestructureGroupEntries [] =
+OakMemberDestructureConstructor & OakMemberDestructureConstructor :: Instance ()
 {
 	
-	{ & OakStructDestructureConstructor :: Instance, 0 }
+	return GetGlobalSingleton <OakMemberDestructureConstructor> ();
 	
-};
+}
 
 OakMemberDestructureConstructor :: OakMemberDestructureConstructor ():
-	DestructureGroup ( _OakMemberDestructureConstructor_DestructureGroupEntries, 1 )
+	DestructureGroup ( { { & ( OakStructDestructureConstructor :: Instance () ), 0 } } )
 {
 }
 

@@ -19,7 +19,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakUnrestrictedTemplateParameterConstructor Instance;
+	static OakUnrestrictedTemplateParameterConstructor & Instance ();
 	
 private:
 	

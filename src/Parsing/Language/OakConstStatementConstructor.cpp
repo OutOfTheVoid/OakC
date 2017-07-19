@@ -18,27 +18,30 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakConstStatementConstructor OakConstStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakConstStatementConstructor_TypeGroupEntries [] =
+OakConstStatementConstructor & OakConstStatementConstructor :: Instance ()
 {
 	
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakConstStatementConstructor> ();
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakConstStatementConstructor_InitializerValueGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+}
 
 OakConstStatementConstructor :: OakConstStatementConstructor ():
-	TypeGroup ( _OakConstStatementConstructor_TypeGroupEntries, 6 ),
-	InitializerValueGroup ( _OakConstStatementConstructor_InitializerValueGroupEntries, 1 )
+	TypeGroup ( 
+	{
+		
+		{ & ( OakReferenceTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+		{ & ( OakVoidTypeConstructor :: Instance () ), 2 },
+		
+	} ),
+	InitializerValueGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 

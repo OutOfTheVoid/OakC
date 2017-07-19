@@ -8,12 +8,17 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
-OakMemberAccessNameConstructor OakMemberAccessNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakMemberAccessNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+OakMemberAccessNameConstructor & OakMemberAccessNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakMemberAccessNameConstructor> ();
+	
+}
 
 OakMemberAccessNameConstructor :: OakMemberAccessNameConstructor ():
-	TemplateGroup ( _OakMemberAccessNameConstructor_TemplateGroupEntries, 1 )
+	TemplateGroup ( { { & ( OakTemplateSpecificationConstructor :: Instance () ), 0 } } )
 {
 }
 

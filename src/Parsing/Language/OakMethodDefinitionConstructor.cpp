@@ -14,18 +14,20 @@
 
 #include <Logging/Logging.h>
 
-OakMethodDefinitionConstructor OakMethodDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_ParameterListConstructionEntries [] = { { & OakMethodParameterListConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_ReturnTypeConstructionEntries [] = { { & OakReturnTypeConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakMethodDefinitionConstructor_BodyConstructionGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+OakMethodDefinitionConstructor & OakMethodDefinitionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakMethodDefinitionConstructor> ();
+	
+}
 
 OakMethodDefinitionConstructor :: OakMethodDefinitionConstructor ():
-	TemplateConstructionGroup ( _OakMethodDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
-	ParameterListConstructionGroup ( _OakMethodDefinitionConstructor_ParameterListConstructionEntries, 1 ),
-	ReturnTypeConstructionGroup ( _OakMethodDefinitionConstructor_ReturnTypeConstructionEntries, 1 ),
-	BodyConstructionGroup ( _OakMethodDefinitionConstructor_BodyConstructionGroupEntries, 1 )
+	TemplateConstructionGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	ParameterListConstructionGroup ( { { & ( OakMethodParameterListConstructor :: Instance () ), 0 } } ),
+	ReturnTypeConstructionGroup ( { { & ( OakReturnTypeConstructor :: Instance () ), 0 } } ),
+	BodyConstructionGroup ( { { & ( OakStatementBlockConstructor :: Instance () ), 0 } } )
 {
 }
 

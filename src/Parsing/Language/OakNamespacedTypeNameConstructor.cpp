@@ -11,7 +11,14 @@
 
 #include <vector>
 
-OakNamespacedTypeNameConstructor OakNamespacedTypeNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakNamespacedTypeNameConstructor & OakNamespacedTypeNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakNamespacedTypeNameConstructor> ();
+	
+}
 
 OakNamespacedTypeNameConstructor :: OakNamespacedTypeNameConstructor ()
 {

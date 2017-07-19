@@ -5,18 +5,23 @@
 
 #include <Parsing/Language/OakASTTags.h>
 
-OakExpressionConstructor OakExpressionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakExpressionConstructor_SubExpressionGroup [] =
+OakExpressionConstructor & OakExpressionConstructor :: Instance ()
 {
 	
-	{ & OakOperatorExpressionConstructor :: Instance, 0 },
-	{ & OakPrimaryExpressionConstructor :: Instance, 1 }
+	return GetGlobalSingleton <OakExpressionConstructor> ();
 	
-};
+}
 
 OakExpressionConstructor :: OakExpressionConstructor ():
-	SubExpressionGroup ( _OakExpressionConstructor_SubExpressionGroup, 2 )
+	SubExpressionGroup (
+	{
+		
+		{ & ( OakOperatorExpressionConstructor :: Instance () ), 0 },
+		{ & ( OakPrimaryExpressionConstructor :: Instance () ), 1 }
+		
+	} )
 {
 }
 

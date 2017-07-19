@@ -15,6 +15,16 @@ ASTConstructionGroup :: ASTConstructionGroup ():
 {
 }
 
+ASTConstructionGroup :: ASTConstructionGroup ( std :: initializer_list <StaticInitEntry> EntryList ):
+	Constructors ()
+{
+	
+	
+	for ( uint32_t I = 0; I < EntryList.size (); I ++ )
+		AddConstructorCantidate ( ( EntryList.begin () + I ) -> Cantidate, ( EntryList.begin () + I ) -> Priority );
+	
+}
+
 ASTConstructionGroup :: ASTConstructionGroup ( StaticInitEntry * EntryList, uint32_t EntryCount ):
 	Constructors ()
 {
@@ -70,7 +80,8 @@ ASTElement * ASTConstructionGroup :: TryConstructSingleNoParent ( uint64_t Dummy
 	if ( Constructors.size () == 0 )
 	{
 		
-		Error = false;
+		Error = true;
+		ErrorSuggestion = "Internal error: No constructors!";
 		
 		return 0;
 		
@@ -138,7 +149,14 @@ uint64_t ASTConstructionGroup :: TryConstruction ( ASTElement * RootElement, uin
 	Error = false;
 	
 	if ( Constructors.size () == 0 )
+	{
+		
+		Error = true;
+		ErrorSuggestion = "Internal error: No constructors!";
+		
 		return 0;
+		
+	}
 	
 	uint64_t SubElementCount = 0;
 	uint64_t TokenOffset = 0;

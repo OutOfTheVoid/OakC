@@ -20,7 +20,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakStatementBlockConstructor Instance;
+	static OakStatementBlockConstructor & Instance ();
 	
 private:
 	

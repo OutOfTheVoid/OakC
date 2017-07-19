@@ -12,7 +12,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakVoidTypeConstructor Instance;
+	static OakVoidTypeConstructor & Instance ();
 	
 };
 

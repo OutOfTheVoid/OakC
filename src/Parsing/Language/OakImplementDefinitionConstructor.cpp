@@ -25,51 +25,45 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakImplementDefinitionConstructor OakImplementDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries [] =
+OakImplementDefinitionConstructor & OakImplementDefinitionConstructor :: Instance ()
 {
 	
-	{ & OakMethodDefinitionConstructor :: Instance, 1 },
-	{ & OakFunctionDefinitionConstructor :: Instance, 0 },
-	{ & OakDecoratorTagConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakImplementDefinitionConstructor> ();
 	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries [] =
-{
-	
-	{ & OakVoidTypeConstructor :: Instance, 0 },
-	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_ImplementedTraitConstructionGroupEntries [] =
-{
-	
-	{ & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTraitNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTraitNameConstructor :: Instance, 1 },
-	{ & OakBareTraitNameConstructor :: Instance, 2 },
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakImplementDefinitionConstructor_WhereClauseGroupEntries [] =
-{
-	
-	{ & OakWhereClauseConstructor :: Instance, 0 },
-	
-};
+}
 
 OakImplementDefinitionConstructor :: OakImplementDefinitionConstructor ():
-	ImplementChildrenConstructionGroup ( _OakImplementDefinitionConstructor_ImplementChildrenConstructionGroupEntries, 3 ),
-	TypeNameGroup ( _OakImplementDefinitionConstructor_ImplementedTypeConstructionGroupEntries, 5 ),
-	TraitNameGroup ( _OakImplementDefinitionConstructor_ImplementedTraitConstructionGroupEntries, 4 ),
-	WhereClauseGroup ( _OakImplementDefinitionConstructor_WhereClauseGroupEntries, 1 )
+	ImplementChildrenConstructionGroup ( 
+	{
+		
+		{ & ( OakMethodDefinitionConstructor :: Instance () ), 1 },
+		{ & ( OakFunctionDefinitionConstructor :: Instance () ), 0 },
+		{ & ( OakDecoratorTagConstructor :: Instance () ), 0 },
+		
+	} ),
+	TypeNameGroup ( 
+	{
+		
+		{ & ( OakVoidTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+	} ),
+	TraitNameGroup ( 
+	{
+		
+		{ & ( OakNamespacedTemplatedTraitNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTraitNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTraitNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTraitNameConstructor :: Instance () ), 2 },
+		
+	} ),
+	WhereClauseGroup ( { { & ( OakWhereClauseConstructor :: Instance () ), 0 } } )
 {
 }
 

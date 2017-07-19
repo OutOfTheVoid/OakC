@@ -9,14 +9,18 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakIfElseStatementConstructor OakIfElseStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakIfElseStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakIfElseStatementConstructor_EStatementBodyGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+OakIfElseStatementConstructor & OakIfElseStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakIfElseStatementConstructor> ();
+	
+}
 
 OakIfElseStatementConstructor :: OakIfElseStatementConstructor ():
-	ExpressionGroup ( _OakIfElseStatementConstructor_ExpressionGroupEntries, 1 ),
-	StatementBodyGroup ( _OakIfElseStatementConstructor_EStatementBodyGroupEntries, 1 )
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } ),
+	StatementBodyGroup ( { { & ( OakStatementBlockConstructor :: Instance () ), 0 } } )
 {
 }
 

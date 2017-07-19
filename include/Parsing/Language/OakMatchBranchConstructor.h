@@ -38,7 +38,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakMatchBranchConstructor Instance;
+	static OakMatchBranchConstructor & Instance ();
 	
 private:
 	

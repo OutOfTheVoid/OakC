@@ -12,7 +12,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakLiteralExpressionConstructor Instance;
+	static OakLiteralExpressionConstructor & Instance ();
 	
 };
 

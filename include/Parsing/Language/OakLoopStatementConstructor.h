@@ -20,7 +20,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakLoopStatementConstructor Instance;
+	static OakLoopStatementConstructor & Instance ();
 	
 private:
 	

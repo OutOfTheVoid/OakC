@@ -5,18 +5,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakStructDestructureConstructor OakStructDestructureConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-
-ASTConstructionGroup :: StaticInitEntry _OakStructDestructureConstructor_MemberDestructGroupEntries [] =
+OakStructDestructureConstructor & OakStructDestructureConstructor :: Instance ()
 {
 	
-	{ & OakMemberDestructureConstructor :: Instance, 0 }
+	return GetGlobalSingleton <OakStructDestructureConstructor> ();
 	
-};
+}
 
 OakStructDestructureConstructor :: OakStructDestructureConstructor ():
-	MemberDestructGroup ( _OakStructDestructureConstructor_MemberDestructGroupEntries, 1 )
+	MemberDestructGroup ( { { & ( OakMemberDestructureConstructor :: Instance () ), 0 } } )
 {
 }
 

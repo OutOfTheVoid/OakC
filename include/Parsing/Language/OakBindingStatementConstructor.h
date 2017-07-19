@@ -23,7 +23,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakBindingStatementConstructor Instance;
+	static OakBindingStatementConstructor & Instance ();
 	
 private:
 	

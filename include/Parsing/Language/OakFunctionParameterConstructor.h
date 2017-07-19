@@ -21,7 +21,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakFunctionParameterConstructor Instance;
+	static OakFunctionParameterConstructor & Instance ();
 	
 private:
 	

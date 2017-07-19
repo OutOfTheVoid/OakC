@@ -8,12 +8,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakReturnStatementConstructor OakReturnStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakReturnStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+OakReturnStatementConstructor & OakReturnStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakReturnStatementConstructor> ();
+	
+}
 
 OakReturnStatementConstructor :: OakReturnStatementConstructor ():
-	ExpressionGroup ( _OakReturnStatementConstructor_ExpressionGroupEntries, 1 )
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 

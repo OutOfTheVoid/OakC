@@ -10,22 +10,27 @@
 #include <Parsing/Language/OakArrayLiteralConstructor.h>
 #include <Parsing/Language/OakStructLiteralConstructor.h>
 
-OakPrimaryExpressionConstructor OakPrimaryExpressionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakPrimaryExpressionConstructor_PrimaryGroupEntries [] =
+OakPrimaryExpressionConstructor & OakPrimaryExpressionConstructor :: Instance ()
 {
 	
-	{ & OakParenthesizedExpressionConstructor :: Instance, 0 },
-	{ & OakLiteralExpressionConstructor :: Instance, 1 },
-	{ & OakArrayLiteralConstructor :: Instance, 1 },
-	{ & OakStructLiteralConstructor :: Instance, 1 },
-	{ & OakSelfAllusionConstructor :: Instance, 2 },
-	{ & OakAllusionConstructor :: Instance, 2 },
+	return GetGlobalSingleton <OakPrimaryExpressionConstructor> ();
 	
-};
+}
 
 OakPrimaryExpressionConstructor :: OakPrimaryExpressionConstructor ():
-	PrimaryGroup ( _OakPrimaryExpressionConstructor_PrimaryGroupEntries, 6 )
+	PrimaryGroup ( 
+	{
+		
+		{ & ( OakParenthesizedExpressionConstructor :: Instance () ), 0 },
+		{ & ( OakLiteralExpressionConstructor :: Instance () ), 1 },
+		{ & ( OakArrayLiteralConstructor :: Instance () ), 1 },
+		{ & ( OakStructLiteralConstructor :: Instance () ), 1 },
+		{ & ( OakSelfAllusionConstructor :: Instance () ), 2 },
+		{ & ( OakAllusionConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

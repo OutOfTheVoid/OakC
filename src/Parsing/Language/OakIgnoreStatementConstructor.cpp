@@ -7,7 +7,14 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakIgnoreStatementConstructor OakIgnoreStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakIgnoreStatementConstructor & OakIgnoreStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakIgnoreStatementConstructor> ();
+	
+}
 
 OakIgnoreStatementConstructor :: OakIgnoreStatementConstructor ()
 {

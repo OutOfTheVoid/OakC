@@ -5,7 +5,14 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakSelfParameterConstructor OakSelfParameterConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakSelfParameterConstructor & OakSelfParameterConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakSelfParameterConstructor> ();
+	
+}
 
 OakSelfParameterConstructor :: OakSelfParameterConstructor ()
 {

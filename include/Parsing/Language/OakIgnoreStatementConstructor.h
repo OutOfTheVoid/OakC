@@ -19,7 +19,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakIgnoreStatementConstructor Instance;
+	static OakIgnoreStatementConstructor & Instance ();
 	
 private:
 	

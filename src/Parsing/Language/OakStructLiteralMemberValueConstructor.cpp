@@ -9,12 +9,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakStructLiteralMemberValueConstructor OakStructLiteralMemberValueConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakStructLiteralConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+OakStructLiteralMemberValueConstructor & OakStructLiteralMemberValueConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakStructLiteralMemberValueConstructor> ();
+	
+}
 
 OakStructLiteralMemberValueConstructor :: OakStructLiteralMemberValueConstructor ():
-	ExpressionGroup ( _OakStructLiteralConstructor_ExpressionGroupEntries, 1 )
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 

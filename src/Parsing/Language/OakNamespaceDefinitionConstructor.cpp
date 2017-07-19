@@ -21,28 +21,33 @@
 
 #include <Parsing/Language/OakStructDefinitionConstructor.h>
 
-OakNamespaceDefinitionConstructor OakNamespaceDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakNamespaceDefinitionConstructor_NamespaceChildrenGroupEntries [] =
+OakNamespaceDefinitionConstructor & OakNamespaceDefinitionConstructor :: Instance ()
 {
 	
-	{ & OakNamespaceDefinitionConstructor :: Instance, 0 },
-	{ & OakAliasDeclarationConstructor :: Instance, 0 },
-	{ & OakStructDefinitionConstructor :: Instance, 0 },
-	{ & OakTraitDefinitionConstructor :: Instance, 0 },
-	{ & OakBindingStatementConstructor :: Instance, 0 },
-	{ & OakConstStatementConstructor :: Instance, 0 },
-	{ & OakFunctionDefinitionConstructor :: Instance, 0 },
-	{ & OakImplementDefinitionConstructor :: Instance, 0 },
-	{ & OakDecoratorTagConstructor :: Instance, 0 },
-	{ & OakEnumConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakNamespaceDefinitionConstructor> ();
 	
-	{ & OakLoneSemicolonConstructor :: Instance, 1 },
-	
-};
+}
 
 OakNamespaceDefinitionConstructor :: OakNamespaceDefinitionConstructor ():
-	NamespaceChildrenGroup ( _OakNamespaceDefinitionConstructor_NamespaceChildrenGroupEntries, 11 )
+	NamespaceChildrenGroup ( 
+	{
+		
+		{ & ( OakNamespaceDefinitionConstructor :: Instance () ), 0 },
+		{ & ( OakAliasDeclarationConstructor :: Instance () ), 0 },
+		{ & ( OakStructDefinitionConstructor :: Instance () ), 0 },
+		{ & ( OakTraitDefinitionConstructor :: Instance () ), 0 },
+		{ & ( OakBindingStatementConstructor :: Instance () ), 0 },
+		{ & ( OakConstStatementConstructor :: Instance () ), 0 },
+		{ & ( OakFunctionDefinitionConstructor :: Instance () ), 0 },
+		{ & ( OakImplementDefinitionConstructor :: Instance () ), 0 },
+		{ & ( OakDecoratorTagConstructor :: Instance () ), 0 },
+		{ & ( OakEnumConstructor :: Instance () ), 0 },
+		
+		{ & ( OakLoneSemicolonConstructor :: Instance () ), 1 },
+		
+	} )
 {
 }
 

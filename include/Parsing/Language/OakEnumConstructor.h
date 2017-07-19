@@ -23,7 +23,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakEnumConstructor Instance;
+	static OakEnumConstructor & Instance ();
 	
 private:
 	

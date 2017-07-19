@@ -14,17 +14,18 @@
 	#define NULL nullptr
 #endif
 
-OakAllusionConstructor OakAllusionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakAllusionConstructor_TemplateSpecificationGroupEntries [] =
+OakAllusionConstructor & OakAllusionConstructor :: Instance ()
 {
 	
-	{ & OakTemplateSpecificationConstructor :: Instance, 0 }
+	return GetGlobalSingleton <OakAllusionConstructor> ();
 	
-};
+}
+
 
 OakAllusionConstructor :: OakAllusionConstructor ():
-	TemplateSpecificationGroup ( _OakAllusionConstructor_TemplateSpecificationGroupEntries, 1 )
+	TemplateSpecificationGroup ( { { & ( OakTemplateSpecificationConstructor :: Instance () ), 0 } } )
 {
 }
 

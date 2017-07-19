@@ -9,12 +9,19 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakFunctionParameterListConstructor OakFunctionParameterListConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakFunctionParameterListConstructor_ParameterConstructionGroupEntries [] = { { & OakFunctionParameterConstructor :: Instance, 0 } };
+#include <Utils/GlobalSingleton.h>
+
+OakFunctionParameterListConstructor & OakFunctionParameterListConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakFunctionParameterListConstructor> ();
+	
+}
 
 OakFunctionParameterListConstructor :: OakFunctionParameterListConstructor ():
-	ParameterConstructionGroup ( _OakFunctionParameterListConstructor_ParameterConstructionGroupEntries, 1 )
+	ParameterConstructionGroup ( { { & ( OakFunctionParameterConstructor :: Instance () ), 0 } } )
 {
 }
 

@@ -13,7 +13,14 @@
 	#define NULL nullptr
 #endif
 
-OakOperatorExpressionConstructor OakOperatorExpressionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakOperatorExpressionConstructor & OakOperatorExpressionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakOperatorExpressionConstructor> ();
+	
+}
 
 typedef enum
 {
@@ -60,23 +67,8 @@ typedef struct OperatorEntry_Struct
 	
 } _OperatorEntry_t;
 
-ASTConstructionGroup :: StaticInitEntry _OakOperatorExpressionConstructor_FunctionCallParamListGroup_Entries [] =
-{
-	
-	{ & OakFunctionCallParameterListConstructor :: Instance, 0 }
-	
-};
-
-ASTConstructionGroup _OakOperatorExpressionConstructor_FunctionCallParamListGroup ( _OakOperatorExpressionConstructor_FunctionCallParamListGroup_Entries, 1 );
-
-ASTConstructionGroup :: StaticInitEntry _OakOperatorExpressionConstructor_MemberAccessNameGroup_Entries [] =
-{
-	
-	{ & OakMemberAccessNameConstructor :: Instance, 0 }
-	
-};
-
-ASTConstructionGroup _OakOperatorExpressionConstructor_MemberAccessNameGroup ( _OakOperatorExpressionConstructor_MemberAccessNameGroup_Entries, 1 );
+ASTConstructionGroup _OakOperatorExpressionConstructor_FunctionCallParamListGroup ( { { & ( OakFunctionCallParameterListConstructor :: Instance () ), 0 } } );
+ASTConstructionGroup _OakOperatorExpressionConstructor_MemberAccessNameGroup ( { { & ( OakMemberAccessNameConstructor :: Instance () ), 0 } } );
 
 _OperatorEntry_t _OakOperatorExpressionConstructor_OperatorList [] =
 {
@@ -224,12 +216,9 @@ void CleanupExpressionElements ( std :: vector <ExpressionElement> & ExpressionE
 	
 }
 
-ASTConstructionGroup :: StaticInitEntry _OakOperatorExpressionConstructor_PrimaryGroupEntries [] = { { & OakPrimaryExpressionConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakOperatorExpressionConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
-
 OakOperatorExpressionConstructor :: OakOperatorExpressionConstructor ():
-	PrimaryGroup ( _OakOperatorExpressionConstructor_PrimaryGroupEntries, 1 ),
-	ExpressionGroup ( _OakOperatorExpressionConstructor_ExpressionGroupEntries, 1 )
+	PrimaryGroup ( { { & ( OakPrimaryExpressionConstructor :: Instance () ), 0 } } ),
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 

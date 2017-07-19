@@ -18,37 +18,28 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakArrayLiteralConstructor OakArrayLiteralConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_TypeGroupEntries [] =
+OakArrayLiteralConstructor & OakArrayLiteralConstructor :: Instance ()
 {
 	
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakArrayLiteralConstructor> ();
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_ExpressionGroupEntries [] =
-{
-	
-	{ & OakExpressionConstructor :: Instance, 0 }
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakArrayLiteralConstructor_UnsignedIntegerGroupEntries [] =
-{
-	
-	{ & OakLiteralExpressionConstructor :: Instance, 0 }
-	
-};
+}
 
 OakArrayLiteralConstructor :: OakArrayLiteralConstructor ():
-	TypeGroup ( _OakArrayLiteralConstructor_TypeGroupEntries, 5 ),
-	ExpressionGroup ( _OakArrayLiteralConstructor_ExpressionGroupEntries, 1 )
+	TypeGroup ( 
+	{
+		
+		{ & ( OakReferenceTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+	} ),
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 

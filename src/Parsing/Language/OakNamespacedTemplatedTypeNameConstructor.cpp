@@ -9,12 +9,17 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
-OakNamespacedTemplatedTypeNameConstructor OakNamespacedTemplatedTypeNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakNamespacedTemplatedTypeNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+OakNamespacedTemplatedTypeNameConstructor & OakNamespacedTemplatedTypeNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakNamespacedTemplatedTypeNameConstructor> ();
+	
+}
 
 OakNamespacedTemplatedTypeNameConstructor :: OakNamespacedTemplatedTypeNameConstructor ():
-	TemplateGroup ( _OakNamespacedTemplatedTypeNameConstructor_TemplateGroupEntries, 1 )
+	TemplateGroup ( { { & ( OakTemplateSpecificationConstructor :: Instance () ), 0 } } )
 {
 }
 

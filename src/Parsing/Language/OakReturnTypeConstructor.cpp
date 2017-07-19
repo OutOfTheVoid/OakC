@@ -16,23 +16,29 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakReturnTypeConstructor OakReturnTypeConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakReturnTypeConstructor_TypeGroupEntries [] =
+OakReturnTypeConstructor & OakReturnTypeConstructor :: Instance ()
 {
 	
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
-	{ & OakVoidTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakReturnTypeConstructor> ();
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-};
+}
 
 OakReturnTypeConstructor :: OakReturnTypeConstructor ():
-	TypeGroup ( _OakReturnTypeConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( 
+	{
+		
+		{ & ( OakReferenceTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+		{ & ( OakVoidTypeConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

@@ -6,7 +6,14 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakLoopLabelConstructor OakLoopLabelConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakLoopLabelConstructor & OakLoopLabelConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakLoopLabelConstructor> ();
+	
+}
 
 OakLoopLabelConstructor :: OakLoopLabelConstructor ()
 {

@@ -12,24 +12,27 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakReferenceTypeConstructor OakReferenceTypeConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakReferenceTypeConstructor_TypeGroupEntries [] =
+OakReferenceTypeConstructor & OakReferenceTypeConstructor :: Instance ()
 {
 	
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakReferenceTypeConstructor> ();
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-	{ & OakVoidTypeConstructor :: Instance, 2 },
-	
-};
+}
 
 OakReferenceTypeConstructor :: OakReferenceTypeConstructor ():
-	TypeGroup ( _OakReferenceTypeConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( 
+	{
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+		{ & ( OakVoidTypeConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

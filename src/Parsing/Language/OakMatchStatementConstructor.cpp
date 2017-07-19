@@ -10,20 +10,18 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakMatchStatementConstructor OakMatchStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakMatchStatementConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
-
-ASTConstructionGroup :: StaticInitEntry _OakMatchStatementConstructor_MatchesGroupEntries [] =
+OakMatchStatementConstructor & OakMatchStatementConstructor :: Instance ()
 {
 	
-	{ & OakMatchBranchConstructor :: Instance, 0 }
+	return GetGlobalSingleton <OakMatchStatementConstructor> ();
 	
-};
+}
 
 OakMatchStatementConstructor :: OakMatchStatementConstructor ():
-	ExpressionGroup ( _OakMatchStatementConstructor_ExpressionGroupEntries, 1 ),
-	MatchesGroup ( _OakMatchStatementConstructor_MatchesGroupEntries, 1 )
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } ),
+	MatchesGroup ( { { & ( OakMatchBranchConstructor :: Instance () ), 0 } } )
 {	
 }
 

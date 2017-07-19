@@ -18,43 +18,27 @@
 	#define NULL nullptr
 #endif
 
-OakMatchBranchConstructor OakMatchBranchConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakMatchBranchConstructor_LiteralGroupEntries [] = 
+OakMatchBranchConstructor & OakMatchBranchConstructor :: Instance ()
 {
 	
-	{ & OakLiteralExpressionConstructor :: Instance, 0 },
-	{ & OakArrayLiteralConstructor :: Instance, 0 },
-	{ & OakStructLiteralConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakMatchBranchConstructor> ();
 	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakMatchBranchConstructor_DestructureGroupEntries [] =
-{
-	
-	{ & OakStructDestructureConstructor :: Instance, 0 }
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakMatchBranchConstructor_AllusionGroupEntries [] =
-{
-	
-	{ & OakAllusionConstructor :: Instance, 0 }
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakMatchBranchConstructor_StatementBlockGroupEntries [] =
-{
-	
-	{ & OakStatementBlockConstructor :: Instance, 0 }
-	
-};
+}
 
 OakMatchBranchConstructor :: OakMatchBranchConstructor ():
-	LiteralGroup ( _OakMatchBranchConstructor_LiteralGroupEntries, 3 ),
-	DestructureGroup ( _OakMatchBranchConstructor_DestructureGroupEntries, 1 ),
-	AllusionGroup ( _OakMatchBranchConstructor_AllusionGroupEntries, 1 ),
-	StatementBlockGroup ( _OakMatchBranchConstructor_StatementBlockGroupEntries, 1 )
+	LiteralGroup ( 
+	{
+		
+		{ & ( OakLiteralExpressionConstructor :: Instance () ), 0 },
+		{ & ( OakArrayLiteralConstructor :: Instance () ), 0 },
+		{ & ( OakStructLiteralConstructor :: Instance () ), 0 },
+		
+	} ),
+	DestructureGroup ( { { & ( OakStructDestructureConstructor :: Instance () ), 0 } } ),
+	AllusionGroup ( { { & ( OakAllusionConstructor :: Instance () ), 0 } } ),
+	StatementBlockGroup ( { { & ( OakStatementBlockConstructor :: Instance () ), 0 } } )
 {
 }
 

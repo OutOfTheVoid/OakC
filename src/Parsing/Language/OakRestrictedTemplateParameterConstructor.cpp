@@ -12,20 +12,26 @@
 #include <Parsing/Language/OakNamespacedTraitNameConstructor.h>
 #include <Parsing/Language/OakNamespacedTemplatedTraitNameConstructor.h>
 
-OakRestrictedTemplateParameterConstructor OakRestrictedTemplateParameterConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakRestrictedTemplateParameterConstructor_RestrictionTraitGroupEntries [] =
+OakRestrictedTemplateParameterConstructor & OakRestrictedTemplateParameterConstructor :: Instance ()
 {
 	
-	{ & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTraitNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTraitNameConstructor :: Instance, 1 },
-	{ & OakBareTraitNameConstructor :: Instance, 2 },
+	return GetGlobalSingleton <OakRestrictedTemplateParameterConstructor> ();
 	
-};
+}
+
 
 OakRestrictedTemplateParameterConstructor :: OakRestrictedTemplateParameterConstructor ():
-	RestrictionTraitGroup ( _OakRestrictedTemplateParameterConstructor_RestrictionTraitGroupEntries, 4 )
+	RestrictionTraitGroup ( 
+	{
+		
+		{ & ( OakNamespacedTemplatedTraitNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTraitNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTraitNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTraitNameConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

@@ -7,17 +7,18 @@
 
 #include <Parsing/Language/OakTemplateDefinitionConstructor.h>
 
-OakWhereClauseConstructor OakWhereClauseConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakWhereClauseConstructor_TemplateConstructionGroup [] =
+OakWhereClauseConstructor & OakWhereClauseConstructor :: Instance ()
 {
 	
-	{ & OakTemplateDefinitionConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakWhereClauseConstructor> ();
 	
-};
+}
+
 
 OakWhereClauseConstructor :: OakWhereClauseConstructor ():
-	TemplateGroup ( _OakWhereClauseConstructor_TemplateConstructionGroup, 1 )
+	TemplateGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } )
 {
 }
 

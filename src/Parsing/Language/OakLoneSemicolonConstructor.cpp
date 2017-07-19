@@ -6,7 +6,14 @@
 	#define NULL nullptr
 #endif
 
-OakLoneSemicolonConstructor OakLoneSemicolonConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakLoneSemicolonConstructor & OakLoneSemicolonConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakLoneSemicolonConstructor> ();
+	
+}
 
 OakLoneSemicolonConstructor :: OakLoneSemicolonConstructor ()
 {

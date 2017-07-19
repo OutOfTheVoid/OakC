@@ -25,7 +25,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakBareTypeNameConstructor Instance;
+	static OakBareTypeNameConstructor & Instance ();
 	
 private:
 	

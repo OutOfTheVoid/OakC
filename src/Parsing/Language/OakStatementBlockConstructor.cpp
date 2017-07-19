@@ -21,30 +21,35 @@
 
 #include <Logging/Logging.h>
 
-OakStatementBlockConstructor OakStatementBlockConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakStatementBlockConstructor_StatementGroupEntries [] =
+OakStatementBlockConstructor & OakStatementBlockConstructor :: Instance ()
 {
 	
-	{ & OakIgnoreStatementConstructor :: Instance, 0 },
-	{ & OakLoneSemicolonConstructor :: Instance, 0 },
-	{ & OakReturnStatementConstructor :: Instance, 0 },
-	{ & OakIfElseStatementConstructor :: Instance, 0 },
-	{ & OakWhileStatementConstructor :: Instance, 0 },
-	{ & OakDoWhileStatementConstructor :: Instance, 0 },
-	{ & OakBreakStatementConstructor :: Instance, 0 },
-	{ & OakLoopStatementConstructor :: Instance, 0 },
-	{ & OakConstStatementConstructor :: Instance, 0 },
-	{ & OakBindingStatementConstructor :: Instance, 0 },
-	{ & OakMatchStatementConstructor :: Instance, 0 },
-	{ & OakExpressionStatementConstructor :: Instance, 1 },
+	return GetGlobalSingleton <OakStatementBlockConstructor> ();
 	
-	{ & OakStatementBlockConstructor :: Instance, 1 },
-	
-};
+}
 
 OakStatementBlockConstructor :: OakStatementBlockConstructor ():
-	StatementGroup ( _OakStatementBlockConstructor_StatementGroupEntries, 14 )
+	StatementGroup ( 
+	{
+		
+		{ & ( OakIgnoreStatementConstructor :: Instance () ), 0 },
+		{ & ( OakLoneSemicolonConstructor :: Instance () ), 0 },
+		{ & ( OakReturnStatementConstructor :: Instance () ), 0 },
+		{ & ( OakIfElseStatementConstructor :: Instance () ), 0 },
+		{ & ( OakWhileStatementConstructor :: Instance () ), 0 },
+		{ & ( OakDoWhileStatementConstructor :: Instance () ), 0 },
+		{ & ( OakBreakStatementConstructor :: Instance () ), 0 },
+		{ & ( OakLoopStatementConstructor :: Instance () ), 0 },
+		{ & ( OakConstStatementConstructor :: Instance () ), 0 },
+		{ & ( OakBindingStatementConstructor :: Instance () ), 0 },
+		{ & ( OakMatchStatementConstructor :: Instance () ), 0 },
+		{ & ( OakExpressionStatementConstructor :: Instance () ), 1 },
+		
+		{ & ( OakStatementBlockConstructor :: Instance () ), 1 },
+		
+	} )
 {
 }
 

@@ -9,7 +9,14 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
-OakTemplatedTypeNameConstructor OakTemplatedTypeNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakTemplatedTypeNameConstructor & OakTemplatedTypeNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakTemplatedTypeNameConstructor> ();
+	
+}
 
 uint64_t _OakTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
 {
@@ -38,10 +45,8 @@ uint64_t _OakTemplatedTypeNameConstructor_AllowedKeywordTagList [] =
 
 TestSet <uint64_t> OakTemplatedTypeNameConstructor :: AllowedKeywordTags ( _OakTemplatedTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
-ASTConstructionGroup :: StaticInitEntry _OakTemplatedTypeNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
-
 OakTemplatedTypeNameConstructor :: OakTemplatedTypeNameConstructor ():
-	TemplateGroup ( _OakTemplatedTypeNameConstructor_TemplateGroupEntries, 1 )
+	TemplateGroup ( { { & ( OakTemplateSpecificationConstructor :: Instance () ), 0 } } )
 {
 }
 

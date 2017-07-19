@@ -23,7 +23,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakArrayLiteralConstructor Instance;
+	static OakArrayLiteralConstructor & Instance ();
 	
 private:
 	

@@ -9,7 +9,14 @@
 #include <Tokenization/Language/OakTokenTags.h>
 #include <Tokenization/Token.h>
 
-OakImportStatementConstructor OakImportStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakImportStatementConstructor & OakImportStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakImportStatementConstructor> ();
+	
+}
 
 OakImportStatementConstructor :: OakImportStatementConstructor ()
 {	

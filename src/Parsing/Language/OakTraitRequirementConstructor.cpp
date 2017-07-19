@@ -12,20 +12,26 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakTraitRequirementConstructor OakTraitRequirementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakTraitRequirementConstructor_TraitRefGroupEntries []
+OakTraitRequirementConstructor & OakTraitRequirementConstructor :: Instance ()
 {
 	
-	{ & OakNamespacedTemplatedTraitNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTraitNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTraitNameConstructor :: Instance, 1 },
-	{ & OakBareTraitNameConstructor :: Instance, 2 },
+	return GetGlobalSingleton <OakTraitRequirementConstructor> ();
 	
-};
+}
+
 
 OakTraitRequirementConstructor :: OakTraitRequirementConstructor ():
-	TraitRefGroup ( _OakTraitRequirementConstructor_TraitRefGroupEntries, 4 )
+	TraitRefGroup ( 
+	{
+		
+		{ & ( OakNamespacedTemplatedTraitNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTraitNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTraitNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTraitNameConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

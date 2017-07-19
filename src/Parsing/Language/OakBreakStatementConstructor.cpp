@@ -7,17 +7,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakBreakStatementConstructor OakBreakStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakBreakStatementConstructor_LabelGroupEntries []
+OakBreakStatementConstructor & OakBreakStatementConstructor :: Instance ()
 {
 	
-	{ & OakLoopLabelConstructor :: Instance, 0 }
+	return GetGlobalSingleton <OakBreakStatementConstructor> ();
 	
-};
+}
 
 OakBreakStatementConstructor :: OakBreakStatementConstructor ():
-	LabelGroup ( _OakBreakStatementConstructor_LabelGroupEntries, 1 )
+	LabelGroup ( { { & ( OakLoopLabelConstructor :: Instance () ), 0 } } )
 {
 }
 

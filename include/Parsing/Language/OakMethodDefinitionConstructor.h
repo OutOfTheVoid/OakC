@@ -24,7 +24,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakMethodDefinitionConstructor Instance;
+	static OakMethodDefinitionConstructor & Instance ();
 	
 private:
 	

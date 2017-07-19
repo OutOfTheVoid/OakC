@@ -5,7 +5,14 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakUnrestrictedTemplateParameterConstructor OakUnrestrictedTemplateParameterConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakUnrestrictedTemplateParameterConstructor & OakUnrestrictedTemplateParameterConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakUnrestrictedTemplateParameterConstructor> ();
+	
+}
 
 OakUnrestrictedTemplateParameterConstructor :: OakUnrestrictedTemplateParameterConstructor ()
 {

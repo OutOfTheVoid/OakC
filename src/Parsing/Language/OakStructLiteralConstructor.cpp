@@ -14,23 +14,26 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakStructLiteralConstructor OakStructLiteralConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakStructLiteralConstructor_StructTypeGroupEntries [] =
+OakStructLiteralConstructor & OakStructLiteralConstructor :: Instance ()
 {
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
+	return GetGlobalSingleton <OakStructLiteralConstructor> ();
 	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakStructLiteralConstructor_MemberValueGroupEntries [] = { { & OakStructLiteralMemberValueConstructor :: Instance, 0 } };
+}
 
 OakStructLiteralConstructor :: OakStructLiteralConstructor ():
-	StructTypeGroup ( _OakStructLiteralConstructor_StructTypeGroupEntries, 4 ),
-	MemberValueGroup (  _OakStructLiteralConstructor_MemberValueGroupEntries, 1 )
+	StructTypeGroup ( 
+	{
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+	} ),
+	MemberValueGroup ( { { & ( OakStructLiteralMemberValueConstructor :: Instance () ), 0 } } )
 {
 }
 

@@ -13,7 +13,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakSelfParameterReferenceConstructor Instance;
+	static OakSelfParameterReferenceConstructor & Instance ();
 	
 private:
 	

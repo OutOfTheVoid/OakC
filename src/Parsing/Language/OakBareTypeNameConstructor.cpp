@@ -37,7 +37,14 @@ uint64_t _OakBareTypeNameConstructor_AllowedKeywordTagList [] =
 
 TestSet <uint64_t> OakBareTypeNameConstructor :: AllowedKeywordTags ( _OakBareTypeNameConstructor_AllowedKeywordTagList, 19, false );
 
-OakBareTypeNameConstructor OakBareTypeNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakBareTypeNameConstructor & OakBareTypeNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakBareTypeNameConstructor> ();
+	
+}
 
 OakBareTypeNameConstructor :: OakBareTypeNameConstructor ()
 {	
@@ -61,7 +68,6 @@ void OakBareTypeNameConstructor :: TryConstruct ( ASTConstructionInput & Input, 
 	
 	uint32_t Offset = 0;
 	bool Absolute = false;
-	bool Mutable = false;
 	
 	const Token * CurrentToken = Input.Tokens [ Offset ];
 	

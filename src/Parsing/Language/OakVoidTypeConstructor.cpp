@@ -6,7 +6,14 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakVoidTypeConstructor OakVoidTypeConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakVoidTypeConstructor & OakVoidTypeConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakVoidTypeConstructor> ();
+	
+}
 
 OakVoidTypeConstructor :: OakVoidTypeConstructor ()
 {

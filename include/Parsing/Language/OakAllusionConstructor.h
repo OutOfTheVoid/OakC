@@ -33,7 +33,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakAllusionConstructor Instance;
+	static OakAllusionConstructor & Instance ();
 	
 private:
 	

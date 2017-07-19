@@ -7,12 +7,17 @@
 
 #include <Parsing/Language/OakTemplateSpecificationConstructor.h>
 
-OakTemplatedTraitNameConstructor OakTemplatedTraitNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakTemplatedTraitNameConstructor_TemplateGroupEntries [] = { { & OakTemplateSpecificationConstructor :: Instance, 0 } };
+OakTemplatedTraitNameConstructor & OakTemplatedTraitNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakTemplatedTraitNameConstructor> ();
+	
+}
 
 OakTemplatedTraitNameConstructor :: OakTemplatedTraitNameConstructor ():
-	TemplateGroup ( _OakTemplatedTraitNameConstructor_TemplateGroupEntries, 1 )
+	TemplateGroup ( { { & ( OakTemplateSpecificationConstructor :: Instance () ), 0 } } )
 {
 }
 

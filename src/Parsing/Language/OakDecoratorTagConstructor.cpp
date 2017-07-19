@@ -7,7 +7,14 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakDecoratorTagConstructor OakDecoratorTagConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakDecoratorTagConstructor & OakDecoratorTagConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakDecoratorTagConstructor> ();
+	
+}
 	
 OakDecoratorTagConstructor :: OakDecoratorTagConstructor ()
 {

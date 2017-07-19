@@ -21,31 +21,28 @@
 #include <Logging/Logging.h>
 #include <Encoding/CodeConversion.h>
 
-OakAliasDeclarationConstructor OakAliasDeclarationConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakAliasDeclarationConstructor_TypeGroupEntries [] =
+OakAliasDeclarationConstructor & OakAliasDeclarationConstructor :: Instance ()
 {
 	
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
-	{ & OakVoidTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakAliasDeclarationConstructor> ();
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-};
-
-ASTConstructionGroup :: StaticInitEntry _OakAliasDeclarationConstructor_TemplateGroupEntries [] =
-{
-	
-	{ & OakTemplateDefinitionConstructor :: Instance, 0 },
-	
-};
+}
 
 OakAliasDeclarationConstructor :: OakAliasDeclarationConstructor ():
-	TemplateGroup ( _OakAliasDeclarationConstructor_TemplateGroupEntries, 1 ),
-	TypeGroup ( _OakAliasDeclarationConstructor_TypeGroupEntries, 6 )
+	TemplateGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	TypeGroup ( 
+	{
+		{ & ( OakReferenceTypeConstructor :: Instance () ), 0 },
+		{ & ( OakVoidTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

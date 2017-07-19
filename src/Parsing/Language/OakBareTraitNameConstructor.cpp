@@ -7,7 +7,14 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakBareTraitNameConstructor OakBareTraitNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakBareTraitNameConstructor & OakBareTraitNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakBareTraitNameConstructor> ();
+	
+}
 
 OakBareTraitNameConstructor :: OakBareTraitNameConstructor ()
 {	

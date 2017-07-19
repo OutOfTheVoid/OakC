@@ -5,12 +5,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakParenthesizedExpressionConstructor OakParenthesizedExpressionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakParenthesizedExpressionConstructor_ExpressionGroupEntries [] = { { & OakExpressionConstructor :: Instance, 0 } };
+OakParenthesizedExpressionConstructor & OakParenthesizedExpressionConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakParenthesizedExpressionConstructor> ();
+	
+}
 
 OakParenthesizedExpressionConstructor :: OakParenthesizedExpressionConstructor ():
-	ExpressionGroup ( _OakParenthesizedExpressionConstructor_ExpressionGroupEntries, 1 )
+	ExpressionGroup ( { { & ( OakExpressionConstructor :: Instance () ), 0 } } )
 {
 }
 

@@ -5,12 +5,17 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakSelfParameterReferenceConstructor OakSelfParameterReferenceConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakSelfParameterReferenceConstructor_SelfParamGroupEntries [] = { { & OakSelfParameterConstructor :: Instance, 0 } };
+OakSelfParameterReferenceConstructor & OakSelfParameterReferenceConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakSelfParameterReferenceConstructor> ();
+	
+}
 
 OakSelfParameterReferenceConstructor :: OakSelfParameterReferenceConstructor ():
-	SelfParamGroup ( _OakSelfParameterReferenceConstructor_SelfParamGroupEntries, 1 )
+	SelfParamGroup ( { { & ( OakSelfParameterConstructor :: Instance () ), 0 } } )
 {
 }
 

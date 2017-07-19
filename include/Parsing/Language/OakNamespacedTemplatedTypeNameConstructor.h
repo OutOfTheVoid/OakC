@@ -30,7 +30,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakNamespacedTemplatedTypeNameConstructor Instance;
+	static OakNamespacedTemplatedTypeNameConstructor & Instance ();
 	
 private:
 	

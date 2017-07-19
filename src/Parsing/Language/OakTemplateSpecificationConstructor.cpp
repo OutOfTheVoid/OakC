@@ -9,20 +9,25 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakTemplateSpecificationConstructor OakTemplateSpecificationConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakTemplateSpecificationConstructor_ParameterGroupEntries [] =
+OakTemplateSpecificationConstructor & OakTemplateSpecificationConstructor :: Instance ()
 {
 	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
+	return GetGlobalSingleton <OakTemplateSpecificationConstructor> ();
 	
-};
+}
 
 OakTemplateSpecificationConstructor :: OakTemplateSpecificationConstructor ():
-	ParameterGroup ( _OakTemplateSpecificationConstructor_ParameterGroupEntries, 4 )
+	ParameterGroup ( 
+	{
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+	} )
 {
 }
 

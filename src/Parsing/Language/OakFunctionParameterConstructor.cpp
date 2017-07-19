@@ -16,24 +16,29 @@
 
 #include <Tokenization/Language/OakTokenTags.h>
 
-OakFunctionParameterConstructor OakFunctionParameterConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakFunctionParameterConstructor_TypeGroupEntries [] =
+OakFunctionParameterConstructor & OakFunctionParameterConstructor :: Instance ()
 {
 	
-	{ & OakReferenceTypeConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakFunctionParameterConstructor> ();
 	
-	{ & OakVoidTypeConstructor :: Instance, 0 },
-	
-	{ & OakNamespacedTemplatedTypeNameConstructor :: Instance, 0 },
-	{ & OakNamespacedTypeNameConstructor :: Instance, 1 },
-	{ & OakTemplatedTypeNameConstructor :: Instance, 1 },
-	{ & OakBareTypeNameConstructor :: Instance, 2 },
-	
-};
+}
 
 OakFunctionParameterConstructor :: OakFunctionParameterConstructor ():
-	TypeGroup ( _OakFunctionParameterConstructor_TypeGroupEntries, 6 )
+	TypeGroup ( 
+	{
+	
+		{ & ( OakReferenceTypeConstructor :: Instance () ), 0 },
+		
+		{ & ( OakNamespacedTemplatedTypeNameConstructor :: Instance () ), 0 },
+		{ & ( OakNamespacedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakTemplatedTypeNameConstructor :: Instance () ), 1 },
+		{ & ( OakBareTypeNameConstructor :: Instance () ), 2 },
+		
+		{ & ( OakVoidTypeConstructor :: Instance () ), 0 },
+		
+	} )
 {
 }
 

@@ -10,14 +10,18 @@
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
-OakLoopStatementConstructor OakLoopStatementConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakLoopStatementConstructor_LoopLabelGroupEntries [] = { { & OakLoopLabelConstructor :: Instance, 0 } };
-ASTConstructionGroup :: StaticInitEntry _OakLoopStatementConstructor_StatementBodyGroupEntries [] = { { & OakStatementBlockConstructor :: Instance, 0 } };
+OakLoopStatementConstructor & OakLoopStatementConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakLoopStatementConstructor> ();
+	
+}
 
 OakLoopStatementConstructor :: OakLoopStatementConstructor ():
-	LoopLabelGroup ( _OakLoopStatementConstructor_LoopLabelGroupEntries, 1 ),
-	StatementBodyGroup ( _OakLoopStatementConstructor_StatementBodyGroupEntries, 1 )
+	LoopLabelGroup ( { { & ( OakLoopLabelConstructor :: Instance () ), 0 } } ),
+	StatementBodyGroup ( { { & ( OakStatementBlockConstructor :: Instance () ), 0 } } )
 {
 }
 

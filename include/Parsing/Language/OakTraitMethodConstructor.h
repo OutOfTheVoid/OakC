@@ -22,7 +22,7 @@ public:
 	
 	void TryConstruct ( ASTConstructionInput & Input, ASTConstructionOutput & Output ) const;
 	
-	static OakTraitMethodConstructor Instance;
+	static OakTraitMethodConstructor & Instance ();
 	
 private:
 	

@@ -14,22 +14,25 @@
 
 #include <Logging/Logging.h>
 
-OakTraitDefinitionConstructor OakTraitDefinitionConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
 
-ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries [] = { { & OakTemplateDefinitionConstructor :: Instance, 0 } };
-
-ASTConstructionGroup :: StaticInitEntry _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries [] =
+OakTraitDefinitionConstructor & OakTraitDefinitionConstructor :: Instance ()
 {
 	
-	{ & OakTraitMethodConstructor :: Instance, 0 },
-	{ & OakTraitFunctionConstructor :: Instance, 0 },
-	{ & OakTraitRequirementConstructor :: Instance, 0 },
+	return GetGlobalSingleton <OakTraitDefinitionConstructor> ();
 	
-};
+}
 
 OakTraitDefinitionConstructor :: OakTraitDefinitionConstructor ():
-	TemplateConstructionGroup ( _OakTraitDefinitionConstructor_TemplateConstructionGroupEntries, 1 ),
-	TraitBodyConstructionGroup ( _OakTraitDefinitionConstructor_TraitBodyConstructionGroupEntries, 3 )
+	TemplateConstructionGroup ( { { & ( OakTemplateDefinitionConstructor :: Instance () ), 0 } } ),
+	TraitBodyConstructionGroup ( 
+	{
+		
+		{ & ( OakTraitMethodConstructor :: Instance () ), 0 },
+		{ & ( OakTraitFunctionConstructor :: Instance () ), 0 },
+		{ & ( OakTraitRequirementConstructor :: Instance () ), 0 },
+		
+	} )
 {
 }
 

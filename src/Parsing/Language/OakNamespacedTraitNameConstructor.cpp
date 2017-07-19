@@ -9,7 +9,14 @@
 
 #include <vector>
 
-OakNamespacedTraitNameConstructor OakNamespacedTraitNameConstructor :: Instance;
+#include <Utils/GlobalSingleton.h>
+
+OakNamespacedTraitNameConstructor & OakNamespacedTraitNameConstructor :: Instance ()
+{
+	
+	return GetGlobalSingleton <OakNamespacedTraitNameConstructor> ();
+	
+}
 
 OakNamespacedTraitNameConstructor :: OakNamespacedTraitNameConstructor ()
 {

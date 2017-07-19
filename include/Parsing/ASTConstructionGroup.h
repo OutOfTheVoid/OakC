@@ -6,6 +6,8 @@
 
 #include <Tokenization/Token.h>
 
+#include <initializer_list>
+
 class ASTConstructionGroup
 {
 public:
@@ -19,6 +21,7 @@ public:
 	} StaticInitEntry;
 	
 	ASTConstructionGroup ();
+	ASTConstructionGroup ( std :: initializer_list <StaticInitEntry> EntryList );
 	ASTConstructionGroup ( StaticInitEntry * EntryList, uint32_t EntryCount );
 	
 	~ASTConstructionGroup ();
