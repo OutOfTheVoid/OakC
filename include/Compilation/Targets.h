@@ -49,11 +49,13 @@ const TargetArchID kTargetArch_ARM_V7;
 		#define TARGET_HOST_ARCH kTargetArch_X86_32
 		
 		#ifdef __SSE2__
-			#define TARGET_HOST_ARCH_FLAGS ( TARGET_HOST_ARCH_FLAGS | kTargetArchFlag_X86_32_SSE2 )
+			#undef TARGET_HOST_ARCH_FLAGS
+			#define TARGET_HOST_ARCH_FLAGS kTargetArchFlag_X86_32_SSE2
 		#endif
 		
 		#ifdef __SSE3__
-			#define TARGET_HOST_ARCH_FLAGS ( TARGET_HOST_ARCH_FLAGS | kTargetArchFlag_X86_32_SSE3 )
+			#undef TARGET_HOST_ARCH_FLAGS
+			#define TARGET_HOST_ARCH_FLAGS ( kTargetArchFlag_X86_32_SSE2 | kTargetArchFlag_X86_32_SSE3 )
 		#endif
 		
 	#else

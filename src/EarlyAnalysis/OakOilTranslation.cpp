@@ -191,7 +191,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 		if ( ! ( ( Tag == OakASTTags :: kASTTag_DecoratorTag ) || ( Tag == OakASTTags :: kASTTag_ImportStatement ) ) )
 		{
 			
-			if ( ! TestConditionalCompilationDecorators ( & Decorators [ 0 ], Decorators.size (), CompilationConditions, CompilationConditionCount ) )
+			if ( ! TestConditionalCompilationDecorators ( Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size (), CompilationConditions, CompilationConditionCount ) )
 			{
 				
 				while ( Decorators.size () != 0 )
@@ -256,7 +256,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 			case OakASTTags :: kASTTag_Enum:
 			{
 				
-				if ( ! OakTranslateEnumToOil ( SubElement, GlobalNS, & Decorators [ 0 ], Decorators.size () ) )
+				if ( ! OakTranslateEnumToOil ( SubElement, GlobalNS, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () ) )
 				{
 					
 					while ( Decorators.size () != 0 )
@@ -287,7 +287,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 			case OakASTTags :: kASTTag_StructDefinition:
 			{
 				
-				if ( ! OakTranslateStructTreeToOil ( SubElement, GlobalNS, & Decorators [ 0 ], Decorators.size () ) )
+				if ( ! OakTranslateStructTreeToOil ( SubElement, GlobalNS, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () ) )
 				{
 					
 					while ( Decorators.size () != 0 )
@@ -380,7 +380,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					
 				}
 				
-				OilFunctionDefinition * FunctionDefinition = OakTranslateFunctionDefinitionToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilFunctionDefinition * FunctionDefinition = OakTranslateFunctionDefinitionToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () );
 				
 				if ( FunctionDefinition == NULL )
 					return false;
@@ -424,7 +424,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					
 				}
 				
-				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () );
 				
 				if ( BindingStatement == NULL )
 					return false;
@@ -516,7 +516,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 					
 				}
 				
-				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () );
 				
 				while ( Decorators.size () != 0 )
 				{
@@ -538,7 +538,7 @@ bool OakTranslateFileTreeToOil ( const ASTElement * TreeRoot, OilNamespaceDefini
 			case OakASTTags :: kASTTag_ImplementDefinition:
 			{
 				
-				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, & Decorators [ 0 ], Decorators.size (), CompilationConditions, CompilationConditionCount );
+				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size (), CompilationConditions, CompilationConditionCount );
 				
 				if ( Block == NULL )
 				{
@@ -697,7 +697,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 		if ( ! ( ( Tag == OakASTTags :: kASTTag_DecoratorTag ) || ( Tag == OakASTTags :: kASTTag_ImportStatement ) ) )
 		{
 			
-			if ( ! TestConditionalCompilationDecorators ( & Decorators [ 0 ], Decorators.size (), CompilationConditions, CompilationConditionCount ) )
+			if ( ! TestConditionalCompilationDecorators ( Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size (), CompilationConditions, CompilationConditionCount ) )
 			{
 				
 				while ( Decorators.size () != 0 )
@@ -747,7 +747,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			case OakASTTags :: kASTTag_Enum:
 			{
 				
-				if ( ! OakTranslateEnumToOil ( SubElement, * DefinedNamespaceDefinition, & Decorators [ 0 ], Decorators.size () ) )
+				if ( ! OakTranslateEnumToOil ( SubElement, * DefinedNamespaceDefinition, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () ) )
 				{
 					
 					while ( Decorators.size () != 0 )
@@ -778,7 +778,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			case OakASTTags :: kASTTag_StructDefinition:
 			{
 				
-				if ( ! OakTranslateStructTreeToOil ( SubElement, * DefinedNamespaceDefinition, & Decorators [ 0 ], Decorators.size () ) )
+				if ( ! OakTranslateStructTreeToOil ( SubElement, * DefinedNamespaceDefinition, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () ) )
 				{
 					
 					while ( Decorators.size () != 0 )
@@ -853,7 +853,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 					
 				}
 				
-				OilFunctionDefinition * FunctionDefinition = OakTranslateFunctionDefinitionToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilFunctionDefinition * FunctionDefinition = OakTranslateFunctionDefinitionToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () );
 				
 				if ( FunctionDefinition == NULL )
 				{
@@ -901,7 +901,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 					
 				}
 				
-				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilBindingStatement * BindingStatement = OakTranslateBindingStatementToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () );
 				
 				while ( Decorators.size () != 0 )
 				{
@@ -989,7 +989,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 					
 				}
 				
-				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement, & Decorators [ 0 ], Decorators.size () );
+				OilTraitDefinition * TraitDefinition = OakTranslateTraitToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size () );
 				
 				while ( Decorators.size () != 0 )
 				{
@@ -1011,7 +1011,7 @@ bool OakTranslateNamespaceTreeToOil ( const ASTElement * NamespaceElement, OilNa
 			case OakASTTags :: kASTTag_ImplementDefinition:
 			{
 				
-				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, & Decorators [ 0 ], Decorators.size (), CompilationConditions, CompilationConditionCount );
+				OilImplementBlock * Block = OakTranslateImplementBlockToOil ( SubElement, Decorators.size () != 0 ? & Decorators [ 0 ] : NULL, Decorators.size (), CompilationConditions, CompilationConditionCount );
 				
 				if ( Block == NULL )
 				{
@@ -1401,7 +1401,7 @@ OilTemplateDefinition * OakTranslateTemplateDefinitionToOil ( const ASTElement *
 				
 			}
 			
-			Result -> AddParameter ( new OilTemplateDefinitionParameter ( Ref, ParamData -> Name, & RestrictionTypes [ 0 ], RestrictionTypes.size () ) );
+			Result -> AddParameter ( new OilTemplateDefinitionParameter ( Ref, ParamData -> Name, RestrictionTypes.size () != 0 ? & RestrictionTypes [ 0 ] : NULL, RestrictionTypes.size () ) );
 			
 		}
 		else
@@ -1456,7 +1456,7 @@ OilTemplateSpecification * OakTranslateTemplateSpecificationToOil ( const ASTEle
 		
 	}
 	
-	return new OilTemplateSpecification ( Ref, & TypeList [ 0 ], TypeList.size () );
+	return new OilTemplateSpecification ( Ref, TypeList.size () != 0 ? & TypeList [ 0 ] : NULL, TypeList.size () );
 	
 }
 
@@ -1879,7 +1879,7 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 		if ( ChildElement -> GetTag () == OakASTTags :: kASTTag_FunctionDefinition )
 		{
 			
-			if ( ! TestConditionalCompilationDecorators ( & Tags [ 0 ], Tags.size (), CompilationConditions, CompilationConditionCount ) )
+			if ( ! TestConditionalCompilationDecorators ( Tags.size () != 0 ? & Tags [ 0 ] : NULL, Tags.size (), CompilationConditions, CompilationConditionCount ) )
 			{
 				
 				for ( uint32_t I = 0; I < Tags.size (); I ++ )
@@ -1898,7 +1898,7 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 			
 			Tags.clear ();
 			
-			OilFunctionDefinition * Function = OakTranslateFunctionDefinitionToOil ( ChildElement, & Tags [ 0 ], Tags.size () );
+			OilFunctionDefinition * Function = OakTranslateFunctionDefinitionToOil ( ChildElement, Tags.size () != 0 ? & Tags [ 0 ] : NULL, Tags.size () );
 			
 			if ( Function == NULL )
 			{
@@ -1953,7 +1953,7 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 		else
 		{
 			
-			if ( ! TestConditionalCompilationDecorators ( & Tags [ 0 ], Tags.size (), CompilationConditions, CompilationConditionCount ) )
+			if ( ! TestConditionalCompilationDecorators ( Tags.size () != 0 ? & Tags [ 0 ] : NULL, Tags.size (), CompilationConditions, CompilationConditionCount ) )
 			{
 				
 				for ( uint32_t I = 0; I < Tags.size (); I ++ )
@@ -1972,7 +1972,7 @@ OilImplementBlock * OakTranslateImplementBlockToOil ( const ASTElement * Impleme
 			
 			Tags.clear ();
 			
-			OilMethodDefinition * Method = OakTranslateMethodDefinitionToOil ( ChildElement, & Tags [ 0 ], Tags.size () );
+			OilMethodDefinition * Method = OakTranslateMethodDefinitionToOil ( ChildElement, Tags.size () != 0 ? & Tags [ 0 ] : NULL, Tags.size () );
 			
 			if ( Method == NULL )
 			{
@@ -3199,7 +3199,7 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 					
 				}
 				
-				Body -> AddStatement ( new OilIfElse ( Ref, IfCondition, IfStatementBody, & ElseIfConditions [ 0 ], & ElseIfStatementBodies [ 0 ], IfElseData -> ElseIfCount, ElseStatementBody ) );
+				Body -> AddStatement ( new OilIfElse ( Ref, IfCondition, IfStatementBody, IfElseData -> ElseIfCount != 0 ? & ElseIfConditions [ 0 ] : NULL, IfElseData -> ElseIfCount != 0 ? & ElseIfStatementBodies [ 0 ] : NULL, IfElseData -> ElseIfCount, ElseStatementBody ) );
 				
 			}
 			break;
@@ -3474,14 +3474,14 @@ OilArrayLiteral * OakTranslateArrayLiteral ( const ASTElement * ArrayElement )
 	{
 		
 		if ( InitializerValues.size () > 0 )
-			return new OilArrayLiteral ( Ref, SizePrimary, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+			return new OilArrayLiteral ( Ref, SizePrimary, TypeSpecifier, InitializerValues.size () != 0 ? & InitializerValues [ 0 ] : NULL, InitializerValues.size () );
 		else
 			return new OilArrayLiteral ( Ref, SizePrimary, TypeSpecifier );
 		
 	}
 	
 	if ( InitializerValues.size () > 0 )
-		return new OilArrayLiteral ( Ref, TypeSpecifier, & InitializerValues [ 0 ], InitializerValues.size () );
+		return new OilArrayLiteral ( Ref, TypeSpecifier, InitializerValues.size () != 0 ? & InitializerValues [ 0 ] : NULL, InitializerValues.size () );
 	
 	return new OilArrayLiteral ( Ref, TypeSpecifier );
 	
@@ -3584,7 +3584,7 @@ OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement )
 					
 				}
 				
-				return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
+				return new OilAllusion ( Ref, NSNames.size () != 0 ? & NSNames [ 0 ] : NULL, NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec, IndirectTemplateSpec );
 				
 			}
 			else
@@ -3613,7 +3613,7 @@ OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement )
 				if ( DirectTemplateSpec == NULL )
 					return NULL;
 				
-				return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
+				return new OilAllusion ( Ref, NSNames.size () != 0 ? & NSNames [ 0 ] : NULL, NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, DirectTemplateSpec );
 				
 			}
 			
@@ -3646,7 +3646,7 @@ OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement )
 			if ( IndirectTemplateSpec == NULL )
 				return NULL;
 			
-			return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
+			return new OilAllusion ( Ref, NSNames.size () != 0 ? & NSNames [ 0 ] : NULL, NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name, NULL, IndirectTemplateSpec );
 			
 		}
 		else
@@ -3670,7 +3670,7 @@ OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement )
 				
 			}
 			
-			return new OilAllusion ( Ref, & NSNames [ 0 ], NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
+			return new OilAllusion ( Ref, NSNames.size () != 0 ? & NSNames [ 0 ] : NULL, NSNames.size (), AllusionData -> DirectGlobalReference, AllusionData -> IdentList [ AllusionData -> IdentListLength - 1 ].Name );
 			
 		}
 		
@@ -4381,7 +4381,7 @@ OilStructLiteral * OakTranslateStructLiteral ( const ASTElement * LiteralElement
 		
 	}
 	
-	return new OilStructLiteral ( LiteralElement -> GetToken ( 0, 0 ) -> GetSourceRef (), StructType, & Values [ 0 ], Values.size () );
+	return new OilStructLiteral ( LiteralElement -> GetToken ( 0, 0 ) -> GetSourceRef (), StructType, Values.size () != 0 ? & Values [ 0 ] : NULL, Values.size () );
 	
 }
 

@@ -1,5 +1,5 @@
 workspace "OakC"
-	configurations { "Debug", "Release" }
+	configurations { "Debug32", "Release32", "Debug64", "Release64" }
 
 project "Compiler"
 	
@@ -20,12 +20,18 @@ project "Compiler"
 		
 	filter {}
 		
-	filter { "configurations:Debug" }
+	filter { "configurations:Debug32 or configurations:Debug64" }
 		defines { "DEBUG" }
 		symbols "On"
 		
-	filter { "configurations:Release" }
+	filter { "configurations:Release32 or configurations:Release64" }
 		defines { "RELEASE" }
 		optimize "On"
+		
+	filter { "configurations:Debug32 or configurations:Release32" }
+		architecture "x86"
+		
+	filter { "configurations:Debug64 or configurations:Release64" }
+		architecture "x86_64"
 	
 	
