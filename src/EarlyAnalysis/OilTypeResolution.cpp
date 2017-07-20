@@ -44,6 +44,8 @@
 #include <OIL/OilTraitFunction.h>
 #include <OIL/OilTraitMethod.h>
 #include <OIL/OilEnum.h>
+#include <OIL/OilMatch.h>
+#include <OIL/OilMatchBranch.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -1820,12 +1822,156 @@ TypeResolutionResult OilTypeResolution_StatementBody ( OilNamespaceDefinition & 
 			}
 			break;
 			
+			case IOilStatement :: kStatementType_Match:
+			{
+				
+				OilMatch * Match = dynamic_cast <OilMatch *> ( Statement );
+				
+				TypeResolutionResult MatcheeResult = OilTypeResolution_Expression ( CurrentNS, * Match -> GetMatcheeExpression (), TemplateNames, AllowSelfType );
+				
+				if ( MatcheeResult == kTypeResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( MatcheeResult == kTypeResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( MatcheeResult == kTypeResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return MatcheeResult;
+				
+				uint32_t BranchCount = Match -> GetBranchCount ();
+				
+				for ( uint32_t I = 0; I < BranchCount; I ++ )
+				{
+					
+					OilMatchBranch * Branch = Match -> GetBranch ( I );
+					
+					TypeResolutionResult BranchResult = OilTypeResolution_MatchBranch ( CurrentNS, * Branch, TemplateNames, AllowSelfType );
+					
+					if ( BranchResult == kTypeResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( BranchResult == kTypeResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( BranchResult == kTypeResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return BranchResult;
+					
+				}
+				
+			}
+			break;
 			
-			
-			default:
+			case IOilStatement :: kStatementType_Break:
 			break;
 			
 		}
+		
+	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kTypeResolutionResult_Success_Progress;
+		else
+			return kTypeResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kTypeResolutionResult_Success_Complete;
+	
+}
+
+TypeResolutionResult OilTypeResolution_MatchBranch ( OilNamespaceDefinition & CurrentNS, OilMatchBranch & Branch, FlatNameList * TemplateNames, bool AllowSelfType )
+{
+	
+	bool Progress = false;
+	bool Unresolved = false;
+	
+	TypeResolutionResult BodyResult = OilTypeResolution_StatementBody ( CurrentNS, * Branch.GetStatementBody (), TemplateNames, AllowSelfType );
+	
+	if ( BodyResult == kTypeResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( BodyResult == kTypeResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( BodyResult == kTypeResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+		return BodyResult;
+	
+	switch ( Branch.GetMatchType () )
+	{
+		
+		case OilMatchBranch :: kMatchType_Constant:
+		{
+			
+			TypeResolutionResult PrimaryResult = OilTypeResolution_Primary ( CurrentNS, Branch.GetConstantPrimary (), TemplateNames, AllowSelfType );
+			
+			if ( PrimaryResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( PrimaryResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( PrimaryResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return PrimaryResult;
+			
+		}
+		break;
+		
+		case OilMatchBranch :: kMatchType_Allusion:
+		case OilMatchBranch :: kMatchType_AllusionValue:
+		{
+			
+			TypeResolutionResult AllusionResult = OilTypeResolution_Allusion ( CurrentNS, * Branch.GetMatchAllusion (), TemplateNames, AllowSelfType );
+			
+			if ( AllusionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( AllusionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( AllusionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return AllusionResult;
+			
+		}
+		break;
+		
+		case OilMatchBranch :: kMatchType_Destructure:
+		{
+			
+			// TODO: Implement
+			
+		}
+		break;
+		
+		case OilMatchBranch :: kMatchType_Other:
+		break;
 		
 	}
 	

@@ -37,6 +37,7 @@ class OilTraitDefinition;
 class OilTraitFunction;
 class OilTraitMethod;
 class OilEnum;
+class OilMatchBranch;
 
 TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & CurrentNS, OilTypeRef & TypeRef, FlatNameList * TemplateNames = NULL, bool AllowSelfType = false );
 TypeResolutionResult OilTypeResolution_TemplateSpecification ( OilNamespaceDefinition & CurrentNS, OilTemplateSpecification & TemplateSpecification, FlatNameList * TemplateNames = NULL, bool AllowSelfType = false );
@@ -54,6 +55,7 @@ TypeResolutionResult OilTypeResolution_Trait ( OilNamespaceDefinition & CurrentN
 TypeResolutionResult OilTypeResolution_TraitFunction ( OilNamespaceDefinition & CurrentNS, OilTraitFunction & Function, FlatNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_TraitMethod ( OilNamespaceDefinition & CurrentNS, OilTraitMethod & Method, FlatNameList * TemplateNames = NULL );
 TypeResolutionResult OilTypeResolution_Enum ( OilNamespaceDefinition & CurrentNS, OilEnum & Enum );
+TypeResolutionResult OilTypeResolution_MatchBranch ( OilNamespaceDefinition & CurrentNS, OilMatchBranch & Branch, FlatNameList * TemplateNames = NULL, bool AllowSelfType = false );
 
 TypeResolutionResult OilTypeResolution_TypeDefinitions ( OilNamespaceDefinition & RootNS );
 TypeResolutionResult OilTypeResolution_Constants ( OilNamespaceDefinition & RootNS );

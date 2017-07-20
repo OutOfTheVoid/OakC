@@ -59,7 +59,25 @@ function Test ()
 	{
 		
 		0:
-			some_func ( 100 );
+			if ( 3 < 5 )
+			{
+				
+				loop `my_loop
+				{
+					
+					break my_loop;
+					
+					if ( 2 > 1 )
+						return;
+					
+				}
+				
+				bind r: i32 = 0;
+				
+				r += 3;
+				r %= 2;
+				
+			}
 		
 		1:
 			some_func ( 200 );
