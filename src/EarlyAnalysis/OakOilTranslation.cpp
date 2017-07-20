@@ -4859,7 +4859,7 @@ OilTraitDefinition * OakTranslateTraitToOil ( const ASTElement * TraitElement, c
 		
 	}
 	
-	OilTraitDefinition * TraitDef = new OilTraitDefinition ( Ref, TraitData -> Name, & RequiredTraitRefs [ 0 ], RequiredTraitRefs.size (), & TraitFunctions [ 0 ], TraitFunctions.size (), & TraitMethods [ 0 ], TraitMethods.size (), TemplateDefinition, Builtin );
+	OilTraitDefinition * TraitDef = new OilTraitDefinition ( Ref, TraitData -> Name, RequiredTraitRefs.size () != 0 ? & RequiredTraitRefs [ 0 ] : NULL, RequiredTraitRefs.size (), TraitFunctions.size () != 0 ? & TraitFunctions [ 0 ] : NULL, TraitFunctions.size (), TraitMethods.size () != 0 ? & TraitMethods [ 0 ] : NULL, TraitMethods.size (), TemplateDefinition, Builtin );
 	
 	return TraitDef;
 	
@@ -5041,9 +5041,14 @@ OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTa
 			
 		case OakDecoratorTagConstructor :: kTagKind_Parametric_1:
 			return new OilDecoratorTag ( Ref, DecoratorData -> ID, DecoratorData -> Param1 );
+
+		default:
+			break;
 		
 	}
 	
+	return NULL;
+
 }
 
 

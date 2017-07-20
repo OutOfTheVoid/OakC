@@ -402,7 +402,7 @@ trait MutIndexOp <ELEMENT_T, INDEX_T>
 trait Contains <ELEMENT_T>
 {
 	
-	function contains ( & self, x: ELEMENT_T ): bool;
+	function contains ( & self, x: ELEMENT_T ): bool
 	
 }
 
