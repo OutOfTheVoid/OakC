@@ -1,41 +1,31 @@
-namespace TestNS
+namespace A
 {
 	
-	namespace SubNS
-	{
-		
-		
-		
-	}
+	bind TEST_1: i32 = 0;
 	
-	struct SomeStruct
-	{
-	}
-	
-	trait SomeTrait
-	{
-	}
+	namespace Z {}
 	
 }
 
-namespace SomeNS::DirectlyNestedNS
+namespace B
 {
 	
-	struct Struct2
+	bind TEST_2: i32 = 0;
+	
+	namespace A
 	{
+		
+		bind TEST_3: i32 = 0;
+		
+		namespace D {}
+		
 	}
 	
-}
-
-namespace SomeGloballyReferencedNS::DirectlyNestedNS
-{
-	
-	struct Struct3
+	namespace Q
 	{
-	}
-	
-	struct Struct1
-	{
+		
+		namespace R {}
+		
 	}
 	
 }

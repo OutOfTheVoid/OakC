@@ -91,6 +91,8 @@ private:
 	
 	static void TryResolveTypes ( OilNamespaceDefinition & RootNS, bool & Complete, bool & Error );
 	
+	static void TryResolveAllusions ( OilNamespaceDefinition & RootNS, bool & Complete, bool & Error );
+	
 	// Current state of compilation. Used to track failure and represent compilation progress.
 	CompilationStep CompilationState;
 	

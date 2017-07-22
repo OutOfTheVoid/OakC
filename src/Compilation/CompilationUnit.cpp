@@ -26,6 +26,7 @@
 #include <EarlyAnalysis/OakOilTranslation.h>
 #include <EarlyAnalysis/OilImplementResolution.h>
 #include <EarlyAnalysis/OilTypeResolution.h>
+#include <EarlyAnalysis/OilAllusionResolution.h>
 
 #include <Builtins/OakBuiltinTypes.h>
 
@@ -465,26 +466,50 @@ void CompilationUnit :: TryResolveTypes ( OilNamespaceDefinition & RootNS, bool 
 	
 }
 
+void CompilationUnit :: TryResolveAllusions ( OilNamespaceDefinition & RootNS, bool & Complete, bool & Error )
+{
+	
+	AllusionResolutionResult Result = OilAllusionResolution_Root ( RootNS );
+	
+	if ( Result == kAllusionResolutionResult_Success_Complete )
+		Complete = true;
+	else if ( Result == kAllusionResolutionResult_Success_Progress )
+		Complete = false;
+	else
+		Error = true;
+	
+}
+
 bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 {
 	
 	LOG_VERBOSE ( "[ ALL ]: compilation step: Semantic analysis." );
 	
-	bool Stop = false;
+	bool Complete = false;
 	
-	while ( ! Stop )
+	while ( ! Complete )
 	{
 		
-		bool Error;
-		bool Complete;
+		bool Error = false;
 		
 		TryResolveTypes ( RootNS, Complete, Error );
 		
 		if ( Error )
 			return false;
 		
-		if ( Complete )
-			break;
+	}
+	
+	Complete = false;
+	
+	while ( ! Complete )
+	{
+		
+		bool Error = false;
+		
+		TryResolveAllusions ( RootNS, Complete, Error );
+		
+		if ( Error )
+			return false;
 		
 	}
 	
