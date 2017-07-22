@@ -33,22 +33,6 @@ OilStatementBody :: ~OilStatementBody ()
 		
 	}
 	
-	for ( uint64_t I = 0; I < Locals.size (); I ++ )
-	{
-		
-		if ( Locals [ I ].Binding != NULL )
-			delete Locals [ I ].Binding;
-		
-	}
-	
-	for ( uint64_t I = 0; I < Constants.size (); I ++ )
-	{
-		
-		if ( Constants [ I ] != NULL )
-			delete Constants [ I ];
-		
-	}
-	
 }
 
 bool OilStatementBody :: IsRootBody () const
@@ -237,6 +221,8 @@ void OilStatementBody :: AddLocalBinding ( OilBindingStatement * LocalBinding )
 	
 	Data.Binding = LocalBinding;
 	
+	Statements.push_back ( LocalBinding );
+	
 	if ( LocalBinding -> HasInitializer () )
 	{
 		
@@ -315,6 +301,7 @@ void OilStatementBody :: AddLocalConst ( OilConstStatement * Const )
 {
 	
 	Constants.push_back ( Const );
+	Statements.push_back ( Const );
 	
 }
 

@@ -9,6 +9,19 @@
 #include <OIL/OilTypeAlias.h>
 #include <OIL/OilStatementBody.h>
 #include <OIL/IOilStatement.h>
+#include <OIL/OilExpression.h>
+#include <OIL/OilImplicitLocalInitialization.h>
+#include <OIL/OilImplicitBindingInitialization.h>
+#include <OIL/OilReturn.h>
+#include <OIL/OilIfElse.h>
+#include <OIL/OilMatch.h>
+#include <OIL/OilLoop.h>
+#include <OIL/OilDoWhileLoop.h>
+#include <OIL/OilWhileLoop.h>
+#include <OIL/OilBreak.h>
+
+#include <Logging/Logging.h>
+#include <Logging/ErrorUtils.h>
  
 OilAllusionResolution_NameMapStack :: NameContext_Struct :: NameContext_Struct ( NameContextType Context ):
 	Type ( Context ),
@@ -295,6 +308,7 @@ private:
 
 //============================================================================================================================================================================================//
 
+AllusionResolutionResult OilAllusionResolution_Expression ( OilAllusionResolution_NameMapStack & NameStack, OilExpression & Expression );
 AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolution_NameMapStack & NameStack, OilStatementBody & Body );
 AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution_NameMapStack & NameStack, OilNamespaceDefinition & Namespace );
 
@@ -410,8 +424,7 @@ AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution
 	else
 		return ISBResult;
 	
-	
-	//=======================================[Child propogation]
+	//========================================[Child propogation]=======================================//
 	
 	SubNSCount = Namespace.GetSubNamespaceDefinitionCount ();
 	
@@ -498,16 +511,69 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 			case IOilStatement :: kStatementType_Binding:
 			{
 				
-				OilBindingStatement * Binding = dynamic_cast <OilBindingStatement *> ( Statement );
+				// NOTE: Initializer allusion resolution is handled by resolving corresponding OilImplicitLocalInitialization objects.
 				
-				if ( Binding -> HasInitializer () )
+				OilBindingStatement * Binding = dynamic_cast <OilBindingStatement *> ( Statement );
+				NameStack.AddBindingStatementMapping ( Binding -> GetName (), Binding );
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitLocalInitialization:
+			{
+				
+				OilImplicitLocalInitialization * Initializer = dynamic_cast <OilImplicitLocalInitialization *> ( Statement );
+				OilBindingStatement * Binding = Body.GetLocalBinding ( Initializer -> GetLocalIndex () );
+				
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Binding -> GetInitializerValue () );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
 				{
 					
-					// TODO: resolve allusions in initializer
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_ImplicitBindingInitialization:
+			{
+				
+				OilImplicitBindingInitialization * Initializer = dynamic_cast <OilImplicitBindingInitialization *> ( Statement );
+				OilAllusionResolution_NameMapStack :: NameMapping BindingMapping = NameStack.LookupName ( Initializer -> GetBindingID () );
+				
+				if ( BindingMapping.Type != OilAllusionResolution_NameMapStack :: kMappingType_BindingStatement )
+				{
+					
+					LOG_FATALERROR ( "Internal error: namespace binding initializer refers to binding not in namespace scope" );
+					
+					return kAllusionResolutionResult_Error;
 					
 				}
 				
-				NameStack.AddBindingStatementMapping ( Binding -> GetName (), Binding );
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * BindingMapping.BindingStatement -> GetInitializerValue () );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
 				
 			}
 			break;
@@ -517,7 +583,22 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 				
 				OilConstStatement * Constant = dynamic_cast <OilConstStatement *> ( Statement );
 				
-				// TODO: resolve allusions in initializer
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Constant -> GetInitializerValue () );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
 				
 				NameStack.AddConstStatementMapping ( Constant -> GetName (), Constant );
 				
@@ -525,20 +606,72 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 			break;
 			
 			case IOilStatement :: kStatementType_Expression:
-			case IOilStatement :: kStatementType_Return:
+			{
+				
+				OilExpression * Expression = dynamic_cast <OilExpression *> ( Statement );
+				
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
+			}
+			break;
+			
+			case IOilStatement :: kStatementType_Return
+			{
+				
+				OilReturn * Return = dynamic_cast <OilReturn *> ( Statement );
+				
+			}
+			break;
+			
 			case IOilStatement :: kStatementType_IfElse:
 			case IOilStatement :: kStatementType_Match:
 			case IOilStatement :: kStatementType_WhileLoop:
 			case IOilStatement :: kStatementType_DoWhileLoop:
 			case IOilStatement :: kStatementType_Loop:
 			case IOilStatement :: kStatementType_Break:
-			case IOilStatement :: kStatementType_ImplicitLocalInitialization:
-			case IOilStatement :: kStatementType_ImplicitBindingInitialization:
 			break;
 			
 		}
 		
 	}
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kAllusionResolutionResult_Success_Progress;
+		
+		return kAllusionResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+AllusionResolutionResult OilAllusionResolution_Expression ( OilAllusionResolution_NameMapStack & NameStack, OilExpression & Expression )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	// TODO: Implement
+	(void) NameStack;
+	(void) Expression;
 	
 	if ( Unresolved )
 	{

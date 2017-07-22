@@ -1,0 +1,34 @@
+OakFile := OakFileElement OakFile | OakFileElement
+
+OakFileElement := ImportStatement | NamespaceDefinition | FunctionDefinition | StructDefinition | TraitDefinition | TypeAlias | Binding | Constant | EnumDefinition | ';' | WhitespaceChar
+
+ImportStatement := DecoratorTag ImportStatement | 'import' MinWhiteSpace UnTypedString MinWhiteSpace ';'
+
+NamespaceDefinition := 'namespace' MinWhiteSpace NamespacedIdentifier MinWhiteSpace '{' NamespaceMemberList '}'
+
+NamespaceMemberList := [ NamespaceDefinition | FunctionDefinition | StructDefinition | TraitDefinition | TypeAlias | Binding | Constant | EnumDefinition | ';' | WhitespaceChar ] * 0^
+
+FunctionDefinition := 'function' MinWhiteSpace Identifier MinWhiteSpace TemplateDefinition? MinWhiteSpace FunctionParameterList MinWhiteSpace StatementBody
+
+StructDefinition := TODO
+TraitDefinition := TODO
+TypeAlias := TODO
+Binding := TODO
+Constant := TODO
+EnumDefinition := TODO
+
+TemplateDefinition := TODO
+FunctionParameterList := TODO
+StatementBody := TODO
+
+UnTypedString := '"' [ ! [ '"' | "\" ] | EscapedChar ] '"'
+
+EscapedChar := '\' [ '"' | 'n' | 'r' | 't' | 'v' | 'b' | 'f' | 'a' | '0' | '\' | ''' | 'u' HexChar * 4 | 'U' HexChar * 8 | 'x' [ HexChar * 2 | '{' HexChar * 1-8 '}' ]
+
+HexChar := [ 'a'-'f' | 'A'-'F' | '0'-'9' ]
+
+WhitespaceChar := [ ' ' | '\n' | '\t' | '\r' ]
+MinWhiteSpace = WhitespaceChar * 1^
+
+NamespacedIdentifier = NamespacedIdentifier '::' Identifier | '::'? Identifier
+Identifier := UTF_XID_Start UTF_XID_CONTINUE * 0^
