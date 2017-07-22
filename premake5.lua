@@ -1,5 +1,5 @@
 workspace "OakC"
-	configurations { "Debug32", "Release32", "Debug64", "Release64" }
+	configurations { "Debug64", "Release64", "Debug32", "Release32" }
 
 project "Compiler"
 	

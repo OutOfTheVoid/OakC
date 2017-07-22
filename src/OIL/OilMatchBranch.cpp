@@ -2,6 +2,7 @@
 #include <OIL/IOilPrimary.h>
 #include <OIL/OilStatementBody.h>
 #include <OIL/OilAllusion.h>
+#include <OIL/OilStructDestructure.h>
 
 #ifndef NULL
 	#define NULL nullptr;
@@ -10,6 +11,7 @@
 OilMatchBranch :: OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body ):
 	Type ( kMatchType_Other ),
 	AllusionValueName ( U"" ),
+	MatchDestructure ( NULL ),
 	Body ( Body ),
 	Ref ( Ref )
 {
@@ -19,6 +21,7 @@ OilMatchBranch :: OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Bod
 	Type ( kMatchType_Constant ),
 	MatchConstantPrimary ( MatchConstantPrimary ),
 	AllusionValueName ( U"" ),
+	MatchDestructure ( NULL ),
 	Body ( Body ),
 	Ref ( Ref )
 {
@@ -28,6 +31,7 @@ OilMatchBranch :: OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Bod
 	Type ( kMatchType_Allusion ),
 	MatchAllusion ( MatchAllusion ),
 	AllusionValueName ( U"" ),
+	MatchDestructure ( NULL ),
 	Body ( Body ),
 	Ref ( Ref )
 {
@@ -37,6 +41,18 @@ OilMatchBranch :: OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Bod
 	Type ( kMatchType_AllusionValue ),
 	MatchAllusion ( MatchAllusion ),
 	AllusionValueName ( AllusionValueName ),
+	MatchDestructure ( NULL ),
+	Body ( Body ),
+	Ref ( Ref )
+{
+}
+
+
+OilMatchBranch :: OilMatchBranch ( const SourceRef & Ref, OilStatementBody * Body, OilAllusion * MatchAllusion, OilStructDestructure * Destructure ):
+	Type ( kMatchType_Destructure ),
+	MatchAllusion ( MatchAllusion ),
+	AllusionValueName ( U"" ),
+	MatchDestructure ( Destructure ),
 	Body ( Body ),
 	Ref ( Ref )
 {
@@ -56,6 +72,7 @@ OilMatchBranch :: ~OilMatchBranch ()
 			
 		case kMatchType_AllusionValue:
 		case kMatchType_Allusion:
+		case kMatchType_Destructure:
 			delete MatchAllusion;
 			break;
 			
@@ -63,6 +80,9 @@ OilMatchBranch :: ~OilMatchBranch ()
 			break;
 		
 	}
+	
+	if ( Type == kMatchType_Destructure )
+		delete MatchDestructure;
 	
 }
 
@@ -104,14 +124,28 @@ IOilPrimary * OilMatchBranch :: GetConstantPrimary ()
 const OilAllusion * OilMatchBranch :: GetMatchAllusion () const
 {
 	
-	return ( ( Type == kMatchType_Allusion ) || ( Type == kMatchType_AllusionValue ) ) ? MatchAllusion : NULL;
+	return ( ( Type == kMatchType_Allusion ) || ( Type == kMatchType_Destructure ) || ( Type == kMatchType_AllusionValue ) ) ? MatchAllusion : NULL;
 	
 }
 
 OilAllusion * OilMatchBranch :: GetMatchAllusion ()
 {
 	
-	return ( ( Type == kMatchType_Allusion ) || ( Type == kMatchType_AllusionValue ) ) ? MatchAllusion : NULL;
+	return ( ( Type == kMatchType_Allusion ) || ( Type == kMatchType_Destructure ) || ( Type == kMatchType_AllusionValue ) ) ? MatchAllusion : NULL;
+	
+}
+
+const OilStructDestructure * OilMatchBranch :: GetMatchDestructure () const
+{
+	
+	return ( Type == kMatchType_Destructure ) ? MatchDestructure : NULL;
+	
+}
+
+OilStructDestructure * OilMatchBranch :: GetMatchDestructure ()
+{
+	
+	return ( Type == kMatchType_Destructure ) ? MatchDestructure : NULL;
 	
 }
 

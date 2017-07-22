@@ -16,6 +16,7 @@ class OilFunctionDefinition;
 class OilConstStatement;
 class OilMethodDefinition;
 class OilEnum;
+class OilMatchBranch;
 
 class OilAllusion : public virtual IOilPrimary
 {
@@ -42,6 +43,7 @@ public:
 		kAllusionTarget_Constant,
 		kAllusionTarget_Self,
 		kAllusionTarget_EnumBranch,
+		kAllusionTarget_MatchBranchValue,
 		
 		kAllusionTarget_Function_Namespaced,
 		kAllusionTarget_Method_Namespaced,
@@ -78,6 +80,7 @@ public:
 	void SetTargetAsBinding ( OilBindingStatement * Binding );
 	void SetTargetAsConstant ( OilConstStatement * Constant );
 	void SetTargetAsEnumBranch ( OilEnum * Enum );
+	void SetTargetAsMatchBranchValue ( OilMatchBranch * Branch );
 	
 	void SetTargetAsNamespacedFunction ( OilFunctionDefinition * Function );
 	void SetTargetAsNamespacedMethod ( OilMethodDefinition * Method );
@@ -102,6 +105,9 @@ public:
 	
 	const OilBindingStatement * GetBindingTarget () const;
 	OilBindingStatement * GetBindingTarget ();
+	
+	const OilMatchBranch * GetMatchBranchTarget () const;
+	OilMatchBranch * GetMatchBranchTarget ();
 	
 	const OilConstStatement * GetConstTarget () const;
 	OilConstStatement * GetConstTarget ();
@@ -148,6 +154,7 @@ private:
 		OilConstStatement * ConstTarget;
 		OilMethodDefinition * MethodTarget;
 		OilEnum * EnumTarget;
+		OilMatchBranch * MatchBranchTarget;
 		
 	};
 	

@@ -37,7 +37,7 @@ function Test ()
 			
 		}
 		
-		E::B { X: x, Y: y }:
+		E::B { X: x, Y: ignore }:
 		{
 			
 			
@@ -62,10 +62,10 @@ function Test ()
 			if ( 3 < 5 )
 			{
 				
-				loop `my_loop
+				loop `my_loop:
 				{
 					
-					break my_loop;
+					break `my_loop;
 					
 					if ( 2 > 1 )
 						return;
@@ -75,7 +75,6 @@ function Test ()
 				bind r: i32 = 0;
 				
 				r += 3;
-				r %= 2;
 				
 			}
 		

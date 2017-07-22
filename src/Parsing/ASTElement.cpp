@@ -31,7 +31,8 @@ ASTElement :: ~ASTElement ()
 void ASTElement :: AddSubElement ( ASTElement * Element )
 {
 	
-	SubElements.push_back ( Element );
+	if ( Element != NULL )
+		SubElements.push_back ( Element );
 	
 }
 

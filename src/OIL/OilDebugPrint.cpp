@@ -47,6 +47,8 @@
 #include <OIL/OilEnum.h>
 #include <OIL/OilMatch.h>
 #include <OIL/OilMatchBranch.h>
+#include <OIL/OilStructDestructure.h>
+#include <OIL/OilMemberDestructure.h>
 
 #include <Encoding/CodeConversion.h>
 
@@ -71,6 +73,7 @@ std :: string OilStringExpression ( const OilExpression & Expression, const OilP
 std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOptions & PrintOptions );
 std :: string OilStringOperator ( const IOilOperator & Operator, const OilPrintOptions & PrintOptions );
 std :: string OilStringFunctionCallParameterList ( const OilFunctionCallParameterList & List, const OilPrintOptions & PrintOptions );
+std :: string OilStringStructDestructure ( const OilStructDestructure & Destructure, const OilPrintOptions & PrintOptions );
 void OilPrintIfElse ( const OilIfElse & IfElse, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
 void OilPrintDoWhileLoop ( const OilWhileLoop & Loop, uint32_t Indent, const OilPrintOptions & PrintOptions );
@@ -1691,16 +1694,32 @@ std :: string OilStringPrimary ( const IOilPrimary & Primary, const OilPrintOpti
 				case OilAllusion :: kAllusionTarget_EnumBranch:
 				{
 					
-					// TODO: Implement
-					return "";
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Enum Branch: \"" : "[ALLUSION Enum Branch: \"";
+					
+					PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "::";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
 					
 				}
 				
 				case OilAllusion :: kAllusionTarget_EnumBranch_Namespaced:
 				{
 					
-					// TODO: Implement
-					return "";
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Enum Branch: \"" : "[ALLUSION Enum Branch: \"";
+					
+					for ( uint32_t I = 0; I < Allusion.GetNamespaceNameCount (); I ++ )
+						PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( I ) ) + "::";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
+					
+				}
+				
+				case OilAllusion :: kAllusionTarget_MatchBranchValue:
+				{
+					
+					std :: string PrintString = PrintOptions.ShowResolution ? "[ALLUSION (resolved) Match Branch Value: \"" : "[ALLUSION Match Branch Value: \"";
+					
+					return PrintString + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetName () ) + "\"]";
 					
 				}
 				
@@ -2224,8 +2243,10 @@ void OilPrintMatch ( const OilMatch & Match, uint32_t Indent, const OilPrintOpti
 			case OilMatchBranch :: kMatchType_Destructure:
 			{
 				
-				// TODO
-				PrintString += "destructure";
+				PrintString += "destructure ";
+				PrintString += OilStringPrimary ( * Branch -> GetMatchAllusion (), PrintOptions ) + ": ";
+				PrintString += OilStringStructDestructure ( * Branch -> GetMatchDestructure (), PrintOptions );
+				
 				
 			}
 			break;
@@ -2257,5 +2278,49 @@ void OilPrintMatch ( const OilMatch & Match, uint32_t Indent, const OilPrintOpti
 	
 	LOG_VERBOSE ( PrintString );
 	
+	
+}
+
+std :: string OilStringStructDestructure ( const OilStructDestructure & Destructure, const OilPrintOptions & PrintOptions )
+{
+	
+	std :: string PrintString = "[DESTRUCTURE";
+	
+	if ( PrintOptions.ShowResolution )
+	{
+	
+		if ( Destructure.IsDestructuredTypeResolved () )
+			PrintString += " type: " + OilStringTypeRef ( * Destructure.GetDestructuredType (), PrintOptions );
+		else
+			PrintString += " type: unresolved"; 
+		
+	}
+	
+	PrintString += " ( ";
+	
+	uint32_t MemberCount = Destructure.GetMemberDestructureCount ();
+	
+	for ( uint32_t I = 0; I < MemberCount; I ++ )
+	{
+		
+		const OilMemberDestructure * Member = Destructure.GetMemberDestructure ( I );
+		
+		PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Member -> GetMemberName () ) + ": ";
+		
+		if ( Member -> IsIgnored () )
+			PrintString += "ignored";
+		else if ( Member -> IsSubDestructure () )
+			PrintString += OilStringStructDestructure ( * Member -> GetSubDestructure (), PrintOptions );
+		else
+			PrintString += CodeConversion :: ConvertUTF32ToUTF8 ( Member -> GetValueName () );
+		
+		if ( I != MemberCount - 1 )
+			PrintString += ", ";
+		
+	}
+	
+	PrintString += " )]";
+	
+	return PrintString;
 	
 }

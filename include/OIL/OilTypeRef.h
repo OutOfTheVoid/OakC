@@ -34,7 +34,6 @@ public:
 	static const RefFlag kRefFlag_Trait = 1;
 	static const RefFlag kRefFlag_Absolute = 2;
 	
-	
 	OilTypeRef ( const SourceRef & Ref, const OilTypeRef & CopyFrom );
 	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, RefFlag Flags = kRefFlag_None );
 	OilTypeRef ( const SourceRef & Ref, const std :: u32string & Name, const std :: u32string * NamespaceNameList, uint32_t NamespaceNameCount, RefFlag Flags = kRefFlag_None );
@@ -66,6 +65,7 @@ public:
 	RefFlag GetFlags () const;
 	
 	bool IsResolved () const;
+	
 	bool IsResolvedAsType () const;
 	bool IsResolvedAsTrait () const;
 	bool IsResolvedAsTemplateParam () const;

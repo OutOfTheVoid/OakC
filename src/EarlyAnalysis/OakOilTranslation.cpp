@@ -52,6 +52,8 @@
 #include <OIL/OilEnum.h>
 #include <OIL/OilMatch.h>
 #include <OIL/OilMatchBranch.h>
+#include <OIL/OilStructDestructure.h>
+#include <OIL/OilMemberDestructure.h>
 
 #include <Parsing/Language/OakASTTags.h>
 #include <Parsing/Language/OakNamespaceDefinitionConstructor.h>
@@ -95,6 +97,7 @@
 #include <Parsing/Language/OakReturnTypeConstructor.h>
 #include <Parsing/Language/OakMatchStatementConstructor.h>
 #include <Parsing/Language/OakMatchBranchConstructor.h>
+#include <Parsing/Language/OakMemberDestructureConstructor.h>
 
 #include <Lexing/Language/OakKeywordTokenTags.h>
 
@@ -139,6 +142,7 @@ OilDecoratorTag * OakTranslateDecoratorTagToOil ( const ASTElement * DecoratorTa
 OilConstStatement * OakTranslateConstStatementToOil ( const ASTElement * ConstElement );
 OilTypeAlias * OakTranslateTypeAliasToOil ( const ASTElement * AliasElement );
 OilAllusion * OakTranslateAllusionToOil ( const ASTElement * AllusionElement );
+OilStructDestructure * OakTranslateStructDestructureToOil ( const ASTElement * DestructureElement );
 
 OilFunctionCallParameterList * OakTranslateFunctionCallParameterListToOil ( const ASTElement * CallListElement );
 
@@ -3038,8 +3042,58 @@ OilStatementBody * OakTranslateStatementBodyToOil ( const ASTElement * BodyEleme
 						}
 						break;
 						
-						// TODO: Implement destructure matches
-						// case OakMatchBranchConstructor :: kBranchType_DestructureMatch
+						case OakMatchBranchConstructor :: kBranchType_DestructureMatch:
+						{
+							
+							const ASTElement * AllusionElement = BranchElement -> GetSubElement ( 0 );
+							
+							OilAllusion * Allusion = OakTranslateAllusionToOil ( AllusionElement );
+							
+							if ( Allusion == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								
+								return NULL;
+								
+							}
+							
+							const ASTElement * DestructureElement = BranchElement -> GetSubElement ( 1 );
+							
+							OilStructDestructure * Destructure = OakTranslateStructDestructureToOil ( DestructureElement );
+							
+							if ( Destructure == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								delete Allusion;
+								
+								return NULL;
+								
+							}
+							
+							const ASTElement * StatementBodyElement = BranchElement -> GetSubElement ( 2 );
+							
+							OilStatementBody * BranchBody = OakTranslateStatementBodyToOil ( StatementBodyElement );
+							
+							if ( BranchBody == NULL )
+							{
+								
+								delete Body;
+								delete NewMatch;
+								delete Allusion;
+								delete Destructure;
+								
+								return NULL;
+								
+							}
+							
+							NewMatch -> AddBranch ( new OilMatchBranch ( FindEarliestSourceRef ( AllusionElement ), BranchBody, Allusion, Destructure ) );
+							
+						}
+						break;
 						
 						default:
 						break;
@@ -5088,6 +5142,82 @@ OilTypeAlias * OakTranslateTypeAliasToOil ( const ASTElement * AliasElement )
 	OilTypeAlias * NewAlias = new OilTypeAlias ( Ref, AliasData -> NewName, AliasedType, Template );
 	
 	return NewAlias;
+	
+}
+
+OilStructDestructure * OakTranslateStructDestructureToOil ( const ASTElement * DestructureElement )
+{
+	
+	if ( ( DestructureElement == NULL ) || ( DestructureElement -> GetTag () != OakASTTags :: kASTTag_StructDestructure ) || ( DestructureElement -> GetSubElementCount () == 0 ) )
+	{
+		
+		LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+		
+		return NULL;
+		
+	}
+	
+	SourceRef Ref = FindEarliestSourceRef ( DestructureElement );
+	
+	OilStructDestructure * Destructure = new OilStructDestructure ( Ref );
+	
+	uint32_t MemberCount = DestructureElement -> GetSubElementCount ();
+	
+	for ( uint32_t I = 0; I < MemberCount; I ++ )
+	{
+		
+		const ASTElement * MemberElement = DestructureElement -> GetSubElement ( I );
+		
+		if ( MemberElement -> GetTag () != OakASTTags :: kASTTag_MemberDestructure )
+		{
+			
+			delete Destructure;
+			
+			LOG_FATALERROR ( "Structurally invalid AST passed to OIL parser" );
+			
+			return NULL;
+			
+		}
+		
+		const OakMemberDestructureConstructor :: ElementData * MemberDestructureData = reinterpret_cast <const OakMemberDestructureConstructor :: ElementData *> ( MemberElement -> GetData () );
+		
+		SourceRef MemberRef = FindEarliestSourceRef ( MemberElement );
+		
+		switch ( MemberDestructureData -> Type )
+		{
+			
+			case OakMemberDestructureConstructor :: kDestructureType_Ignored:
+				Destructure -> AddMemberDestructure ( new OilMemberDestructure ( MemberRef, MemberDestructureData -> MemberName ) );
+				break;
+			
+			case OakMemberDestructureConstructor :: kDestructureType_Named:
+				Destructure -> AddMemberDestructure ( new OilMemberDestructure ( MemberRef, MemberDestructureData -> MemberName, MemberDestructureData -> BindingName ) );
+				break;
+			
+			case OakMemberDestructureConstructor :: kDestrucutreType_SubDestructure:
+			{
+				
+				OilStructDestructure * SubDestructure = OakTranslateStructDestructureToOil ( MemberElement -> GetSubElement ( 0 ) );
+				
+				if ( SubDestructure == NULL )
+				{
+					
+					delete Destructure;
+					
+					return NULL;
+					
+				}
+				
+				Destructure -> AddMemberDestructure ( new OilMemberDestructure ( MemberRef, MemberDestructureData -> MemberName, SubDestructure ) );
+				
+			}
+			break;
+			
+		}
+		
+	}
+	
+	return Destructure;
 	
 }
 

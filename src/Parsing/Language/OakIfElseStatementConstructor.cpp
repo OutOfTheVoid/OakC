@@ -145,6 +145,20 @@ void OakIfElseStatementConstructor :: TryConstruct ( ASTConstructionInput & Inpu
 	if ( StatementBodyGroup.TryConstruction ( IfElseElement, 1, Error, ErrorString, ErrorToken, & Input.Tokens [ Input.AvailableTokenCount - TokenCount ], TokenCount ) == 0 )
 	{
 		
+		if ( Error )
+		{
+			
+			delete IfElseElement;
+			
+			Output.Accepted = false;
+			Output.Error = true;
+			Output.ErrorSuggestion = ErrorString;
+			Output.ErrorProvokingToken = ErrorToken;
+			
+			return;
+			
+		}
+		
 		delete IfElseElement;
 		
 		Output.Accepted = false;

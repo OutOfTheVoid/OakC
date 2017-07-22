@@ -89,6 +89,9 @@ void Logging :: LogError ( const std :: string & Message, ErrorLevel Level, uint
 	
 	FormatStream << Message << std :: endl;
 	
-	LogOutput -> WriteError ( FormatStream.str () );
+	if ( UnVerboseLevel != kLevel_Debug )
+		LogOutput -> WriteError ( FormatStream.str () );
+	else
+		LogOutput -> Write ( FormatStream.str () );
 	
 }

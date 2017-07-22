@@ -323,6 +323,28 @@ OilEnum * OilAllusion :: GetEnumTarget ()
 	
 }
 
+void OilAllusion :: SetTargetAsMatchBranchValue ( OilMatchBranch * Branch )
+{
+	
+	Target = kAllusionTarget_MatchBranchValue;
+	MatchBranchTarget = Branch;
+	
+}
+
+const OilMatchBranch * OilAllusion :: GetMatchBranchTarget () const
+{
+	
+	return ( Target == kAllusionTarget_MatchBranchValue ) ? MatchBranchTarget : NULL;
+	
+}
+
+OilMatchBranch * OilAllusion :: GetMatchBranchTarget ()
+{
+	
+	return ( Target == kAllusionTarget_MatchBranchValue ) ? MatchBranchTarget : NULL;
+	
+}
+
 const std :: u32string & OilAllusion :: GetName () const
 {
 	
