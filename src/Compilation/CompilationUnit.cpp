@@ -485,28 +485,23 @@ bool CompilationUnit :: RunSourceAnalysis ( OilNamespaceDefinition & RootNS )
 	
 	LOG_VERBOSE ( "[ ALL ]: compilation step: Semantic analysis." );
 	
-	bool Complete = false;
+	bool TypeComplete = false;
+	bool AllusionComplete = false;
 	
-	while ( ! Complete )
+	while ( ! ( TypeComplete && AllusionComplete ) )
 	{
 		
 		bool Error = false;
 		
-		TryResolveTypes ( RootNS, Complete, Error );
+		if ( ! TypeComplete )
+			TryResolveTypes ( RootNS, TypeComplete, Error );
 		
 		if ( Error )
 			return false;
 		
-	}
-	
-	Complete = false;
-	
-	while ( ! Complete )
-	{
 		
-		bool Error = false;
-		
-		TryResolveAllusions ( RootNS, Complete, Error );
+		if ( ! AllusionComplete )
+			TryResolveAllusions ( RootNS, AllusionComplete, Error );
 		
 		if ( Error )
 			return false;

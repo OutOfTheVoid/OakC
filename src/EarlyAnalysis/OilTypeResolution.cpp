@@ -1970,6 +1970,33 @@ TypeResolutionResult OilTypeResolution_MatchBranch ( OilNamespaceDefinition & Cu
 			
 			// TODO: Implement
 			
+			OilAllusion * BranchAllusion = Branch.GetMatchAllusion ();
+			
+			TypeResolutionResult AllusionResult = OilTypeResolution_Allusion ( CurrentNS, * BranchAllusion, TemplateNames, SelfType );
+			
+			if ( AllusionResult == kTypeResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( AllusionResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( AllusionResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return AllusionResult;
+			
+			if ( ! BranchAllusion -> IsResolved () )
+				Unresolved = true;
+			else
+			{
+				
+				
+				
+			}
+			
 		}
 		break;
 		

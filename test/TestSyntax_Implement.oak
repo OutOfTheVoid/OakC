@@ -53,11 +53,7 @@ namespace MyNS
 		function op_add ( LHS: & Self, RHS: & Self ): Self
 		{
 			
-			bind mut New:Self;
-			
-			New.set ( LHS.A + RHS.A );
-			
-			return New;
+			return Self: { A: LHS.A + RHS.A };
 			
 		}
 		
