@@ -25,6 +25,7 @@
 #include <OIL/OilFunctionParameter.h>
 #include <OIL/OilStructDestructure.h>
 #include <OIL/OilMemberDestructure.h>
+#include <OIL/OilAllusion.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -123,9 +124,10 @@ OilAllusionResolution_NameMapStack :: NameMapping_Struct :: ~NameMapping_Struct 
 }
 
 
-OilAllusionResolution_NameMapStack :: OilAllusionResolution_NameMapStack ():
+OilAllusionResolution_NameMapStack :: OilAllusionResolution_NameMapStack ( OilNamespaceDefinition & GlobalNamespace ):
 	Contexts (),
-	NameMap ()
+	NameMap (),
+	GlobalNamespace ( GlobalNamespace )
 {
 }
 
@@ -137,6 +139,13 @@ OilAllusionResolution_NameMapStack :: ~OilAllusionResolution_NameMapStack ()
 	
 	Contexts.clear ();
 	NameMap.clear ();
+	
+}
+
+OilNamespaceDefinition & OilAllusionResolution_NameMapStack :: GetGlobalNamespace ()
+{
+	
+	return GlobalNamespace;
 	
 }
 
@@ -418,7 +427,7 @@ AllusionResolutionResult OilAllusionResolution_Root ( OilNamespaceDefinition & R
 	
 	(void) RootNS;
 	
-	OilAllusionResolution_NameMapStack NameMapStack;
+	OilAllusionResolution_NameMapStack NameMapStack ( RootNS );
 	
 	return OilAllusionResolution_Namespace ( NameMapStack, RootNS );
 	
@@ -531,6 +540,7 @@ AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution
 	{
 		
 		OilTypeDefinition * Definition = Namespace.GetTypeDefinition ( I );
+		
 		// TODO: Resolve type definitions
 		(void) Definition;
 		
@@ -1283,30 +1293,6 @@ void AddDestructureNames ( OilAllusionResolution_NameMapStack & NameStack, OilSt
 	
 }
 
-AllusionResolutionResult OilAllusionResolution_Expression ( OilAllusionResolution_NameMapStack & NameStack, OilExpression & Expression )
-{
-	
-	bool Unresolved = false;
-	bool Progress = false;
-	
-	// TODO: Implement
-	(void) NameStack;
-	(void) Expression;
-	
-	if ( Unresolved )
-	{
-		
-		if ( Progress )
-			return kAllusionResolutionResult_Success_Progress;
-		
-		return kAllusionResolutionResult_Success_NoProgress;
-		
-	}
-	
-	return kAllusionResolutionResult_Success_Complete;
-	
-}
-
 AllusionResolutionResult OilAllusionResolution_Function ( OilAllusionResolution_NameMapStack & NameStack, OilFunctionDefinition & FunctionDefinition )
 {
 	
@@ -1360,13 +1346,219 @@ AllusionResolutionResult OilAllusionResolution_Function ( OilAllusionResolution_
 	
 }
 
+AllusionResolutionResult OilAllusionResolution_Expression ( OilAllusionResolution_NameMapStack & NameStack, OilExpression & Expression )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	// TODO: Implement 
+	(void) NameStack;
+	(void) Expression;
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kAllusionResolutionResult_Success_Progress;
+		
+		return kAllusionResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+AllusionResolutionResult OilAllusionResolution_Allusion_FinalNamespaceSearchResult ( OilNamespaceDefinition :: NameSearchResult & NamespaceSearchResult, OilAllusion & Allusion )
+{
+	
+	(void) NamespaceSearchResult;
+	(void) Allusion;
+	
+	// TODO: Implement
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
 AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_NameMapStack & NameStack, OilAllusion & Allusion )
 {
 	
 	bool Unresolved = false;
 	bool Progress = false;
 	
-	// TODO: Implement
+	if ( Allusion.IsResolved () )
+		return kAllusionResolutionResult_Success_Complete;
+	
+	OilNamespaceDefinition :: NameSearchResult NamespaceSearchResult;
+	OilAllusionResolution_NameMapStack :: NameMapping NameStackSearchResult;
+	
+	switch ( Allusion.GetTarget () )
+	{
+		
+		case OilAllusion :: kAllusionTarget_Namespaced:
+		{
+			
+			NameStackSearchResult = NameStack.LookupName ( Allusion.GetNamespaceName ( 0 ) );
+			
+			OilNamespaceDefinition * CurrentNamespace = NULL;
+			OilTypeDefinition * CurrentTypeDefinition = NULL;
+			OilTypeAlias * CurrentTypeAlias = NULL;
+			
+			if ( NameStackSearchResult.Type == OilAllusionResolution_NameMapStack :: kMappingType_None )
+			{
+				
+				NameStack.GetGlobalNamespace ().SearchName ( Allusion.GetNamespaceName ( 0 ), NamespaceSearchResult );
+				
+				if ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_SubNamespace )
+					CurrentNamespace = NamespaceSearchResult.NamespaceDefinition;
+				else if ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_TypeDefinition )
+				{
+					
+					if ( Allusion.GetNamespaceNameCount () != 1 )
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "\" does not refer to a namespace!" );
+						
+						return kAllusionResolutionResult_Error;
+						
+					}
+					
+					CurrentTypeDefinition = NamespaceSearchResult.TypeDefinition;
+					
+				}
+				else if ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_TypeAlias )
+				{
+					
+					if ( Allusion.GetNamespaceNameCount () != 1 )
+					{
+						
+						LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "\" does not refer to a namespace!" );
+						
+						return kAllusionResolutionResult_Error;
+						
+					}
+					
+					CurrentTypeAlias = NamespaceSearchResult.Alias;
+					
+				}
+				
+			}
+			else if ( NameStackSearchResult.Type == OilAllusionResolution_NameMapStack :: kMappingType_Namespace )
+				CurrentNamespace = NameStackSearchResult.Namespace;
+			else if ( NameStackSearchResult.Type == OilAllusionResolution_NameMapStack :: kMappingType_TypeDefinition )
+			{
+				
+				if ( Allusion.GetNamespaceNameCount () != 1 )
+				{
+					
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "\" does not refer to a namespace!" );
+					
+					return kAllusionResolutionResult_Error;
+					
+				}
+				
+				CurrentTypeDefinition = NamespaceSearchResult.TypeDefinition;
+				
+			}
+			else if ( NameStackSearchResult.Type == OilAllusionResolution_NameMapStack :: kMappingType_TypeAlias )
+			{
+				
+				if ( Allusion.GetNamespaceNameCount () != 1 )
+				{
+					
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "\" does not refer to a namespace!" );
+					
+					return kAllusionResolutionResult_Error;
+					
+				}
+				
+				CurrentTypeAlias = NameStackSearchResult.TypeAlias;
+				
+			}
+			else
+			{
+				
+				LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( 0 ) ) + "\" does not refer to a namespace!" );
+				
+				return kAllusionResolutionResult_Error;
+				
+			}
+			
+			if ( CurrentNamespace != NULL )
+			{
+				
+				uint32_t CurrentNameIndex = 1;
+				uint32_t NameLength = Allusion.GetNamespaceNameCount ();
+				
+				while ( CurrentNameIndex < NameLength )
+				{
+					
+					CurrentNamespace -> SearchName ( Allusion.GetNamespaceName ( CurrentNameIndex ), NamespaceSearchResult );
+					CurrentNamespace = NULL;
+					CurrentNameIndex ++;
+					
+					if ( NamespaceSearchResult.Type != OilNamespaceDefinition :: kNameSearchResultType_SubNamespace )
+					{
+						
+						if ( ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_None ) || ( CurrentNameIndex != NameLength ) )
+						{
+							
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( CurrentNameIndex - 1 ) ) + "\" does not refer to a namespace!" );
+							
+							return kAllusionResolutionResult_Error;
+							
+						}
+						
+						if ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_TypeDefinition )
+							CurrentTypeDefinition = NamespaceSearchResult.TypeDefinition;
+						else if ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_TypeAlias )
+							CurrentTypeAlias = NamespaceSearchResult.Alias;
+						else
+						{
+							
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "\"" + CodeConversion :: ConvertUTF32ToUTF8 ( Allusion.GetNamespaceName ( CurrentNameIndex - 1 ) ) + "\" does not refer to a namespace!" );
+							
+							return kAllusionResolutionResult_Error;
+							
+						}
+						
+					}
+					else
+						CurrentNamespace = NamespaceSearchResult.NamespaceDefinition;
+					
+				}
+				
+			}
+			
+			if ( CurrentNamespace != NULL )
+			{
+				
+				CurrentNamespace -> SearchName ( Allusion.GetName (), NamespaceSearchResult );
+				
+				return OilAllusionResolution_Allusion_FinalNamespaceSearchResult ( NamespaceSearchResult, Allusion );
+				
+			}
+			
+		}
+		break;
+		
+		case OilAllusion :: kAllusionTarget_Namespaced_Absolue:
+		case OilAllusion :: kAllusionTarget_Namespaced_Templated:
+		case OilAllusion :: kAllusionTarget_Namespaced_Absolue_Templated:
+		case OilAllusion :: kAllusionTarget_Self_Unchecked:
+		
+		case OilAllusion :: kAllusionTarget_Indeterminate:
+		case OilAllusion :: kAllusionTarget_Indeterminate_Templated:
+		break;
+		
+		default:
+		break;
+		
+	}
+	
+	
 	(void) NameStack;
 	(void) Allusion;
 	

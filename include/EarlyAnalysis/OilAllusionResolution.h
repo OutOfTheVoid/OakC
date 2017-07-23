@@ -16,6 +16,7 @@ class IOilLoop;
 class OilFunctionParameter;
 class OilMatchBranch;
 class OilMemberDestructure;
+class OilEnum;
 
 class OilAllusionResolution_NameMapStack
 {
@@ -47,7 +48,8 @@ public:
 		kMappingType_LabledLoop,
 		kMappingType_FunctionParameter,
 		kMappingType_MatchBranchValue,
-		kMappingType_MemberDestructure
+		kMappingType_MemberDestructure,
+		kMappingType_Enum
 		
 	};
 	
@@ -66,6 +68,7 @@ public:
 		NameMapping_Struct ( OilFunctionParameter * Parameter );
 		NameMapping_Struct ( OilMatchBranch * MatchBranchValue );
 		NameMapping_Struct ( OilMemberDestructure * MemberDestructure );
+		NameMapping_Struct ( OilEnum * Enum );
 		
 		~NameMapping_Struct ();
 		
@@ -90,7 +93,7 @@ public:
 		
 	} NameMapping;
 	
-	OilAllusionResolution_NameMapStack ();
+	OilAllusionResolution_NameMapStack ( OilNamespaceDefinition & GlobalNamespace );
 	~OilAllusionResolution_NameMapStack ();
 	
 	void PushContext ( NameContextType Context );
@@ -111,6 +114,8 @@ public:
 	NameMapping LookupName ( const std :: u32string Name );
 	void ReadInScopeNames ( std :: vector <std :: u32string> & Out );
 	
+	OilNamespaceDefinition & GetGlobalNamespace ();
+	
 private:
 	
 	typedef struct NameContext_Struct
@@ -128,6 +133,8 @@ private:
 	
 	std :: vector <NameContext *> Contexts;
 	std :: unordered_map <std :: u32string, std :: vector <NameMapping>> NameMap;
+	
+	OilNamespaceDefinition & GlobalNamespace;
 	
 };
 
