@@ -2,6 +2,7 @@
 #define OIL_OILDOWHILELOOP_H
 
 #include <OIL/IOilStatement.h>
+#include <OIL/IOilLoop.h>
 
 class OilExpression;
 class OilStatementBody;
@@ -10,7 +11,7 @@ class OilStatementBody;
 
 #include <Tokenization/SourceRef.h>
 
-class OilDoWhileLoop : public virtual IOilStatement
+class OilDoWhileLoop : public virtual IOilStatement, public virtual IOilLoop
 {
 public:
 	

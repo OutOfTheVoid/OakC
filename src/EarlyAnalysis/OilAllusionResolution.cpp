@@ -19,9 +19,17 @@
 #include <OIL/OilDoWhileLoop.h>
 #include <OIL/OilWhileLoop.h>
 #include <OIL/OilBreak.h>
+#include <OIL/IOilLoop.h>
+#include <OIL/OilMatchBranch.h>
+#include <OIL/OilFunctionParameterList.h>
+#include <OIL/OilFunctionParameter.h>
+#include <OIL/OilStructDestructure.h>
+#include <OIL/OilMemberDestructure.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
+
+#include <Encoding/CodeConversion.h>
  
 OilAllusionResolution_NameMapStack :: NameContext_Struct :: NameContext_Struct ( NameContextType Context ):
 	Type ( Context ),
@@ -83,6 +91,30 @@ OilAllusionResolution_NameMapStack :: NameMapping_Struct :: NameMapping_Struct (
 OilAllusionResolution_NameMapStack :: NameMapping_Struct :: NameMapping_Struct ( OilTypeAlias * TypeAlias ):
 	Type ( kMappingType_TypeAlias ),
 	TypeAlias ( TypeAlias )
+{
+}
+
+OilAllusionResolution_NameMapStack :: NameMapping_Struct :: NameMapping_Struct ( IOilLoop * LabledLoop ):
+	Type ( kMappingType_LabledLoop ),
+	LabledLoop ( LabledLoop )
+{
+}
+
+OilAllusionResolution_NameMapStack :: NameMapping_Struct :: NameMapping_Struct ( OilFunctionParameter * FunctionParameter ):
+	Type ( kMappingType_FunctionParameter ),
+	FunctionParameter ( FunctionParameter )
+{
+}
+
+OilAllusionResolution_NameMapStack :: NameMapping_Struct :: NameMapping_Struct ( OilMatchBranch * MatchBranchValue ):
+	Type ( kMappingType_MatchBranchValue ),
+	MatchBranchValue ( MatchBranchValue )
+{
+}
+
+OilAllusionResolution_NameMapStack :: NameMapping_Struct :: NameMapping_Struct ( OilMemberDestructure * MemberDestructure ):
+	Type ( kMappingType_MemberDestructure ),
+	MemberDestructure ( MemberDestructure )
 {
 }
 
@@ -250,6 +282,71 @@ void OilAllusionResolution_NameMapStack :: AddTypeAliasMapping ( const std :: u3
 	
 }
 
+void OilAllusionResolution_NameMapStack :: AddLabledLoopMapping ( const std :: u32string & Label, IOilLoop * LabledLoop )
+{
+	
+	NameContext * CurrentContext = Contexts [ Contexts.size () - 1 ];
+	
+	CurrentContext -> Names.push_back ( Label );
+	
+	std :: unordered_map <std :: u32string, std :: vector <NameMapping>> :: iterator FindIter = NameMap.find ( Label );
+	
+	if ( FindIter == NameMap.end () )
+		NameMap [ Label ] = std :: vector <NameMapping> ( { NameMapping ( LabledLoop ) } );
+	else
+		FindIter -> second.push_back ( NameMapping ( LabledLoop ) );
+	
+}
+
+void OilAllusionResolution_NameMapStack :: AddFunctionParameterMapping ( const std :: u32string & Name, OilFunctionParameter * FunctionParameter )
+{
+	
+	NameContext * CurrentContext = Contexts [ Contexts.size () - 1 ];
+	
+	CurrentContext -> Names.push_back ( Name );
+	
+	std :: unordered_map <std :: u32string, std :: vector <NameMapping>> :: iterator FindIter = NameMap.find ( Name );
+	
+	if ( FindIter == NameMap.end () )
+		NameMap [ Name ] = std :: vector <NameMapping> ( { NameMapping ( FunctionParameter ) } );
+	else
+		FindIter -> second.push_back ( NameMapping ( FunctionParameter ) );
+	
+}
+
+void OilAllusionResolution_NameMapStack :: AddMatchBranchValueMapping ( const std :: u32string & Name, OilMatchBranch * MatchBranchValue )
+{
+	
+	NameContext * CurrentContext = Contexts [ Contexts.size () - 1 ];
+	
+	CurrentContext -> Names.push_back ( Name );
+	
+	std :: unordered_map <std :: u32string, std :: vector <NameMapping>> :: iterator FindIter = NameMap.find ( Name );
+	
+	if ( FindIter == NameMap.end () )
+		NameMap [ Name ] = std :: vector <NameMapping> ( { NameMapping ( MatchBranchValue ) } );
+	else
+		FindIter -> second.push_back ( NameMapping ( MatchBranchValue ) );
+	
+}
+
+
+void OilAllusionResolution_NameMapStack :: AddMemberDestructureMapping ( const std :: u32string & Name, OilMemberDestructure * MemberDestructure )
+{
+	
+	NameContext * CurrentContext = Contexts [ Contexts.size () - 1 ];
+	
+	CurrentContext -> Names.push_back ( Name );
+	
+	std :: unordered_map <std :: u32string, std :: vector <NameMapping>> :: iterator FindIter = NameMap.find ( Name );
+	
+	if ( FindIter == NameMap.end () )
+		NameMap [ Name ] = std :: vector <NameMapping> ( { NameMapping ( MemberDestructure ) } );
+	else
+		FindIter -> second.push_back ( NameMapping ( MemberDestructure ) );
+	
+}
+
 OilAllusionResolution_NameMapStack :: NameMapping OilAllusionResolution_NameMapStack :: LookupName ( const std :: u32string Name )
 {
 	
@@ -308,8 +405,12 @@ private:
 
 //============================================================================================================================================================================================//
 
+AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_NameMapStack & NameStack, OilAllusion & Allusion );
+void AddDestructureNames ( OilAllusionResolution_NameMapStack & NameStack, OilStructDestructure & Destructure );
+AllusionResolutionResult OilAllusionResolution_Function ( OilAllusionResolution_NameMapStack & NameStack, OilFunctionDefinition & Branch );
+AllusionResolutionResult OilAllusionResolution_MatchBranch ( OilAllusionResolution_NameMapStack & NameStack, OilMatchBranch & Branch, IOilLoop * TopLoop );
 AllusionResolutionResult OilAllusionResolution_Expression ( OilAllusionResolution_NameMapStack & NameStack, OilExpression & Expression );
-AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolution_NameMapStack & NameStack, OilStatementBody & Body );
+AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolution_NameMapStack & NameStack, OilStatementBody & Body, IOilLoop * TopLoop );
 AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution_NameMapStack & NameStack, OilNamespaceDefinition & Namespace );
 
 AllusionResolutionResult OilAllusionResolution_Root ( OilNamespaceDefinition & RootNS )
@@ -408,7 +509,7 @@ AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution
 	
 	OilStatementBody & ImplicitInitBody = Namespace.GetImplicitInitializationBody ();
 	
-	AllusionResolutionResult ISBResult = OilAllusionResolution_StatementBody ( NameStack, ImplicitInitBody );
+	AllusionResolutionResult ISBResult = OilAllusionResolution_StatementBody ( NameStack, ImplicitInitBody, NULL );
 	
 	if ( ISBResult == kAllusionResolutionResult_Success_Complete )
 		Progress = true;
@@ -423,6 +524,42 @@ AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution
 		Unresolved = true;
 	else
 		return ISBResult;
+	
+	TypeDefCount = Namespace.GetTypeDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < TypeDefCount; I ++ )
+	{
+		
+		OilTypeDefinition * Definition = Namespace.GetTypeDefinition ( I );
+		// TODO: Resolve type definitions
+		(void) Definition;
+		
+	}
+	
+	FunctionDefCount = Namespace.GetFunctionDefinitionCount ();
+	
+	for ( uint32_t I = 0; I < FunctionDefCount; I ++ )
+	{
+		
+		OilFunctionDefinition * Definition = Namespace.GetFunctionDefinition ( I );
+		
+		AllusionResolutionResult FResult = OilAllusionResolution_Function ( NameStack, * Definition );
+		
+		if ( FResult == kAllusionResolutionResult_Success_Complete )
+			Progress = true;
+		else if ( FResult == kAllusionResolutionResult_Success_Progress )
+		{
+			
+			Progress = true;
+			Unresolved = true;
+			
+		}
+		else if ( FResult == kAllusionResolutionResult_Success_NoProgress )
+			Unresolved = true;
+		else
+			return FResult;
+		
+	}
 	
 	//========================================[Child propogation]=======================================//
 	
@@ -465,7 +602,7 @@ AllusionResolutionResult OilAllusionResolution_Namespace ( OilAllusionResolution
 	
 }
 
-AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolution_NameMapStack & NameStack, OilStatementBody & Body )
+AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolution_NameMapStack & NameStack, OilStatementBody & Body, IOilLoop * TopLoop )
 {
 	
 	bool Unresolved = false;
@@ -489,7 +626,7 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 				
 				OilStatementBody * SubBody = dynamic_cast <OilStatementBody *> ( Statement );
 				
-				AllusionResolutionResult SBResult = OilAllusionResolution_StatementBody ( NameStack, * SubBody );
+				AllusionResolutionResult SBResult = OilAllusionResolution_StatementBody ( NameStack, * SubBody, TopLoop );
 				
 				if ( SBResult == kAllusionResolutionResult_Success_Complete )
 					Progress = true;
@@ -553,7 +690,7 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 				if ( BindingMapping.Type != OilAllusionResolution_NameMapStack :: kMappingType_BindingStatement )
 				{
 					
-					LOG_FATALERROR ( "Internal error: namespace binding initializer refers to binding not in namespace scope" );
+					LOG_FATALERROR ( "internal error: namespace binding initializer refers to binding not in namespace scope" );
 					
 					return kAllusionResolutionResult_Error;
 					
@@ -629,20 +766,374 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 			}
 			break;
 			
-			case IOilStatement :: kStatementType_Return
+			case IOilStatement :: kStatementType_Return:
 			{
 				
 				OilReturn * Return = dynamic_cast <OilReturn *> ( Statement );
+				
+				if ( Return -> HasExpression () )
+				{
+					
+					OilExpression * Expression = Return -> GetReturnedExpression ();
+					
+					AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+					
+					if ( EResult == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( EResult == kAllusionResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return EResult;
+					
+				}
 				
 			}
 			break;
 			
 			case IOilStatement :: kStatementType_IfElse:
+			{
+				
+				OilIfElse * IfElse = dynamic_cast <OilIfElse *> ( Statement );
+				
+				OilExpression * Expression = IfElse -> GetIfClauseConditionExpression ();
+				
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
+				OilStatementBody * Body = IfElse -> GetIfClauseStatementBody ();
+				
+				AllusionResolutionResult BResult = OilAllusionResolution_StatementBody ( NameStack, * Body, TopLoop );
+				
+				if ( BResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( BResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( BResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return BResult;
+				
+				uint32_t ElseIfCount = IfElse -> HasElseIfClauses () ? IfElse -> GetElseIfClauseCount () : 0;
+				
+				for ( uint32_t I = 0; I < ElseIfCount; I ++ )
+				{
+					
+					Expression = IfElse -> GetElseIfClauseConditionExpression ( I );
+					
+					EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+					
+					if ( EResult == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( EResult == kAllusionResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return EResult;
+					
+					Body = IfElse -> GetElseIfClauseStatementBody ( I );
+					
+					AllusionResolutionResult BResult = OilAllusionResolution_StatementBody ( NameStack, * Body, TopLoop );
+					
+					if ( BResult == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( BResult == kAllusionResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( BResult == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return BResult;
+					
+				}
+				
+				if ( IfElse -> HasElseClause () )
+				{
+					
+					Body = IfElse -> GetElseClauseStatementBody ();
+					
+					AllusionResolutionResult BResult = OilAllusionResolution_StatementBody ( NameStack, * Body, TopLoop );
+					
+					if ( BResult == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( BResult == kAllusionResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( BResult == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return BResult;
+					
+				}
+				
+			}
+			break;
+			
 			case IOilStatement :: kStatementType_Match:
+			{
+				
+				OilMatch * Match = dynamic_cast <OilMatch *> ( Statement );
+				
+				OilExpression * Expression = Match -> GetMatcheeExpression ();
+				
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
+				uint32_t BranchCount = Match -> GetBranchCount ();
+				
+				for ( uint32_t I = 0; I < BranchCount; I ++ )
+				{
+					
+					OilMatchBranch * Branch = Match -> GetBranch ( I );
+					
+					AllusionResolutionResult BRResult = OilAllusionResolution_MatchBranch ( NameStack, * Branch, TopLoop );
+					
+					if ( BRResult == kAllusionResolutionResult_Success_Complete )
+						Progress = true;
+					else if ( BRResult == kAllusionResolutionResult_Success_Progress )
+					{
+						
+						Progress = true;
+						Unresolved = true;
+						
+					}
+					else if ( BRResult == kAllusionResolutionResult_Success_NoProgress )
+						Unresolved = true;
+					else
+						return BRResult;
+					
+				}
+				
+			}
+			break;
+			
 			case IOilStatement :: kStatementType_WhileLoop:
+			{
+				
+				OilWhileLoop * WhileLoop = dynamic_cast <OilWhileLoop *> ( Statement );
+				
+				OilExpression * Expression = WhileLoop -> GetConditionExpression ();
+				
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
+				if ( WhileLoop -> HasLoopLabel () )
+					NameStack.AddLabledLoopMapping ( std :: u32string ( U"`" ) + WhileLoop -> GetLoopLabel (), WhileLoop );
+				
+				OilStatementBody * Body = WhileLoop -> GetStatementBody ();
+				
+				AllusionResolutionResult BResult = OilAllusionResolution_StatementBody ( NameStack, * Body, WhileLoop );
+				
+				if ( BResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( BResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( BResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return BResult;
+				
+			}
+			break;
+			
 			case IOilStatement :: kStatementType_DoWhileLoop:
+			{
+				
+				OilDoWhileLoop * DoWhileLoop = dynamic_cast <OilDoWhileLoop *> ( Statement );
+				
+				if ( DoWhileLoop -> HasLoopLabel () )
+					NameStack.AddLabledLoopMapping ( std :: u32string ( U"`" ) + DoWhileLoop -> GetLoopLabel (), DoWhileLoop );
+				
+				OilStatementBody * Body = DoWhileLoop -> GetStatementBody ();
+				
+				AllusionResolutionResult BResult = OilAllusionResolution_StatementBody ( NameStack, * Body, DoWhileLoop );
+				
+				if ( BResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( BResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( BResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return BResult;
+				
+				OilExpression * Expression = DoWhileLoop -> GetConditionExpression ();
+				
+				AllusionResolutionResult EResult = OilAllusionResolution_Expression ( NameStack, * Expression );
+				
+				if ( EResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( EResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( EResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return EResult;
+				
+			}
+			break;
+			
 			case IOilStatement :: kStatementType_Loop:
+			{
+				
+				OilLoop * Loop = dynamic_cast <OilLoop *> ( Statement );
+				
+				if ( Loop -> HasLoopLabel () )
+					NameStack.AddLabledLoopMapping ( std :: u32string ( U"`" ) + Loop -> GetLoopLabel (), Loop );
+				
+				OilStatementBody * Body = Loop -> GetStatementBody ();
+				
+				AllusionResolutionResult BResult = OilAllusionResolution_StatementBody ( NameStack, * Body, Loop );
+				
+				if ( BResult == kAllusionResolutionResult_Success_Complete )
+					Progress = true;
+				else if ( BResult == kAllusionResolutionResult_Success_Progress )
+				{
+					
+					Progress = true;
+					Unresolved = true;
+					
+				}
+				else if ( BResult == kAllusionResolutionResult_Success_NoProgress )
+					Unresolved = true;
+				else
+					return BResult;
+				
+			}
+			break;
+			
 			case IOilStatement :: kStatementType_Break:
+			{
+				
+				OilBreak * Break = dynamic_cast <OilBreak *> ( Statement );
+				
+				if ( ! Break -> BrokenLoopResolved () )
+				{
+					
+					if ( Break -> HasLoopLabel () )
+					{
+						
+						OilAllusionResolution_NameMapStack :: NameMapping Lookup = NameStack.LookupName ( std :: u32string ( U"`" ) + Break -> GetLoopLabel () );
+						
+						if ( Lookup.Type != OilAllusionResolution_NameMapStack :: kMappingType_LabledLoop )
+						{
+							
+							if ( Lookup.Type == OilAllusionResolution_NameMapStack :: kMappingType_None )
+							{
+								
+								LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Break -> GetSourceRef () ) + "break label refers to non-existant of loop" );
+								
+								return kAllusionResolutionResult_Error;
+								
+							}
+														
+							LOG_FATALERROR ( "internal error: break label refers to a non loop-label type name" );
+							
+							return kAllusionResolutionResult_Error;
+							
+						}
+						
+						Break -> SetBrokenLoop ( Lookup.LabledLoop );
+						
+					}
+					else
+					{
+						
+						if ( TopLoop == NULL )
+						{
+							
+							LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Break -> GetSourceRef () ) + "break statement outside of loop" );
+							
+							return kAllusionResolutionResult_Error;
+							
+						}
+						
+						Break -> SetBrokenLoop ( TopLoop );
+						
+					}
+					
+				}
+				
+			}
 			break;
 			
 		}
@@ -660,6 +1151,135 @@ AllusionResolutionResult OilAllusionResolution_StatementBody ( OilAllusionResolu
 	}
 	
 	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+AllusionResolutionResult OilAllusionResolution_MatchBranch ( OilAllusionResolution_NameMapStack & NameStack, OilMatchBranch & Branch, IOilLoop * TopLoop )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	NameStack.PushContext ( OilAllusionResolution_NameMapStack :: kNameContext_MatchBranch );
+	OilAllusionResolution_ScopedNameStackContextReleaser NS_Releaser ( NameStack );
+	
+	switch ( Branch.GetMatchType () )
+	{
+		
+		case OilMatchBranch :: kMatchType_Allusion:
+		{
+			
+			AllusionResolutionResult ARResult = OilAllusionResolution_Allusion ( NameStack, * Branch.GetMatchAllusion () );
+			
+			if ( ARResult == kAllusionResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ARResult == kAllusionResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ARResult == kAllusionResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return ARResult;
+			
+		}
+		break;
+		
+		case OilMatchBranch :: kMatchType_AllusionValue:
+		{
+			
+			AllusionResolutionResult ARResult = OilAllusionResolution_Allusion ( NameStack, * Branch.GetMatchAllusion () );
+			
+			if ( ARResult == kAllusionResolutionResult_Success_Complete )
+				Progress = true;
+			else if ( ARResult == kAllusionResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+				
+			}
+			else if ( ARResult == kAllusionResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return ARResult;
+			
+			NameStack.AddMatchBranchValueMapping ( Branch.GetAllusionValueName (), & Branch );
+			
+		}
+		break;
+		
+		case OilMatchBranch :: kMatchType_Destructure:
+		{
+			
+			OilStructDestructure * Destructure = Branch.GetMatchDestructure ();
+			AddDestructureNames ( NameStack, * Destructure );
+			
+		}
+		break;
+		
+		case OilMatchBranch :: kMatchType_Constant:
+		case OilMatchBranch :: kMatchType_Other:
+		break;
+		
+	}
+	
+	OilStatementBody * Body = Branch.GetStatementBody ();
+	
+	AllusionResolutionResult SBResult = OilAllusionResolution_StatementBody ( NameStack, * Body, TopLoop );
+	
+	if ( SBResult == kAllusionResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( SBResult == kAllusionResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( SBResult == kAllusionResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+		return SBResult;
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kAllusionResolutionResult_Success_Progress;
+		
+		return kAllusionResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
+
+void AddDestructureNames ( OilAllusionResolution_NameMapStack & NameStack, OilStructDestructure & Destructure )
+{
+	
+	uint32_t MemberCount = Destructure.GetMemberDestructureCount ();
+	
+	for ( uint32_t I = 0; I < MemberCount; I ++ )
+	{
+		
+		OilMemberDestructure * Member = Destructure.GetMemberDestructure ( I );
+		
+		if ( ! Member -> IsIgnored () )
+		{
+			
+			if ( Member -> IsSubDestructure () )
+				AddDestructureNames ( NameStack, * Member -> GetSubDestructure () );
+			else
+				NameStack.AddMemberDestructureMapping ( Member -> GetValueName (), Member );
+			
+		}
+		
+	}
 	
 }
 
@@ -687,4 +1307,79 @@ AllusionResolutionResult OilAllusionResolution_Expression ( OilAllusionResolutio
 	
 }
 
+AllusionResolutionResult OilAllusionResolution_Function ( OilAllusionResolution_NameMapStack & NameStack, OilFunctionDefinition & FunctionDefinition )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	NameStack.PushContext ( OilAllusionResolution_NameMapStack :: kNameContext_Function );
+	OilAllusionResolution_ScopedNameStackContextReleaser NS_Releaser ( NameStack );
+	
+	OilFunctionParameterList * Parameters = FunctionDefinition.GetParameterList ();
+	uint32_t ParamCount = Parameters -> GetParameterCount ();
+	
+	for ( uint32_t I = 0; I < ParamCount; I ++ )
+	{
+		
+		OilFunctionParameter * Param = Parameters -> GetFunctionParameter ( I );
+		
+		NameStack.AddFunctionParameterMapping ( Param -> GetName (), Param );
+		
+	}
+	
+	OilStatementBody * Body = FunctionDefinition.GetStatementBody ();
+	
+	AllusionResolutionResult SBResult = OilAllusionResolution_StatementBody ( NameStack, * Body, NULL );
+	
+	if ( SBResult == kAllusionResolutionResult_Success_Complete )
+		Progress = true;
+	else if ( SBResult == kAllusionResolutionResult_Success_Progress )
+	{
+		
+		Progress = true;
+		Unresolved = true;
+		
+	}
+	else if ( SBResult == kAllusionResolutionResult_Success_NoProgress )
+		Unresolved = true;
+	else
+		return SBResult;
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kAllusionResolutionResult_Success_Progress;
+		
+		return kAllusionResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}
 
+AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_NameMapStack & NameStack, OilAllusion & Allusion )
+{
+	
+	bool Unresolved = false;
+	bool Progress = false;
+	
+	// TODO: Implement
+	(void) NameStack;
+	(void) Allusion;
+	
+	if ( Unresolved )
+	{
+		
+		if ( Progress )
+			return kAllusionResolutionResult_Success_Progress;
+		
+		return kAllusionResolutionResult_Success_NoProgress;
+		
+	}
+	
+	return kAllusionResolutionResult_Success_Complete;
+	
+}

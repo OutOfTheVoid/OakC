@@ -1,14 +1,20 @@
 #include <OIL/OilBreak.h>
 
+#ifndef NULL
+	#define NULL nullptr
+#endif
+
 OilBreak :: OilBreak ( const SourceRef & Ref ):
 	LoopLabel ( U"" ),
-	Ref ( Ref )
+	Ref ( Ref ),
+	BrokenLoop ( NULL )
 {
 }
 
 OilBreak :: OilBreak ( const SourceRef & Ref, const std :: u32string & LoopLabel ):
 	LoopLabel ( LoopLabel ),
-	Ref ( Ref )
+	Ref ( Ref ),
+	BrokenLoop ( NULL )
 {
 }
 
@@ -41,5 +47,33 @@ const SourceRef & OilBreak :: GetSourceRef () const
 {
 	
 	return Ref;
+	
+}
+
+void OilBreak :: SetBrokenLoop ( IOilLoop * Loop )
+{
+	
+	BrokenLoop = Loop;
+	
+}
+
+const IOilLoop * OilBreak :: GetBrokenLoop () const
+{
+	
+	return BrokenLoop;
+	
+}
+
+IOilLoop * OilBreak :: GetBrokenLoop ()
+{
+	
+	return BrokenLoop;
+	
+}
+
+bool OilBreak :: BrokenLoopResolved () const
+{
+	
+	return BrokenLoop != NULL;
 	
 }

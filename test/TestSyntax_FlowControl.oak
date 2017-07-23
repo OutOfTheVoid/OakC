@@ -5,7 +5,7 @@ function HelloWorld ()
 	
 }
 
-function TestSyntax () : void
+function TestSyntax ()
 {
 	
 	if ( true )

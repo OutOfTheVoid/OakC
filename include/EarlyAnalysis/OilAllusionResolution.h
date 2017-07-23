@@ -12,6 +12,10 @@ class OilTypeDefinition;
 class OilFunctionDefinition;
 class OilTraitDefinition;
 class OilTypeAlias;
+class IOilLoop;
+class OilFunctionParameter;
+class OilMatchBranch;
+class OilMemberDestructure;
 
 class OilAllusionResolution_NameMapStack
 {
@@ -25,7 +29,7 @@ public:
 		kNameContext_Template,
 		kNameContext_Match,
 		kNameContext_MatchBranch,
-		kNameContext_StatementBlock
+		kNameContext_StatementBlock,
 		
 	};
 	
@@ -40,6 +44,10 @@ public:
 		kMappingType_FunctionDefinition,
 		kMappingType_TraitDefinition,
 		kMappingType_TypeAlias,
+		kMappingType_LabledLoop,
+		kMappingType_FunctionParameter,
+		kMappingType_MatchBranchValue,
+		kMappingType_MemberDestructure
 		
 	};
 	
@@ -54,6 +62,10 @@ public:
 		NameMapping_Struct ( OilFunctionDefinition * FunctionDefintiion );
 		NameMapping_Struct ( OilTraitDefinition * TraitDefinition );
 		NameMapping_Struct ( OilTypeAlias * TypeAlias );
+		NameMapping_Struct ( IOilLoop * LabledLoop );
+		NameMapping_Struct ( OilFunctionParameter * Parameter );
+		NameMapping_Struct ( OilMatchBranch * MatchBranchValue );
+		NameMapping_Struct ( OilMemberDestructure * MemberDestructure );
 		
 		~NameMapping_Struct ();
 		
@@ -69,6 +81,10 @@ public:
 			OilFunctionDefinition * FunctionDefintiion;
 			OilTraitDefinition * TraitDefinition;
 			OilTypeAlias * TypeAlias;
+			IOilLoop * LabledLoop;
+			OilFunctionParameter * FunctionParameter;
+			OilMatchBranch * MatchBranchValue;
+			OilMemberDestructure * MemberDestructure;
 			
 		};
 		
@@ -87,6 +103,10 @@ public:
 	void AddFunctionMapping ( const std :: u32string & Name, OilFunctionDefinition * FunctionDefintiion );
 	void AddTraitMapping ( const std :: u32string & Name, OilTraitDefinition * TraitDefinition );
 	void AddTypeAliasMapping ( const std :: u32string & Name, OilTypeAlias * TypeAlias );
+	void AddLabledLoopMapping ( const std :: u32string & Label, IOilLoop * Loop );
+	void AddFunctionParameterMapping ( const std :: u32string & Name, OilFunctionParameter * Parameter );
+	void AddMatchBranchValueMapping ( const std :: u32string & Name, OilMatchBranch * MatchBranchValue );
+	void AddMemberDestructureMapping ( const std :: u32string & Name, OilMemberDestructure * MemberDestructure );
 	
 	NameMapping LookupName ( const std :: u32string Name );
 	void ReadInScopeNames ( std :: vector <std :: u32string> & Out );

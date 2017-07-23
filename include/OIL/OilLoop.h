@@ -2,6 +2,7 @@
 #define OIL_OILLOOP_H
 
 #include <OIL/IOilStatement.h>
+#include <OIL/IOilLoop.h>
 
 #include <string>
 
@@ -9,7 +10,7 @@
 
 class OilStatementBody;
 
-class OilLoop : public virtual IOilStatement
+class OilLoop : public virtual IOilStatement, public virtual IOilLoop
 {
 public:
 	

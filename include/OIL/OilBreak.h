@@ -7,6 +7,8 @@
 
 #include <Tokenization/SourceRef.h>
 
+class IOilLoop;
+
 class OilBreak : public virtual IOilStatement
 {
 public:
@@ -23,11 +25,20 @@ public:
 	
 	const SourceRef & GetSourceRef () const;
 	
+	void SetBrokenLoop ( IOilLoop * Loop );
+	
+	const IOilLoop * GetBrokenLoop () const;
+	IOilLoop * GetBrokenLoop ();
+	
+	bool BrokenLoopResolved () const;
+	
 private:
 	
 	const std :: u32string LoopLabel;
 	
 	SourceRef Ref;
+	
+	IOilLoop * BrokenLoop;
 	
 };
 

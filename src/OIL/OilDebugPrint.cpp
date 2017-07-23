@@ -591,6 +591,16 @@ void OilPrintBreak ( const OilBreak & Break, uint32_t Indent, const OilPrintOpti
 	
 	PrintString += "[BREAK";
 	
+	if ( PrintOptions.ShowResolution )
+	{
+		
+		if ( Break.BrokenLoopResolved () )
+			PrintString += " (resolved)";
+		else
+			PrintString += " (unresolved)";
+		
+	}
+	
 	if ( Break.HasLoopLabel () )
 	{
 		
