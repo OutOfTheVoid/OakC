@@ -734,3 +734,20 @@ void BuildAbsoluteNamePath_Trait ( std :: vector <std :: u32string> & AbsolutePa
 	AbsolutePath.push_back ( Trait.GetName () );
 	
 }
+
+void BuildAbsoluteNamePath_TypeDefinition ( std :: vector <std :: u32string> & AbsolutePath, const OilTypeDefinition & Type )
+{
+	
+	const OilNamespaceDefinition * Parent = Type.GetParentNamespace ();
+	
+	while ( Parent -> GetParent () != NULL )
+	{
+		
+		AbsolutePath.insert ( AbsolutePath.begin (), Parent -> GetID () );
+		Parent = Parent -> GetParent ();
+		
+	}
+	
+	AbsolutePath.push_back ( Type.GetName () );
+	
+}

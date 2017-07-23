@@ -26,6 +26,8 @@
 #include <OIL/OilStructDestructure.h>
 #include <OIL/OilMemberDestructure.h>
 #include <OIL/OilAllusion.h>
+#include <OIL/OilTemplateDefinition.h>
+#include <OIL/OilTemplateSpecification.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -1382,6 +1384,65 @@ AllusionResolutionResult OilAllusionResolution_Allusion_FinalNamespaceSearchResu
 	
 }
 
+bool OilAllusionResolution_Allusion_CheckTypeAliasMatch ( OilAllusion & Allusion, OilTypeAlias & Alias, OilTemplateSpecification * TemplateSpecification )
+{
+	
+	if ( Alias.IsTemplated () )
+	{
+		
+		if ( TemplateSpecification == NULL )
+		{
+			
+			LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "allusion has no template specification, but references templated type " + CodeConversion :: ConvertUTF32ToUTF8 ( Alias.GetName () ) );
+			
+			return false;
+			
+		}
+		
+		OilTemplateDefinition * Definition = Alias.GetTemplateDefinition ();
+		
+		uint32_t SpecifiedParamCount = TemplateSpecification -> GetTypeRefCount ();
+		uint32_t DefinitionParamCount = Definition -> GetTemplateParameterCount ();
+		
+		if ( SpecifiedParamCount != DefinitionParamCount )
+		{
+			
+			if ( SpecifiedParamCount > DefinitionParamCount )
+				LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "allusion to type alias specifies " + std :: to_string ( SpecifiedParamCount - DefinitionParamCount ) + " more template parameters than templated type " + CodeConversion :: ConvertUTF32ToUTF8 ( Alias.GetName () ) + " requires" );
+			else
+				LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "allusion to type alias specifies " + std :: to_string ( DefinitionParamCount - SpecifiedParamCount ) + " fewer template parameters than templated type " + CodeConversion :: ConvertUTF32ToUTF8 ( Alias.GetName () ) + " requires" );
+				
+			return false;
+			
+		}
+		
+		for ( uint32_t I = 0; I < SpecifiedParamCount; I ++ )
+		{
+			
+			OilTemplateDefinitionParameter * TemplateParam = Definition -> GetTemplateParameter ( I );
+			
+			// TODO: Make sure that type parameter actually implements the required traits
+			(void) TemplateParam;
+			
+		}
+		
+		return true;
+		
+	}
+	
+	if ( TemplateSpecification != NULL )
+	{
+		
+		LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( Allusion.GetSourceRef () ) + "allusion has template specification, but references non-tempalted type " + CodeConversion :: ConvertUTF32ToUTF8 ( Alias.GetName () ) );
+		
+		return false;
+		
+	}
+	
+	return true;
+	
+}
+
 AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_NameMapStack & NameStack, OilAllusion & Allusion )
 {
 	
@@ -1400,7 +1461,9 @@ AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_
 		case OilAllusion :: kAllusionTarget_Namespaced:
 		{
 			
-			NameStackSearchResult = NameStack.LookupName ( Allusion.GetNamespaceName ( 0 ) );
+			uint32_t CurrentNameIndex = 0;
+			
+			NameStackSearchResult = NameStack.LookupName ( Allusion.GetNamespaceName ( CurrentNameIndex ) );
 			
 			OilNamespaceDefinition * CurrentNamespace = NULL;
 			OilTypeDefinition * CurrentTypeDefinition = NULL;
@@ -1409,7 +1472,7 @@ AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_
 			if ( NameStackSearchResult.Type == OilAllusionResolution_NameMapStack :: kMappingType_None )
 			{
 				
-				NameStack.GetGlobalNamespace ().SearchName ( Allusion.GetNamespaceName ( 0 ), NamespaceSearchResult );
+				NameStack.GetGlobalNamespace ().SearchName ( Allusion.GetNamespaceName ( CurrentNameIndex ), NamespaceSearchResult );
 				
 				if ( NamespaceSearchResult.Type == OilNamespaceDefinition :: kNameSearchResultType_SubNamespace )
 					CurrentNamespace = NamespaceSearchResult.NamespaceDefinition;
@@ -1489,7 +1552,7 @@ AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_
 			if ( CurrentNamespace != NULL )
 			{
 				
-				uint32_t CurrentNameIndex = 1;
+				CurrentNameIndex = 1;
 				uint32_t NameLength = Allusion.GetNamespaceNameCount ();
 				
 				while ( CurrentNameIndex < NameLength )
@@ -1538,6 +1601,20 @@ AllusionResolutionResult OilAllusionResolution_Allusion ( OilAllusionResolution_
 				CurrentNamespace -> SearchName ( Allusion.GetName (), NamespaceSearchResult );
 				
 				return OilAllusionResolution_Allusion_FinalNamespaceSearchResult ( NamespaceSearchResult, Allusion );
+				
+			}
+			
+			if ( CurrentTypeAlias != NULL )
+			{
+				
+				
+				
+			}
+			
+			if ( CurrentTypeDefinition != NULL )
+			{
+				
+				
 				
 			}
 			

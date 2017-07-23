@@ -294,7 +294,18 @@ void OilTypeRef :: SetResolvedTemplateParamName ()
 	
 }
 
-void OilTypeRef :: SetResolvedAsSelf ()
+void OilTypeRef :: SetResolvedAsSelf ( OilTypeDefinition * SelfType )
+{
+	
+	ResolvedType = SelfType;
+	
+	ResolvedAsTrait = false;
+	ResolvedAsTemplateParam = false;
+	ResolvedAsSelf = true;
+	
+}
+
+void OilTypeRef ::  SetResolvedAsSelfAbstract ()
 {
 	
 	ResolvedAsTrait = false;
@@ -332,7 +343,14 @@ bool OilTypeRef :: IsResolvedAsTrait () const
 bool OilTypeRef :: IsResolvedAsSelf () const
 {
 	
-	return ResolvedAsSelf;
+	return ResolvedAsSelf && ( ResolvedType != NULL );
+	
+}
+
+bool OilTypeRef :: IsResolvedAsSelfAbstract () const
+{
+	
+	return ResolvedAsSelf && ( ResolvedType == NULL );
 	
 }
 
@@ -346,14 +364,14 @@ bool OilTypeRef :: IsResolvedAsTemplateParam () const
 const OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition () const
 {
 	
-	return IsResolvedAsType () ? ResolvedType : NULL;
+	return ( IsResolvedAsType () || IsResolvedAsSelf () ) ? ResolvedType : NULL;
 	
 }
 
 OilTypeDefinition * OilTypeRef :: GetResolvedTypeDefinition ()
 {
 	
-	return IsResolvedAsType () ? ResolvedType : NULL;
+	return ( IsResolvedAsType () || IsResolvedAsSelf () ) ? ResolvedType : NULL;
 	
 }
 

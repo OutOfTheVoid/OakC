@@ -20,6 +20,7 @@ OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, OilNamesp
 const OilTraitDefinition * FindTraitDefinition ( const OilTypeRef & TypeRef, const OilNamespaceDefinition & ImmediateContainer, bool & TemplateMismatch );
 
 void BuildAbsoluteNamePath_Trait ( std :: vector <std :: u32string> & AbsolutePath, const OilTraitDefinition & Trait );
+void BuildAbsoluteNamePath_TypeDefinition ( std :: vector <std :: u32string> & AbsolutePath, const OilTypeDefinition & Type );
 
 OilNamespaceDefinition * OilFindParentallyContainedNamespace ( OilNamespaceDefinition & SearchLeaf, const std :: u32string & Name );
 const OilNamespaceDefinition * OilFindParentallyContainedNamespace ( const OilNamespaceDefinition & SearchLeaf, const std :: u32string & Name );

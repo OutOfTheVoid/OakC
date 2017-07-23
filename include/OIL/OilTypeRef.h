@@ -70,13 +70,15 @@ public:
 	bool IsResolvedAsTrait () const;
 	bool IsResolvedAsTemplateParam () const;
 	bool IsResolvedAsSelf () const;
+	bool IsResolvedAsSelfAbstract () const;
 	
 	void SetResolvedTypeDefinition ( OilTypeDefinition * TypeDefinition );
 	void SetResolvedTraitDefinition ( OilTraitDefinition * TraitDefinition );
 	void SetResolvedTypeWithTemplateSpec ( OilTypeDefinition * Type, OilTemplateSpecification * Spec );
 	void SetResolvedTemplateParamName ();
 	void SetResolvedVoid ();
-	void SetResolvedAsSelf ();
+	void SetResolvedAsSelf ( OilTypeDefinition * SelfType );
+	void SetResolvedAsSelfAbstract ();
 	
 	const OilTypeDefinition * GetResolvedTypeDefinition () const;
 	OilTypeDefinition * GetResolvedTypeDefinition ();
