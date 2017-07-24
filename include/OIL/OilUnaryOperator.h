@@ -11,6 +11,7 @@ class OilExpression;
 class IOilPrimary;
 class OilFunctionCallParameterList;
 class OilTemplateSpecification;
+class OilTypeRef;
 
 class OilUnaryOperator : public virtual IOilOperator
 {
@@ -19,24 +20,26 @@ public:
 	typedef enum
 	{
 		
-		kOperator_PostfixIncrement,
-		kOperator_PostfixDecrement,
-		kOperator_PrefixIncrement,
-		kOperator_PrefixDecrement,
-		kOperator_BitwiseNot,
-		kOperator_LogicalNot,
-		kOperator_UnaryNegative,
-		kOperator_UnaryPositive,
-		kOperator_Reference,
-		kOperator_Dereference,
-		kOperator_ArrayAccess,
-		kOperator_FunctionCall,
-		kOperator_MemberAccess,
+		kOperator_PostfixIncrement = 0,
+		kOperator_PostfixDecrement = 1,
+		kOperator_PrefixIncrement = 2,
+		kOperator_PrefixDecrement = 3,
+		kOperator_BitwiseNot = 4,
+		kOperator_LogicalNot = 5,
+		kOperator_UnaryNegative = 6,
+		kOperator_UnaryPositive = 7,
+		kOperator_Reference = 8,
+		kOperator_Dereference = 9,
+		kOperator_ArrayAccess = 10,
+		kOperator_FunctionCall = 11,
+		kOperator_MemberAccess = 12,
+		kOperator_TraitCast = 13,
 		
 	} Operator;
 	
 	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilOperator * Term );
 	OilUnaryOperator ( const SourceRef & Ref, Operator Op, IOilPrimary * Term );
+	
 	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, OilFunctionCallParameterList * ParameterList );
 	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, OilFunctionCallParameterList * ParameterList );
 	
@@ -45,6 +48,11 @@ public:
 	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName );
 	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, const std :: u32string & MemberName, OilTemplateSpecification * MemberTemplateSpec );
 	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, const std :: u32string & MemberName, OilTemplateSpecification * MemberTemplateSpec );
+	
+	// TODO: Add data slot for typeref for trait cast
+	
+	OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, OilTypeRef * CastTrait );
+	OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, OilTypeRef * CastTrait );
 	
 	~OilUnaryOperator ();
 	
@@ -57,7 +65,8 @@ public:
 	const OilFunctionCallParameterList * GetFunctionCallParameterList () const;
 	OilFunctionCallParameterList * GetFunctionCallParameterList ();
 	
-	
+	const OilTypeRef * GetCastTraitRef () const;
+	OilTypeRef * GetCastTraitRef ();
 	
 	void SetTerm ( IOilOperator * Term );
 	void SetTerm ( IOilPrimary * Term );
@@ -105,6 +114,7 @@ private:
 		
 		OilFunctionCallParameterList * ParameterList;
 		OilTemplateSpecification * MemberTemplateSpec;
+		OilTypeRef * CastTrait;
 		
 	};
 	

@@ -106,6 +106,8 @@ namespace OakTokenTags
 	
 	const uint64_t kTokenTag_DecoratorOpen = 78;
 	
+	const uint64_t kTokenTag_At = 79;
+	
 	//const uint64_t kTokenTag_ = ;
 	
 	const char * const TagNames [] =
@@ -190,6 +192,7 @@ namespace OakTokenTags
 		"BACK_TICK",
 		"IDENT",
 		"DECORTATOR_OPEN",
+		"AT",
 		
 	};
 	

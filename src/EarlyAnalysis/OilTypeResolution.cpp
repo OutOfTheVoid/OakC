@@ -77,6 +77,9 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 		
 	}
 	
+	if ( VoidType )
+		return kTypeResolutionResult_Success_Complete;
+	
 	if ( Ref -> IsTemplated () )
 	{
 		
@@ -371,6 +374,15 @@ TypeResolutionResult OilTypeResolution_TypeRef ( OilNamespaceDefinition & Curren
 					return kTypeResolutionResult_Success_Complete;
 					
 				}
+				
+			}
+			
+			if ( Ref -> GetName () == U"void" )
+			{
+				
+				Ref -> SetResolvedVoid ();
+				
+				return kTypeResolutionResult_Success_Complete;
 				
 			}
 			
@@ -2105,6 +2117,46 @@ TypeResolutionResult OilTypeResolution_UnaryOperator ( OilNamespaceDefinition & 
 				Unresolved = true;
 			else
 				return ParamResult;
+			
+		}
+		
+	}
+	else if ( Operator.GetOp () == OilUnaryOperator :: kOperator_TraitCast )
+	{
+		
+		OilTypeRef * CastTraitRef = Operator.GetCastTraitRef ();
+		
+		if ( ! CastTraitRef -> IsResolved () )
+		{
+			
+			TypeResolutionResult TraitResult = OilTypeResolution_TypeRef ( CurrentNS, * CastTraitRef, TemplateNames, SelfType );
+			
+			if ( TraitResult == kTypeResolutionResult_Success_Complete )
+			{
+				
+				if ( ! CastTraitRef -> IsResolvedAsTrait () )
+				{
+					
+					LOG_FATALERROR_NOFILE ( SourceRefToPositionString ( CastTraitRef -> GetSourceRef () ) + "trait cast operator refers to non-trait type" );
+					
+					return kTypeResolutionResult_Failure_NonTrait;
+					
+				}
+				
+				Progress = true;
+				
+			}
+			else if ( TraitResult == kTypeResolutionResult_Success_Progress )
+			{
+				
+				Progress = true;
+				Unresolved = true;
+					
+			}
+			else if ( TraitResult == kTypeResolutionResult_Success_NoProgress )
+				Unresolved = true;
+			else
+				return TraitResult;
 			
 		}
 		

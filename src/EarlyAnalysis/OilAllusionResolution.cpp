@@ -28,6 +28,7 @@
 #include <OIL/OilAllusion.h>
 #include <OIL/OilTemplateDefinition.h>
 #include <OIL/OilTemplateSpecification.h>
+#include <OIL/OilTypeRef.h>
 
 #include <Logging/Logging.h>
 #include <Logging/ErrorUtils.h>
@@ -1384,7 +1385,7 @@ AllusionResolutionResult OilAllusionResolution_Allusion_FinalNamespaceSearchResu
 	
 }
 
-bool OilAllusionResolution_Allusion_CheckTypeAliasMatch ( OilAllusion & Allusion, OilTypeAlias & Alias, OilTemplateSpecification * TemplateSpecification )
+bool OilAllusionResolution_Allusion_CheckTypeAliasMatch ( OilAllusion & Allusion, OilTypeAlias & Alias, OilTemplateSpecification * TemplateSpecification, bool & Incomplete )
 {
 	
 	if ( Alias.IsTemplated () )
@@ -1418,6 +1419,15 @@ bool OilAllusionResolution_Allusion_CheckTypeAliasMatch ( OilAllusion & Allusion
 		
 		for ( uint32_t I = 0; I < SpecifiedParamCount; I ++ )
 		{
+			
+			if ( ! TemplateSpecification -> GetTypeRef ( I ) -> IsResolved () )
+			{
+				
+				Incomplete = true;
+				
+				return false;
+				
+			}
 			
 			OilTemplateDefinitionParameter * TemplateParam = Definition -> GetTemplateParameter ( I );
 			

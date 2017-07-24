@@ -4454,6 +4454,7 @@ const std :: map <uint64_t, OilUnaryOperator :: Operator> _OakOilTranslation_Ope
 	{ OakASTTags :: kASTTag_Operator_Reference, OilUnaryOperator :: kOperator_Reference},
 	{ OakASTTags :: kASTTag_Operator_ArrayAccess, OilUnaryOperator :: kOperator_ArrayAccess },
 	{ OakASTTags :: kASTTag_Operator_FunctionCall, OilUnaryOperator :: kOperator_FunctionCall },
+	{ OakASTTags :: kASTTag_Operator_TraitCast, OilUnaryOperator :: kOperator_TraitCast },
 	
 };
 
@@ -4572,8 +4573,21 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 				return new OilUnaryOperator ( Ref, PrimaryTerm, MemberAccessData -> Name );
 				
 			}
-			else
-				return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
+			else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_TraitCast )
+			{
+				
+				const ASTElement * CastTraitElement = OperatorElement -> GetSubElement ( 1 );
+				
+				OilTypeRef * CastTraitRef = OakTranslateTraitRefToOil ( CastTraitElement );
+				
+				if ( CastTraitRef == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( Ref, PrimaryTerm, CastTraitRef );
+				
+			}
+			
+			return new OilUnaryOperator ( Ref, UnaryIter -> second, PrimaryTerm );
 			
 		}
 		
@@ -4607,11 +4621,39 @@ IOilOperator * OakTranslateOperatorToOil ( const ASTElement * OperatorElement )
 		else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_MemberAccess )
 		{
 			
-			const ASTElement * MemberNameElement = OperatorElement -> GetSubElement ( 1 );
+			const ASTElement * MemberAccessElement = OperatorElement -> GetSubElement ( 1 );
 			
-			return new OilUnaryOperator ( Ref, OperatorTerm, MemberNameElement -> GetToken ( 0, 0 ) -> GetSource () );
+			const OakMemberAccessNameConstructor :: ElementData * MemberAccessData = reinterpret_cast <const OakMemberAccessNameConstructor :: ElementData *> ( MemberAccessElement -> GetData () );
+			
+			if ( MemberAccessData -> Templated )
+			{
+				
+				OilTemplateSpecification * MemberAccessTemplate = OakTranslateTemplateSpecificationToOil ( MemberAccessElement -> GetSubElement ( 0 ) );
+				
+				if ( MemberAccessTemplate == NULL )
+					return NULL;
+				
+				return new OilUnaryOperator ( Ref, OperatorTerm, MemberAccessData -> Name, MemberAccessTemplate );
+				
+			}
+			
+			return new OilUnaryOperator ( Ref, OperatorTerm, MemberAccessData -> Name );
 			
 		}
+		else if ( UnaryIter -> second == OilUnaryOperator :: kOperator_TraitCast )
+		{
+			
+			const ASTElement * CastTraitElement = OperatorElement -> GetSubElement ( 1 );
+			
+			OilTypeRef * CastTraitRef = OakTranslateTraitRefToOil ( CastTraitElement );
+			
+			if ( CastTraitRef == NULL )
+				return NULL;
+			
+			return new OilUnaryOperator ( Ref, OperatorTerm, CastTraitRef );
+			
+		}
+		
 		return new OilUnaryOperator ( Ref, UnaryIter -> second, OperatorTerm );
 		
 	}

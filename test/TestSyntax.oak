@@ -1,6 +1,50 @@
 //import "test/TestSyntax_Literals.oak";
 
-function Main ( ProgramArguments: Array:<str> ) : i32
+trait Cast <TO_T>
+{
+	
+	function cast ( & self ): TO_T
+	
+}
+
+struct MyType
+{
+}
+
+implement MyType for Cast:<i32>
+{
+	
+	function cast ( & self ): i32
+	{
+		
+		return 0;
+		
+	}
+	
+}
+
+implement MyType for Cast:<u64>
+{
+	
+	function cast ( & self ): u64
+	{
+		
+		return 1;
+		
+	}
+	
+}
+
+function TestCastSyntax (): void
+{
+	
+	bind a: MyType;
+	
+	a@Cast:<i32>.cast ();
+	
+}
+
+/*function Main ( ProgramArguments: Array:<str> ) : i32
 {
 	
 	ignore ProgramArguments;
@@ -32,4 +76,4 @@ function Main ( ProgramArguments: Array:<str> ) : i32
 	
 	return 0;
 	
-}
+}*/

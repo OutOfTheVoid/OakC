@@ -3,6 +3,7 @@
 #include <OIL/OilExpression.h>
 #include <OIL/OilTemplateSpecification.h>
 #include <OIL/OilFunctionCallParameterList.h>
+#include <OIL/OilTypeRef.h>
 
 #ifndef NULL
 	#define NULL nullptr
@@ -24,10 +25,11 @@ const std :: string OilUnaryOperator :: OperatorStrings [] =
 	"array_access",
 	"function_call",
 	"member_access",
+	"trait_cast",
 	
 };
 
-const uint32_t OilUnaryOperator :: MaxOpString = 12;
+const uint32_t OilUnaryOperator :: MaxOpString = 13;
 
 const std :: string OilUnaryOperator :: UnknownOpString = "UNKOWN_OP";
 
@@ -111,6 +113,23 @@ OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term
 {
 }
 
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilOperator * Term, OilTypeRef * CastTrait ):
+	Op ( kOperator_TraitCast ),
+	TermIsPrimary ( false ),
+	OperatorTerm ( Term ),
+	CastTrait ( CastTrait ),
+	Ref ( Ref )
+{
+}
+
+OilUnaryOperator :: OilUnaryOperator ( const SourceRef & Ref, IOilPrimary * Term, OilTypeRef * CastTrait ):
+	Op ( kOperator_TraitCast ),
+	TermIsPrimary ( true ),
+	PrimaryTerm ( Term ),
+	CastTrait ( CastTrait ),
+	Ref ( Ref )
+{
+}
 
 void OilUnaryOperator :: SetTerm ( IOilOperator * Term )
 {
@@ -132,6 +151,28 @@ void OilUnaryOperator :: SetTerm ( IOilOperator * Term )
 	
 	OperatorTerm = Term;
 	TermIsPrimary = false;
+	
+	if ( Op == kOperator_FunctionCall )
+	{
+		
+		if ( ParameterList != NULL )
+			delete ParameterList;
+		
+	}
+	else if ( Op == kOperator_MemberAccess )
+	{
+		
+		if ( MemberTemplateSpec != NULL )
+			delete MemberTemplateSpec;
+		
+	}
+	else if ( Op == kOperator_TraitCast )
+	{
+		
+		if ( CastTrait != NULL )
+			delete CastTrait;
+		
+	}
 	
 }
 
@@ -306,6 +347,20 @@ OilTemplateSpecification * OilUnaryOperator :: GetTemplateSpecificationForMember
 {
 	
 	return ( Op == kOperator_MemberAccess ) ? MemberTemplateSpec : NULL;
+	
+}
+
+const OilTypeRef * OilUnaryOperator :: GetCastTraitRef () const
+{
+	
+	return ( Op == kOperator_TraitCast ) ? CastTrait : NULL;
+	
+}
+
+OilTypeRef * OilUnaryOperator :: GetCastTraitRef ()
+{
+	
+	return ( Op == kOperator_TraitCast ) ? CastTrait : NULL;
 	
 }
 

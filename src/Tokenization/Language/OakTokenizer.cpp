@@ -72,6 +72,8 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	ITokenSplitRule * DoubleColonRule = new StringMatchSplitRule (  U"::", OakTokenTags :: kTokenTag_DoubleColon );
 	// Dot
 	ITokenSplitRule * DotRule = new CharMatchSplitRule ( U'.', OakTokenTags :: kTokenTag_Dot );
+	// At
+	ITokenSplitRule * AtRule = new CharMatchSplitRule ( U'@', OakTokenTags :: kTokenTag_At );
 	// Double Equals
 	ITokenSplitRule * DoubleEqualsRule = new StringMatchSplitRule ( U"==", OakTokenTags :: kTokenTag_DoubleEquals );
 	// Plus Equals
@@ -183,6 +185,7 @@ const Tokenizer & OakTokenizer :: GetOakTokenizer ()
 	NewTokenizer -> AddSplitRule ( PoundRule, 3 );
 	NewTokenizer -> AddSplitRule ( DoubleColonRule, 3 );
 	NewTokenizer -> AddSplitRule ( DotRule, 3 );
+	NewTokenizer -> AddSplitRule ( AtRule, 3 );
 	NewTokenizer -> AddSplitRule ( PlusEqualsRule, 3 );
 	NewTokenizer -> AddSplitRule ( MinusEqualsRule, 3 );
 	NewTokenizer -> AddSplitRule ( DoublePlusRule, 3 );

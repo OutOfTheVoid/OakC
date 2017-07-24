@@ -167,6 +167,8 @@ namespace OakASTTags
 	const uint64_t kASTTag_StructDestructure = 111;
 	const uint64_t kASTTag_MemberDestructure = 112;
 	
+	const uint64_t kASTTag_Operator_TraitCast = 113;
+	
 	const char * const TagNames [] =
 	{
 		
@@ -283,6 +285,7 @@ namespace OakASTTags
 		"MATCH_BRANCH",
 		"DESTRUCTURE_STRUCT",
 		"DESTRUCTURE_MEMBER",
+		"OPERATOR_TRAIT_CAST"
 		
 	};
 	

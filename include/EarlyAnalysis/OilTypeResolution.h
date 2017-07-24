@@ -13,6 +13,7 @@ enum TypeResolutionResult
 	kTypeResolutionResult_Success_NoProgress,
 	kTypeResolutionResult_Failure_TemplateMismatch,
 	kTypeResolutionResult_Failure_NonExistantType,
+	kTypeResolutionResult_Failure_NonTrait,
 	
 };
 
